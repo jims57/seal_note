@@ -1,0 +1,23 @@
+{
+    "name": "seal_note",
+    "short_name": "seal_note",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0175C2",
+    "theme_color": "#0175C2",
+    "description": "An English note app helping users to review knowledge, especially English ones, with the right review interval according to Ebbinghaus curve. You can refer to it as a note-reviewing app that helps you easily covert your short-term memory into long-term ones in a scientific way. Good for English leaners!",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
