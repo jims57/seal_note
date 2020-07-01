@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:seal_note/ui/Detail/DetailWidget.dart';
 import 'package:seal_note/ui/ItemListWidget.dart';
+
+import 'Detail/DetailPage.dart';
 
 class MasterDetailPage extends StatefulWidget {
   @override
@@ -31,19 +34,22 @@ class _MasterDetailPageState extends State<MasterDetailPage> {
                 child: ItemListWidget(
                     itemCount: 10,
                     onItemSelected: (idx) {
-                      setState(() {
-                        selectedIndex = idx;
-                      });
+                      if (isLargeScreen) {
+                        setState(() {
+                          selectedIndex = idx;
+                        });
+                      } else {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (context) {
+                          return DetailPage(idx);
+                        }));
+                      }
                     }),
               ),
               (isLargeScreen
                   ? Expanded(
                       flex: 2,
-                      child: Container(
-                        height: MediaQuery.of(context).size.height,
-                        color: Colors.green,
-                        child: Text('Selected index is: $selectedIndex'),
-                      ),
+                      child: DetailWidget(selectedIndex),
                     )
                   : Container()),
             ],
