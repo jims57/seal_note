@@ -11,10 +11,10 @@ class ItemListWidget extends StatefulWidget {
   final ItemSelectedCallback onItemSelected;
 
   @override
-  State<StatefulWidget> createState() => ItemListWidgetState();
+  State<StatefulWidget> createState() => _ItemListWidgetState();
 }
 
-class ItemListWidgetState extends State<ItemListWidget> {
+class _ItemListWidgetState extends State<ItemListWidget> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(

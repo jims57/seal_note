@@ -3,10 +3,10 @@ import 'package:seal_note/ui/ItemListWidget.dart';
 
 class MasterDetailPage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => MasterDetailPageState();
+  State<StatefulWidget> createState() => _MasterDetailPageState();
 }
 
-class MasterDetailPageState extends State<MasterDetailPage> {
+class _MasterDetailPageState extends State<MasterDetailPage> {
   bool isLargeScreen = false;
   int selectedIndex = 0;
 
