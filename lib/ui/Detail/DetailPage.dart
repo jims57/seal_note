@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:seal_note/data/appstate/EditingNoteModel.dart';
 
 import 'DetailWidget.dart';
 
 class DetailPage extends StatefulWidget {
-  DetailPage(this.selectedIndex);
-
-  final int selectedIndex;
-
   @override
   State<StatefulWidget> createState() => _DetailPageState();
 }
@@ -15,8 +13,12 @@ class _DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Note${widget.selectedIndex} detail'),),
-      body: DetailWidget(widget.selectedIndex),
+      appBar: AppBar(
+        title: Consumer<EditingNoteModel>(
+          builder: (context, note, child) => Text('Node${note.id} Detail'),
+        ),
+      ),
+      body: DetailWidget(),
     );
   }
 }

@@ -11,7 +11,6 @@ class MasterDetailPage extends StatefulWidget {
 
 class _MasterDetailPageState extends State<MasterDetailPage> {
   bool isLargeScreen = false;
-  int selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -33,15 +32,12 @@ class _MasterDetailPageState extends State<MasterDetailPage> {
                 flex: 1,
                 child: ItemListWidget(
                     itemCount: 10,
-                    onItemSelected: (idx) {
-                      if (isLargeScreen) {
-                        setState(() {
-                          selectedIndex = idx;
-                        });
-                      } else {
+                    onItemSelected: () {
+                      // When it is a small screen
+                      if (!isLargeScreen) {
                         Navigator.of(context)
                             .push(MaterialPageRoute(builder: (context) {
-                          return DetailPage(idx);
+                          return DetailPage();
                         }));
                       }
                     }),
@@ -49,7 +45,7 @@ class _MasterDetailPageState extends State<MasterDetailPage> {
               (isLargeScreen
                   ? Expanded(
                       flex: 2,
-                      child: DetailWidget(selectedIndex),
+                      child: DetailWidget(),
                     )
                   : Container()),
             ],

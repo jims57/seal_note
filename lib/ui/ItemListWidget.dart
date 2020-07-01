@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:seal_note/data/appstate/EditingNoteModel.dart';
 
-typedef void ItemSelectedCallback(int index);
+typedef void ItemSelectedCallback();
 
 class ItemListWidget extends StatefulWidget {
   ItemListWidget(
@@ -22,11 +24,16 @@ class _ItemListWidgetState extends State<ItemListWidget> {
         itemBuilder: (cxt, idx) {
           int currentIndex = idx;
 
-          return GestureDetector(
-            child: Text('I am text $currentIndex'),
-            onTap: () {
-              widget.onItemSelected(currentIndex);
-            },
+          return Consumer<EditingNoteModel>(
+            builder: (context, note, child) => GestureDetector(
+              child: Text('I am text $currentIndex'),
+              onTap: () {
+                note.id = currentIndex;
+                note.title = 'title $currentIndex';
+                note.content = 'title $currentIndex content';
+                widget.onItemSelected();
+              },
+            ),
           );
         });
   }
