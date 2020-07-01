@@ -23,3 +23,7 @@ doc/api/
 *.iml
 .idea/seal_note.iml
 .DS_Store
+.flutter-plugins-dependencies
+ios/Flutter/.last_build_id
+ios/Flutter/.last_build_id
+.flutter-plugins-dependencies
