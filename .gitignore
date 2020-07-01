@@ -22,3 +22,4 @@ doc/api/
 *.iml
 *.iml
 .idea/seal_note.iml
+.DS_Store
