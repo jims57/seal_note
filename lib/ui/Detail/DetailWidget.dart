@@ -12,8 +12,11 @@ class _DetailWidgetState extends State<DetailWidget> {
   Widget build(BuildContext context) {
     return Consumer<EditingNoteModel>(
       builder: (context, note, child) {
-        return Text(
-            'I am detail widget!\nid=>${note.id}\ntitle=>${note.title}\ncontent=>${note.content}');
+        return Container(
+          child: Text(
+              'I am detail widget!\nid=>${note.id}\ntitle=>${note.title}\ncontent=>${note.content}'),
+          color: Colors.green,
+        );
       },
     );
   }
