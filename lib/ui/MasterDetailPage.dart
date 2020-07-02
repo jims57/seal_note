@@ -33,12 +33,16 @@ class _MasterDetailPageState extends State<MasterDetailPage> {
           ),
         ],
         tailChildren: [
-          Icon(Icons.book),
-          Icon(Icons.hd),
+          IconButton(
+              icon: Icon(
+            Icons.more_horiz,
+            color: Colors.white,
+          )),
         ],
+//        title: '英语知识英语知识',
         title: '英语知识',
-        leadingWidth: 140,
-        tailWidth: 50,
+        leadingWidth: 90,
+        tailWidth: 40,
       ),
       body: OrientationBuilder(
         builder: (c, o) {

@@ -5,6 +5,19 @@ double _getAppBarTitleWidth(
   return (screenWidth - leadingWidth - tailWidth);
 }
 
+List<Widget> _getContainerList(List<Widget> leadingChildren) {
+  int _currentIndex = 0;
+
+  return leadingChildren.map((e) {
+    _currentIndex += 1;
+    return Container(
+      margin: EdgeInsets.only(
+          left: ((_currentIndex == 1) ? 0.0 : ((_currentIndex - 1) * 35.0))),
+      child: e,
+    );
+  }).toList();
+}
+
 class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
   AppBarWidget(
       {Key key,
@@ -32,34 +45,41 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
 
     double _offsetToRight = leadingWidth - tailWidth;
 
+    // Get AppBar height
+    double _appBarHeight = preferredSize.height;
+
     return AppBar(
-      title: Row(
+      title: Stack(
         children: [
           Container(
-            width: leadingWidth,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: leadingChildren,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: leadingWidth,
+                  height: _appBarHeight,
+                  child: Stack(
+                    children: _getContainerList(leadingChildren),
+                    alignment: Alignment.centerLeft,
+                  ),
+                ),
+                Container(
+                  width: tailWidth,
+                  height: _appBarHeight,
+                  alignment: Alignment.centerRight,
+                  child: Stack(
+                    children: _getContainerList(tailChildren),
+                  ),
+                )
+              ],
             ),
           ),
           Container(
-            color: Colors.green,
-            width: _titleWidth,
-            padding: const EdgeInsets.only(left: 5.0, right: 5),
-            child: Container(
-              padding: EdgeInsets.only(right: _offsetToRight),
-              color: Colors.deepPurpleAccent,
-              child: Center(
-                child: Text('$title'),
-              ),
-            ),
-          ),
-          Container(
-            color: Colors.amber,
-            width: tailWidth,
-            child: Row(
-              children: tailChildren,
-            ),
+            alignment: Alignment.center,
+            width: _screenWidth,
+            height: _appBarHeight,
+            margin: EdgeInsets.only(left: leadingWidth, right: leadingWidth),
+            child: Text('$title'),
           )
         ],
       ),
@@ -68,5 +88,6 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize =>
+      Size.fromHeight(kToolbarHeight); //>>get appbar height
 }
