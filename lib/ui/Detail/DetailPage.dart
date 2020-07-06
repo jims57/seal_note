@@ -5,6 +5,8 @@ import 'package:seal_note/data/appstate/EditingNoteModel.dart';
 import 'DetailWidget.dart';
 
 class DetailPage extends StatefulWidget {
+  String remark = 'remark1';
+
   @override
   State<StatefulWidget> createState() => _DetailPageState();
 }

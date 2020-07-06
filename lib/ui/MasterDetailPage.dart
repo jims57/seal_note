@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:seal_note/ui/Detail/DetailWidget.dart';
-import 'package:seal_note/ui/ItemListWidget.dart';
+import 'package:seal_note/function/checkScreenType.dart';
+import 'package:seal_note/ui/NoteListWidget.dart';
 
 import 'Common/AppBarWidget.dart';
 import 'Detail/DetailPage.dart';
@@ -11,12 +11,15 @@ class MasterDetailPage extends StatefulWidget {
 }
 
 class _MasterDetailPageState extends State<MasterDetailPage> {
-  bool _isLargeScreen = false;
+  int _screenType = 3; // 1 = Small, 2 = Medium, 3 = Large
   double _screenWidth = 0;
+  double _screenHeight = 0;
 
   @override
   Widget build(BuildContext context) {
     _screenWidth = MediaQuery.of(context).size.width;
+    _screenHeight = MediaQuery.of(context).size.height;
+    _screenType = checkScreenType(_screenWidth);
 
     return Scaffold(
       appBar: AppBarWidget(
@@ -40,41 +43,43 @@ class _MasterDetailPageState extends State<MasterDetailPage> {
           )),
         ],
 //        title: '英语知识英语知识',
-        title: '英语知识',
+        title: '$_screenWidth',
         leadingWidth: 90,
         tailWidth: 40,
       ),
       body: OrientationBuilder(
-        builder: (c, o) {
-          _screenWidth = MediaQuery.of(context).size.width;
-          if (_screenWidth > 600) {
-            _isLargeScreen = true;
-          } else {
-            _isLargeScreen = false;
-          }
-
+        builder: (context, orientation) {
           return Row(
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: ItemListWidget(
-                    itemCount: 60,
-                    onItemSelected: () {
-                      // When it is a small screen
-                      if (!_isLargeScreen) {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (context) {
-                          return DetailPage();
-                        }));
-                      }
-                    }),
+            children: [
+              Container(
+                child: (_screenType == 3
+                    ? Container(
+                        width: 195,
+                        height: _screenHeight,
+                        color: Colors.red,
+                        child: Text('C1'),
+                      )
+                    : Container()),
               ),
-              (_isLargeScreen
-                  ? Expanded(
-                      flex: 2,
-                      child: DetailWidget(),
-                    )
-                  : Container()),
+              Container(
+                width: (_screenType == 1 ? _screenWidth : 220),
+                height: _screenHeight,
+                color: Colors.green,
+                child: NoteListWidget(
+                  itemCount: 60,
+                ),
+              ),
+              Expanded(
+                child: (_screenType == 1
+                    ? Container()
+                    : Container(
+                        height: _screenHeight,
+                        child: Container(
+                          color: Colors.blue,
+                          child: Text('C3'),
+                        ),
+                      )),
+              )
             ],
           );
         },

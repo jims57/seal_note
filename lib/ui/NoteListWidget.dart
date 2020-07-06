@@ -4,8 +4,8 @@ import 'package:seal_note/data/appstate/EditingNoteModel.dart';
 
 typedef void ItemSelectedCallback();
 
-class ItemListWidget extends StatefulWidget {
-  ItemListWidget(
+class NoteListWidget extends StatefulWidget {
+  NoteListWidget(
       {Key key, @required this.itemCount, @required this.onItemSelected})
       : super(key: key);
 
@@ -13,10 +13,10 @@ class ItemListWidget extends StatefulWidget {
   final ItemSelectedCallback onItemSelected;
 
   @override
-  State<StatefulWidget> createState() => _ItemListWidgetState();
+  State<StatefulWidget> createState() => _NoteListWidgetState();
 }
 
-class _ItemListWidgetState extends State<ItemListWidget> {
+class _NoteListWidgetState extends State<NoteListWidget> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(

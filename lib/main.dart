@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:seal_note/ui/Detail/DetailPage.dart';
 
 // Import custom files
 import 'data/appstate/EditingNoteModel.dart';
@@ -19,6 +20,9 @@ void main() => runApp(MultiProvider(
         ),
         ChangeNotifierProvider<EditingNoteModel>(
           create: (context) => EditingNoteModel(),
+        ),
+        Provider<DetailPage>(
+          create: (context) => DetailPage(),
         ),
       ],
       child: MyApp(),
