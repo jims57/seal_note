@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/EditingNoteModel.dart';
+import 'package:seal_note/function/checkScreenType.dart';
+
+import 'Common/AppBarWidget.dart';
 
 typedef void ItemSelectedCallback();
 
@@ -17,24 +20,58 @@ class NoteListWidget extends StatefulWidget {
 }
 
 class _NoteListWidgetState extends State<NoteListWidget> {
+  int _screenType = 1; // 1 = Small, 2 = Medium, 3 = Large
+  double _screenWidth = 0;
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: widget.itemCount,
-        itemBuilder: (cxt, idx) {
-          int currentIndex = idx;
+    _screenWidth = MediaQuery.of(context).size.width;
+    _screenType = checkScreenType(_screenWidth);
 
-          return Consumer<EditingNoteModel>(
-            builder: (context, note, child) => GestureDetector(
-              child: Text('I am text $currentIndex'),
-              onTap: () {
-                note.id = currentIndex;
-                note.title = 'title $currentIndex';
-                note.content = 'title $currentIndex content';
-                widget.onItemSelected();
-              },
+    return Scaffold(
+      appBar: AppBarWidget(
+        leadingChildren: [
+          IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.white,
             ),
-          );
-        });
+          ),
+          (_screenType == 2
+              ? Container()
+              : Text(
+                  '文件夹',
+                  style: TextStyle(fontSize: 14.0),
+                )),
+        ],
+        tailChildren: [
+          IconButton(
+              icon: Icon(
+            Icons.more_horiz,
+            color: Colors.white,
+          )),
+        ],
+        title: '英语知识英语知识英语知识英语知识英语知识英语知识',
+        leadingWidth: 90,
+        tailWidth: 40,
+      ),
+      body: ListView.builder(
+          itemCount: widget.itemCount,
+          itemBuilder: (cxt, idx) {
+            int currentIndex = idx;
+
+            return Consumer<EditingNoteModel>(
+              builder: (context, note, child) => GestureDetector(
+                child: Text('I am text $currentIndex'),
+                onTap: () {
+                  note.id = currentIndex;
+                  note.title = 'title $currentIndex';
+                  note.content = 'title $currentIndex content';
+                  widget.onItemSelected();
+                },
+              ),
+            );
+          }),
+    );
   }
 }

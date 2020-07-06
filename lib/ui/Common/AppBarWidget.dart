@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seal_note/function/checkScreenType.dart';
 
 double _getAppBarTitleWidth(
     double screenWidth, double leadingWidth, double tailWidth) {
@@ -38,6 +39,7 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
   Widget build(BuildContext context) {
     // Get screen size
     double _screenWidth = MediaQuery.of(context).size.width;
+    int _screenType = checkScreenType(_screenWidth);
 
     // Get title size
     double _titleWidth =
@@ -48,6 +50,9 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
     // Get AppBar height
     double _appBarHeight = preferredSize.height;
 
+    // Margin width
+    double marigWidth = (_screenType == 1 ? leadingWidth : tailWidth);
+
     return AppBar(
       title: Stack(
         children: [
@@ -55,14 +60,16 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  width: leadingWidth,
-                  height: _appBarHeight,
-                  child: Stack(
-                    children: _getContainerList(leadingChildren),
-                    alignment: Alignment.centerLeft,
-                  ),
-                ),
+                (_screenType == 3
+                    ? Container()
+                    : Container(
+                        width: leadingWidth,
+                        height: _appBarHeight,
+                        child: Stack(
+                          children: _getContainerList(leadingChildren),
+                          alignment: Alignment.centerLeft,
+                        ),
+                      )),
                 Container(
                   width: tailWidth,
                   height: _appBarHeight,
@@ -78,7 +85,7 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
             alignment: Alignment.center,
             width: _screenWidth,
             height: _appBarHeight,
-            margin: EdgeInsets.only(left: leadingWidth, right: leadingWidth),
+            margin: EdgeInsets.only(left: marigWidth, right: marigWidth),
             child: Text('$title'),
           )
         ],

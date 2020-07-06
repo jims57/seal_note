@@ -11,7 +11,7 @@ class MasterDetailPage extends StatefulWidget {
 }
 
 class _MasterDetailPageState extends State<MasterDetailPage> {
-  int _screenType = 3; // 1 = Small, 2 = Medium, 3 = Large
+  int _screenType = 1; // 1 = Small, 2 = Medium, 3 = Large
   double _screenWidth = 0;
   double _screenHeight = 0;
 
@@ -22,31 +22,31 @@ class _MasterDetailPageState extends State<MasterDetailPage> {
     _screenType = checkScreenType(_screenWidth);
 
     return Scaffold(
-      appBar: AppBarWidget(
-        leadingChildren: [
-          IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            '文件夹',
-            style: TextStyle(fontSize: 14.0),
-          ),
-        ],
-        tailChildren: [
-          IconButton(
-              icon: Icon(
-            Icons.more_horiz,
-            color: Colors.white,
-          )),
-        ],
-//        title: '英语知识英语知识',
-        title: '$_screenWidth',
-        leadingWidth: 90,
-        tailWidth: 40,
-      ),
+//      appBar: AppBarWidget(
+//      leadingChildren: [
+//        IconButton(
+//          icon: Icon(
+//            Icons.arrow_back_ios,
+//            color: Colors.white,
+//          ),
+//        ),
+//        Text(
+//          '文件夹',
+//          style: TextStyle(fontSize: 14.0),
+//        ),
+//      ],
+//      tailChildren: [
+//        IconButton(
+//            icon: Icon(
+//              Icons.more_horiz,
+//              color: Colors.white,
+//            )),
+//      ],
+////        title: '英语知识英语知识',
+//      title: '$_screenWidth',
+//      leadingWidth: 90,
+//      tailWidth: 40,
+//    ),
       body: OrientationBuilder(
         builder: (context, orientation) {
           return Row(
