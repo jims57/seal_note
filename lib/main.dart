@@ -13,20 +13,20 @@ import 'data/database/dbHelper/shared.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
 
 void main() => runApp(MultiProvider(
-      providers: [
-        Provider<Database>(
-          create: (context) => constructDb(),
-          dispose: (context, db) => db.close(),
-        ),
-        ChangeNotifierProvider<EditingNoteModel>(
-          create: (context) => EditingNoteModel(),
-        ),
-        Provider<DetailPage>(
-          create: (context) => DetailPage(),
-        ),
-      ],
-      child: MyApp(),
-    ));
+  providers: [
+    Provider<Database>(
+      create: (context) => constructDb(),
+      dispose: (context, db) => db.close(),
+    ),
+    ChangeNotifierProvider<EditingNoteModel>(
+      create: (context) => EditingNoteModel(),
+    ),
+    Provider<DetailPage>(
+      create: (context) => DetailPage(),
+    ),
+  ],
+  child: MyApp(),
+));
 
 class MyApp extends StatelessWidget {
   @override
@@ -37,3 +37,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+

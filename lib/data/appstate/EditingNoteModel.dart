@@ -2,6 +2,15 @@ import 'package:flutter/material.dart';
 
 class EditingNoteModel extends ChangeNotifier {
   int _id;
+  String _title;
+  String _content;
+  BuildContext _context;
+
+  BuildContext get context => _context;
+
+  set context(BuildContext value) {
+    _context = value;
+  }
 
   int get id => _id;
 
@@ -9,9 +18,6 @@ class EditingNoteModel extends ChangeNotifier {
     _id = value;
     notifyListeners();
   }
-
-  String _title;
-  String _content;
 
   String get title => _title;
 

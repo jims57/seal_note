@@ -9,6 +9,13 @@
             </list>
           </value>
         </entry>
+        <entry key="after_layout">
+          <value>
+            <list>
+              <option value="$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/after_layout-1.0.7+2/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="analyzer">
           <value>
             <list>
@@ -615,6 +622,7 @@
     </properties>
     <CLASSES>
       <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/_fe_analyzer_shared-4.0.0/lib" />
+      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/after_layout-1.0.7+2/lib" />
       <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/analyzer-0.39.10/lib" />
       <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/analyzer_plugin-0.2.4/lib" />
       <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/args-1.6.0/lib" />
