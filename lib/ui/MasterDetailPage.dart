@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:seal_note/data/appstate/EditingNoteModel.dart';
-import 'package:seal_note/function/checkScreenType.dart';
-import 'package:seal_note/ui/FolderListWidget.dart';
-import 'package:seal_note/ui/NoteListWidget.dart';
 import 'package:provider/provider.dart';
+import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/function/checkScreenType.dart';
+import 'package:seal_note/ui/FolderListPage.dart';
+import 'package:seal_note/ui/NoteListPage.dart';
+import 'package:seal_note/ui/NoteDetailPage.dart';
+
+
 
 class MasterDetailPage extends StatefulWidget {
   @override
@@ -11,30 +14,39 @@ class MasterDetailPage extends StatefulWidget {
 }
 
 class _MasterDetailPageState extends State<MasterDetailPage> {
-  int _screenType = 1; // 1 = Small, 2 = Medium, 3 = Large
-  double _screenWidth = 0;
-  double _screenHeight = 0;
+  // Common variables
+  int _screenType; // 1 = Small, 2 = Medium, 3 = Large
+  double _screenWidth;
+  double _screenHeight;
+
+  // Page variables
+  FolderListPage _folderListPage;
+  NoteListPage _noteListPage;
+  NoteDetailPage _noteDetailPage;
+
+  @override
+  void initState() {
+
+    _noteListPage = Provider.of<NoteListPage>(context, listen: false);
+    GlobalState.noteListPage = _noteListPage;
+
+    _folderListPage = Provider.of<FolderListPage>(context, listen: false);
+    GlobalState.folderListPage = _folderListPage;
+
+    _noteDetailPage = Provider.of<NoteDetailPage>(context, listen: false);
+    GlobalState.noteDetailPage = _noteDetailPage;
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-//    _screenWidth = size.width;
-//    _screenHeight = size.height;
     _screenWidth = MediaQuery.of(context).size.width;
     _screenHeight = MediaQuery.of(context).size.height;
     _screenType = checkScreenType(_screenWidth);
+    GlobalState.screenType = _screenType;
 
-    BuildContext noteListContext =
-        Provider.of<EditingNoteModel>(context, listen: false).context;
-    if (noteListContext != null) {
-      bool canPop = Navigator.canPop(noteListContext);
-      if (canPop && _screenType == 3) {
-        Navigator.pop(noteListContext);
-      }
-
-      bool canPop2 = Navigator.canPop(context);
-      String s = 's';
-    }
 
     return Scaffold(
       body: OrientationBuilder(
@@ -46,30 +58,33 @@ class _MasterDetailPageState extends State<MasterDetailPage> {
                     ? Container(
                         width: 195,
                         height: _screenHeight,
-                        color: Colors.red,
-                        child: FolderListWidget(),
+                        decoration: (_screenType == 3
+                            ? BoxDecoration(
+                                border: Border(
+                                    right: BorderSide(color: Colors.grey[200])))
+                            : BoxDecoration()),
+                        child: _folderListPage,
                       )
                     : Container()),
               ),
               Container(
                   width: (_screenType == 1 ? _screenWidth : 220),
                   height: _screenHeight,
-                  color: Colors.green,
+                  decoration: (_screenType == 1
+                      ? BoxDecoration()
+                      : BoxDecoration(
+                          border: Border(
+                              right: BorderSide(color: Colors.grey[200])))),
                   child: MaterialApp(
                     debugShowCheckedModeBanner: false,
-                    home: NoteListWidget(
-                      itemCount: 60,
-                    ),
+                    home: _noteListPage,
                   )),
               Expanded(
                 child: (_screenType == 1
                     ? Container()
                     : Container(
                         height: _screenHeight,
-                        child: Container(
-                          color: Colors.blue,
-                          child: Text('C3'),
-                        ),
+                        child: _noteDetailPage,
                       )),
               )
             ],

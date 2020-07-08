@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 import 'package:seal_note/function/checkScreenType.dart';
 
 double _getAppBarTitleWidth(
@@ -54,6 +56,7 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
     double marigWidth = (_screenType == 1 ? leadingWidth : tailWidth);
 
     return AppBar(
+      elevation: 0.0,
       title: Stack(
         children: [
           Container(

@@ -2,10 +2,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:seal_note/ui/Detail/DetailPage.dart';
+import 'package:seal_note/ui/FolderListPage.dart';
+import 'package:seal_note/ui/NoteDetailPage.dart';
+import 'package:seal_note/ui/NoteListPage.dart';
+import 'package:seal_note/ui/NoteListWidget.dart';
 
 // Import custom files
-import 'data/appstate/EditingNoteModel.dart';
+import 'data/appstate/SelectedNoteModel.dart';
 import 'data/database/database.dart';
 import 'data/database/dbHelper/shared.dart';
 
@@ -13,20 +16,32 @@ import 'data/database/dbHelper/shared.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
 
 void main() => runApp(MultiProvider(
-  providers: [
-    Provider<Database>(
-      create: (context) => constructDb(),
-      dispose: (context, db) => db.close(),
-    ),
-    ChangeNotifierProvider<EditingNoteModel>(
-      create: (context) => EditingNoteModel(),
-    ),
-    Provider<DetailPage>(
-      create: (context) => DetailPage(),
-    ),
-  ],
-  child: MyApp(),
-));
+      providers: [
+        Provider<Database>(
+          create: (context) => constructDb(),
+          dispose: (context, db) => db.close(),
+        ),
+        ChangeNotifierProvider<SelectedNoteModel>(
+          create: (context) => SelectedNoteModel(),
+        ),
+        Provider<NoteListPage>(
+          create: (context) => NoteListPage(
+            itemCount: 60,
+          ),
+          lazy: false,
+        ),
+        Provider<FolderListPage>(
+          create: (context) => FolderListPage(),
+        ),
+        Provider<NoteListWidget>(
+          create: (context) => NoteListWidget(),
+        ),
+        Provider<NoteDetailPage>(
+          create: (context) => NoteDetailPage(),
+        ),
+      ],
+      child: MyApp(),
+    ));
 
 class MyApp extends StatelessWidget {
   @override
@@ -37,4 +52,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
