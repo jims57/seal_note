@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 
 import 'NoteDetailWidget.dart';
@@ -10,23 +11,8 @@ class NoteDetailPage extends StatefulWidget {
 }
 
 class _NoteDetailPageState extends State<NoteDetailPage> {
-  _NoteDetailPageState() {
-    String s = 's';
-  }
-
-  SelectedNoteModel _selectedNoteModel;
-
-  @override
-  void initState() {
-
-    _selectedNoteModel = Provider.of<SelectedNoteModel>(context,listen: false);
-    String s = 'a';
-  }
-
   @override
   Widget build(BuildContext context) {
-//    return Text('NoteD');
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
@@ -45,11 +31,12 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
           ),
         ],
         title: Consumer<SelectedNoteModel>(
-          builder: (context, note, child) => Text('Node${note.id} Detail'),
+          builder: (ctx, note, child) {
+            return Text('detail page at ID by consumer=> ${note.id}');
+          },
         ),
-//      title: Text('title=>${_selectedNoteModel.id}'),
       ),
-      body: DetailWidget(),
+      body: GlobalState.noteDetailWidget,
     );
   }
 }

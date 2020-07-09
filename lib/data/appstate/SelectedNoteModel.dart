@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class SelectedNoteModel extends ChangeNotifier {
   int _folderId;
-
   int _id;
   String _title;
   String _content;
@@ -12,12 +11,6 @@ class SelectedNoteModel extends ChangeNotifier {
 
   set folderId(int value) {
     _folderId = value;
-  }
-
-  BuildContext get noteListPageContext => _noteListPageContext;
-
-  set noteListPageContext(BuildContext value) {
-    _noteListPageContext = value;
   }
 
   int get id => _id;
@@ -41,5 +34,11 @@ class SelectedNoteModel extends ChangeNotifier {
     _content = value;
 
     notifyListeners();
+  }
+
+  BuildContext get noteListPageContext => _noteListPageContext;
+
+  set noteListPageContext(BuildContext value) {
+    _noteListPageContext = value;
   }
 }

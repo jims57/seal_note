@@ -1,52 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/function/checkScreenType.dart';
+import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
+import 'package:seal_note/mixin/check_device.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/NoteListPage.dart';
 import 'package:seal_note/ui/NoteDetailPage.dart';
 
-
+import 'NoteDetailWidget.dart';
+import 'NoteListWidget.dart';
 
 class MasterDetailPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _MasterDetailPageState();
 }
 
-class _MasterDetailPageState extends State<MasterDetailPage> {
-  // Common variables
-  int _screenType; // 1 = Small, 2 = Medium, 3 = Large
-  double _screenWidth;
-  double _screenHeight;
-
-  // Page variables
-  FolderListPage _folderListPage;
-  NoteListPage _noteListPage;
-  NoteDetailPage _noteDetailPage;
-
+class _MasterDetailPageState extends State<MasterDetailPage>
+    with CheckDeviceMixin {
   @override
   void initState() {
+    // Folder
+    GlobalState.folderListPage =
+        Provider.of<FolderListPage>(context, listen: false);
 
-    _noteListPage = Provider.of<NoteListPage>(context, listen: false);
-    GlobalState.noteListPage = _noteListPage;
+    // Note list
+    GlobalState.noteListPage =
+        Provider.of<NoteListPage>(context, listen: false);
+    GlobalState.noteListWidget =
+        Provider.of<NoteListWidget>(context, listen: false);
 
-    _folderListPage = Provider.of<FolderListPage>(context, listen: false);
-    GlobalState.folderListPage = _folderListPage;
+    // Note detail
+    GlobalState.noteDetailPage =
+        Provider.of<NoteDetailPage>(context, listen: false);
+    GlobalState.noteDetailWidget =
+        Provider.of<NoteDetailWidget>(context, listen: false);
 
-    _noteDetailPage = Provider.of<NoteDetailPage>(context, listen: false);
-    GlobalState.noteDetailPage = _noteDetailPage;
+    // Model
+    GlobalState.selectedNoteModel =
+        Provider.of<SelectedNoteModel>(context, listen: false);
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    _screenWidth = MediaQuery.of(context).size.width;
-    _screenHeight = MediaQuery.of(context).size.height;
-    _screenType = checkScreenType(_screenWidth);
-    GlobalState.screenType = _screenType;
-
+    GlobalState.screenHeight = getScreenHeight(context);
+    GlobalState.screenWidth = getScreenWidth(context);
+    GlobalState.screenType = checkScreenType(GlobalState.screenWidth);
 
     return Scaffold(
       body: OrientationBuilder(
@@ -54,37 +54,39 @@ class _MasterDetailPageState extends State<MasterDetailPage> {
           return Row(
             children: [
               Container(
-                child: (_screenType == 3
+                child: (GlobalState.screenType == 3
                     ? Container(
                         width: 195,
-                        height: _screenHeight,
-                        decoration: (_screenType == 3
+                        height: GlobalState.screenHeight,
+                        decoration: (GlobalState.screenType == 3
                             ? BoxDecoration(
                                 border: Border(
                                     right: BorderSide(color: Colors.grey[200])))
                             : BoxDecoration()),
-                        child: _folderListPage,
+                        child: GlobalState.folderListPage,
                       )
                     : Container()),
               ),
               Container(
-                  width: (_screenType == 1 ? _screenWidth : 220),
-                  height: _screenHeight,
-                  decoration: (_screenType == 1
+                  width: (GlobalState.screenType == 1
+                      ? GlobalState.screenWidth
+                      : 220),
+                  height: GlobalState.screenHeight,
+                  decoration: (GlobalState.screenType == 1
                       ? BoxDecoration()
                       : BoxDecoration(
                           border: Border(
                               right: BorderSide(color: Colors.grey[200])))),
                   child: MaterialApp(
                     debugShowCheckedModeBanner: false,
-                    home: _noteListPage,
+                    home: GlobalState.noteListPage,
                   )),
               Expanded(
-                child: (_screenType == 1
+                child: (GlobalState.screenType == 1
                     ? Container()
                     : Container(
-                        height: _screenHeight,
-                        child: _noteDetailPage,
+                        height: GlobalState.screenHeight,
+                        child: GlobalState.noteDetailPage,
                       )),
               )
             ],

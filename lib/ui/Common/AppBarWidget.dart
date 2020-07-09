@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
-import 'package:seal_note/function/checkScreenType.dart';
+import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/mixin/check_device.dart';
 
 double _getAppBarTitleWidth(
     double screenWidth, double leadingWidth, double tailWidth) {
@@ -39,13 +38,9 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get screen size
-    double _screenWidth = MediaQuery.of(context).size.width;
-    int _screenType = checkScreenType(_screenWidth);
-
     // Get title size
     double _titleWidth =
-        _getAppBarTitleWidth(_screenWidth, leadingWidth, tailWidth);
+        _getAppBarTitleWidth(GlobalState.screenWidth, leadingWidth, tailWidth);
 
     double _offsetToRight = leadingWidth - tailWidth;
 
@@ -53,7 +48,8 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
     double _appBarHeight = preferredSize.height;
 
     // Margin width
-    double marigWidth = (_screenType == 1 ? leadingWidth : tailWidth);
+    double marginWidth =
+        (GlobalState.screenType == 1 ? leadingWidth : tailWidth);
 
     return AppBar(
       elevation: 0.0,
@@ -63,7 +59,7 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                (_screenType == 3
+                (GlobalState.screenType == 3
                     ? Container()
                     : Container(
                         width: leadingWidth,
@@ -86,9 +82,9 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
           ),
           Container(
             alignment: Alignment.center,
-            width: _screenWidth,
+            width: GlobalState.screenWidth,
             height: _appBarHeight,
-            margin: EdgeInsets.only(left: marigWidth, right: marigWidth),
+            margin: EdgeInsets.only(left: marginWidth, right: marginWidth),
             child: Text('$title'),
           )
         ],

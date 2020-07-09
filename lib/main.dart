@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/NoteDetailPage.dart';
+import 'package:seal_note/ui/NoteDetailWidget.dart';
 import 'package:seal_note/ui/NoteListPage.dart';
 import 'package:seal_note/ui/NoteListWidget.dart';
 
@@ -38,6 +39,9 @@ void main() => runApp(MultiProvider(
         ),
         Provider<NoteDetailPage>(
           create: (context) => NoteDetailPage(),
+        ),
+        Provider<NoteDetailWidget>(
+          create: (context) => NoteDetailWidget(),
         ),
       ],
       child: MyApp(),

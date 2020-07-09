@@ -10,14 +10,6 @@ class NoteListWidget extends StatefulWidget {
 }
 
 class _NoteListWidgetState extends State<NoteListWidget> {
-  SelectedNoteModel _selectedNoteModel;
-
-  @override
-  void initState() {
-    _selectedNoteModel = Provider.of<SelectedNoteModel>(context, listen: false);
-    super.initState();
-  }
-  
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -29,16 +21,15 @@ class _NoteListWidgetState extends State<NoteListWidget> {
             builder: (context, note, child) => GestureDetector(
               child: Text('I am text $currentIndex'),
               onTap: () {
-                _selectedNoteModel.id = currentIndex;
+                GlobalState.selectedNoteModel.id = currentIndex;
 
-                if(GlobalState.screenType == 1){
+                if (GlobalState.screenType == 1) {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => GlobalState.noteDetailPage),
+                    MaterialPageRoute(
+                        builder: (context) => GlobalState.noteDetailPage),
                   );
                 }
-
-
               },
             ),
           );

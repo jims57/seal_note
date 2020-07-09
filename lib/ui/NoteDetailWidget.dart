@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 
-class DetailWidget extends StatefulWidget {
+class NoteDetailWidget extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _DetailWidgetState();
+  State<StatefulWidget> createState() => _NoteDetailWidgetState();
 }
 
-class _DetailWidgetState extends State<DetailWidget> {
+class _NoteDetailWidgetState extends State<NoteDetailWidget> {
   @override
   Widget build(BuildContext context) {
     return Consumer<SelectedNoteModel>(

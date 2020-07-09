@@ -9,6 +9,8 @@ class FolderListWidget extends StatefulWidget {
 class FolderListWidgetState extends State<FolderListWidget> {
   @override
   Widget build(BuildContext context) {
-   return Scaffold(body: Text('folder'),);
+    return Scaffold(
+      body: Text('folder'),
+    );
   }
 }
