@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 
+import 'NoteDetailPage.dart';
+
 class NoteListWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _NoteListWidgetState();
@@ -26,8 +28,7 @@ class _NoteListWidgetState extends State<NoteListWidget> {
                 if (GlobalState.screenType == 1) {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => GlobalState.noteDetailPage),
+                    MaterialPageRoute(builder: (context) => NoteDetailPage()),
                   );
                 }
               },

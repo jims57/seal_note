@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
-import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/util/route/SlideRightRoute.dart';
 
 import 'Common/AppBarWidget.dart';
+import 'FolderListPage.dart';
+import 'NoteListWidget.dart';
 
 typedef void ItemSelectedCallback();
 
@@ -34,15 +33,18 @@ class _NoteListPageState extends State<NoteListPage> {
     return Scaffold(
       appBar: AppBarWidget(
         leadingChildren: [
-          IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              Navigator.push(context, SlideRightRoute(page: FolderListPage()));
-            },
-          ),
+          (GlobalState.screenType == 3
+              ? Container()
+              : IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                        context, SlideRightRoute(page: FolderListPage()));
+                  },
+                )),
           (GlobalState.screenType == 2
               ? Container()
               : Text(
@@ -61,7 +63,7 @@ class _NoteListPageState extends State<NoteListPage> {
         leadingWidth: 90,
         tailWidth: 40,
       ),
-      body: GlobalState.noteListWidget,
+      body: NoteListWidget(),
     );
   }
 }

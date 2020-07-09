@@ -6,9 +6,7 @@ import 'package:seal_note/mixin/check_device.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/NoteListPage.dart';
 import 'package:seal_note/ui/NoteDetailPage.dart';
-
-import 'NoteDetailWidget.dart';
-import 'NoteListWidget.dart';
+import 'package:after_layout/after_layout.dart';
 
 class MasterDetailPage extends StatefulWidget {
   @override
@@ -19,22 +17,6 @@ class _MasterDetailPageState extends State<MasterDetailPage>
     with CheckDeviceMixin {
   @override
   void initState() {
-    // Folder
-    GlobalState.folderListPage =
-        Provider.of<FolderListPage>(context, listen: false);
-
-    // Note list
-    GlobalState.noteListPage =
-        Provider.of<NoteListPage>(context, listen: false);
-    GlobalState.noteListWidget =
-        Provider.of<NoteListWidget>(context, listen: false);
-
-    // Note detail
-    GlobalState.noteDetailPage =
-        Provider.of<NoteDetailPage>(context, listen: false);
-    GlobalState.noteDetailWidget =
-        Provider.of<NoteDetailWidget>(context, listen: false);
-
     // Model
     GlobalState.selectedNoteModel =
         Provider.of<SelectedNoteModel>(context, listen: false);
@@ -63,7 +45,7 @@ class _MasterDetailPageState extends State<MasterDetailPage>
                                 border: Border(
                                     right: BorderSide(color: Colors.grey[200])))
                             : BoxDecoration()),
-                        child: GlobalState.folderListPage,
+                        child: FolderListPage(),
                       )
                     : Container()),
               ),
@@ -79,14 +61,14 @@ class _MasterDetailPageState extends State<MasterDetailPage>
                               right: BorderSide(color: Colors.grey[200])))),
                   child: MaterialApp(
                     debugShowCheckedModeBanner: false,
-                    home: GlobalState.noteListPage,
+                    home: NoteListPage(),
                   )),
               Expanded(
                 child: (GlobalState.screenType == 1
                     ? Container()
                     : Container(
                         height: GlobalState.screenHeight,
-                        child: GlobalState.noteDetailPage,
+                        child: NoteDetailPage(),
                       )),
               )
             ],

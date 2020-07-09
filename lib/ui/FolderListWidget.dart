@@ -1,16 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:seal_note/data/appstate/GlobalState.dart';
 
 class FolderListWidget extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => FolderListWidgetState();
+  State<StatefulWidget> createState() => _FolderListWidgetState();
 }
 
-class FolderListWidgetState extends State<FolderListWidget> {
+class _FolderListWidgetState extends State<FolderListWidget> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Text('folder'),
+    return GestureDetector(
+      child: Center(child: Text('I am folder list')),
+      onTap: () {
+        if (GlobalState.screenType != 3)
+          Navigator.pop(GlobalState.noteListPageContext);
+      },
     );
   }
 }

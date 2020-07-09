@@ -32,11 +32,11 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
         ],
         title: Consumer<SelectedNoteModel>(
           builder: (ctx, note, child) {
-            return Text('detail page at ID by consumer=> ${note.id}');
+            return Text('detail id=> ${note.id}');
           },
         ),
       ),
-      body: GlobalState.noteDetailWidget,
+      body: NoteDetailWidget(),
     );
   }
 }

@@ -2,7 +2,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
+import 'package:seal_note/ui/FolderListWidget.dart';
 import 'package:seal_note/ui/NoteDetailPage.dart';
 import 'package:seal_note/ui/NoteDetailWidget.dart';
 import 'package:seal_note/ui/NoteListPage.dart';
@@ -22,17 +24,23 @@ void main() => runApp(MultiProvider(
           create: (context) => constructDb(),
           dispose: (context, db) => db.close(),
         ),
+        ChangeNotifierProvider<GlobalState>(
+          create: (context) => GlobalState(),
+        ),
         ChangeNotifierProvider<SelectedNoteModel>(
           create: (context) => SelectedNoteModel(),
+        ),
+        Provider<FolderListPage>(
+          create: (context) => FolderListPage(),
+        ),
+        Provider<FolderListWidget>(
+          create: (context) => FolderListWidget(),
         ),
         Provider<NoteListPage>(
           create: (context) => NoteListPage(
             itemCount: 60,
           ),
           lazy: false,
-        ),
-        Provider<FolderListPage>(
-          create: (context) => FolderListPage(),
         ),
         Provider<NoteListWidget>(
           create: (context) => NoteListWidget(),

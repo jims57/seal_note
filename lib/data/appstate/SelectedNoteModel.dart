@@ -6,11 +6,20 @@ class SelectedNoteModel extends ChangeNotifier {
   String _title;
   String _content;
   BuildContext _noteListPageContext;
+  int _screenType = 1;
+
+  int get screenType => _screenType;
+
+  set screenType(int value) {
+    _screenType = value;
+    notifyListeners();
+  }
 
   int get folderId => _folderId;
 
   set folderId(int value) {
     _folderId = value;
+    notifyListeners();
   }
 
   int get id => _id;

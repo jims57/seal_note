@@ -1,4 +1,5 @@
 import 'package:seal_note/ui/FolderListPage.dart';
+import 'package:seal_note/ui/FolderListWidget.dart';
 import 'package:seal_note/ui/NoteDetailWidget.dart';
 import 'package:seal_note/ui/NoteListPage.dart';
 import 'package:seal_note/ui/NoteDetailPage.dart';
@@ -7,7 +8,7 @@ import 'package:seal_note/ui/NoteListWidget.dart';
 
 import 'SelectedNoteModel.dart';
 
-class GlobalState {
+class GlobalState with ChangeNotifier {
   static final GlobalState _singleton = GlobalState._internal();
 
   factory GlobalState() => _singleton;
@@ -21,13 +22,6 @@ class GlobalState {
 
   // Contexts
   static BuildContext noteListPageContext;
-
-  // Pages and Widget
-  static FolderListPage folderListPage;
-  static NoteListPage noteListPage;
-  static NoteListWidget noteListWidget;
-  static NoteDetailPage noteDetailPage;
-  static NoteDetailWidget noteDetailWidget;
 
   // Models
   static SelectedNoteModel selectedNoteModel;

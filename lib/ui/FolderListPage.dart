@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:after_layout/after_layout.dart';
 
+import 'FolderListWidget.dart';
+
 class FolderListPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _FolderListPageState();
@@ -12,19 +14,9 @@ class _FolderListPageState extends State<FolderListPage>
   bool _canPop = false;
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        child: Center(child: Text('I am folder list')),
-        onTap: () {
-          if (GlobalState.screenType != 3) Navigator.pop(context);
-        },
-      ),
+      body: FolderListWidget(),
     );
   }
 
