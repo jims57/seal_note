@@ -38,7 +38,7 @@ class _MasterDetailPageState extends State<MasterDetailPage>
               Container(
                 child: (GlobalState.screenType == 3
                     ? Container(
-                        width: 195,
+                        width: 220,
                         height: GlobalState.screenHeight,
                         decoration: (GlobalState.screenType == 3
                             ? BoxDecoration(
@@ -52,7 +52,7 @@ class _MasterDetailPageState extends State<MasterDetailPage>
               Container(
                   width: (GlobalState.screenType == 1
                       ? GlobalState.screenWidth
-                      : 220),
+                      : 280),
                   height: GlobalState.screenHeight,
                   decoration: (GlobalState.screenType == 1
                       ? BoxDecoration()

@@ -59,7 +59,7 @@ class _NoteListPageState extends State<NoteListPage> {
             color: Colors.white,
           )),
         ],
-        title: '英语知识英语知识英语知识英语知识英语知识英语知识',
+        title: '今天',
         leadingWidth: 90,
         tailWidth: 40,
       ),
