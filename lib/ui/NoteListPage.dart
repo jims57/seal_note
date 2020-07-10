@@ -64,6 +64,7 @@ class _NoteListPageState extends State<NoteListPage> {
         tailWidth: 40,
       ),
       body: NoteListWidget(),
+      floatingActionButton: FloatingActionButton(child: Icon(Icons.add),),
     );
   }
 }
