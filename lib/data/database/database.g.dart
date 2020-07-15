@@ -11,18 +11,26 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
   final int id;
   final String title;
   final String content;
-  NoteEntry({@required this.id, @required this.title, @required this.content});
+  final DateTime created;
+  NoteEntry(
+      {@required this.id,
+      @required this.title,
+      @required this.content,
+      @required this.created});
   factory NoteEntry.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
+    final dateTimeType = db.typeSystem.forDartType<DateTime>();
     return NoteEntry(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       title:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
       content:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}body']),
+      created: dateTimeType
+          .mapFromDatabaseResponse(data['${effectivePrefix}createdT']),
     );
   }
   @override
@@ -37,6 +45,9 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
     if (!nullToAbsent || content != null) {
       map['body'] = Variable<String>(content);
     }
+    if (!nullToAbsent || created != null) {
+      map['createdT'] = Variable<DateTime>(created);
+    }
     return map;
   }
 
@@ -48,6 +59,9 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       content: content == null && nullToAbsent
           ? const Value.absent()
           : Value(content),
+      created: created == null && nullToAbsent
+          ? const Value.absent()
+          : Value(created),
     );
   }
 
@@ -58,6 +72,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       content: serializer.fromJson<String>(json['content']),
+      created: serializer.fromJson<DateTime>(json['created']),
     );
   }
   @override
@@ -67,69 +82,85 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
       'content': serializer.toJson<String>(content),
+      'created': serializer.toJson<DateTime>(created),
     };
   }
 
-  NoteEntry copyWith({int id, String title, String content}) => NoteEntry(
+  NoteEntry copyWith(
+          {int id, String title, String content, DateTime created}) =>
+      NoteEntry(
         id: id ?? this.id,
         title: title ?? this.title,
         content: content ?? this.content,
+        created: created ?? this.created,
       );
   @override
   String toString() {
     return (StringBuffer('NoteEntry(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('content: $content')
+          ..write('content: $content, ')
+          ..write('created: $created')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      $mrjf($mrjc(id.hashCode, $mrjc(title.hashCode, content.hashCode)));
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(title.hashCode, $mrjc(content.hashCode, created.hashCode))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is NoteEntry &&
           other.id == this.id &&
           other.title == this.title &&
-          other.content == this.content);
+          other.content == this.content &&
+          other.created == this.created);
 }
 
 class NotesCompanion extends UpdateCompanion<NoteEntry> {
   final Value<int> id;
   final Value<String> title;
   final Value<String> content;
+  final Value<DateTime> created;
   const NotesCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.content = const Value.absent(),
+    this.created = const Value.absent(),
   });
   NotesCompanion.insert({
     this.id = const Value.absent(),
     @required String title,
     @required String content,
+    @required DateTime created,
   })  : title = Value(title),
-        content = Value(content);
+        content = Value(content),
+        created = Value(created);
   static Insertable<NoteEntry> custom({
     Expression<int> id,
     Expression<String> title,
     Expression<String> content,
+    Expression<DateTime> created,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (content != null) 'body': content,
+      if (created != null) 'createdT': created,
     });
   }
 
   NotesCompanion copyWith(
-      {Value<int> id, Value<String> title, Value<String> content}) {
+      {Value<int> id,
+      Value<String> title,
+      Value<String> content,
+      Value<DateTime> created}) {
     return NotesCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
       content: content ?? this.content,
+      created: created ?? this.created,
     );
   }
 
@@ -145,6 +176,9 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     if (content.present) {
       map['body'] = Variable<String>(content.value);
     }
+    if (created.present) {
+      map['createdT'] = Variable<DateTime>(created.value);
+    }
     return map;
   }
 
@@ -153,7 +187,8 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     return (StringBuffer('NotesCompanion(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('content: $content')
+          ..write('content: $content, ')
+          ..write('created: $created')
           ..write(')'))
         .toString();
   }
@@ -193,8 +228,20 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
     );
   }
 
+  final VerificationMeta _createdMeta = const VerificationMeta('created');
+  GeneratedDateTimeColumn _created;
   @override
-  List<GeneratedColumn> get $columns => [id, title, content];
+  GeneratedDateTimeColumn get created => _created ??= _constructCreated();
+  GeneratedDateTimeColumn _constructCreated() {
+    return GeneratedDateTimeColumn(
+      'createdT',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, title, content, created];
   @override
   $NotesTable get asDslTable => this;
   @override
@@ -220,6 +267,12 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
           content.isAcceptableOrUnknown(data['body'], _contentMeta));
     } else if (isInserting) {
       context.missing(_contentMeta);
+    }
+    if (data.containsKey('createdT')) {
+      context.handle(_createdMeta,
+          created.isAcceptableOrUnknown(data['createdT'], _createdMeta));
+    } else if (isInserting) {
+      context.missing(_createdMeta);
     }
     return context;
   }

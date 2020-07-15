@@ -12,7 +12,7 @@ Database constructDb({bool logStatements = false}) {
   if (Platform.isIOS || Platform.isAndroid) {
     final executor = LazyDatabase(() async {
       final dataDir = await paths.getApplicationDocumentsDirectory();
-      final dbFile = File(p.join(dataDir.path, 'db.sqlite'));
+      final dbFile = File(p.join(dataDir.path, 'sealdb1.sqlite'));
       return VmDatabase(dbFile, logStatements: logStatements);
     });
     return Database(executor);
