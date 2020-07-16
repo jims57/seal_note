@@ -7,6 +7,7 @@ import 'package:seal_note/util/route/SlideRightRoute.dart';
 import 'Common/AppBarWidget.dart';
 import 'FolderListPage.dart';
 import 'NoteListWidget.dart';
+import 'NoteListWidgetForToday.dart';
 
 typedef void ItemSelectedCallback();
 
@@ -23,6 +24,9 @@ class NoteListPage extends StatefulWidget {
 }
 
 class _NoteListPageState extends State<NoteListPage> {
+  final GlobalKey<NoteListWidgetState> _noteListWidgetState =
+      GlobalKey<NoteListWidgetState>();
+
   Database _database;
 
   @override
@@ -65,9 +69,11 @@ class _NoteListPageState extends State<NoteListPage> {
             ),
             onPressed: () {
               _database.deleteAllNotes().then((value) {
-                setState(() {
-                  String s='s';
-                });
+
+//                _noteListWidgetForTodayState.currentState.resetLoadingConfigsAfterRefreshing();
+                _noteListWidgetState
+                    .currentState.noteListWidgetForTodayState.currentState
+                    .resetLoadingConfigsAfterRefreshing();
               });
             },
           ),
@@ -76,7 +82,9 @@ class _NoteListPageState extends State<NoteListPage> {
         leadingWidth: 90,
         tailWidth: 40,
       ),
-      body: NoteListWidget(),
+      body: NoteListWidget(
+        key: _noteListWidgetState,
+      ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
       ),

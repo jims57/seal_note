@@ -7,18 +7,20 @@ import 'package:seal_note/data/database/database.dart';
 import 'NoteDetailPage.dart';
 
 class NoteListWidgetForToday extends StatefulWidget {
+  NoteListWidgetForToday({Key key}) : super(key: key);
+
   @override
-  _NoteListWidgetForTodayState createState() => _NoteListWidgetForTodayState();
+  NoteListWidgetForTodayState createState() => NoteListWidgetForTodayState();
 }
 
-class _NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
+class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   Database _database;
   List<NoteEntry> _noteList = List<NoteEntry>();
 
   int _pageNo;
   int _pageSize;
 
-  int _refreshCount = 11;
+  int _refreshCount = 20;
 
   bool _isLaunching;
   bool _isLoading;
@@ -36,9 +38,11 @@ class _NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
         .then((value) {
       _noteList.addAll(value);
 
-      _isLoading = false;
+      if (!_isLoading) _loadMore();
 
-      if (value.length != 0) _loadMore();
+      setState(() {
+        _isLoading = false;
+      });
     });
   }
 
@@ -88,7 +92,7 @@ class _NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
               itemCount: 1,
               itemBuilder: (context, index) {
                 if (_isLoading) {
-                  _isLoading = false;
+//                  _isLoading = false;
                   return Center(
                     child: SizedBox(
                       child: CircularProgressIndicator(),
@@ -191,18 +195,16 @@ class _NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   Future<Null> _getRefresh() async {
     await Future.delayed(Duration(seconds: 3));
 
-    setState(() {
-      for (var i = 0; i < _refreshCount; ++i) {
-        final now = DateTime.now();
-        NotesCompanion noteEntry = NotesCompanion(
-            title: Value('[refresh] title${i + 1}'),
-            content: Value('[refresh] content${i + 1}'),
-            created: Value(now));
+    for (var i = 0; i < _refreshCount; ++i) {
+      final now = DateTime.now();
+      NotesCompanion noteEntry = NotesCompanion(
+          title: Value('[refresh] title${i + 1}'),
+          content: Value('[refresh] content${i + 1}'),
+          created: Value(now));
 
-        _database.insertNote(noteEntry);
-      }
+      _database.insertNote(noteEntry);
+    }
 
-      resetLoadingConfigsAfterRefreshing();
-    });
+    resetLoadingConfigsAfterRefreshing();
   }
 }
