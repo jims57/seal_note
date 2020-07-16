@@ -20,6 +20,7 @@ class _NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
   int _refreshCount = 11;
 
+  bool _isLaunching;
   bool _isLoading;
   bool _hasMore;
 
@@ -36,6 +37,8 @@ class _NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       _noteList.addAll(value);
 
       _isLoading = false;
+
+      if (value.length != 0) _loadMore();
     });
   }
 
@@ -49,13 +52,13 @@ class _NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   void initState() {
     _database = Provider.of<Database>(context, listen: false);
 
+    _isLaunching = true;
     initLoadingConfigs();
     super.initState();
   }
 
   void _loadMore() {
     _isLoading = true;
-//    int batchCount = (_isRefreshing ? 10 : _pageSize);
 
     _pageNo++;
 
@@ -73,8 +76,6 @@ class _NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
           _noteList.addAll(fetchedList);
         });
       }
-
-//      _isRefreshing = false;
     });
   }
 
@@ -87,6 +88,7 @@ class _NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
               itemCount: 1,
               itemBuilder: (context, index) {
                 if (_isLoading) {
+                  _isLoading = false;
                   return Center(
                     child: SizedBox(
                       child: CircularProgressIndicator(),
@@ -94,9 +96,9 @@ class _NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                       width: 24,
                     ),
                   );
-                } else {
-                  return Text('No data');
                 }
+
+                return Text('No data');
               })
           : ListView.builder(
               itemCount: _hasMore ? _noteList.length + 1 : _noteList.length,
@@ -124,8 +126,6 @@ class _NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                           contentPadding: EdgeInsets.only(
                               top: 15.0, bottom: 15, left: 10.0, right: 10.0),
                           title: Text(
-//                      '香港国安法落地施行以来，众多香港市民感到振奋，认为这部法律定能带领香港社会从暴乱失序回到发展正轨。全国政协委员、香港新活力青年智库总监杨志红在接受光明日报记者采访时说：“香港国安法符合香港市民根本利益，有利于香港社会重建秩序、重启信心，是对香港长治久安、繁荣稳定的坚强护佑。',
-//                        '香港国安法落地',
                               'NoteID=>${_noteList[index].id.toString()}',
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -136,7 +136,6 @@ class _NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                             children: [
                               Text(
                                 '自2019年发生“修例风波”以来，香港各行各业深受其害，很多家庭收入锐减，都盼着尽快止暴制乱。杨志红痛心地说：“这一年的社会风波，暴露出香港在维护国家安全上存在巨大风险，使‘一国两制’香港实践遭遇前所未有的严峻挑战。',
-//                        '自2019年发生“修例风波”以来',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -190,8 +189,6 @@ class _NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   Future<Null> _getRefresh() async {
-//    _isRefreshing = true;
-
     await Future.delayed(Duration(seconds: 3));
 
     setState(() {

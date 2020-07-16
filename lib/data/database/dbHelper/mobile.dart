@@ -18,7 +18,7 @@ Database constructDb({bool logStatements = false}) {
     return Database(executor);
   }
   if (Platform.isMacOS || Platform.isLinux) {
-    final file = File('db.sqlite');
+    final file = File('sealdb.sqlite');
     return Database(VmDatabase(file, logStatements: logStatements));
   }
   // if (Platform.isWindows) {

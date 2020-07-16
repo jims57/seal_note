@@ -50,7 +50,7 @@ class Database extends _$Database {
     return nl;
   }
 
-  Future deleteAllNotes() {
+  Future<int> deleteAllNotes() {
     return (delete(notes)).go();
   }
 }

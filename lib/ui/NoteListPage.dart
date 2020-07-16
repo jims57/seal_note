@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/data/database/database.dart';
 import 'package:seal_note/util/route/SlideRightRoute.dart';
 
 import 'Common/AppBarWidget.dart';
@@ -21,9 +23,12 @@ class NoteListPage extends StatefulWidget {
 }
 
 class _NoteListPageState extends State<NoteListPage> {
+  Database _database;
+
   @override
   void initState() {
     GlobalState.noteListPageContext = context;
+    _database = Provider.of<Database>(context, listen: false);
 
     super.initState();
   }
@@ -54,17 +59,27 @@ class _NoteListPageState extends State<NoteListPage> {
         ],
         tailChildren: [
           IconButton(
-              icon: Icon(
-            Icons.more_horiz,
-            color: Colors.white,
-          )),
+            icon: Icon(
+              Icons.more_horiz,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              _database.deleteAllNotes().then((value) {
+                setState(() {
+                  String s='s';
+                });
+              });
+            },
+          ),
         ],
         title: '今天',
         leadingWidth: 90,
         tailWidth: 40,
       ),
       body: NoteListWidget(),
-      floatingActionButton: FloatingActionButton(child: Icon(Icons.add),),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+      ),
     );
   }
 }
