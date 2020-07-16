@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seal_note/ui/NoteListWidgetForToday.dart';
 
 class SelectedNoteModel extends ChangeNotifier {
   int _folderId;
@@ -6,6 +7,17 @@ class SelectedNoteModel extends ChangeNotifier {
   String _title;
   String _content;
   BuildContext _noteListPageContext;
+
+  GlobalKey<NoteListWidgetForTodayState> _noteListWidgetForTodayState;
+
+  GlobalKey<NoteListWidgetForTodayState> get noteListWidgetForTodayState =>
+      _noteListWidgetForTodayState;
+
+  set noteListWidgetForTodayState(
+      GlobalKey<NoteListWidgetForTodayState> value) {
+    _noteListWidgetForTodayState = value;
+  }
+
   int _screenType = 1;
 
   int get screenType => _screenType;

@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 import 'package:seal_note/ui/NoteListWidgetForToday.dart';
 
 class NoteListWidget extends StatefulWidget {
@@ -7,11 +9,22 @@ class NoteListWidget extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => NoteListWidgetState();
+
+
 }
 
 class NoteListWidgetState extends State<NoteListWidget> {
-  final GlobalKey<NoteListWidgetForTodayState> noteListWidgetForTodayState =
-      GlobalKey<NoteListWidgetForTodayState>();
+  GlobalKey<NoteListWidgetForTodayState> noteListWidgetForTodayState;
+  SelectedNoteModel _selectedNoteModel;
+
+@override
+  void initState() {
+  noteListWidgetForTodayState = GlobalKey<NoteListWidgetForTodayState>();
+  _selectedNoteModel = Provider.of<SelectedNoteModel>(context, listen: false);
+  _selectedNoteModel.noteListWidgetForTodayState = noteListWidgetForTodayState;
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -30,27 +30,6 @@ void main() => runApp(MultiProvider(
         ChangeNotifierProvider<SelectedNoteModel>(
           create: (context) => SelectedNoteModel(),
         ),
-//        Provider<FolderListPage>(
-//          create: (context) => FolderListPage(),
-//        ),
-//        Provider<FolderListWidget>(
-//          create: (context) => FolderListWidget(),
-//        ),
-//        Provider<NoteListPage>(
-//          create: (context) => NoteListPage(
-//            itemCount: 60,
-//          ),
-//          lazy: false,
-//        ),
-//        Provider<NoteListWidget>(
-//          create: (context) => NoteListWidget(),
-//        ),
-//        Provider<NoteDetailPage>(
-//          create: (context) => NoteDetailPage(),
-//        ),
-//        Provider<NoteDetailWidget>(
-//          create: (context) => NoteDetailWidget(),
-//        ),
       ],
       child: MyApp(),
     ));

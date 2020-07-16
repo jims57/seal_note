@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moor/moor.dart' show Value;
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 import 'package:seal_note/data/database/database.dart';
 
 import 'NoteDetailPage.dart';
@@ -14,6 +15,7 @@ class NoteListWidgetForToday extends StatefulWidget {
 }
 
 class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
+  SelectedNoteModel _selectedNoteModel;
   Database _database;
   List<NoteEntry> _noteList = List<NoteEntry>();
 
@@ -22,7 +24,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
   int _refreshCount = 20;
 
-  bool _isLaunching;
   bool _isLoading;
   bool _hasMore;
 
@@ -55,8 +56,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   @override
   void initState() {
     _database = Provider.of<Database>(context, listen: false);
+    _selectedNoteModel = Provider.of<SelectedNoteModel>(context, listen: false);
 
-    _isLaunching = true;
     initLoadingConfigs();
     super.initState();
   }
@@ -92,7 +93,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
               itemCount: 1,
               itemBuilder: (context, index) {
                 if (_isLoading) {
-//                  _isLoading = false;
                   return Center(
                     child: SizedBox(
                       child: CircularProgressIndicator(),
@@ -193,7 +193,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   Future<Null> _getRefresh() async {
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(Duration(seconds: 5));
 
     for (var i = 0; i < _refreshCount; ++i) {
       final now = DateTime.now();
@@ -205,6 +205,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       _database.insertNote(noteEntry);
     }
 
-    resetLoadingConfigsAfterRefreshing();
+//    resetLoadingConfigsAfterRefreshing();
+    _selectedNoteModel.noteListWidgetForTodayState.currentState
+        .resetLoadingConfigsAfterRefreshing();
   }
 }

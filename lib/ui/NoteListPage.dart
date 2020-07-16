@@ -7,7 +7,6 @@ import 'package:seal_note/util/route/SlideRightRoute.dart';
 import 'Common/AppBarWidget.dart';
 import 'FolderListPage.dart';
 import 'NoteListWidget.dart';
-import 'NoteListWidgetForToday.dart';
 
 typedef void ItemSelectedCallback();
 
@@ -69,8 +68,6 @@ class _NoteListPageState extends State<NoteListPage> {
             ),
             onPressed: () {
               _database.deleteAllNotes().then((value) {
-
-//                _noteListWidgetForTodayState.currentState.resetLoadingConfigsAfterRefreshing();
                 _noteListWidgetState
                     .currentState.noteListWidgetForTodayState.currentState
                     .resetLoadingConfigsAfterRefreshing();

@@ -6,7 +6,6 @@ import 'package:seal_note/mixin/check_device.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/NoteListPage.dart';
 import 'package:seal_note/ui/NoteDetailPage.dart';
-import 'package:after_layout/after_layout.dart';
 
 class MasterDetailPage extends StatefulWidget {
   @override
