@@ -9,19 +9,18 @@ class NoteListWidget extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => NoteListWidgetState();
-
-
 }
 
 class NoteListWidgetState extends State<NoteListWidget> {
   GlobalKey<NoteListWidgetForTodayState> noteListWidgetForTodayState;
   SelectedNoteModel _selectedNoteModel;
 
-@override
+  @override
   void initState() {
-  noteListWidgetForTodayState = GlobalKey<NoteListWidgetForTodayState>();
-  _selectedNoteModel = Provider.of<SelectedNoteModel>(context, listen: false);
-  _selectedNoteModel.noteListWidgetForTodayState = noteListWidgetForTodayState;
+    noteListWidgetForTodayState = GlobalKey<NoteListWidgetForTodayState>();
+    _selectedNoteModel = Provider.of<SelectedNoteModel>(context, listen: false);
+    _selectedNoteModel.noteListWidgetForTodayState =
+        noteListWidgetForTodayState;
 
     super.initState();
   }

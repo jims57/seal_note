@@ -3,12 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/ui/FolderListPage.dart';
-import 'package:seal_note/ui/FolderListWidget.dart';
-import 'package:seal_note/ui/NoteDetailPage.dart';
-import 'package:seal_note/ui/NoteDetailWidget.dart';
-import 'package:seal_note/ui/NoteListPage.dart';
-import 'package:seal_note/ui/NoteListWidget.dart';
 
 // Import custom files
 import 'data/appstate/SelectedNoteModel.dart';

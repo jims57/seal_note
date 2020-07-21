@@ -1,11 +1,21 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:moor/moor.dart' show Value;
+import 'package:http/http.dart' as http;
+import 'package:moor_ffi/moor_ffi.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 import 'package:seal_note/data/database/database.dart';
+import 'package:moor/isolate.dart';
+
+import 'dart:isolate';
+
+import '../data/database/dbHelper/mobile.dart';
 
 import 'NoteDetailPage.dart';
+import 'httper/NoteHttper.dart';
+//import 'httper/NoteHttper.dart';
 
 class NoteListWidgetForToday extends StatefulWidget {
   NoteListWidgetForToday({Key key}) : super(key: key);
@@ -27,36 +37,16 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   bool _isLoading;
   bool _hasMore;
 
-  void initLoadingConfigs() {
-    _pageNo = 1;
-    _pageSize = 10;
-
-    _isLoading = true;
-    _hasMore = true;
-
-    _database
-        .getNotesByPageSize(pageNo: _pageNo, pageSize: _pageSize)
-        .then((value) {
-      _noteList.addAll(value);
-
-      if (!_isLoading) _loadMore();
-
-      setState(() {
-        _isLoading = false;
-      });
-    });
-  }
-
-  void resetLoadingConfigsAfterRefreshing() {
-    _noteList.clear();
-
-    initLoadingConfigs();
-  }
+//  NoteHttper _noteHttper;
+  bool _isFirstLoad;
 
   @override
   void initState() {
     _database = Provider.of<Database>(context, listen: false);
+    GlobalState.database = _database;
     _selectedNoteModel = Provider.of<SelectedNoteModel>(context, listen: false);
+    _isFirstLoad = true;
+//    _noteHttper = NoteHttper();
 
     initLoadingConfigs();
     super.initState();
@@ -102,7 +92,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                   );
                 }
 
-                return Text('No data');
+                return Text('No data2');
               })
           : ListView.builder(
               itemCount: _hasMore ? _noteList.length + 1 : _noteList.length,
@@ -193,20 +183,61 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   Future<Null> _getRefresh() async {
-    await Future.delayed(Duration(seconds: 5));
+    await Future.delayed(Duration(seconds: 2));
 
     for (var i = 0; i < _refreshCount; ++i) {
       final now = DateTime.now();
-      NotesCompanion noteEntry = NotesCompanion(
+      NotesCompanion notesCompanion = NotesCompanion(
           title: Value('[refresh] title${i + 1}'),
           content: Value('[refresh] content${i + 1}'),
           created: Value(now));
 
-      _database.insertNote(noteEntry);
+      _database.insertNote(notesCompanion);
     }
 
-//    resetLoadingConfigsAfterRefreshing();
     _selectedNoteModel.noteListWidgetForTodayState.currentState
-        .resetLoadingConfigsAfterRefreshing();
+        .resetLoadingConfigsAfterUpdatingSqlite();
+  }
+
+  void initLoadingConfigs() {
+    _pageNo = 1;
+    _pageSize = 10;
+
+    _isLoading = true;
+    _hasMore = true;
+
+    _database
+        .getNotesByPageSize(pageNo: _pageNo, pageSize: _pageSize)
+        .then((value) {
+      _noteList.addAll(value);
+
+      if (!_isLoading) _loadMore();
+
+      setState(() {
+        _isLoading = false;
+      });
+    });
+
+    // If it is the first load, by the way to fetch data from the server
+    if (_isFirstLoad) {
+      _isFirstLoad = false;
+
+      fetchPhotos(client: http.Client()).then((fetchedPhotoList) {
+        _database.upsertNotesInBatch(fetchedPhotoList).whenComplete(() {
+          _selectedNoteModel.noteListWidgetForTodayState.currentState
+              .resetLoadingConfigsAfterUpdatingSqlite();
+        });
+      }).catchError((e) {
+        String errorMessage = e;
+      });
+    }
+
+    String ss = '22';
+  }
+
+  void resetLoadingConfigsAfterUpdatingSqlite() {
+    _noteList.clear();
+
+    initLoadingConfigs();
   }
 }

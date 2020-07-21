@@ -70,7 +70,7 @@ class _NoteListPageState extends State<NoteListPage> {
               _database.deleteAllNotes().then((value) {
                 _noteListWidgetState
                     .currentState.noteListWidgetForTodayState.currentState
-                    .resetLoadingConfigsAfterRefreshing();
+                    .resetLoadingConfigsAfterUpdatingSqlite();
               });
             },
           ),

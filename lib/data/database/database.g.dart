@@ -13,10 +13,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
   final String content;
   final DateTime created;
   NoteEntry(
-      {@required this.id,
-      @required this.title,
-      @required this.content,
-      @required this.created});
+      {@required this.id, @required this.title, this.content, this.created});
   factory NoteEntry.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -132,11 +129,9 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
   NotesCompanion.insert({
     this.id = const Value.absent(),
     @required String title,
-    @required String content,
-    @required DateTime created,
-  })  : title = Value(title),
-        content = Value(content),
-        created = Value(created);
+    this.content = const Value.absent(),
+    this.created = const Value.absent(),
+  }) : title = Value(title);
   static Insertable<NoteEntry> custom({
     Expression<int> id,
     Expression<String> title,
@@ -213,7 +208,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
   GeneratedTextColumn get title => _title ??= _constructTitle();
   GeneratedTextColumn _constructTitle() {
     return GeneratedTextColumn('title', $tableName, false,
-        minTextLength: 2, maxTextLength: 32);
+        minTextLength: 2, maxTextLength: 200);
   }
 
   final VerificationMeta _contentMeta = const VerificationMeta('content');
@@ -224,7 +219,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
     return GeneratedTextColumn(
       'body',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -236,7 +231,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
     return GeneratedDateTimeColumn(
       'createdT',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -265,14 +260,10 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
     if (data.containsKey('body')) {
       context.handle(_contentMeta,
           content.isAcceptableOrUnknown(data['body'], _contentMeta));
-    } else if (isInserting) {
-      context.missing(_contentMeta);
     }
     if (data.containsKey('createdT')) {
       context.handle(_createdMeta,
           created.isAcceptableOrUnknown(data['createdT'], _createdMeta));
-    } else if (isInserting) {
-      context.missing(_createdMeta);
     }
     return context;
   }
@@ -293,6 +284,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
 
 abstract class _$Database extends GeneratedDatabase {
   _$Database(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
+  _$Database.connect(DatabaseConnection c) : super.connect(c);
   $NotesTable _notes;
   $NotesTable get notes => _notes ??= $NotesTable(this);
   @override

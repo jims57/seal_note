@@ -1,10 +1,5 @@
-import 'package:seal_note/ui/FolderListPage.dart';
-import 'package:seal_note/ui/FolderListWidget.dart';
-import 'package:seal_note/ui/NoteDetailWidget.dart';
-import 'package:seal_note/ui/NoteListPage.dart';
-import 'package:seal_note/ui/NoteDetailPage.dart';
+import 'package:seal_note/data/database/database.dart';
 import 'package:flutter/material.dart';
-import 'package:seal_note/ui/NoteListWidget.dart';
 
 import 'SelectedNoteModel.dart';
 
@@ -14,6 +9,9 @@ class GlobalState with ChangeNotifier {
   factory GlobalState() => _singleton;
 
   GlobalState._internal();
+
+  // Database
+  static Database database;
 
   // Device basic info
   static int screenType;

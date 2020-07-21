@@ -12,13 +12,13 @@ Database constructDb({bool logStatements = false}) {
   if (Platform.isIOS || Platform.isAndroid) {
     final executor = LazyDatabase(() async {
       final dataDir = await paths.getApplicationDocumentsDirectory();
-      final dbFile = File(p.join(dataDir.path, 'sealdb1.sqlite'));
+      final dbFile = File(p.join(dataDir.path, 'sealmobile3.sqlite'));
       return VmDatabase(dbFile, logStatements: logStatements);
     });
     return Database(executor);
   }
   if (Platform.isMacOS || Platform.isLinux) {
-    final file = File('sealdb.sqlite');
+    final file = File('sealmacdb2.sqlite');
     return Database(VmDatabase(file, logStatements: logStatements));
   }
   // if (Platform.isWindows) {

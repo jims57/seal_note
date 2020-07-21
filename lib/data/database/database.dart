@@ -6,11 +6,14 @@ part 'database.g.dart';
 class Notes extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  TextColumn get title => text().withLength(min: 2, max: 32)();
+  TextColumn get title => text().withLength(min: 2, max: 200)();
 
-  TextColumn get content => text().named('body')();
+  TextColumn get content => text().nullable().named('body')();
 
-  DateTimeColumn get created => dateTime().named('createdT')();
+  DateTimeColumn get created => dateTime().nullable().named('createdT')();
+
+  @override
+  Set<Column> get primaryKey => {id};
 }
 
 //LazyDatabase _openConnection() {
@@ -28,6 +31,8 @@ class Notes extends Table {
 class Database extends _$Database {
   Database(QueryExecutor e) : super(e);
 
+  Database.connect(DatabaseConnection connection) : super.connect(connection);
+
   @override
   int get schemaVersion => 1;
 
@@ -35,14 +40,28 @@ class Database extends _$Database {
     return into(notes).insert(entry);
   }
 
+  Future<List<NoteEntry>> insertNotesInBatch(
+      List<NoteEntry> noteEntryList) async {
+    await batch((batch) {
+      batch.insertAll(notes, noteEntryList);
+    });
+  }
+
+  Future<List<NoteEntry>> upsertNotesInBatch(
+      List<NoteEntry> noteEntryList) async {
+    await batch((batch){
+      batch.insertAllOnConflictUpdate(notes, noteEntryList);
+    });
+  }
+
   Future<List<NoteEntry>> get getAllNotes => select(notes).get();
 
-  Future<List<NoteEntry>> getNotesByPageSize (
+  Future<List<NoteEntry>> getNotesByPageSize(
       {@required int pageNo, @required int pageSize}) {
     Future<List<NoteEntry>> nl = (select(notes)
           ..orderBy([
-            (t) => OrderingTerm(expression: t.created, mode: OrderingMode.desc),
-            (t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc),
+            (t) => OrderingTerm(expression: t.created, mode: OrderingMode.asc),
+            (t) => OrderingTerm(expression: t.id, mode: OrderingMode.asc),
           ])
           ..limit(pageSize, offset: pageSize * (pageNo - 1)))
         .get();
