@@ -7,6 +7,7 @@ class AppState extends ChangeNotifier {
 
   set isExecutingSync(bool value) {
     _isExecutingSync = value;
+
     notifyListeners();
   }
 }

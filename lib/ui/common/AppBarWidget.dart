@@ -3,9 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'dart:math';
+import 'package:after_layout/after_layout.dart';
 
-double _getAppBarTitleWidth(double screenWidth, double leadingWidth,
-    double tailWidth) {
+double _getAppBarTitleWidth(
+    double screenWidth, double leadingWidth, double tailWidth) {
   return (screenWidth - leadingWidth - tailWidth);
 }
 
@@ -23,12 +24,13 @@ List<Widget> _getContainerList(List<Widget> leadingChildren) {
 }
 
 class AppBarWidget extends StatefulWidget with PreferredSizeWidget {
-  AppBarWidget({Key key,
-    @required this.leadingChildren,
-    @required this.tailChildren,
-    @required this.title,
-    this.leadingWidth: 110,
-    this.tailWidth: 30})
+  AppBarWidget(
+      {Key key,
+      @required this.leadingChildren,
+      @required this.tailChildren,
+      @required this.title,
+      this.leadingWidth: 110,
+      this.tailWidth: 30})
       : super(key: key);
 
   final List<Widget> leadingChildren;
@@ -45,16 +47,24 @@ class AppBarWidget extends StatefulWidget with PreferredSizeWidget {
 }
 
 class _AppBarWidgetState extends State<AppBarWidget>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AfterLayoutMixin<AppBarWidget> {
+  AppState _appState;
   AnimationController _animationController;
 
   @override
   void initState() {
     _animationController =
-    AnimationController(vsync: this, duration: Duration(seconds: 2))
-      ..repeat();
+        AnimationController(vsync: this, duration: Duration(seconds: 2))
+          ..repeat();
+    _appState = Provider.of<AppState>(context, listen: false);
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -70,7 +80,7 @@ class _AppBarWidgetState extends State<AppBarWidget>
 
     // Margin width
     double marginWidth =
-    (GlobalState.screenType == 1 ? widget.leadingWidth : widget.tailWidth);
+        (GlobalState.screenType == 1 ? widget.leadingWidth : widget.tailWidth);
 
     return AppBar(
       elevation: 0.0,
@@ -83,13 +93,13 @@ class _AppBarWidgetState extends State<AppBarWidget>
                 (GlobalState.screenType == 3
                     ? Container()
                     : Container(
-                  width: widget.leadingWidth,
-                  height: _appBarHeight,
-                  child: Stack(
-                    children: _getContainerList(widget.leadingChildren),
-                    alignment: Alignment.centerLeft,
-                  ),
-                )),
+                        width: widget.leadingWidth,
+                        height: _appBarHeight,
+                        child: Stack(
+                          children: _getContainerList(widget.leadingChildren),
+                          alignment: Alignment.centerLeft,
+                        ),
+                      )),
                 Container(
                   width: widget.tailWidth,
                   height: _appBarHeight,
@@ -150,5 +160,10 @@ class _AppBarWidgetState extends State<AppBarWidget>
       ),
       titleSpacing: 0.0,
     );
+  }
+
+  @override
+  void afterFirstLayout(BuildContext context) {
+    _appState.isExecutingSync = true;
   }
 }
