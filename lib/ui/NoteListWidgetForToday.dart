@@ -1,21 +1,16 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:moor/moor.dart' show Value;
 import 'package:http/http.dart' as http;
-import 'package:moor_ffi/moor_ffi.dart';
 import 'package:provider/provider.dart';
+import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 import 'package:seal_note/data/database/database.dart';
-import 'package:moor/isolate.dart';
-
-import 'dart:isolate';
-
-import '../data/database/dbHelper/mobile.dart';
 
 import 'NoteDetailPage.dart';
 import 'httper/NoteHttper.dart';
-//import 'httper/NoteHttper.dart';
 
 class NoteListWidgetForToday extends StatefulWidget {
   NoteListWidgetForToday({Key key}) : super(key: key);
@@ -26,7 +21,9 @@ class NoteListWidgetForToday extends StatefulWidget {
 
 class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   SelectedNoteModel _selectedNoteModel;
+  AppState _appState;
   Database _database;
+
   List<NoteEntry> _noteList = List<NoteEntry>();
 
   int _pageNo;
@@ -37,7 +34,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   bool _isLoading;
   bool _hasMore;
 
-//  NoteHttper _noteHttper;
   bool _isFirstLoad;
 
   @override
@@ -45,8 +41,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     _database = Provider.of<Database>(context, listen: false);
     GlobalState.database = _database;
     _selectedNoteModel = Provider.of<SelectedNoteModel>(context, listen: false);
+    _appState = Provider.of<AppState>(context, listen: false);
     _isFirstLoad = true;
-//    _noteHttper = NoteHttper();
 
     initLoadingConfigs();
     super.initState();
@@ -226,13 +222,15 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
         _database.upsertNotesInBatch(fetchedPhotoList).whenComplete(() {
           _selectedNoteModel.noteListWidgetForTodayState.currentState
               .resetLoadingConfigsAfterUpdatingSqlite();
+
+          Timer(Duration(seconds: 2), () {
+            _appState.isExecutingSync = false;
+          });
         });
       }).catchError((e) {
         String errorMessage = e;
       });
     }
-
-    String ss = '22';
   }
 
   void resetLoadingConfigsAfterUpdatingSqlite() {

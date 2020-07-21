@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/database/database.dart';
+import 'package:seal_note/ui/common/AppBarWidget.dart';
 import 'package:seal_note/util/route/SlideRightRoute.dart';
 
-import 'Common/AppBarWidget.dart';
 import 'FolderListPage.dart';
 import 'NoteListWidget.dart';
 
@@ -75,7 +75,7 @@ class _NoteListPageState extends State<NoteListPage> {
             },
           ),
         ],
-        title: '今天',
+        title: Text('英语知识'),
         leadingWidth: 90,
         tailWidth: 40,
       ),

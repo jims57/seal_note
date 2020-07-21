@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 
 // Import custom files
+import 'data/appstate/AppState.dart';
 import 'data/appstate/SelectedNoteModel.dart';
 import 'data/database/database.dart';
 import 'data/database/dbHelper/shared.dart';
@@ -23,6 +24,9 @@ void main() => runApp(MultiProvider(
         ),
         ChangeNotifierProvider<SelectedNoteModel>(
           create: (context) => SelectedNoteModel(),
+        ),
+        ChangeNotifierProvider<AppState>(
+          create: (context) => AppState(),
         ),
       ],
       child: MyApp(),
