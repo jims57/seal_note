@@ -9,6 +9,7 @@ import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 import 'package:seal_note/data/database/database.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'NoteDetailPage.dart';
 import 'httper/NoteHttper.dart';
@@ -36,6 +37,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   bool _hasMore;
 
   bool _isFirstLoad;
+
+  // Slide options
+  double _slideIconSize = 30.0;
+  double _slideFontSize = 16.0;
 
   @override
   void initState() {
@@ -112,53 +117,136 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     margin:
                         const EdgeInsets.only(top: 5.0, left: 8.0, right: 8.0),
                     child: Container(
-                      child: Card(
-                        child: ListTile(
-                          contentPadding: EdgeInsets.only(
-                              top: 15.0, bottom: 15, left: 10.0, right: 10.0),
-                          title: Text(
-                              'NoteID=>${_noteList[index].id.toString()}',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontSize: 18.0, fontWeight: FontWeight.w400)),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '自2019年发生“修例风波”以来，香港各行各业深受其害，很多家庭收入锐减，都盼着尽快止暴制乱。杨志红痛心地说：“这一年的社会风波，暴露出香港在维护国家安全上存在巨大风险，使‘一国两制’香港实践遭遇前所未有的严峻挑战。',
+                      child: Slidable(
+                        actionPane: SlidableDrawerActionPane(),
+                        actionExtentRatio: 0.25,
+                        child: Card(
+                          child: ListTile(
+                            contentPadding: EdgeInsets.only(
+                                top: 15.0, bottom: 15, left: 10.0, right: 10.0),
+                            title: Text(
+                                'NoteID=>${_noteList[index].id.toString()}',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(top: 5.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      '应30分钟前复习',
-                                      style: TextStyle(
-                                          color: Colors.red, fontSize: 10.0),
-                                    ),
-                                    Text(
-                                      /**/
-                                      '进度：4/7',
-                                      style: TextStyle(
-                                          color: Colors.grey[400],
-                                          fontSize: 10.0),
-                                    ),
-                                  ],
+                                style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w400)),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '自2019年发生“修例风波”以来，香港各行各业深受其害，很多家庭收入锐减，都盼着尽快止暴制乱。杨志红痛心地说：“这一年的社会风波，暴露出香港在维护国家安全上存在巨大风险，使‘一国两制’香港实践遭遇前所未有的严峻挑战。',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                            ],
+                                Container(
+                                  margin: const EdgeInsets.only(top: 5.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        '应30分钟前复习',
+                                        style: TextStyle(
+                                            color: Colors.red, fontSize: 10.0),
+                                      ),
+                                      Text(
+                                        /**/
+                                        '进度：4/7',
+                                        style: TextStyle(
+                                            color: Colors.grey[400],
+                                            fontSize: 10.0),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          elevation: 1.1,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide.none,
+                            borderRadius: BorderRadius.circular(15.0),
                           ),
                         ),
-                        elevation: 1.1,
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide.none,
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
+                        actions: <Widget>[
+                          SlideAction(
+                            child: Container(
+                              constraints: BoxConstraints.expand(),
+                              color: GlobalState.themeColor,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.schedule,
+                                    size: _slideIconSize,
+                                    color: Colors.white,
+                                  ),
+                                  Text(
+                                    '推迟',
+                                    style: TextStyle(
+                                      fontSize: _slideFontSize,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                        secondaryActions: <Widget>[
+                          SlideAction(
+                            child: Container(
+                              constraints: BoxConstraints.expand(),
+                              color: Colors.orangeAccent,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.playlist_play,
+                                    size: _slideIconSize,
+                                    color: Colors.white,
+                                  ),
+                                  Text(
+                                    '移动',
+                                    style: TextStyle(
+                                      fontSize: _slideFontSize,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          SlideAction(
+                            child: Container(
+                              constraints: BoxConstraints.expand(),
+                              color: Colors.red,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.delete_outline,
+                                    size: _slideIconSize,
+                                    color: Colors.white,
+                                  ),
+                                  Text(
+                                    '删除',
+                                    style: TextStyle(
+                                      fontSize: _slideFontSize,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                _noteList.removeAt(index);
+                              });
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   ),

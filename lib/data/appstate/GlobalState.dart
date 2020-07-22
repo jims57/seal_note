@@ -10,6 +10,9 @@ class GlobalState with ChangeNotifier {
 
   GlobalState._internal();
 
+  // App
+  static Color themeColor;
+
   // Database
   static Database database;
 

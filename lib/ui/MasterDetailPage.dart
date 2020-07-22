@@ -20,6 +20,8 @@ class _MasterDetailPageState extends State<MasterDetailPage>
     GlobalState.selectedNoteModel =
         Provider.of<SelectedNoteModel>(context, listen: false);
 
+
+
     super.initState();
   }
 
@@ -28,6 +30,7 @@ class _MasterDetailPageState extends State<MasterDetailPage>
     GlobalState.screenHeight = getScreenHeight(context);
     GlobalState.screenWidth = getScreenWidth(context);
     GlobalState.screenType = checkScreenType(GlobalState.screenWidth);
+    GlobalState.themeColor = Theme.of(context).primaryColor;
 
     return Scaffold(
       body: OrientationBuilder(
