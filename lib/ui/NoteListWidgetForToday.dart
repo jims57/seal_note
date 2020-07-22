@@ -42,6 +42,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   double _slideIconSize = 30.0;
   double _slideFontSize = 16.0;
 
+  // Data manipulation
+  NoteEntry _noteEntryDeleted;
+
   @override
   void initState() {
     _database = Provider.of<Database>(context, listen: false);
@@ -242,7 +245,24 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                             ),
                             onTap: () {
                               setState(() {
+                                _noteEntryDeleted = _noteList[index];
                                 _noteList.removeAt(index);
+
+                                Scaffold.of(context).showSnackBar(SnackBar(
+                                  content: Text('SB'),
+                                  backgroundColor: GlobalState.themeColor,
+                                  behavior: SnackBarBehavior.floating,
+                                  action: SnackBarAction(
+                                    label: '撤消',
+                                    textColor: Colors.white,
+                                    onPressed: () {
+                                      setState(() {
+                                        _noteList.insert(
+                                            index, _noteEntryDeleted);
+                                      });
+                                    },
+                                  ),
+                                ));
                               });
                             },
                           ),
