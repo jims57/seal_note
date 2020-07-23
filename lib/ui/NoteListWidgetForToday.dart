@@ -21,6 +21,7 @@ class NoteListWidgetForToday extends StatefulWidget {
   NoteListWidgetForTodayState createState() => NoteListWidgetForTodayState();
 }
 
+
 class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   SelectedNoteModel _selectedNoteModel;
   AppState _appState;
@@ -251,7 +252,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                 Scaffold.of(context).showSnackBar(SnackBar(
                                   content: Text('SB'),
                                   backgroundColor: GlobalState.themeColor,
-                                  behavior: SnackBarBehavior.floating,
+                                  behavior: SnackBarBehavior.fixed,
                                   action: SnackBarAction(
                                     label: '撤消',
                                     textColor: Colors.white,

@@ -26,4 +26,7 @@ class GlobalState with ChangeNotifier {
 
   // Models
   static SelectedNoteModel selectedNoteModel;
+
+  // Folder Options
+  static double folderOptionItemHeight = 40.0;
 }
