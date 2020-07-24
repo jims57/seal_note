@@ -10,4 +10,14 @@ class AppState extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  bool get isInFolderOptionSubPanel => _isInFolderOptionSubPanel;
+
+  set isInFolderOptionSubPanel(bool value) {
+    _isInFolderOptionSubPanel = value;
+
+    notifyListeners();
+  }
+
+  bool _isInFolderOptionSubPanel = false;
 }

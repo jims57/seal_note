@@ -12,56 +12,67 @@ class FolderOptionListWidget extends StatefulWidget {
 class _FolderOptionSliverChildListDelegateState
     extends State<FolderOptionListWidget> {
   // Folder option items
-  double _folderOptionIconSize = 13.0;
+  double _folderOptionIconSize = 18.0;
   double _folderOptionFontSize = 14.0;
   Color _folderOptionColor = Colors.black;
+  Color _folderOptionColorForDelete = Colors.red;
+
+  @override
+  void initState() {
+    GlobalState.folderOptionItemListPanelContext = context;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-//      constraints: BoxConstraints.expand(),
       child: CustomScrollView(
         slivers: [
           SliverList(
             delegate: SliverChildListDelegate(
               [
-                Container(
-                  color: Colors.red,
-                  height: GlobalState.folderOptionItemHeight,
-                  padding: const EdgeInsets.only(left: 8.0,right: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        child: Row(children: [
-                          Icon(
-                            Icons.calendar_today,
-                            color: _folderOptionColor,
-                            size: _folderOptionIconSize,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text(
-                              '复习计划',
-                              style: TextStyle(
-                                  color: _folderOptionColor,
-                                  fontSize: _folderOptionFontSize),
-                            ),
-                          )
-                        ]),
-                      ),
-                      Icon(
-                        Icons.keyboard_arrow_right,
-                        size: 14.0,
-                      )
-                    ],
-                  ),
-                ),
+                // Review plan option
                 GestureDetector(
                   child: Container(
-                    color: Colors.green,
+                    color: Colors.transparent,
                     height: GlobalState.folderOptionItemHeight,
-                    padding: const EdgeInsets.only(left: 8.0,right: 8.0),
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          child: Row(children: [
+                            Icon(
+                              Icons.calendar_today,
+                              color: _folderOptionColor,
+                              size: _folderOptionIconSize,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                '复习计划',
+                                style: TextStyle(
+                                    color: _folderOptionColor,
+                                    fontSize: _folderOptionFontSize),
+                              ),
+                            )
+                          ]),
+                        ),
+                        Icon(
+                          Icons.keyboard_arrow_right,
+                          size: 14.0,
+                        )
+                      ],
+                    ),
+                  ),
+                  onTap: () {},
+                ),
+                // Order option
+                GestureDetector(
+                  child: Container(
+                    color: Colors.transparent,
+                    height: GlobalState.folderOptionItemHeight,
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -75,7 +86,7 @@ class _FolderOptionSliverChildListDelegateState
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: Text(
-                                '排序2',
+                                '排序',
                                 style: TextStyle(
                                     color: _folderOptionColor,
                                     fontSize: _folderOptionFontSize),
@@ -91,12 +102,124 @@ class _FolderOptionSliverChildListDelegateState
                     ),
                   ),
                   onTap: () {
-                    var c1 = context;
+                    GlobalState.appState.isInFolderOptionSubPanel = true;
 
-                    Navigator.of(c1).push(MaterialPageRoute(builder: (c1) {
+                    Navigator.of(GlobalState.folderOptionItemListPanelContext)
+                        .push(MaterialPageRoute(builder: (c1) {
                       return NoteDetailPage();
                     }));
                   },
+                ),
+                // Rename option
+                GestureDetector(
+                  child: Container(
+                    color: Colors.transparent,
+                    height: GlobalState.folderOptionItemHeight,
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          child: Row(children: [
+                            Icon(
+                              Icons.credit_card,
+                              color: _folderOptionColor,
+                              size: _folderOptionIconSize,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                '重新命名',
+                                style: TextStyle(
+                                    color: _folderOptionColor,
+                                    fontSize: _folderOptionFontSize),
+                              ),
+                            )
+                          ]),
+                        ),
+                        Icon(
+                          Icons.keyboard_arrow_right,
+                          size: 14.0,
+                          color: Colors.transparent,
+                        )
+                      ],
+                    ),
+                  ),
+                  onTap: () {},
+                ),
+                // Edit option
+                GestureDetector(
+                  child: Container(
+                    color: Colors.transparent,
+                    height: GlobalState.folderOptionItemHeight,
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          child: Row(children: [
+                            Icon(
+                              Icons.edit,
+                              color: _folderOptionColor,
+                              size: _folderOptionIconSize,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                '编辑',
+                                style: TextStyle(
+                                    color: _folderOptionColor,
+                                    fontSize: _folderOptionFontSize),
+                              ),
+                            )
+                          ]),
+                        ),
+                        Icon(
+                          Icons.keyboard_arrow_right,
+                          size: 14.0,
+                          color: Colors.transparent,
+                        )
+                      ],
+                    ),
+                  ),
+                  onTap: () {},
+                ),
+                // Delete folder option
+                GestureDetector(
+                  child: Container(
+                    color: Colors.transparent,
+                    height: GlobalState.folderOptionItemHeight,
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          child: Row(children: [
+                            Icon(
+                              Icons.delete_outline,
+                              color: _folderOptionColorForDelete,
+                              size: _folderOptionIconSize,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                '删除文件夹',
+                                style: TextStyle(
+                                    color: _folderOptionColorForDelete,
+                                    fontSize: _folderOptionFontSize),
+                              ),
+                            )
+                          ]),
+                        ),
+                        Icon(
+                          Icons.keyboard_arrow_right,
+                          size: 14.0,
+                          color: Colors.transparent,
+                        )
+                      ],
+                    ),
+                  ),
+                  onTap: () {},
                 ),
               ],
             ),

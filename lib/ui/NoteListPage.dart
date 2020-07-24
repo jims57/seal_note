@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/database/database.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
@@ -33,6 +34,7 @@ class _NoteListPageState extends State<NoteListPage> {
 
   // Folder option items
   double _folderOptionCaptionSize = 16.0;
+  double _folderOptionCaptionTitleHeight = 40.0;
 
   @override
   void initState() {
@@ -73,13 +75,14 @@ class _NoteListPageState extends State<NoteListPage> {
               color: Colors.white,
             ),
             onPressed: () {
+              GlobalState.appState.isInFolderOptionSubPanel = false;
+
               showModalBottomSheet<void>(
                 barrierColor: Colors.black12,
                 backgroundColor: Colors.transparent,
                 context: context,
                 builder: (BuildContext context) {
                   return Container(
-//                    height: 100,
                     width: 100,
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -109,14 +112,54 @@ class _NoteListPageState extends State<NoteListPage> {
                               ),
                               Row(
                                 children: [
+                                  // Folder option caption left button
                                   Expanded(
                                     flex: 1,
-                                    child: Container(),
+                                    child: GestureDetector(
+                                      child: Consumer<AppState>(
+                                        builder: (ctx, appState, child) {
+                                          if (appState
+                                              .isInFolderOptionSubPanel) {
+                                            return Container(
+                                                alignment: Alignment.centerLeft,
+                                                height:
+                                                    _folderOptionCaptionTitleHeight,
+                                                color: Colors.transparent,
+                                                padding: const EdgeInsets.only(
+                                                    left: 15.0),
+                                                child: Icon(
+                                                  Icons.keyboard_arrow_left,
+                                                  color: GlobalState.themeColor,
+                                                ));
+                                          } else {
+                                            return Container();
+                                          }
+                                        },
+                                      ),
+//                                      child: Container(
+//                                          alignment: Alignment.centerLeft,
+//                                          height:
+//                                              _folderOptionCaptionTitleHeight,
+//                                          color: Colors.transparent,
+//                                          padding:
+//                                              const EdgeInsets.only(left: 15.0),
+//                                          child: Icon(
+//                                            Icons.keyboard_arrow_left,
+//                                            color: GlobalState.themeColor,
+//                                          )),
+                                      onTap: () {
+                                        GlobalState.appState.isInFolderOptionSubPanel = false;
+
+                                        Navigator.pop(GlobalState
+                                            .folderOptionItemListPanelContext);
+                                      },
+                                    ),
                                   ),
+                                  // Folder option caption
                                   Expanded(
                                     flex: 1,
                                     child: Container(
-//                                      color: Colors.green,
+                                      height: _folderOptionCaptionTitleHeight,
                                       child: Center(
                                           child: Text(
                                         '文件夹选项',
@@ -126,23 +169,25 @@ class _NoteListPageState extends State<NoteListPage> {
                                       )),
                                     ),
                                   ),
+                                  // Folder option caption finish button
                                   Expanded(
                                     flex: 1,
-                                    child: Container(
-                                      alignment: Alignment.centerRight,
-                                      padding:
-                                          const EdgeInsets.only(right: 15.0),
-//                                      color: Colors.blue,
-                                      child: GestureDetector(
+                                    child: GestureDetector(
+                                      child: Container(
+                                        color: Colors.transparent,
+                                        height: _folderOptionCaptionTitleHeight,
+                                        alignment: Alignment.centerRight,
+                                        padding:
+                                            const EdgeInsets.only(right: 15.0),
                                         child: Text(
                                           '完成',
                                           style: TextStyle(
                                               color: GlobalState.themeColor),
                                         ),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                        },
                                       ),
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                      },
                                     ),
                                   )
                                 ],
@@ -157,29 +202,8 @@ class _NoteListPageState extends State<NoteListPage> {
                             ],
                           ),
                         ),
-//                        Container(
-//                            width: double.infinity,
-//                            color: Colors.green,
-//                            child: Column(
-//                              children: [
-//                                Container(child: Text('r12')),
-//                                Text('r2'),
-//                                Text('r3'),
-//                                Text('r4-2')
-//                              ],
-//                            )),
-
-//                        Container(
-//                          width: double.infinity,
-//                          child: MaterialApp(
-//                              debugShowCheckedModeBanner: false,
-//                              home: Text('mm')),
-//                        )
-
-//                      Container(child: MaterialApp(home:Scaffold(body: Text('s'),)),),
-
                         SizedBox(
-                            height: GlobalState.folderOptionItemHeight * 2,
+                            height: GlobalState.folderOptionItemHeight * 5,
                             width: double.infinity,
                             child: MaterialApp(
                               debugShowCheckedModeBanner: false,

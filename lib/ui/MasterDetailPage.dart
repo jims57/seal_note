@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 import 'package:seal_note/mixin/check_device.dart';
@@ -16,11 +17,13 @@ class _MasterDetailPageState extends State<MasterDetailPage>
     with CheckDeviceMixin {
   @override
   void initState() {
-    // Model
+    // Models
     GlobalState.selectedNoteModel =
         Provider.of<SelectedNoteModel>(context, listen: false);
 
-
+    // States
+    GlobalState.appState =
+        Provider.of<AppState>(context, listen: false);
 
     super.initState();
   }
