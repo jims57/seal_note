@@ -12,6 +12,7 @@ import 'package:seal_note/data/database/database.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'NoteDetailPage.dart';
+import 'NoteDetailWidget.dart';
 import 'httper/NoteHttper.dart';
 
 class NoteListWidgetForToday extends StatefulWidget {
@@ -20,7 +21,6 @@ class NoteListWidgetForToday extends StatefulWidget {
   @override
   NoteListWidgetForTodayState createState() => NoteListWidgetForTodayState();
 }
-
 
 class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   SelectedNoteModel _selectedNoteModel;
@@ -275,11 +275,15 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     GlobalState.selectedNoteModel.id = index;
 
                     if (GlobalState.screenType == 1) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => NoteDetailPage()),
-                      );
+//                      Navigator.push(
+//                        context,
+//                        MaterialPageRoute(
+//                            builder: (context) => NoteDetailPage()),
+//                      );
+
+                      Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+                        return NoteDetailWidget();
+                      }));
                     }
                   },
                 );

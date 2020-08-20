@@ -4,12 +4,12 @@ import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/database/database.dart';
+import 'package:seal_note/ui/NoteDetailWidget.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
 import 'package:seal_note/util/route/SlideRightRoute.dart';
 
 import 'FolderListPage.dart';
 import 'folderOption/FolderOptionListWidget.dart';
-import 'NoteDetailPage.dart';
 import 'NoteListWidget.dart';
 
 typedef void ItemSelectedCallback();
@@ -136,19 +136,9 @@ class _NoteListPageState extends State<NoteListPage> {
                                           }
                                         },
                                       ),
-//                                      child: Container(
-//                                          alignment: Alignment.centerLeft,
-//                                          height:
-//                                              _folderOptionCaptionTitleHeight,
-//                                          color: Colors.transparent,
-//                                          padding:
-//                                              const EdgeInsets.only(left: 15.0),
-//                                          child: Icon(
-//                                            Icons.keyboard_arrow_left,
-//                                            color: GlobalState.themeColor,
-//                                          )),
                                       onTap: () {
-                                        GlobalState.appState.isInFolderOptionSubPanel = false;
+                                        GlobalState.appState
+                                            .isInFolderOptionSubPanel = false;
 
                                         Navigator.pop(GlobalState
                                             .folderOptionItemListPanelContext);
@@ -229,11 +219,15 @@ class _NoteListPageState extends State<NoteListPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          _database.deleteAllNotes().then((value) {
-            _noteListWidgetState
-                .currentState.noteListWidgetForTodayState.currentState
-                .resetLoadingConfigsAfterUpdatingSqlite();
-          });
+          Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+            return NoteDetailWidget();
+          }));
+
+//          _database.deleteAllNotes().then((value) {
+//            _noteListWidgetState
+//                .currentState.noteListWidgetForTodayState.currentState
+//                .resetLoadingConfigsAfterUpdatingSqlite();
+//          });
         },
       ),
     );

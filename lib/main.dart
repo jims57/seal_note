@@ -13,24 +13,28 @@ import 'data/database/dbHelper/shared.dart';
 // Import widgets
 import 'package:seal_note/ui/MasterDetailPage.dart';
 
-void main() => runApp(MultiProvider(
-      providers: [
-        Provider<Database>(
-          create: (context) => constructDb(),
-          dispose: (context, db) => db.close(),
-        ),
-        ChangeNotifierProvider<GlobalState>(
-          create: (context) => GlobalState(),
-        ),
-        ChangeNotifierProvider<SelectedNoteModel>(
-          create: (context) => SelectedNoteModel(),
-        ),
-        ChangeNotifierProvider<AppState>(
-          create: (context) => AppState(),
-        ),
-      ],
-      child: MyApp(),
-    ));
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runApp(MultiProvider(
+    providers: [
+      Provider<Database>(
+        create: (context) => constructDb(),
+        dispose: (context, db) => db.close(),
+      ),
+//      Provider<GlobalState>(
+//        create: (context) => GlobalState(),
+//      ),
+      ChangeNotifierProvider<SelectedNoteModel>(
+        create: (context) => SelectedNoteModel(),
+      ),
+      ChangeNotifierProvider<AppState>(
+        create: (context) => AppState(),
+      ),
+    ],
+    child: MyApp(),
+  ));
+}
 
 class MyApp extends StatelessWidget {
   @override

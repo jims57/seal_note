@@ -20,4 +20,13 @@ class AppState extends ChangeNotifier {
   }
 
   bool _isInFolderOptionSubPanel = false;
+
+  int _widgetNo = 1; // 1 = init page, 2 = webview, 3 = image gallery
+
+  int get widgetNo => _widgetNo;
+
+  set widgetNo(int value) {
+    _widgetNo = value;
+    notifyListeners();
+  }
 }

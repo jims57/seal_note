@@ -1,22 +1,164 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show ByteData, rootBundle;
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:keyboard_utils/keyboard_listener.dart';
+import 'package:keyboard_utils/keyboard_utils.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
+import 'package:seal_note/data/appstate/AppState.dart';
+import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/util/route/ScaleRoute.dart';
+
+import 'common/PhotoViewWidget.dart';
 
 class NoteDetailWidget extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _NoteDetailWidgetState();
+  State<StatefulWidget> createState() {
+    return NoteDetailWidgetState();
+  }
 }
 
-class _NoteDetailWidgetState extends State<NoteDetailWidget> {
+class NoteDetailWidgetState extends State<NoteDetailWidget> {
+  KeyboardUtils _keyboardUtils = KeyboardUtils();
+  final _flutterWebviewPlugin = FlutterWebviewPlugin();
+
+  String htmlString = '';
+
+  int _idKeyboardListener;
+
+  bool _isWebViewInitialized = false;
+
+//  int _firstPageIndex = 0 ;
+
+  @override
+  void initState() {
+    super.initState();
+
+    GlobalState.flutterWebviewPlugin = _flutterWebviewPlugin;
+    GlobalState.noteDetailWidgetContext = context;
+//    GlobalState.myWebViewPluginContext = context;
+
+    _idKeyboardListener = _keyboardUtils.add(
+        listener: KeyboardListener(willHideKeyboard: () {
+      _flutterWebviewPlugin.evalJavascript("javascript:hideKeyboard();");
+    }, willShowKeyboard: (double keyboardHeight) {
+      _flutterWebviewPlugin.evalJavascript("javascript:showKeyboard($keyboardHeight);");
+    }));
+
+    rootBundle.loadString('assets/QuillEditor.html').then((value) {
+      setState(() {
+        GlobalState.appState.widgetNo = 2;
+        htmlString = value;
+      });
+    });
+
+    _flutterWebviewPlugin.close();
+  }
+
+  @override
+  void dispose() {
+    _flutterWebviewPlugin.dispose();
+
+    _keyboardUtils.unsubscribeListener(subscribingId: _idKeyboardListener);
+    if (_keyboardUtils.canCallDispose()) {
+      _keyboardUtils.dispose();
+    }
+
+    super.dispose();
+  }
+
+  final Set<JavascriptChannel> jsChannels = [
+    JavascriptChannel(
+        name: 'Print',
+        onMessageReceived: (JavascriptMessage message) {
+          print(message.message);
+        }),
+    JavascriptChannel(
+        // Trigger multi image picker from js
+        name: 'TriggerMultiImagePickerFromJs',
+        onMessageReceived: (JavascriptMessage message) async {
+          try {
+            await MultiImagePicker.pickImages(maxImages: 9, enableCamera: true)
+                .then((assets) async {
+              GlobalState.imageDataList.clear();
+
+              assets.forEach((asset) {
+                Future<ByteData> imageByteData = asset.getByteData(quality: 70);
+                imageByteData.then((byteData) {
+                  ByteData imageByteData = byteData;
+                  List<int> imageData = imageByteData.buffer.asUint8List();
+
+                  GlobalState.imageDataList.add(imageData);
+
+                  FlutterWebviewPlugin()
+                      .evalJavascript("javascript:updateImage($imageData);");
+                });
+              });
+            });
+          } on NoImagesSelectedException catch (e) {
+            print('No image selected');
+          } on Exception catch (e) {
+            print('Other exception');
+          }
+        }),
+    JavascriptChannel(
+        name: 'TriggerPhotoView',
+        onMessageReceived: (JavascriptMessage message) {
+          print(message.message);
+
+          // Convert image index to int
+          GlobalState.firstPageIndex = int.parse(message.message);
+
+          GlobalState.appState.widgetNo = 2;
+
+          Navigator.push(GlobalState.noteDetailWidgetContext,
+              ScaleRoute(page: PhotoViewWidget(firstPageIndex: GlobalState.firstPageIndex,)));
+
+          GlobalState.flutterWebviewPlugin.hide();
+        }),
+  ].toSet();
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<SelectedNoteModel>(
-      builder: (context, note, child) {
-        return Container(
-          child: Text(
-              'I am detail widget!\nid=>${note.id}\ntitle=>${note.title}\ncontent=>${note.content}'),
-          color: Colors.green,
-        );
+    print('build()');
+
+    return Consumer<AppState>(
+      builder: (ctx, appState, child) {
+        switch (GlobalState.appState.widgetNo) {
+          case 2:
+            {
+              return WebviewScaffold(
+                url: new Uri.dataFromString(htmlString,
+                        mimeType: 'text/html',
+                        encoding: Encoding.getByName('utf-8'))
+                    .toString(),
+                appBar: AppBar(
+                  title: Text("Note detail"),
+                ),
+                javascriptChannels: jsChannels,
+                initialChild: Container(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+                hidden: true,
+                scrollBar: false,
+                withJavascript: true,
+                withLocalStorage: true,
+                withZoom: false,
+                allowFileURLs: true,
+              );
+            }
+
+            break;
+          default:
+            {
+              return Container();
+            }
+            break;
+        }
       },
     );
   }

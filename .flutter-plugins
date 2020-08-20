@@ -1,5 +1,8 @@
 # This is a generated file; do not edit or check into version control.
-moor_ffi=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/moor_ffi-0.7.0/
+flutter_webview_plugin=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_webview_plugin-0.3.11/
+keyboard_utils=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/keyboard_utils-1.2.4/
+multi_image_picker=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/multi_image_picker-4.7.11/
 path_provider=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.11/
 path_provider_linux=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_linux-0.0.1+2/
 path_provider_macos=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4+3/
+sqlite3_flutter_libs=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/sqlite3_flutter_libs-0.2.0/

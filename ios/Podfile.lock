@@ -1,22 +1,79 @@
 PODS:
+  - BSGridCollectionViewLayout (1.2.5)
+  - BSImagePicker (2.10.3):
+    - BSGridCollectionViewLayout (= 1.2.5)
+    - BSImageView (= 1.0.3)
+  - BSImageView (1.0.3)
   - Flutter (1.0.0)
+  - flutter_webview_plugin (0.0.1):
+    - Flutter
+  - keyboard_utils (0.0.1):
+    - Flutter
+  - multi_image_picker (4.7.11):
+    - BSImagePicker (~> 2.10.3)
+    - Flutter
   - path_provider (0.0.1):
     - Flutter
+  - sqlite3 (3.32.3):
+    - sqlite3/common (= 3.32.3)
+  - sqlite3/common (3.32.3)
+  - sqlite3/fts5 (3.32.3):
+    - sqlite3/common
+  - sqlite3/json1 (3.32.3):
+    - sqlite3/common
+  - sqlite3/perf-threadsafe (3.32.3):
+    - sqlite3/common
+  - sqlite3/rtree (3.32.3):
+    - sqlite3/common
+  - sqlite3_flutter_libs (0.0.1):
+    - Flutter
+    - sqlite3 (~> 3.32.3)
+    - sqlite3/fts5
+    - sqlite3/json1
+    - sqlite3/perf-threadsafe
+    - sqlite3/rtree
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - flutter_webview_plugin (from `.symlinks/plugins/flutter_webview_plugin/ios`)
+  - keyboard_utils (from `.symlinks/plugins/keyboard_utils/ios`)
+  - multi_image_picker (from `.symlinks/plugins/multi_image_picker/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
+  - sqlite3_flutter_libs (from `.symlinks/plugins/sqlite3_flutter_libs/ios`)
+
+SPEC REPOS:
+  trunk:
+    - BSGridCollectionViewLayout
+    - BSImagePicker
+    - BSImageView
+    - sqlite3
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  flutter_webview_plugin:
+    :path: ".symlinks/plugins/flutter_webview_plugin/ios"
+  keyboard_utils:
+    :path: ".symlinks/plugins/keyboard_utils/ios"
+  multi_image_picker:
+    :path: ".symlinks/plugins/multi_image_picker/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
+  sqlite3_flutter_libs:
+    :path: ".symlinks/plugins/sqlite3_flutter_libs/ios"
 
 SPEC CHECKSUMS:
+  BSGridCollectionViewLayout: 333dcb457a5a3bdd9212607ab5756553dcfe06cb
+  BSImagePicker: 07404254f2fcdaf5a2eb403c0f8c337267ce8738
+  BSImageView: a149459433a2687157d034c78e059d30ac7f2544
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  flutter_webview_plugin: ed9e8a6a96baf0c867e90e1bce2673913eeac694
+  keyboard_utils: ab24bc711be9e91a5937c20489056b8dd650fecc
+  multi_image_picker: bed13baf05c9f1ec602f353502274a92e78e4d35
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
+  sqlite3: 8f7d2078ae27778699a622a94b853285793422a2
+  sqlite3_flutter_libs: 5651f8ff48e3b44d910863c4ea5916085b1b245f
 
-PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+PODFILE CHECKSUM: a75497545d4391e2d394c3668e20cfb1c2bbd4aa
 
 COCOAPODS: 1.9.3
