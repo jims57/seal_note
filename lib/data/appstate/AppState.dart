@@ -29,4 +29,14 @@ class AppState extends ChangeNotifier {
     _widgetNo = value;
     notifyListeners();
   }
+
+  // 1 = old note in read mode, 2 = old note in edit mode, 3 = creating a new note
+  int _detailPageStatus = 1;
+
+  int get detailPageStatus => _detailPageStatus;
+
+  set detailPageStatus(int value) {
+    _detailPageStatus = value;
+    notifyListeners();
+  }
 }

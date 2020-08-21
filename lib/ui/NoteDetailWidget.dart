@@ -44,7 +44,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
         listener: KeyboardListener(willHideKeyboard: () {
       _flutterWebviewPlugin.evalJavascript("javascript:hideKeyboard();");
     }, willShowKeyboard: (double keyboardHeight) {
-      _flutterWebviewPlugin.evalJavascript("javascript:showKeyboard($keyboardHeight);");
+      _flutterWebviewPlugin
+          .evalJavascript("javascript:showKeyboard($keyboardHeight);");
     }));
 
     rootBundle.loadString('assets/QuillEditor.html').then((value) {
@@ -76,6 +77,18 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
           print(message.message);
         }),
     JavascriptChannel(
+        name: 'UpdateQuillStatus',
+        onMessageReceived: (JavascriptMessage message) {
+          print(message.message);
+          if (GlobalState.isQuillReadOnly) {
+            GlobalState.flutterWebviewPlugin
+                .evalJavascript("javascript:setQuillToReadOnly(true);");
+          } else {
+            GlobalState.flutterWebviewPlugin
+                .evalJavascript("javascript:setQuillToReadOnly(false);");
+          }
+        }),
+    JavascriptChannel(
         // Trigger multi image picker from js
         name: 'TriggerMultiImagePickerFromJs',
         onMessageReceived: (JavascriptMessage message) async {
@@ -84,18 +97,26 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
                 .then((assets) async {
               GlobalState.imageDataList.clear();
 
-              assets.forEach((asset) {
-                Future<ByteData> imageByteData = asset.getByteData(quality: 70);
-                imageByteData.then((byteData) {
-                  ByteData imageByteData = byteData;
-                  List<int> imageData = imageByteData.buffer.asUint8List();
+              int insertOrder = 1;
 
-                  GlobalState.imageDataList.add(imageData);
+              assets.forEach((asset) async {
+                int theInsertOrder = insertOrder;
+                insertOrder++;
 
-                  FlutterWebviewPlugin()
-                      .evalJavascript("javascript:updateImage($imageData);");
-                });
+                ByteData byteData =  await asset.getByteData(quality: 70);
+
+                ByteData imageByteData = byteData;
+                List<int> imageData = imageByteData.buffer.asUint8List();
+
+                GlobalState.imageDataList.add(imageData);
+
+                GlobalState.flutterWebviewPlugin
+                    .evalJavascript("javascript:updateImage($imageData, $theInsertOrder);");
+
+
               });
+
+              // After inserting all images, we should remove images with
             });
           } on NoImagesSelectedException catch (e) {
             print('No image selected');
@@ -113,8 +134,12 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
 
           GlobalState.appState.widgetNo = 2;
 
-          Navigator.push(GlobalState.noteDetailWidgetContext,
-              ScaleRoute(page: PhotoViewWidget(firstPageIndex: GlobalState.firstPageIndex,)));
+          Navigator.push(
+              GlobalState.noteDetailWidgetContext,
+              ScaleRoute(
+                  page: PhotoViewWidget(
+                firstPageIndex: GlobalState.firstPageIndex,
+              )));
 
           GlobalState.flutterWebviewPlugin.hide();
         }),
@@ -129,13 +154,33 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
         switch (GlobalState.appState.widgetNo) {
           case 2:
             {
-              return WebviewScaffold(
+              var wewbviewScaffold = WebviewScaffold(
                 url: new Uri.dataFromString(htmlString,
                         mimeType: 'text/html',
                         encoding: Encoding.getByName('utf-8'))
                     .toString(),
                 appBar: AppBar(
-                  title: Text("Note detail"),
+                  title: Text("Note detail2"),
+                  actions: [
+                    IconButton(
+                        icon: (GlobalState.isQuillReadOnly
+                            ? Icon(Icons.edit)
+                            : Icon(Icons.done)),
+                        onPressed: () {
+                          setState(() {
+                            GlobalState.appState.detailPageStatus = 2;
+                            if (GlobalState.isQuillReadOnly) { // If it is currently in readonly mode
+                              GlobalState.flutterWebviewPlugin.evalJavascript("javascript:setQuillToReadOnly(false);");
+                            } else { // If it is in edit mode
+                              GlobalState.flutterWebviewPlugin.evalJavascript("javascript:setQuillToReadOnly(true);");
+                            }
+
+                            // Switch the readonly status
+                            GlobalState.isQuillReadOnly =
+                                !GlobalState.isQuillReadOnly;
+                          });
+                        })
+                  ],
                 ),
                 javascriptChannels: jsChannels,
                 initialChild: Container(
@@ -150,6 +195,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
                 withZoom: false,
                 allowFileURLs: true,
               );
+
+              //GlobalState.flutterWebviewPlugin.evalJavascript("javascript:setQuillToEditMode(false);");
+
+              return wewbviewScaffold;
             }
 
             break;

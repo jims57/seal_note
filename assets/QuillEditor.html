@@ -59,6 +59,14 @@
     .ql-snow .ql-picker.ql-size {
         width: 55px;
     }
+
+    img {
+        width: 20%;
+        display: block;
+        /* margin-bottom: 20px; */
+        margin-left: auto;
+        margin-right: auto;
+    }
 </style>
 <div id="editor-container">
 </div>
@@ -228,11 +236,17 @@ function base64ToBytes(str) {
     var actionSum = 0; // Used to track the actions flow
     var imageIndexClicked = 0;
 
-    // Update the images in WebView by the byte data passed from Multi-Image-Picker(Flutter widget)
-    function updateImage(imageBytesArray) {
+    // Update the images in the WebView by the byte data passed from Multi-Image-Picker(Flutter widget).
+    // insertOrder = 1 means it is the first image to be inserted in a multi image picker action, 
+    // or it means the subsequent images in the same action
+    // (subsequent images need to increase the cursorIndex to append images accordingly)
+    function updateImage(imageBytesArray, insertOrder) {
+        Print.postMessage('insertOrder:' + insertOrder);
         // Print.postMessage('updateImage() is called in js.');
         // TriggerMultiImagePickerFromJs.postMessage('base64');
+
         var base64String = bytesToBase64(imageBytesArray);
+        // var base64String = imageBytesArray;
 
         var scrString = 'data:image/jpg;base64,';
         scrString += base64String;
@@ -257,24 +271,47 @@ function base64ToBytes(str) {
         // $($('.ql-editor')[0]).append($img);
 
         // quill.insertEmbed(1, 'image', 'https://user-images.githubusercontent.com/1920873/90213695-0230cf00-de29-11ea-993c-a6584093c7a7.png');
+
+        // Update the cursorIndex if it is the subsequent image
+        // if(imageNo >1) cursorIndex +=1;
+
+        // Print.postMessage('cursor index at : '+cursorIndex);
+
+        // Get the last characters which is going to be used as image id
+        var last20chars = scrString.slice(-20);
+
         quill.insertEmbed(cursorIndex, 'image', scrString);
-        Print.postMessage('cursor index: '+cursorIndex);
-        // $($('.ql-editor')[0]).append('<p><br></p>');
-        // Print.postMessage($img22.toString());
+
+        // Get the current image object
+        var $theImage = $($("img[src$='"+last20chars+"']")[0]);
+        $theImage.attr('data-insertorder',insertOrder); // Add insert order to the image
+
+        // Order all the images with *data-insertorder* attribute ascendingly
+        orderImagesInserted();
+
+        // Print.postMessage(img1);
+
+        // quill.insertEmbed(cursorIndex, 'imageBlot', {
+        //     src: scrString, // any url
+        //     insertorder: insertOrder, // any custom attr
+        // }, 'user');
+
+        //Print.postMessage('the number of images with imageno: '+$('img[data-imageno]').length);
+        //Print.postMessage('cursor index: '+cursorIndex);
 
         // Update image index
-        var imageArray = $('img');
-        $.each(imageArray,function(index,item){
-            $(item).attr('image-index',index);
-            Print.postMessage('image index updated to: '+index);
-        });
+        // var imageArray = $('img');
+        // $.each(imageArray,function(index,item){
+        //     $(item).attr('image-index',index);
+        //     //Print.postMessage('image index updated to: '+index);
+        // });
 
-        var imageArray2 = $('img');
-        $.each(imageArray2,function(index,item){
-            var imageIndex = $(item).attr('image-index');
-            console.log(imageIndex);
-            Print.postMessage('Image new index: '+imageIndex);
-        });
+        // var imageArray2 = $('img');
+        // $.each(imageArray2,function(index,item){
+        //     var imageIndex = $(item).attr('image-index');
+        //     console.log(imageIndex);
+        //     //Print.postMessage('Image new index: '+imageIndex);
+        // });
 
         // Every time to lose Quill's focus after inserting an image
         setTimeout(function () {
@@ -282,10 +319,44 @@ function base64ToBytes(str) {
         }, 500)
     }
 
+    // Order images inserted just
+    function orderImagesInserted() {
+        var $parent = $($('img[data-insertorder]')[0]).parent();
+        $parent.find('img').sort(function(a,b){return +a.dataset.insertorder - +b.dataset.insertorder;}).appendTo($parent);
+    }
+
     // Trigger Mutli-Image-Picker from js
     function triggerMultiImagePickerFromJs() {
         TriggerMultiImagePickerFromJs.postMessage('');
     }
+    
+    // var InlineBlot = Quill.import('blots/block');
+    // class ImageBlot extends InlineBlot {
+    //     static create(data) {
+    //         console.log(data);
+    //         Print.postMessage('ImageBlot.create()1');
+    //         const node = super.create(data);
+    //         // node.setAttribute('data-src', data.src);
+    //         node.setAttribute('src', data.src);
+    //         node.setAttribute('data-insertorder', data.insertorder);
+    //         // node.setAttribute('width', data.width);
+    //         console.log(node);
+    //         return node;
+    //     }
+
+    //     static value(domNode) {
+    //         Print.postMessage('ImageBlot.value()');
+    //         const { src, insertorder } = domNode.dataset;
+    //         return { src, insertorder };
+    //     }
+    // }
+
+    // ImageBlot.blotName = 'imageBlot';
+    // // ImageBlot.className = 'image-blot';
+    // ImageBlot.tagName = 'img';
+    // Quill.register({ 'formats/imageBlot': ImageBlot });
+
+    // Print.postMessage('ImageBlot create()2');
 
     var quill = new Quill('#editor-container', {
         modules: {
@@ -297,6 +368,7 @@ function base64ToBytes(str) {
     });
 
     quill.getModule('toolbar').addHandler('image', () => {
+        Print.postMessage('image()');
         triggerMultiImagePickerFromJs();
     });
 
@@ -372,6 +444,22 @@ function base64ToBytes(str) {
         document.getElementById('bottom-panel').style.display = 'none';
     }
 
+    // Set quill edit mode
+    function setQuillToReadOnly(isReadOnly){
+        if(isReadOnly){
+            // setTimeout(function () { 
+            //     quill.enable(false);
+            //     quill.blur(); 
+            // }, 300)
+            quill.enable(false);
+            quill.blur(); 
+            
+        } else {
+            quill.enable();
+            quill.focus();
+        }
+    }
+
     $(function () {
         toolbarHeight = $('#toolbar').outerHeight();
 
@@ -405,7 +493,7 @@ function base64ToBytes(str) {
             if (range.length == 0) {
                 cursorIndex = range.index;
                 console.log('User cursor is on', range.index);
-                // Print.postMessage('index is: '+range.index);
+                Print.postMessage('index is: '+range.index);
             } else { // When user has higlighted text
                 var text = quill.getText(range.index, range.length);
                 console.log('User has highlighted', text);
@@ -459,5 +547,8 @@ function base64ToBytes(str) {
             'italic': true,
             'color': 'rgba(0,0,0,0.6)'
         });
+
+        // Set Quill readonly status or not
+        UpdateQuillStatus.postMessage('SetQuillEditMode() in js.');
     });
 </script>

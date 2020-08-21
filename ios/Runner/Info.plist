@@ -46,5 +46,12 @@
     <string></string>
     <key>NSCameraUsageDescription</key>
     <string></string>
+
+    <key>CFBundleLocalizations</key>
+    <array>
+    <string>zh</string>
+    <string>English</string>
+    <string>es</string>
+    </array>
 </dict>
 </plist>

@@ -273,18 +273,15 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                   ),
                   onTap: () {
                     GlobalState.selectedNoteModel.id = index;
+                    GlobalState.appState.detailPageStatus = 1;
+                    GlobalState.isQuillReadOnly = true;
 
                     if (GlobalState.screenType == 1) {
-//                      Navigator.push(
-//                        context,
-//                        MaterialPageRoute(
-//                            builder: (context) => NoteDetailPage()),
-//                      );
-
-                      Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+                      Navigator.of(GlobalState.noteListPageContext)
+                          .push(MaterialPageRoute(builder: (ctx) {
                         return NoteDetailWidget();
                       }));
-                    }
+                    } else {}
                   },
                 );
               },

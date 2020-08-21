@@ -21,14 +21,14 @@ class GlobalState with ChangeNotifier {
   static Database database;
 
   // Device basic info
-  static int screenType;
+  static int screenType; // 1 = small screen, 2 = medium screen, 3 = large screen
   static double screenWidth;
   static double screenHeight;
 
   // Contexts
   static BuildContext noteListPageContext;
   static BuildContext folderOptionItemListPanelContext;
-  static BuildContext noteDetailPageContext;
+//  static BuildContext noteDetailPageContext;
   static BuildContext noteDetailWidgetContext;
   static BuildContext myWebViewPluginContext;
 
@@ -43,6 +43,9 @@ class GlobalState with ChangeNotifier {
 
   // WebView
   static FlutterWebviewPlugin flutterWebviewPlugin;
+
+  // Quill editor
+  static bool isQuillReadOnly = true;
 
   // Photo Views
   static int firstPageIndex = 0;

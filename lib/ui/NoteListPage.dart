@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/database/database.dart';
+import 'package:seal_note/ui/NoteDetailPage.dart';
 import 'package:seal_note/ui/NoteDetailWidget.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
 import 'package:seal_note/util/route/SlideRightRoute.dart';
@@ -219,9 +220,18 @@ class _NoteListPageState extends State<NoteListPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-            return NoteDetailWidget();
-          }));
+          GlobalState.appState.detailPageStatus = 3;
+          GlobalState.isQuillReadOnly = false;
+
+          if (GlobalState.screenType == 1) {
+            Navigator.of(GlobalState.noteListPageContext)
+                .push(MaterialPageRoute(builder: (ctx) {
+//              return NoteDetailWidget();
+              return NoteDetailWidget();
+            }));
+          } else {
+
+          }
 
 //          _database.deleteAllNotes().then((value) {
 //            _noteListWidgetState
