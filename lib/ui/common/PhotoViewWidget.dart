@@ -24,14 +24,15 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
     // TODO: implement initState
     super.initState();
 
-    _currentImageNo = widget.firstPageIndex+1;
+    _currentImageNo = widget.firstPageIndex + 1;
   }
 
   @override
   Widget build(BuildContext context) {
     _imageTotalCount = GlobalState.imageDataList.length;
 
-    PageController _pageController = PageController(initialPage: widget.firstPageIndex);
+    PageController _pageController =
+        PageController(initialPage: widget.firstPageIndex);
 
     return Scaffold(
       body: Stack(
@@ -44,8 +45,7 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
               return PhotoViewGalleryPageOptions(
                 imageProvider: MemoryImage(GlobalState.imageDataList[index]),
                 initialScale: PhotoViewComputedScale.contained * 1,
-                heroAttributes:
-                    PhotoViewHeroAttributes(tag: index),
+                heroAttributes: PhotoViewHeroAttributes(tag: index),
               );
             },
             itemCount: GlobalState.imageDataList.length,
@@ -62,6 +62,7 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
             },
             backgroundDecoration: BoxDecoration(color: Colors.black),
             pageController: _pageController,
+            loadFailedChild: Text('No image'),
           )),
           Container(
             height: 56,

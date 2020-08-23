@@ -50,4 +50,5 @@ class GlobalState with ChangeNotifier {
   // Photo Views
   static int firstPageIndex = 0;
   static List<Uint8List> imageDataList = List<Uint8List>();
+//  static List<Uint8List> tempImageDataList = List<Uint8List>();
 }

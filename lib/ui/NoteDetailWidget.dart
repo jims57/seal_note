@@ -95,9 +95,13 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
           try {
             await MultiImagePicker.pickImages(maxImages: 9, enableCamera: true)
                 .then((assets) async {
+                  // test
+//              if(GlobalState.tempImageDataList.length
+
               GlobalState.imageDataList.clear();
 
               int insertOrder = 1;
+              int assetsCount = assets.length;
 
               assets.forEach((asset) async {
                 int theInsertOrder = insertOrder;
@@ -111,12 +115,13 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
                 GlobalState.imageDataList.add(imageData);
 
                 GlobalState.flutterWebviewPlugin
-                    .evalJavascript("javascript:updateImage($imageData, $theInsertOrder);");
+                    .evalJavascript("javascript:updateImage($imageData, $theInsertOrder, $assetsCount);");
 
 
               });
 
-              // After inserting all images, we should remove images with
+              // Reorder images inserted just and remove their *data-insertorder* attribute to prevent another operation of Multi Image Picker will use it again
+//              GlobalState.flutterWebviewPlugin.evalJavascript("javascript:orderImagesInserted();");
             });
           } on NoImagesSelectedException catch (e) {
             print('No image selected');
@@ -179,7 +184,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
                             GlobalState.isQuillReadOnly =
                                 !GlobalState.isQuillReadOnly;
                           });
-                        })
+                        }),
+                    IconButton(icon: Icon(Icons.text_fields), onPressed: (){
+                      GlobalState.flutterWebviewPlugin.evalJavascript("javascript:getPageHtml();");
+                    })
                   ],
                 ),
                 javascriptChannels: jsChannels,
