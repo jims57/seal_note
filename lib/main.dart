@@ -39,6 +39,9 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
+    var Str = 23.toString().padLeft(3,'0');
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: MasterDetailPage(),

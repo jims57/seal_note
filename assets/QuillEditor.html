@@ -222,6 +222,7 @@ function base64ToBytes(str) {
 }
 </script>
 <!-- Initialize Quill editor -->
+<script></script>
 <script>
     var cursorIndex = 0;
     var toolbarHeight;
@@ -236,112 +237,36 @@ function base64ToBytes(str) {
     var actionSum = 0; // Used to track the actions flow
     var imageIndexClicked = 0;
 
-    // Multi-Image-Picker related variables
     var countOfImagesInsertedNow = 0; // Record how many images being inserted have already been inserted in the html page
+    var imagesSyncArray = []; // Used to sync with dart to keep the image status up-to-date
 
+    // 【Image】
     // Update the images in the WebView by the byte data passed from the Multi-Image-Picker(Flutter widget).
     // insertOrder = 1 means it is the first image to be inserted in the Multi-Image-Picker action, 
     // or it means the subsequent images in the same action
     // (subsequent images need to increase the cursorIndex to append images accordingly)
     // *total* means how many images will be inserted by the Multi-Image-Picker in this action.
-    function updateImage(imageBytesArray, insertOrder, total) {
-        // Print.postMessage('insertOrder:' + insertOrder);
-        // Print.postMessage('updateImage() is called in js.');
-        // TriggerMultiImagePickerFromJs.postMessage('base64');
-
-        var base64String = bytesToBase64(imageBytesArray);
-        // var base64String = imageBytesArray;
-
-        var scrString = 'data:image/jpg;base64,';
-        scrString += base64String;
-
-        // var $img = $('<img border="0" id="img11" src="'+scrString+'">');
-        // var $img = $('<img border="0" id="img11" src="'+scrString+'"><p id="pp1"><br></p>');
-
-        // TODO: Test
-
-        // Bind click event to the image object
-        // $img.click(function(){
-        //     // Print.postMessage('$img.click() is called in js.');
-
-        //     TriggerPhotoView.postMessage('Called $img.click() in js to TriggerPageView() in dart.');
-
-        //     // quill.enable(false);
-        //     setTimeout(function () {
-        //         quill.blur();
-        //     }, 300)
-        // });
-
-        // $($('.ql-editor')[0]).append($img);
-
-        // quill.insertEmbed(1, 'image', 'https://user-images.githubusercontent.com/1920873/90213695-0230cf00-de29-11ea-993c-a6584093c7a7.png');
-
-        // Update the cursorIndex if it is the subsequent image
-        // if(imageNo >1) cursorIndex +=1;
-
-        // Print.postMessage('cursor index at : '+cursorIndex);
-
-        // Get the last characters which is going to be used as image id
-        var last20chars = scrString.slice(-20);
-
-        quill.insertEmbed(cursorIndex, 'image', scrString);
-
-        // Add *insertOrder* attribute to the image tag
-        var $theImage = $($("img[src$='"+last20chars+"']")[0]); // Get the current image object
-        $theImage.attr('data-insertorder',insertOrder); // Add insert order to the image
-
-        // Update the count of images already in the html tree
-        countOfImagesInsertedNow +=1;
+    function upsertAllImagesIndex() {
+        var allImagesArray = $('img'); // Get all image objects in the WebView
         
-        // Insert a <br> tag after the image for user to add comment on the image easily
-        // var $br = $('<p><br></p>');
-        // $br.insertAfter($theImage);
-
-        // If it is the last image, it will trigger to reorder all the images with *data-insertorder* attribute ascendingly
-        if(countOfImagesInsertedNow == total) {
-            orderImagesInserted();
-            // appendBrToImageInserted();
-            removeAllInsertOrderAttributes(); // Remove all the insertorder attribute for these images
-
-            countOfImagesInsertedNow = 0; // Reset the variable for future usage
-        }
-        
-        // Print.postMessage(img1);
-
-        // quill.insertEmbed(cursorIndex, 'imageBlot', {
-        //     src: scrString, // any url
-        //     insertorder: insertOrder, // any custom attr
-        // }, 'user');
-
-        //Print.postMessage('the number of images with imageno: '+$('img[data-imageno]').length);
-        //Print.postMessage('cursor index: '+cursorIndex);
-
-        //Update image index
-        var imageArray = $('img');
-        $.each(imageArray,function(index,item){
+        $.each(allImagesArray,function(index,item){
+            // Update or insert image index attribute
             $(item).attr('image-index',index);
-            //Print.postMessage('image index updated to: '+index);
         });
-
-        var imageArray2 = $('img');
-        $.each(imageArray2,function(index,item){
-            var imageIndex = $(item).attr('image-index');
-            console.log(imageIndex);
-            //Print.postMessage('Image new index: '+imageIndex);
-        });
-
-        // Every time to lose Quill's focus after inserting an image
-        setTimeout(function () {
-            quill.blur();
-        }, 500)
     }
 
-    // Order images inserted just
-    function orderImagesInserted() {
-        // Find all images with *data-insertorder* attribute
-        // var $parent = $($('img[data-insertorder]')[0]).parent();
-        // $parent.find('img[data-insertorder]').sort(function(a,b){return +a.dataset.insertorder - +b.dataset.insertorder;}).appendTo($parent);
+    function upsertCurrentImageAttributes($theImage, imageId) {
+        // Get insert order by imageId(Note: the last 3 bit represents insert order)
+        var insertOrder = parseInt(imageId.slice(-3)); // Parse string to int to trim prefix zeroes
 
+        // Add insert order attribute to the image
+        $theImage.attr('data-insertorder', insertOrder); 
+
+        // Add image id attribute to the image
+        $theImage.attr('id', imageId);
+    }
+
+    function orderImagesInserted() {
         // Update *src* attribute according to *insertorder* attribute(Make it show images ascendingly)
         var $imageList = $('img[data-insertorder]');
         var currentOrder; // The current image's *insertOrder* attribute value
@@ -350,12 +275,10 @@ function base64ToBytes(str) {
         var $currentImage;
         var $shouldBeImage;
         var $tempImage;
-        // var $tempImageFrom; // Temporary image object for swapping position
-        // var $tempImageTo; 
-        // var tempBase64; // temporary variable saving the swapped base64 data
+        var tempHtmlObject;
 
         // Traverse the array to update *src* attribute
-        for(index = 0;index < $imageList.length;index++) {
+        for(index = 0;index < $imageList.length - 1;index++) {
             $currentImage = $($imageList[index]); // Get the current image object
             currentOrder = parseInt($currentImage.attr('data-insertorder'));
             shouldBeOrder = index + 1;
@@ -374,44 +297,15 @@ function base64ToBytes(str) {
                 // Step 3: Replace the should-be image object with the current image object in html page using replaceWith()
                 $shouldBeImage.replaceWith($currentImage);
 
-                // Step 4: Copy the current image item in the $imageList to the should-be item position in the $imageList
+                // Step 4: Swap position between the current item and should-be item in the image array
+                tempHtmlObject = $imageList[shouldBeIndex];
                 $imageList[shouldBeIndex] = $imageList[index];
-                
-                // $imageList[shouldBeIndex] = $currentImage[0];
-                // $($imageList[index]).replaceWith($tempImage);
+                $imageList[index] = tempHtmlObject;
             }
         }
 
-        // $.each($imageList,function(index,item) {
-        //     insertOrder = parseInt($(item).attr('data-insertorder')); // Get the item's insert order
-        //     currentOrder = index + 1;
-
-        //     // When the image isn't shown ascendingly
-        //     if(insertOrder != currentOrder) {
-        //         // Find image object with *data-insertorder* == currentOrder
-        //         $currentOrderImage = $('img[data-insertorder='+currentOrder+']');
-
-        //         // Exchange the two images position
-        //         $tempImageFrom = $currentOrderImage.clone(true, true);
-        //         $tempImageTo = $(item).clone(true, true);
-        //         $(item).replaceWith($tempImageFrom);
-        //         $currentOrderImage.replaceWith($tempImageTo);
-
-        //         // Swapping base64 data, that is Bubble Algorithm
-        //         // tempBase64 = $currentOrderImage.attr('src'); // Save base64 to temporary variable for swapping
-        //         // $currentOrderImage.attr('src', $(item).attr('src')); // Use the current item's src value to update that of another image which should be in current position
-        //         // $(item).attr('src', tempBase64); // Use the temporary base64 to update the current item's src attribute
-        //     }
-
-        //     console.log($(item).attr('data-insertorder'));
-        // });
-
-        // Remove all *data-insertorder* attribute from these images you just inserted
-        // $('img[data-insertorder]').removeAttr('data-insertorder');
-
         Print.postMessage('orderImagesInserted() executed.');
     }
-
 
     function appendBrToImageInserted() {
         var $imageList = $('img[data-insertorder]');
@@ -422,43 +316,67 @@ function base64ToBytes(str) {
         });
     }
 
-    function removeAllInsertOrderAttributes() {
+    function removeAllImagesInsertOrderAttributes() {
         $('img[data-insertorder]').removeAttr('data-insertorder');
     }
 
-    // Trigger Mutli-Image-Picker from js
-    function triggerMultiImagePickerFromJs() {
-        TriggerMultiImagePickerFromJs.postMessage('');
+    function getBase64ByImageId(imageId, shouldSendToDart = false) {
+        Print.postMessage('getBase64ByImageId(imageId = '+imageId+', shouldSendToDart = '+shouldSendToDart+')');
+
+        var srcArray = $('img#'+imageId+'').attr('src').split(',');
+        var base64Result = '';
+
+        if(srcArray.length == 2 && srcArray[0].indexOf('base64')>0) {
+            base64Result = srcArray[1];
+        }
+
+        // For jsChannel
+        if(shouldSendToDart) {
+            GetBase64ByImageId.postMessage(base64Result);
+        }
+
+        return base64Result;
     }
-    
-    // var InlineBlot = Quill.import('blots/block');
-    // class ImageBlot extends InlineBlot {
-    //     static create(data) {
-    //         console.log(data);
-    //         Print.postMessage('ImageBlot.create()1');
-    //         const node = super.create(data);
-    //         // node.setAttribute('data-src', data.src);
-    //         node.setAttribute('src', data.src);
-    //         node.setAttribute('data-insertorder', data.insertorder);
-    //         // node.setAttribute('width', data.width);
-    //         console.log(node);
-    //         return node;
-    //     }
 
-    //     static value(domNode) {
-    //         Print.postMessage('ImageBlot.value()');
-    //         const { src, insertorder } = domNode.dataset;
-    //         return { src, insertorder };
-    //     }
-    // }
+    // 【Image sync】 syncId = { 0 = synced, 1 = to be added, 2 = to be deleted, 3 = to be updated}
+    function addImageToSyncArray(imageId, imageIndex) {
+        var hasImage = checkIfImageExistsInSyncArray(imageId);
 
-    // ImageBlot.blotName = 'imageBlot';
-    // // ImageBlot.className = 'image-blot';
-    // ImageBlot.tagName = 'img';
-    // Quill.register({ 'formats/imageBlot': ImageBlot });
+        if(!hasImage) {
+            var imageSyncJson = {};
 
-    // Print.postMessage('ImageBlot create()2');
+            imageSyncJson['imageId'] = imageId;
+            imageSyncJson['imageIndex'] = imageIndex;
+            imageSyncJson['syncId'] = 1;
 
+            imagesSyncArray.push(imageSyncJson);
+        }
+    }
+
+    function checkIfImageExistsInSyncArray (imageId) {
+        var result = false;
+
+        var filteredImages = $.grep(imagesSyncArray,function(img){
+			return img.imageId === imageId;
+		});
+
+        if(filteredImages.length > 0) result = true;
+
+        return result;
+    }
+
+    // 【Bottom panel】
+    function showBottomPanel(bottomPanelHeight){
+        document.getElementById('bottom-panel').style.display = 'block';
+        document.getElementById('bottom-panel').style.height = bottomPanelHeight;
+    }
+
+    function hideBottomPanel(){
+        document.getElementById('bottom-panel').style.display = 'none';
+    }
+
+
+    // 【For quill editor】
     var quill = new Quill('#editor-container', {
         modules: {
             toolbar: '#toolbar'
@@ -473,7 +391,6 @@ function base64ToBytes(str) {
         triggerMultiImagePickerFromJs();
     });
 
-    //function setEditorHeight(kbHeight, updateKeyboardHeightVar) {
     function setEditorHeight(bottomCtrlHeight, showToolbar) {
         var currentToolbarHeight = 0;
 
@@ -489,7 +406,75 @@ function base64ToBytes(str) {
         document.getElementById('editor-container').style.height = editorHeight;
     }
 
-    function showKeyboard(kbHeight){
+
+    // 【For debug】
+    function getPageHtml() {
+        var htmlString = $('html').html();
+        Print.postMessage(htmlString);
+    }
+
+
+    // 【For js to call dart】
+    // Trigger Mutli-Image-Picker from js
+    function triggerMultiImagePickerFromJs() {
+        TriggerMultiImagePickerFromJs.postMessage('');
+    }
+
+
+    // 【For dart to eval js】
+    function insertImagesByMultiImagePicker(imageBytesArray, imageId, total) {
+        // Print.postMessage('insertOrder:' + insertOrder);
+        // Print.postMessage('insertImagesByMultiImagePicker() is called in js.');
+        // TriggerMultiImagePickerFromJs.postMessage('base64');
+
+        Print.postMessage(imageId);
+
+        // Insert image tag to the html page
+        var base64String = bytesToBase64(imageBytesArray);
+        // var base64String = imageBytesArray;
+        var scrString = 'data:image/jpg;base64,';
+        scrString += base64String;
+        quill.insertEmbed(cursorIndex, 'image', scrString);
+
+        // Upsert the image additional attributes, such as id, image-index
+        var last20chars = scrString.slice(-20); // Get the last characters which is going to be used as image id
+        var $theImage = $($("img[src$='"+last20chars+"']")[0]); // Get the current image object
+        upsertCurrentImageAttributes($theImage, imageId);
+
+        // Update the count of images already in the html tree
+        countOfImagesInsertedNow +=1;
+
+        // If it is the last image, it will trigger to reorder all the images with *data-insertorder* attribute ascendingly
+        if(countOfImagesInsertedNow == total) {
+            orderImagesInserted();
+            // appendBrToImageInserted();
+            removeAllImagesInsertOrderAttributes(); // Remove all the insertorder attribute for these images
+            upsertAllImagesIndex(); // Update all image index after the last image is inserted
+
+            countOfImagesInsertedNow = 0; // Reset the variable for future usage
+
+            // Every time to lose Quill's focus after inserting an image
+            setTimeout(function () {
+                quill.blur();
+            }, 500)
+        }
+    }
+
+    function setQuillToReadOnly(isReadOnly){ //Set quill edit mode
+        if(isReadOnly){
+            setTimeout(function () { 
+                quill.enable(false);
+                quill.blur(); 
+            }, 300);
+        } else {
+            setTimeout(function () { 
+                quill.enable();
+                quill.focus();
+            }, 300);
+        }
+    }
+
+    function showKeyboard(kbHeight){ // Show keyboard from dart code
         keyboardIsBeingShown = true;
         keyboardHeight = kbHeight;
 
@@ -503,8 +488,8 @@ function base64ToBytes(str) {
         pickerIsBeingShown = false;
         actionSum = 0;
     }
-
-    function hideKeyboard(){
+   
+    function hideKeyboard(){ // Hide keyboard from dart code
         // Calculate the actual action
         if(actionSum == 1 ){ //keyboard is pressed Done(The keyboard is going to hide)
             isEditingMode = false;
@@ -536,42 +521,6 @@ function base64ToBytes(str) {
         pickerIsBeingShown = false;
     }
 
-    function showBottomPanel(bottomPanelHeight){
-        document.getElementById('bottom-panel').style.display = 'block';
-        document.getElementById('bottom-panel').style.height = bottomPanelHeight;
-    }
-
-    function hideBottomPanel(){
-        document.getElementById('bottom-panel').style.display = 'none';
-    }
-
-    // Set quill edit mode
-    function setQuillToReadOnly(isReadOnly){
-        if(isReadOnly){
-            setTimeout(function () { 
-                quill.enable(false);
-                quill.blur(); 
-            }, 300);
-
-            // quill.enable(false);
-            // quill.blur();   
-        } else {
-            setTimeout(function () { 
-                quill.enable();
-                quill.focus();
-            }, 300);
-
-            // quill.enable();
-            // quill.focus();
-        }
-    }
-
-    // Utilities for debug
-    function getPageHtml() {
-        var htmlString = $('html').html();
-        Print.postMessage(htmlString);
-    }
-
     $(function () {
         toolbarHeight = $('#toolbar').outerHeight();
 
@@ -596,7 +545,8 @@ function base64ToBytes(str) {
         })
 
         quill.on('text-change', function() {
-            console.log('Text change!');
+            // console.log('Text change!');
+            Print.postMessage('text change');
             cursorIndex++;
         });
 
@@ -653,6 +603,7 @@ function base64ToBytes(str) {
         });
 
         // quill.setText('添加笔记...');
+        // Initialize Quill editor
         quill.insertText(0,'添加笔记...');
 
         quill.formatText(0, 7, {

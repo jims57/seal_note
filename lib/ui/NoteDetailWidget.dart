@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show ByteData, rootBundle;
@@ -31,6 +32,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
   bool _isWebViewInitialized = false;
 
 //  int _firstPageIndex = 0 ;
+//  String _imageId = '';
 
   @override
   void initState() {
@@ -95,29 +97,41 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
           try {
             await MultiImagePicker.pickImages(maxImages: 9, enableCamera: true)
                 .then((assets) async {
-                  // test
-//              if(GlobalState.tempImageDataList.length
-
               GlobalState.imageDataList.clear();
 
+              int timestamp = DateTime.now().millisecondsSinceEpoch;
               int insertOrder = 1;
               int assetsCount = assets.length;
 
               assets.forEach((asset) async {
-                int theInsertOrder = insertOrder;
+                // Get imageId, format = timestamp+insertOrder[3 bits]
+                String paddedInsertOrder =
+                    insertOrder.toString().padLeft(3, '0');
+                String imageId = '$timestamp$paddedInsertOrder';
+                GlobalState.imageId = imageId;
+
+//                int theInsertOrder = insertOrder;
                 insertOrder++;
 
-                ByteData byteData =  await asset.getByteData(quality: 70);
+                ByteData byteData = await asset.getByteData(quality: 20);
 
                 ByteData imageByteData = byteData;
-                List<int> imageData = imageByteData.buffer.asUint8List();
+                Uint8List imageData = imageByteData.buffer.asUint8List();
+
+                // [TEST]
+//                if (GlobalState.tempImageDataList.length <= 1) {
+//                  AssetImage assetImage =
+//                      AssetImage("assets/appImages/loading.gif");
+////                  a
+//
+//                  GlobalState.tempImageDataList.add(imageData);
+//                }
+                // [END TEST]
 
                 GlobalState.imageDataList.add(imageData);
 
-                GlobalState.flutterWebviewPlugin
-                    .evalJavascript("javascript:updateImage($imageData, $theInsertOrder, $assetsCount);");
-
-
+                GlobalState.flutterWebviewPlugin.evalJavascript(
+                    "javascript:insertImagesByMultiImagePicker($imageData, '$imageId', $assetsCount);");
               });
 
               // Reorder images inserted just and remove their *data-insertorder* attribute to prevent another operation of Multi Image Picker will use it again
@@ -135,7 +149,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
           print(message.message);
 
           // Convert image index to int
-          GlobalState.firstPageIndex = int.parse(message.message);
+          GlobalState.firstImageIndex = int.parse(message.message);
 
           GlobalState.appState.widgetNo = 2;
 
@@ -143,10 +157,15 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
               GlobalState.noteDetailWidgetContext,
               ScaleRoute(
                   page: PhotoViewWidget(
-                firstPageIndex: GlobalState.firstPageIndex,
+                firstImageIndex: GlobalState.firstImageIndex,
               )));
 
           GlobalState.flutterWebviewPlugin.hide();
+        }),
+    JavascriptChannel(
+        name: 'GetBase64ByImageId',
+        onMessageReceived: (JavascriptMessage message) {
+          print(message.message);
         }),
   ].toSet();
 
@@ -174,10 +193,14 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
                         onPressed: () {
                           setState(() {
                             GlobalState.appState.detailPageStatus = 2;
-                            if (GlobalState.isQuillReadOnly) { // If it is currently in readonly mode
-                              GlobalState.flutterWebviewPlugin.evalJavascript("javascript:setQuillToReadOnly(false);");
-                            } else { // If it is in edit mode
-                              GlobalState.flutterWebviewPlugin.evalJavascript("javascript:setQuillToReadOnly(true);");
+                            if (GlobalState.isQuillReadOnly) {
+                              // If it is currently in readonly mode
+                              GlobalState.flutterWebviewPlugin.evalJavascript(
+                                  "javascript:setQuillToReadOnly(false);");
+                            } else {
+                              // If it is in edit mode
+                              GlobalState.flutterWebviewPlugin.evalJavascript(
+                                  "javascript:setQuillToReadOnly(true);");
                             }
 
                             // Switch the readonly status
@@ -185,9 +208,18 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
                                 !GlobalState.isQuillReadOnly;
                           });
                         }),
-                    IconButton(icon: Icon(Icons.text_fields), onPressed: (){
-                      GlobalState.flutterWebviewPlugin.evalJavascript("javascript:getPageHtml();");
-                    })
+                    IconButton(
+                        icon: Icon(Icons.text_fields),
+                        onPressed: () {
+                          GlobalState.flutterWebviewPlugin
+                              .evalJavascript("javascript:getPageHtml();");
+                        }),
+                    IconButton(
+                        icon: Icon(Icons.shop),
+                        onPressed: () {
+                          GlobalState.flutterWebviewPlugin
+                              .evalJavascript("javascript:getBase64ByImageId('${GlobalState.imageId}',true);");
+                        }),
                   ],
                 ),
                 javascriptChannels: jsChannels,

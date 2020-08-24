@@ -3,12 +3,13 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/model/GalleryItem.dart';
+import 'dart:async';
 
 class PhotoViewWidget extends StatefulWidget {
-  PhotoViewWidget({Key key, @required this.firstPageIndex = 0})
+  PhotoViewWidget({Key key, @required this.firstImageIndex = 0})
       : super(key: key);
 
-  final int firstPageIndex;
+  final int firstImageIndex;
 
   @override
   _PhotoViewWidgetState createState() => _PhotoViewWidgetState();
@@ -18,21 +19,37 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
   int _currentImageNo = 1;
   int _imageTotalCount = 1;
   bool _showToolBar = true;
+  int _firstImageIndex = 0;
+  bool _updateFirstImageIndex = true;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    _currentImageNo = widget.firstPageIndex + 1;
+    _currentImageNo = widget.firstImageIndex + 1;
+
+    _updateFirstImageIndex = true;
   }
 
   @override
   Widget build(BuildContext context) {
     _imageTotalCount = GlobalState.imageDataList.length;
+    if(_updateFirstImageIndex) _firstImageIndex = widget.firstImageIndex;
 
     PageController _pageController =
-        PageController(initialPage: widget.firstPageIndex);
+        PageController(initialPage: _firstImageIndex);
+
+//    var _timer = new Timer(const Duration(seconds: 5), () {
+//      setState(() {
+////        title = '[updated]';
+////        _firstImageIndex = 1;
+////        _updateFirstImageIndex = false;
+////        _currentImageNo = _firstImageIndex+1;
+//        GlobalState.imageDataList[0] = GlobalState.tempImageDataList[0];
+//        GlobalState.imageDataList[1] = GlobalState.tempImageDataList[1];
+//      });
+//    });
 
     return Scaffold(
       body: Stack(
@@ -45,6 +62,9 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
               return PhotoViewGalleryPageOptions(
                 imageProvider: MemoryImage(GlobalState.imageDataList[index]),
                 initialScale: PhotoViewComputedScale.contained * 1,
+
+//                imageProvider: AssetImage("assets/appImages/loading.gif"),
+//                initialScale: PhotoViewComputedScale.contained * 0.2,
                 heroAttributes: PhotoViewHeroAttributes(tag: index),
               );
             },
