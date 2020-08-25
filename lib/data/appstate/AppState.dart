@@ -39,4 +39,13 @@ class AppState extends ChangeNotifier {
     _detailPageStatus = value;
     notifyListeners();
   }
+
+  int _firstImageIndex = 0;
+
+  int get firstImageIndex => _firstImageIndex;
+
+  set firstImageIndex(int value) {
+    _firstImageIndex = value;
+    notifyListeners();
+  }
 }

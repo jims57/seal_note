@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/util/converter/ImageConverter.dart';
 
 // Import custom files
 import 'data/appstate/AppState.dart';
@@ -14,6 +15,8 @@ import 'data/database/dbHelper/shared.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
 
 import 'model/ImageSyncItem.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,19 +45,32 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    List<ImageSyncItem> imageSyncItemList = new List<ImageSyncItem>();
-    imageSyncItemList.add(ImageSyncItem(imageId: '20',imageIndex: 2,base64: 'b20'));
-    imageSyncItemList.add(ImageSyncItem(imageId: '10',imageIndex: 1,base64: 'b10'));
-    imageSyncItemList.add(ImageSyncItem(imageId: '30',imageIndex: 3,base64: 'b30'));
+//    String str = 'Hello';
+//    String str2 = '';
+//    print(str.isEmpty);
+//    print(str2.isEmpty);
 
-    //someObjects.sort((a, b) => a.someProperty.compareTo(b.someProperty));
-    imageSyncItemList.sort((a,b) =>a.imageIndex.compareTo(b.imageIndex));
-
-    var s = 's';
+//    ImageConverter.convertUint8ListToBase64(uint8List);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: MasterDetailPage(),
     );
+  }
+}
+
+class Tag {
+  String name;
+  int quantity;
+
+  Tag(this.name, this.quantity);
+
+  factory Tag.fromJson(dynamic json) {
+    return Tag(json['name'] as String, json['quantity'] as int);
+  }
+
+  @override
+  String toString() {
+    return '{ ${this.name}, ${this.quantity} }';
   }
 }

@@ -14,6 +14,7 @@ import 'package:seal_note/model/Note.dart';
 import 'package:seal_note/util/route/ScaleRoute.dart';
 
 import 'common/PhotoViewWidget.dart';
+import 'package:seal_note/model/ImageSyncItem.dart';
 
 class NoteDetailWidget extends StatefulWidget {
   @override
@@ -98,7 +99,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
           try {
             await MultiImagePicker.pickImages(maxImages: 9, enableCamera: true)
                 .then((assets) async {
-              GlobalState.imageDataList.clear();
+//              GlobalState.imageDataList.clear();
 
               int timestamp = DateTime.now().millisecondsSinceEpoch;
               int insertOrder = 1;
@@ -114,10 +115,12 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
 //                int theInsertOrder = insertOrder;
                 insertOrder++;
 
-                ByteData byteData = await asset.getByteData(quality: 20);
+                ByteData byteData = await asset.getByteData(quality: 70);
 
                 ByteData imageByteData = byteData;
                 Uint8List imageData = imageByteData.buffer.asUint8List();
+
+//                GlobalState.imageSyncItemList.add(ImageSyncItem(imageId, insertOrder -1 , '', 1));
 
                 // [TEST]
 //                if (GlobalState.tempImageDataList.length <= 1) {
@@ -129,7 +132,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
 //                }
                 // [END TEST]
 
-                GlobalState.imageDataList.add(imageData);
+//                GlobalState.imageDataList.add(imageData);
 
                 GlobalState.flutterWebviewPlugin.evalJavascript(
                     "javascript:insertImagesByMultiImagePicker($imageData, '$imageId', $assetsCount);");
@@ -171,7 +174,21 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
     JavascriptChannel(
         name: 'SyncImagesSyncArrayToDart',
         onMessageReceived: (JavascriptMessage message) {
-          print(message.message);
+          var jsonString = message.message;
+
+          var imagesSyncArray = jsonDecode(jsonString)['imagesSyncArray'] as List;
+          GlobalState.imageSyncItemList = imagesSyncArray.map((imageSync) => ImageSyncItem.fromJson(imageSync)).toList();
+          GlobalState.imageSyncItemList.add(ImageSyncItem('1598237287220013',1,'',1));
+
+//          print(imageSyncItemList);
+
+        }),
+    JavascriptChannel(
+        name: 'FetchImageBase64ByImageId',
+        onMessageReceived: (JavascriptMessage message) {
+          var _firstImageIndex = int.parse(message.message);
+          GlobalState.appState.firstImageIndex = _firstImageIndex;
+
         }), // GetBase64ByImageId
   ].toSet();
 
