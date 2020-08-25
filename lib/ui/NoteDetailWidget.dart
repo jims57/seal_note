@@ -10,6 +10,7 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/model/Note.dart';
 import 'package:seal_note/util/route/ScaleRoute.dart';
 
 import 'common/PhotoViewWidget.dart';
@@ -77,7 +78,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
         name: 'Print',
         onMessageReceived: (JavascriptMessage message) {
           print(message.message);
-        }),
+        }), // Print
     JavascriptChannel(
         name: 'UpdateQuillStatus',
         onMessageReceived: (JavascriptMessage message) {
@@ -89,7 +90,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
             GlobalState.flutterWebviewPlugin
                 .evalJavascript("javascript:setQuillToReadOnly(false);");
           }
-        }),
+        }), // UpdateQuillStatus
     JavascriptChannel(
         // Trigger multi image picker from js
         name: 'TriggerMultiImagePickerFromJs',
@@ -142,7 +143,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
           } on Exception catch (e) {
             print('Other exception');
           }
-        }),
+        }), // TriggerMultiImagePickerFromJs
     JavascriptChannel(
         name: 'TriggerPhotoView',
         onMessageReceived: (JavascriptMessage message) {
@@ -161,18 +162,21 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
               )));
 
           GlobalState.flutterWebviewPlugin.hide();
-        }),
+        }), // TriggerPhotoView
     JavascriptChannel(
         name: 'GetBase64ByImageId',
         onMessageReceived: (JavascriptMessage message) {
           print(message.message);
-        }),
+        }), //
+    JavascriptChannel(
+        name: 'SyncImagesSyncArrayToDart',
+        onMessageReceived: (JavascriptMessage message) {
+          print(message.message);
+        }), // GetBase64ByImageId
   ].toSet();
 
   @override
   Widget build(BuildContext context) {
-    print('build()');
-
     return Consumer<AppState>(
       builder: (ctx, appState, child) {
         switch (GlobalState.appState.widgetNo) {
@@ -217,8 +221,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
                     IconButton(
                         icon: Icon(Icons.shop),
                         onPressed: () {
-                          GlobalState.flutterWebviewPlugin
-                              .evalJavascript("javascript:getBase64ByImageId('${GlobalState.imageId}',true);");
+                          GlobalState.flutterWebviewPlugin.evalJavascript(
+                              "javascript:getBase64ByImageId('${GlobalState.imageId}',true);");
                         }),
                   ],
                 ),

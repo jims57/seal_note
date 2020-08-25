@@ -338,15 +338,23 @@ function base64ToBytes(str) {
         return base64Result;
     }
 
+    function getImageIndexByImageId(imageId) {
+        
+         var imageIndex = $('img#'+imageId).attr('image-index');
+         if(imageIndex === undefined) imageIndex = -1; 
+
+         return imageIndex;
+    }
+
     // 【Image sync】 syncId = { 0 = synced, 1 = to be added, 2 = to be deleted, 3 = to be updated}
-    function addImageToSyncArray(imageId, imageIndex) {
+    function addImageToSyncArray(imageId) {
         var hasImage = checkIfImageExistsInSyncArray(imageId);
 
         if(!hasImage) {
             var imageSyncJson = {};
 
             imageSyncJson['imageId'] = imageId;
-            imageSyncJson['imageIndex'] = imageIndex;
+            imageSyncJson['imageIndex'] = getImageIndexByImageId(imageId);
             imageSyncJson['syncId'] = 1;
 
             imagesSyncArray.push(imageSyncJson);
@@ -363,6 +371,16 @@ function base64ToBytes(str) {
         if(filteredImages.length > 0) result = true;
 
         return result;
+    }
+
+    function addAllOldImagesToSyncArray() { // This is used when the page is initializing
+        // Get all images without *data-insertorder* attribute, these are old images(Already existing in the page before user pick images to insert)
+        var $toBeAddedImages = $('img:not([data-insertorder])'); 
+
+        $.each($toBeAddedImages,function(index,item){
+            var imageId = $(item).attr('id');
+            addImageToSyncArray(imageId);
+        });
     }
 
     // 【Bottom panel】
@@ -420,6 +438,11 @@ function base64ToBytes(str) {
         TriggerMultiImagePickerFromJs.postMessage('');
     }
 
+    function syncImagesSyncArrayToDart() {
+        var jsonString = JSON.stringify(imagesSyncArray); // Convert array to string
+
+        SyncImagesSyncArrayToDart.postMessage(jsonString);
+    }
 
     // 【For dart to eval js】
     function insertImagesByMultiImagePicker(imageBytesArray, imageId, total) {
@@ -571,7 +594,7 @@ function base64ToBytes(str) {
 
         quill.once('selection-change', function () {
             console.log('First selection-change!');
-            quill.deleteText(0, 7);
+            // quill.deleteText(0, 7);
             cursorIndex = 0;
         });
 
@@ -627,5 +650,9 @@ function base64ToBytes(str) {
         // testing
         Print.postMessage('page is initializing!');
         // Print.postMessage('page is initializing!');
+       
+        addAllOldImagesToSyncArray();
+
+        syncImagesSyncArrayToDart();
     });
 </script>

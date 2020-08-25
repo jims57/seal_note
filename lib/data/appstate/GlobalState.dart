@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:seal_note/data/database/database.dart';
 import 'package:flutter/material.dart';
+import 'package:seal_note/model/ImageSyncItem.dart';
 
 import 'AppState.dart';
 import 'SelectedNoteModel.dart';
@@ -51,6 +52,7 @@ class GlobalState with ChangeNotifier {
   static int firstImageIndex = 0;
   static List<Uint8List> imageDataList = List<Uint8List>();
   static List<Uint8List> tempImageDataList = List<Uint8List>();
+  static List<ImageSyncItem> imageSyncItemList = List<ImageSyncItem>();
 
   // Testing
   static String imageId;

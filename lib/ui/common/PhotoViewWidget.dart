@@ -35,7 +35,7 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
   @override
   Widget build(BuildContext context) {
     _imageTotalCount = GlobalState.imageDataList.length;
-    if(_updateFirstImageIndex) _firstImageIndex = widget.firstImageIndex;
+    if (_updateFirstImageIndex) _firstImageIndex = widget.firstImageIndex;
 
     PageController _pageController =
         PageController(initialPage: _firstImageIndex);
@@ -137,5 +137,10 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
         ],
       ),
     );
+  }
+
+  void sortImageSyncItemListByAsc() {
+    GlobalState.imageSyncItemList
+        .sort((a, b) => a.imageIndex.compareTo(b.imageIndex));
   }
 }
