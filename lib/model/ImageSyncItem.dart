@@ -1,17 +1,31 @@
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
+
 class ImageSyncItem {
   String imageId;
   int imageIndex;
-  String base64 = '';
   int syncId;
+  String base64;
+  Uint8List byteData;
 
-  ImageSyncItem(this.imageId, this.imageIndex, this.base64, this.syncId);
+  ImageSyncItem(
+      {@required this.imageId,
+      @required this.imageIndex,
+      @required this.syncId,
+      this.base64,
+      this.byteData});
 
   factory ImageSyncItem.fromJson(dynamic json) {
-    return ImageSyncItem(json['imageId'] as String, json['imageIndex'] as int,json['base64'] as String, json['syncId'] as int);
+    return ImageSyncItem(
+      imageId: json['imageId'],
+      imageIndex: json['imageIndex'],
+      syncId: json['syncId'],
+      base64: json['base64'],
+    );
   }
 
   @override
   String toString() {
-    return '{ ${this.imageId}, ${this.imageIndex}, ${this.base64}, ${this.syncId} }';
+    return '{ ${this.imageId}, ${this.imageIndex}, ${this.syncId}, ${this.base64} }';
   }
 }

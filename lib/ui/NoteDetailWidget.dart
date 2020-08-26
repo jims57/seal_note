@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show ByteData, rootBundle;
@@ -11,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/model/Note.dart';
+import 'package:seal_note/util/converter/ImageConverter.dart';
 import 'package:seal_note/util/route/ScaleRoute.dart';
 
 import 'common/PhotoViewWidget.dart';
@@ -99,8 +101,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
           try {
             await MultiImagePicker.pickImages(maxImages: 9, enableCamera: true)
                 .then((assets) async {
-//              GlobalState.imageDataList.clear();
-
               int timestamp = DateTime.now().millisecondsSinceEpoch;
               int insertOrder = 1;
               int assetsCount = assets.length;
@@ -109,33 +109,30 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
                 // Get imageId, format = timestamp+insertOrder[3 bits]
                 String paddedInsertOrder =
                     insertOrder.toString().padLeft(3, '0');
+
+                int expectedImageIndex = insertOrder;
+
+                insertOrder++;
+
                 String imageId = '$timestamp$paddedInsertOrder';
                 GlobalState.imageId = imageId;
 
-//                int theInsertOrder = insertOrder;
-                insertOrder++;
+                ByteData imageBytes = await asset.getByteData(quality: 70);
 
-                ByteData byteData = await asset.getByteData(quality: 70);
+                Uint8List imageUint8List = imageBytes.buffer.asUint8List();
 
-                ByteData imageByteData = byteData;
-                Uint8List imageData = imageByteData.buffer.asUint8List();
-
-//                GlobalState.imageSyncItemList.add(ImageSyncItem(imageId, insertOrder -1 , '', 1));
-
-                // [TEST]
-//                if (GlobalState.tempImageDataList.length <= 1) {
-//                  AssetImage assetImage =
-//                      AssetImage("assets/appImages/loading.gif");
-////                  a
-//
-//                  GlobalState.tempImageDataList.add(imageData);
-//                }
-                // [END TEST]
-
-//                GlobalState.imageDataList.add(imageData);
+                // Save the image to imageSyncList
+                var imageSyncItem = ImageSyncItem(
+                    imageId: imageId,
+                    imageIndex: expectedImageIndex,
+                    syncId: 1,
+                    byteData: imageUint8List);
+                GlobalState.imageSyncItemList.add(imageSyncItem);
 
                 GlobalState.flutterWebviewPlugin.evalJavascript(
-                    "javascript:insertImagesByMultiImagePicker($imageData, '$imageId', $assetsCount);");
+                    "javascript:insertImagesByMultiImagePicker($imageUint8List, '$imageId', $assetsCount);");
+
+                insertOrder++;
               });
 
               // Reorder images inserted just and remove their *data-insertorder* attribute to prevent another operation of Multi Image Picker will use it again
@@ -153,7 +150,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
           print(message.message);
 
           // Convert image index to int
-          GlobalState.firstImageIndex = int.parse(message.message);
+          GlobalState.appState.firstImageIndex = int.parse(message.message);
 
           GlobalState.appState.widgetNo = 2;
 
@@ -161,34 +158,54 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
               GlobalState.noteDetailWidgetContext,
               ScaleRoute(
                   page: PhotoViewWidget(
-                firstImageIndex: GlobalState.firstImageIndex,
+//                firstImageIndex: GlobalState.appState.firstImageIndex,
               )));
 
           GlobalState.flutterWebviewPlugin.hide();
         }), // TriggerPhotoView
     JavascriptChannel(
-        name: 'GetBase64ByImageId',
-        onMessageReceived: (JavascriptMessage message) {
-          print(message.message);
-        }), //
-    JavascriptChannel(
-        name: 'SyncImagesSyncArrayToDart',
+        name: 'SyncImageSyncArrayToDart',
         onMessageReceived: (JavascriptMessage message) {
           var jsonString = message.message;
 
-          var imagesSyncArray = jsonDecode(jsonString)['imagesSyncArray'] as List;
-          GlobalState.imageSyncItemList = imagesSyncArray.map((imageSync) => ImageSyncItem.fromJson(imageSync)).toList();
-          GlobalState.imageSyncItemList.add(ImageSyncItem('1598237287220013',1,'',1));
+          var imageSyncArray = jsonDecode(jsonString)['imageSyncArray'] as List;
+          GlobalState.imageSyncItemList = imageSyncArray.map((imageSync) {
+            var _imageSyncItem = ImageSyncItem.fromJson(imageSync);
+//            _imageSyncItem.byteData =
+//                ImageConverter.convertBase64ToUint8List(imageSync["base64"]);
+//            _imageSyncItem.base64 =
+//                null; // Clear base64 string from the field, since in dart, we just use uint8list to handle image
 
-//          print(imageSyncItemList);
+            return _imageSyncItem;
+          }).toList();
+          
+          // For Debug
+//          GlobalState.imageSyncItemList.add(ImageSyncItem(imageId: '1598237287220013', imageIndex: 1, syncId: 1));
 
+          
         }),
     JavascriptChannel(
-        name: 'FetchImageBase64ByImageId',
+        name: 'GetBase64ByImageId',
         onMessageReceived: (JavascriptMessage message) {
-          var _firstImageIndex = int.parse(message.message);
-          GlobalState.appState.firstImageIndex = _firstImageIndex;
+          var imageSyncItemString = message.message;
 
+          var imageSyncItem =
+              ImageSyncItem.fromJson(json.decode(imageSyncItemString));
+          var imageIndex = imageSyncItem.imageIndex;
+          GlobalState.imageSyncItemList[imageIndex] = imageSyncItem;
+
+          if(imageSyncItem.base64.isNotEmpty) {
+            imageSyncItem.byteData =
+                ImageConverter.convertBase64ToUint8List(imageSyncItem.base64);
+            imageSyncItem.base64 = null;
+
+//            GlobalState.imageSyncItemList[imageIndex].byteData =
+//                ImageConverter.convertBase64ToUint8List(imageSyncItem.base64);
+          }
+
+          new Timer(const Duration(milliseconds: 500), () {
+            GlobalState.appState.firstImageIndex = imageIndex;
+          });
         }), // GetBase64ByImageId
   ].toSet();
 
@@ -273,3 +290,19 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
     );
   }
 }
+
+//class Tag {
+//  String name;
+//  int quantity;
+//
+//  Tag(this.name, this.quantity);
+//
+//  factory Tag.fromJson(dynamic json) {
+//    return Tag(json['name'] as String, json['quantity'] as int);
+//  }
+//
+//  @override
+//  String toString() {
+//    return '{ ${this.name}, ${this.quantity} }';
+//  }
+//}
