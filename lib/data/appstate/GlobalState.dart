@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:seal_note/data/database/database.dart';
 import 'package:flutter/material.dart';
@@ -22,13 +20,15 @@ class GlobalState with ChangeNotifier {
   static Database database;
 
   // Device basic info
-  static int screenType; // 1 = small screen, 2 = medium screen, 3 = large screen
+  static int
+      screenType; // 1 = small screen, 2 = medium screen, 3 = large screen
   static double screenWidth;
   static double screenHeight;
 
   // Contexts
   static BuildContext noteListPageContext;
   static BuildContext folderOptionItemListPanelContext;
+
 //  static BuildContext noteDetailPageContext;
   static BuildContext noteDetailWidgetContext;
   static BuildContext myWebViewPluginContext;
@@ -49,9 +49,6 @@ class GlobalState with ChangeNotifier {
   static bool isQuillReadOnly = true;
 
   // Photo Views
-//  static int firstImageIndex = 0;
-//  static List<Uint8List> imageDataList = List<Uint8List>();
-//  static List<Uint8List> tempImageDataList = List<Uint8List>();
   static List<ImageSyncItem> imageSyncItemList = List<ImageSyncItem>();
 
   // Testing

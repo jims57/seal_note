@@ -4,17 +4,8 @@ import 'package:photo_view/photo_view_gallery.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/model/GalleryItem.dart';
-import 'dart:async';
-
-import 'package:seal_note/util/converter/ImageConverter.dart';
 
 class PhotoViewWidget extends StatefulWidget {
-//  PhotoViewWidget({Key key, @required this.firstImageIndex = 0})
-//      : super(key: key);
-//
-//  final int firstImageIndex;
-
   @override
   _PhotoViewWidgetState createState() => _PhotoViewWidgetState();
 }
@@ -29,7 +20,6 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     initPhotoView();
@@ -37,11 +27,6 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
 
   @override
   Widget build(BuildContext context) {
-//    if (_updateFirstImageIndex) _firstImageIndex = widget.firstImageIndex;
-
-//    PageController _pageController =
-//        PageController(initialPage: GlobalState.appState.firstImageIndex);
-
     return Scaffold(
       body: Stack(
         alignment: Alignment.topCenter,
@@ -67,7 +52,6 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
                   enableRotation: false,
                   onPageChanged: (newImageIndex) {
                     setState(() {
-//                      if(GlobalState.imageSyncItemList[newImageIndex].base64.isEmpty){
                       if (GlobalState
                               .imageSyncItemList[newImageIndex].byteData ==
                           null) {
@@ -75,9 +59,6 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
                             .imageSyncItemList[newImageIndex].imageId;
 
                         getBase64ByImageId(imageId);
-
-//                        GlobalState.flutterWebviewPlugin.evalJavascript(
-//                            "javascript:getBase64ByImageId('$imageId', true);");
                       }
 
                       _currentImageNo = newImageIndex + 1;
@@ -146,21 +127,18 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
   }
 
   void initPhotoView() {
-//    _currentImageNo = widget.firstImageIndex + 1;
-
     _firstImageIndex = GlobalState.appState.firstImageIndex;
     _firstImageId = GlobalState.imageSyncItemList[_firstImageIndex].imageId;
     _currentImageNo = _firstImageIndex + 1;
 
     _imageTotalCount = GlobalState.imageSyncItemList.length;
 
-    _pageController =
-        PageController(initialPage: _firstImageIndex);
+    _pageController = PageController(initialPage: _firstImageIndex);
 
     sortImageSyncItemListByAsc();
 
     // Check if
-    if(GlobalState.imageSyncItemList[_firstImageIndex].byteData == null) {
+    if (GlobalState.imageSyncItemList[_firstImageIndex].byteData == null) {
       getBase64ByImageId(_firstImageId);
     }
   }

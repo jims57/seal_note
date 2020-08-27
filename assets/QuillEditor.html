@@ -250,8 +250,15 @@ function base64ToBytes(str) {
         var allImagesArray = $('img'); // Get all image objects in the WebView
         
         $.each(allImagesArray,function(index,item){
+            var $theImage = $(item);
+            var imageId;
+            var imageIndex = index;
+
             // Update or insert image index attribute
-            $(item).attr('image-index',index);
+            $theImage.attr('image-index',imageIndex);
+
+            // Get the image id
+            imageId = $theImage.attr('id');
         });
     }
 
@@ -376,34 +383,41 @@ function base64ToBytes(str) {
     }
 
     // 【Image sync】 syncId = { 0 = synced, 1 = to be added, 2 = to be deleted, 3 = to be updated}
-    function addImageToSyncArray(imageId) {
-        Print.postMessage('addImageToSyncArray('+imageId+')');
+    function saveImageSyncToArray(imageId, syncId) { // Save image sync data to arrary for the synchronization with the imageSyncItemList in dart
+        Print.postMessage('saveImageSyncToArray('+imageId+','+syncId+')');
 
-        var hasImage = checkIfImageExistsInSyncArray(imageId);
+        var imageSyncJsonArray = getImageSyncJsonArrayFromImageSyncArray(imageId);
 
-        if(!hasImage) {
+        if(imageSyncJsonArray.length > 0) { // When it already exist in the array, we carry out update operation
+            var theImageSyncJson = imageSyncJsonArray[0];
+            var imageId = theImageSyncJson.imageId;
+
+            theImageSyncJson.imageIndex = getImageIndexByImageId(imageId);
+            theImageSyncJson.syncId = 3;
+        } else { // When it doesn't exist, we add it to the array
             var imageSyncJson = {};
 
             imageSyncJson['imageId'] = imageId;
             imageSyncJson['imageIndex'] = getImageIndexByImageId(imageId);
             // imageSyncJson['base64'] = getBase64ByImageId(imageId, false);
-            // imageSyncJson['base64'] = '';
-            imageSyncJson['syncId'] = 1;
+            imageSyncJson['syncId'] = syncId;
 
             imageSyncArray.push(imageSyncJson);
         }
     }
 
-    function updateImageSyncAtArray(imageId, newImageIndex) {
-        // var imageSyncJson = getim
+    function getImageSyncJsonArrayFromImageSyncArray(imageId) { // This will only return one json, no duplicate
+        var filteredImageSyncJsonArray = $.grep(imageSyncArray,function(imageSync){
+			return imageSync.imageId === imageId;
+		});
+
+        return filteredImageSyncJsonArray;
     }
 
     function checkIfImageExistsInSyncArray (imageId) {
         var result = false;
 
-        var filteredImages = $.grep(imageSyncArray,function(img){
-			return img.imageId === imageId;
-		});
+        var filteredImages = getImageSyncJsonArrayFromImageSyncArray(imageId);
 
         if(filteredImages.length > 0) result = true;
 
@@ -418,7 +432,7 @@ function base64ToBytes(str) {
 
         $.each($toBeAddedImages,function(index,item){
             var imageId = $(item).attr('id');
-            addImageToSyncArray(imageId);
+            saveImageSyncToArray(imageId, 1);
         });
     }
 
@@ -489,8 +503,6 @@ function base64ToBytes(str) {
     // 【For dart to eval js】
     function insertImagesByMultiImagePicker(imageBytesArray, imageId, total) {
         // Print.postMessage('insertOrder:' + insertOrder);
-        // Print.postMessage('insertImagesByMultiImagePicker() is called in js.');
-        // TriggerMultiImagePickerFromJs.postMessage('base64');
 
         Print.postMessage(imageId);
 
@@ -513,10 +525,19 @@ function base64ToBytes(str) {
         // If it is the last image, it will trigger to reorder all the images with *data-insertorder* attribute ascendingly
         if(countOfImagesInsertedNow == total) {
             orderImagesInserted();
-            // appendBrToImageInserted();
-            removeAllImagesInsertOrderAttributes(); // Remove all the insertorder attribute for these images
             upsertAllImagesIndex(); // Update all image index after the last image is inserted
+            // appendBrToImageInserted();
 
+            // By default, we view all images as those subject to be updated. For sometimes, users will insert images between two old images rather than appending
+            $.each($('img'), function (index, item) { 
+                var imageId = item.id;
+                saveImageSyncToArray(imageId, 3);
+            });
+
+            syncImageSyncArrayToDart(); // Always sync with imageSyncItemList in dart
+
+            removeAllImagesInsertOrderAttributes(); // Remove all the insertorder attribute for these images
+            
             countOfImagesInsertedNow = 0; // Reset the variable for future usage
 
             // Every time to lose Quill's focus after inserting an image
@@ -525,16 +546,6 @@ function base64ToBytes(str) {
             }, 500)
         }
     }
-
-    // function getBase64ByImageId(imageId) {
-    //     Print.postMessage('getBase64ByImageId('+imageId+')');
-
-    //     // respose
-
-    //     var responseJsonString = '{"imageId":"'+imageId+'","imageIndex":1,"base64":"i","syncId":1}';
-
-    //     GetBase64ByImageId.postMessage(responseJsonString);
-    // }
 
     function setQuillToReadOnly(isReadOnly){ //Set quill edit mode
         if(isReadOnly){
@@ -734,21 +745,13 @@ function base64ToBytes(str) {
         var $theImage = getImageJqueryObjectByBase64(scrString3);
         addImageIdAttribute($theImage, '1598237287220002');
        
-
-        
-
         upsertAllImagesIndex();
 
         addAllOldImagesToSyncArray();
 
         syncImageSyncArrayToDart();
         
-
-
         Print.postMessage('end()');
-    //    ssetTimeout(function () { 
-         
-    //     }, 3000);
 
     });
 </script>

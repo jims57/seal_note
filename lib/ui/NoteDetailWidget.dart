@@ -11,7 +11,6 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/model/Note.dart';
 import 'package:seal_note/util/converter/ImageConverter.dart';
 import 'package:seal_note/util/route/ScaleRoute.dart';
 
@@ -33,18 +32,12 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
 
   int _idKeyboardListener;
 
-  bool _isWebViewInitialized = false;
-
-//  int _firstPageIndex = 0 ;
-//  String _imageId = '';
-
   @override
   void initState() {
     super.initState();
 
     GlobalState.flutterWebviewPlugin = _flutterWebviewPlugin;
     GlobalState.noteDetailWidgetContext = context;
-//    GlobalState.myWebViewPluginContext = context;
 
     _idKeyboardListener = _keyboardUtils.add(
         listener: KeyboardListener(willHideKeyboard: () {
@@ -135,8 +128,9 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
                 insertOrder++;
               });
 
+              // TODO: Try to insert <br> after image
               // Reorder images inserted just and remove their *data-insertorder* attribute to prevent another operation of Multi Image Picker will use it again
-//              GlobalState.flutterWebviewPlugin.evalJavascript("javascript:orderImagesInserted();");
+              // GlobalState.flutterWebviewPlugin.evalJavascript("javascript:orderImagesInserted();");
             });
           } on NoImagesSelectedException catch (e) {
             print('No image selected');
@@ -154,12 +148,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
 
           GlobalState.appState.widgetNo = 2;
 
-          Navigator.push(
-              GlobalState.noteDetailWidgetContext,
-              ScaleRoute(
-                  page: PhotoViewWidget(
-//                firstImageIndex: GlobalState.appState.firstImageIndex,
-              )));
+          Navigator.push(GlobalState.noteDetailWidgetContext,
+              ScaleRoute(page: PhotoViewWidget()));
 
           GlobalState.flutterWebviewPlugin.hide();
         }), // TriggerPhotoView
@@ -169,20 +159,42 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
           var jsonString = message.message;
 
           var imageSyncArray = jsonDecode(jsonString)['imageSyncArray'] as List;
-          GlobalState.imageSyncItemList = imageSyncArray.map((imageSync) {
-            var _imageSyncItem = ImageSyncItem.fromJson(imageSync);
-//            _imageSyncItem.byteData =
-//                ImageConverter.convertBase64ToUint8List(imageSync["base64"]);
-//            _imageSyncItem.base64 =
-//                null; // Clear base64 string from the field, since in dart, we just use uint8list to handle image
 
+          // var imageSyncItemListLength = GlobalState.imageSyncItemList.length;
+
+          var latestImageSyncItemList = imageSyncArray.map((imageSync) {
+            var _imageSyncItem = ImageSyncItem.fromJson(imageSync);
             return _imageSyncItem;
           }).toList();
-          
-          // For Debug
-//          GlobalState.imageSyncItemList.add(ImageSyncItem(imageId: '1598237287220013', imageIndex: 1, syncId: 1));
 
-          
+          for (var i = 0; i < latestImageSyncItemList.length; i++) {
+            var _imageId = latestImageSyncItemList[i].imageId;
+            var _imageIndex = latestImageSyncItemList[i].imageIndex;
+            var _syncId = latestImageSyncItemList[i].syncId;
+
+            if (_syncId == 1) {
+              // For add operation
+              GlobalState.imageSyncItemList.add(ImageSyncItem(
+                  imageId: _imageId, imageIndex: _imageIndex, syncId: 0));
+            } else if (_syncId == 3) {
+              // For update operation
+              var theImageSyncItem = GlobalState.imageSyncItemList.firstWhere(
+                  (imageSyncItem) => imageSyncItem.imageId == _imageId);
+
+              theImageSyncItem.imageIndex = _imageIndex;
+              theImageSyncItem.syncId = 0;
+
+            }
+          }
+
+          // GlobalState.imageSyncItemList = imageSyncArray.map((imageSync) {
+          //   var _imageSyncItem = ImageSyncItem.fromJson(imageSync);
+          //
+          //   return _imageSyncItem;
+          // }).toList();
+
+          // TODO: For Debug, insert an additional ImageSyncItem
+//          GlobalState.imageSyncItemList.add(ImageSyncItem(imageId: '1598237287220013', imageIndex: 1, syncId: 1));
         }),
     JavascriptChannel(
         name: 'GetBase64ByImageId',
@@ -194,13 +206,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
           var imageIndex = imageSyncItem.imageIndex;
           GlobalState.imageSyncItemList[imageIndex] = imageSyncItem;
 
-          if(imageSyncItem.base64.isNotEmpty) {
+          if (imageSyncItem.base64.isNotEmpty) {
             imageSyncItem.byteData =
                 ImageConverter.convertBase64ToUint8List(imageSyncItem.base64);
             imageSyncItem.base64 = null;
-
-//            GlobalState.imageSyncItemList[imageIndex].byteData =
-//                ImageConverter.convertBase64ToUint8List(imageSyncItem.base64);
           }
 
           new Timer(const Duration(milliseconds: 500), () {
@@ -274,8 +283,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
                 allowFileURLs: true,
               );
 
-              //GlobalState.flutterWebviewPlugin.evalJavascript("javascript:setQuillToEditMode(false);");
-
               return wewbviewScaffold;
             }
 
@@ -290,19 +297,3 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
     );
   }
 }
-
-//class Tag {
-//  String name;
-//  int quantity;
-//
-//  Tag(this.name, this.quantity);
-//
-//  factory Tag.fromJson(dynamic json) {
-//    return Tag(json['name'] as String, json['quantity'] as int);
-//  }
-//
-//  @override
-//  String toString() {
-//    return '{ ${this.name}, ${this.quantity} }';
-//  }
-//}

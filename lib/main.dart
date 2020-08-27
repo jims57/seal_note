@@ -44,14 +44,6 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
-//    String str = 'Hello';
-//    String str2 = '';
-//    print(str.isEmpty);
-//    print(str2.isEmpty);
-
-//    ImageConverter.convertUint8ListToBase64(uint8List);
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: MasterDetailPage(),
@@ -73,4 +65,12 @@ class Tag {
   String toString() {
     return '{ ${this.name}, ${this.quantity} }';
   }
+}
+
+class Book {
+  final int id;
+
+  String get name => "Book$id";
+
+  Book(this.id);
 }
