@@ -157,8 +157,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
         name: 'SyncImageSyncArrayToDart',
         onMessageReceived: (JavascriptMessage message) {
           var jsonString = message.message;
-
           var imageSyncArray = jsonDecode(jsonString)['imageSyncArray'] as List;
+          var imageIdList = List<String>();
 
           // var imageSyncItemListLength = GlobalState.imageSyncItemList.length;
 
@@ -172,10 +172,17 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
             var _imageIndex = latestImageSyncItemList[i].imageIndex;
             var _syncId = latestImageSyncItemList[i].syncId;
 
+            // Record each image id for notifying js they are synced
+            imageIdList.add(_imageId);
+
             if (_syncId == 1) {
               // For add operation
               GlobalState.imageSyncItemList.add(ImageSyncItem(
                   imageId: _imageId, imageIndex: _imageIndex, syncId: 0));
+            } else if (_syncId == 2) {
+              // For deletion operation
+              GlobalState.imageSyncItemList.removeWhere(
+                  (imageSyncItem) => imageSyncItem.imageId == _imageId);
             } else if (_syncId == 3) {
               // For update operation
               var theImageSyncItem = GlobalState.imageSyncItemList.firstWhere(
@@ -183,15 +190,14 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
 
               theImageSyncItem.imageIndex = _imageIndex;
               theImageSyncItem.syncId = 0;
-
             }
           }
 
-          // GlobalState.imageSyncItemList = imageSyncArray.map((imageSync) {
-          //   var _imageSyncItem = ImageSyncItem.fromJson(imageSync);
-          //
-          //   return _imageSyncItem;
-          // }).toList();
+          // Notify javascript that all of these image sync item have been synced successfully
+          if (imageIdList.length > 0) {
+            GlobalState.flutterWebviewPlugin.evalJavascript(
+                "javascript:setSomeImageSyncsToSyncedStatus($imageIdList);");
+          }
 
           // TODO: For Debug, insert an additional ImageSyncItem
 //          GlobalState.imageSyncItemList.add(ImageSyncItem(imageId: '1598237287220013', imageIndex: 1, syncId: 1));

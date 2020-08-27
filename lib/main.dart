@@ -42,8 +42,16 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+
+
   @override
   Widget build(BuildContext context) {
+    // TODO: For Debug
+    // List<String> colors = [];
+    // colors.add('a');
+    // colors.add('b');
+
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: MasterDetailPage(),

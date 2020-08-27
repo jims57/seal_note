@@ -237,8 +237,10 @@ function base64ToBytes(str) {
     var actionSum = 0; // Used to track the actions flow
     var imageIndexClicked = 0;
 
-    var countOfImagesInsertedNow = 0; // Record how many images being inserted have already been inserted in the html page
+    var countOfImagesInsertedNow = 0; // Record how many images in the html have already been inserted by multi image picker this time
+    var totalOfImagesInPage = 0; // The total number of images existing in the html page
     var imageSyncArray = []; // Used to sync with dart to keep the image status up-to-date
+    var isUnderMultiImagePickerOperation = false; // Check if it is still under the operation of the multi image picker
 
     // 【Image】
     // Update the images in the WebView by the byte data passed from the Multi-Image-Picker(Flutter widget).
@@ -246,19 +248,19 @@ function base64ToBytes(str) {
     // or it means the subsequent images in the same action
     // (subsequent images need to increase the cursorIndex to append images accordingly)
     // *total* means how many images will be inserted by the Multi-Image-Picker in this action.
-    function upsertAllImagesIndex() {
+    function upsertAllImagesIndex() { // Update index of all images in the page currently
         var allImagesArray = $('img'); // Get all image objects in the WebView
         
         $.each(allImagesArray,function(index,item){
             var $theImage = $(item);
-            var imageId;
+            // var imageId;
             var imageIndex = index;
 
             // Update or insert image index attribute
             $theImage.attr('image-index',imageIndex);
 
             // Get the image id
-            imageId = $theImage.attr('id');
+            // imageId = $theImage.attr('id');
         });
     }
 
@@ -328,6 +330,14 @@ function base64ToBytes(str) {
         $('img[data-insertorder]').removeAttr('data-insertorder');
     }
 
+    function removeImageSyncItemFromArrayVar(imageId) { // Delete items from imageSyncArray variable
+        var newImageSyncArray = $.grep(imageSyncArray,function(item){
+            return item.imageId!= imageId;
+        });
+    
+        imageSyncArray = newImageSyncArray;
+    }
+
     function getBase64ByImageId(imageId, shouldSendToDart = false) { // When send to dart, we will build imageSync json string, rather than base64 only
         // Print.postMessage('getBase64ByImageId(imageId = '+imageId+', shouldSendToDart = '+shouldSendToDart+')');
 
@@ -378,9 +388,18 @@ function base64ToBytes(str) {
         return $theImage;
     }
 
+    function getImageTotalInPage() {
+        return $('img').length;
+    }
+
+    function updateTotalOfImagesInPageVar() { // Update *totalOfImagesInPage* variable which is used to keep record of the total images existing in the page
+        totalOfImagesInPage = getImageTotalInPage();
+    }
+
     function addImageIdAttribute($theImage, imageId) {
         $theImage.attr('id', imageId);
     }
+
 
     // 【Image sync】 syncId = { 0 = synced, 1 = to be added, 2 = to be deleted, 3 = to be updated}
     function saveImageSyncToArray(imageId, syncId) { // Save image sync data to arrary for the synchronization with the imageSyncItemList in dart
@@ -500,8 +519,11 @@ function base64ToBytes(str) {
         SyncImageSyncArrayToDart.postMessage(jsonString);
     }
 
+
     // 【For dart to eval js】
     function insertImagesByMultiImagePicker(imageBytesArray, imageId, total) {
+
+        isUnderMultiImagePickerOperation = true;
         // Print.postMessage('insertOrder:' + insertOrder);
 
         Print.postMessage(imageId);
@@ -537,6 +559,9 @@ function base64ToBytes(str) {
             syncImageSyncArrayToDart(); // Always sync with imageSyncItemList in dart
 
             removeAllImagesInsertOrderAttributes(); // Remove all the insertorder attribute for these images
+
+            // totalOfImagesInPage = $('img').length;
+            updateTotalOfImagesInPageVar();
             
             countOfImagesInsertedNow = 0; // Reset the variable for future usage
 
@@ -544,7 +569,28 @@ function base64ToBytes(str) {
             setTimeout(function () {
                 quill.blur();
             }, 500)
+
+            isUnderMultiImagePickerOperation = false;
         }
+    }
+
+    function setSomeImageSyncsToSyncedStatus(imageIdArray) { // Set some of imageSyncs passed in imageIdArray parameter to be synced status, that is syncId = 0
+        Print.postMessage('setSomeImageSyncsToSyncedStatus()');
+        
+        $.each(imageIdArray, function (index, imageId) { 
+
+            var theImageSync =$.grep(imageSyncArray,function(imageSync){return imageSync.imageId == imageId});
+
+            // If the syncId = 3(to be deleted), we need to remove the item from the imageSyncArray
+            var theSyncId = theImageSync[0].syncId;
+            if(theSyncId == 2) {
+                var newImageSyncArray = $.grep(imageSyncArray,function(imageSync){return imageSync.syncId != 2 });
+			
+			    imageSyncArray = newImageSyncArray;
+            } else { // Other cases, that is *to be added* and *to be updated* status
+                theImageSync[0].syncId = 0; // You have to use object.property way to set new value, since it is value-type
+            }
+        });
     }
 
     function setQuillToReadOnly(isReadOnly){ //Set quill edit mode
@@ -631,37 +677,6 @@ function base64ToBytes(str) {
             }, 300);
         })
 
-        quill.on('text-change', function() {
-            // console.log('Text change!');
-            Print.postMessage('text change');
-            cursorIndex++;
-        });
-
-        quill.on('selection-change', function(range, oldRange, source) {
-          if (range) {
-            if (range.length == 0) {
-                cursorIndex = range.index;
-                console.log('User cursor is on', range.index);
-                Print.postMessage('index is: '+range.index);
-            } else { // When user has higlighted text
-                var text = quill.getText(range.index, range.length);
-                console.log('User has highlighted', text);
-                // Print.postMessage('hightlighted is: '+text);
-                setEditorHeight(keyboardHeight);
-                showBottomPanel(keyboardHeight);
-            }
-          } else {
-            console.log('Cursor not in the editor');
-            // Print.postMessage('Cursor is not in editor: ');
-          }
-        });
-
-        quill.once('selection-change', function () {
-            console.log('First selection-change!');
-            // quill.deleteText(0, 7);
-            cursorIndex = 0;
-        });
-
         document.getElementById('toolbar').addEventListener('click', function () {
             actionSum += 3;
 
@@ -689,9 +704,9 @@ function base64ToBytes(str) {
             }
         });
 
-        // quill.setText('添加笔记...');
+        quill.setText('添加笔记...');
         // Initialize Quill editor
-        quill.insertText(0,'添加笔记...');
+        // quill.insertText(0,'添加笔记...');
 
         quill.formatText(0, 7, {
             'bold': false,
@@ -699,7 +714,82 @@ function base64ToBytes(str) {
             'color': 'rgba(0,0,0,0.6)'
         });
 
-        
+        quill.on('text-change', function() {
+            // console.log('Text change!');
+            Print.postMessage('text change');
+
+            // Listening the change of image in total
+            var newTotalOfImagesInPage = getImageTotalInPage();
+            var oldTotalOfImagesInPage = totalOfImagesInPage;
+            if(newTotalOfImagesInPage != oldTotalOfImagesInPage) { // When the total of images in the page has changed
+                var deletedImageIds = []; // Record which image Ids is deleleted in this operation
+
+                // Update all image index first
+                upsertAllImagesIndex();
+
+                $.each(imageSyncArray, function (index, imageSyncJson) { //Update each imageSync item in imageSyncArray
+                    var imageId = imageSyncJson.imageId;
+                    var $theImage = getImageJqueryObjectByImageId(imageId);
+
+                    if($theImage.length > 0) { // When the image still exists, we need to update its *image-index* attribute
+                        var imageIndex = getImageIndexByImageJqueryObject($theImage);
+
+                        var theImageSyncJsonArray  = $.grep(imageSyncArray,function(imageSyncJson){
+                            return imageSyncJson.imageId== imageId;
+                        });
+
+                        // Update the imageSyncJson's imageIndex, making sure the array has at least one object
+                        if(theImageSyncJsonArray.length > 0) {
+                            theImageSyncJsonArray[0].imageIndex = imageIndex;
+                        }
+                    } else { // If the image isn't in the page, meaning it has been deleted
+                        imageSyncJson.syncId = 2; // Makes as deleted
+                        imageSyncJson.imageIndex = -1;
+
+                        totalOfImagesInPage -=1; // Deduct 1
+
+                        deletedImageIds.push(imageId);
+                    }
+                });
+
+                syncImageSyncArrayToDart(); // Sync the update to dart
+
+                // Remove item from imageSyncArray, sicne it isn't in the page now
+                $.each(deletedImageIds, function(index, item) {
+                    removeImageSyncItemFromArrayVar(item);
+                });
+
+                updateTotalOfImagesInPageVar();
+            }
+
+            cursorIndex++;
+        });
+
+        quill.on('selection-change', function(range, oldRange, source) {
+          if (range) {
+            if (range.length == 0) {
+                cursorIndex = range.index;
+                console.log('User cursor is on', range.index);
+                Print.postMessage('index is: '+range.index);
+            } else { // When user has higlighted text
+                var text = quill.getText(range.index, range.length);
+                console.log('User has highlighted', text);
+                // Print.postMessage('hightlighted is: '+text);
+                setEditorHeight(keyboardHeight);
+                showBottomPanel(keyboardHeight);
+            }
+          } else {
+            console.log('Cursor not in the editor');
+            // Print.postMessage('Cursor is not in editor: ');
+          }
+        });
+
+        quill.once('selection-change', function () {
+            console.log('First selection-change!');
+            // quill.deleteText(0, 7);
+            cursorIndex = 0;
+        });
+ 
         setTimeout(function(){
             // $('#editor-container').click();
             quill.focus();
@@ -746,6 +836,8 @@ function base64ToBytes(str) {
         addImageIdAttribute($theImage, '1598237287220002');
        
         upsertAllImagesIndex();
+
+        updateTotalOfImagesInPageVar();
 
         addAllOldImagesToSyncArray();
 
