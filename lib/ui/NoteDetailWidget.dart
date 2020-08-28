@@ -103,14 +103,14 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
                 String paddedInsertOrder =
                     insertOrder.toString().padLeft(3, '0');
 
-                int expectedImageIndex = insertOrder;
+                int expectedImageIndex = insertOrder - 1; // Index is always less than its order
 
                 insertOrder++;
 
                 String imageId = '$timestamp$paddedInsertOrder';
                 GlobalState.imageId = imageId;
 
-                ByteData imageBytes = await asset.getByteData(quality: 70);
+                ByteData imageBytes = await asset.getByteData(quality: 80);
 
                 Uint8List imageUint8List = imageBytes.buffer.asUint8List();
 

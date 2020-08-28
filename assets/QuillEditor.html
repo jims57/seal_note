@@ -240,7 +240,6 @@ function base64ToBytes(str) {
     var countOfImagesInsertedNow = 0; // Record how many images in the html have already been inserted by multi image picker this time
     var totalOfImagesInPage = 0; // The total number of images existing in the html page
     var imageSyncArray = []; // Used to sync with dart to keep the image status up-to-date
-    var isUnderMultiImagePickerOperation = false; // Check if it is still under the operation of the multi image picker
 
     // 【Image】
     // Update the images in the WebView by the byte data passed from the Multi-Image-Picker(Flutter widget).
@@ -250,7 +249,7 @@ function base64ToBytes(str) {
     // *total* means how many images will be inserted by the Multi-Image-Picker in this action.
     function upsertAllImagesIndex() { // Update index of all images in the page currently
         var allImagesArray = $('img'); // Get all image objects in the WebView
-        
+
         $.each(allImagesArray,function(index,item){
             var $theImage = $(item);
             // var imageId;
@@ -522,8 +521,6 @@ function base64ToBytes(str) {
 
     // 【For dart to eval js】
     function insertImagesByMultiImagePicker(imageBytesArray, imageId, total) {
-
-        isUnderMultiImagePickerOperation = true;
         // Print.postMessage('insertOrder:' + insertOrder);
 
         Print.postMessage(imageId);
@@ -536,8 +533,6 @@ function base64ToBytes(str) {
         quill.insertEmbed(cursorIndex, 'image', scrString);
 
         // Upsert the image additional attributes, such as id, image-index
-        // var last20chars = scrString.slice(-20); // Get the last characters which is going to be used as image id
-        // var $theImage = $($("img[src$='"+last20chars+"']")[0]); // Get the current image object
         var $theImage = getImageJqueryObjectByBase64(scrString);
         upsertCurrentImageAttributes($theImage, imageId);
 
@@ -569,8 +564,6 @@ function base64ToBytes(str) {
             setTimeout(function () {
                 quill.blur();
             }, 500)
-
-            isUnderMultiImagePickerOperation = false;
         }
     }
 
@@ -669,12 +662,29 @@ function base64ToBytes(str) {
 
             Print.postMessage('Image index clicked: ' + imageIndexClicked);
 
+            // quill.blur();
+            // setQuillToReadOnly(true);
+            // setTimeout(function () {
+            //     // setQuillToReadOnly(true);
+            //     quill.enable(false);
+            //     quill.blur(); 
+
+            //     // quill.blur();
+            //     // TriggerPhotoView.postMessage(imageIndexClicked);
+            //     setTimeout(function(){
+            //         TriggerPhotoView.postMessage(imageIndexClicked);
+            //     }, 50);
+            // }, 200);
+
             TriggerPhotoView.postMessage(imageIndexClicked);
 
             // quill.enable(false);
             setTimeout(function () {
                 quill.blur();
-            }, 300);
+            }, 200);
+
+            
+
         })
 
         document.getElementById('toolbar').addEventListener('click', function () {

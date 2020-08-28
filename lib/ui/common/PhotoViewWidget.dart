@@ -4,6 +4,7 @@ import 'package:photo_view/photo_view_gallery.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+// import 'package:flutter/services.dart' show rootBundle;
 
 class PhotoViewWidget extends StatefulWidget {
   @override
@@ -17,6 +18,7 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
   int _imageTotalCount = 1;
   bool _showToolBar = true;
   PageController _pageController;
+  double _photoViewScale = 1;
 
   @override
   void initState() {
@@ -147,19 +149,39 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
     var _currentImageSyncItem = GlobalState.imageSyncItemList[index];
 
     if (_currentImageSyncItem.byteData == null) {
-      return AssetImage("assets/appImages/loading2.gif");
+      return AssetImage("assets/appImages/loading.gif");
+      // return MemoryImage();
+      // await loadMemoryImage();
+
+      // return MemoryImage(_currentImageSyncItem.byteData);
+      // var imageAsset =  Image.asset(
+      //   'assets/appImages/loading.gif',
+      //   // scale: 2,
+      //   width: 50,
+      //   height: 50,
+      //   // fit: BoxFit.cover,
+      // );
+      // return imageAsset.image;
+
     } else {
       return MemoryImage(_currentImageSyncItem.byteData);
     }
   }
 
+  // Future<MemoryImage> loadMemoryImage() async{
+  //   rootBundle.load('assets/appImages/loading.gif').then((value) {
+  //     var uint8Value = value.buffer.asUint8List();
+  //     MemoryImage(uint8Value);
+  //   });
+  // }
+
   dynamic setInitialScale(index) {
     var _currentImageSyncItem = GlobalState.imageSyncItemList[index];
 
     if (_currentImageSyncItem.byteData == null) {
-      return PhotoViewComputedScale.contained * 1;
+      return PhotoViewComputedScale.contained * _photoViewScale;
     } else {
-      return PhotoViewComputedScale.contained * 1;
+      return PhotoViewComputedScale.contained * _photoViewScale;
     }
   }
 
