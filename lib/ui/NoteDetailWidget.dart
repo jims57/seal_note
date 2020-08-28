@@ -157,10 +157,14 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
         name: 'SyncImageSyncArrayToDart',
         onMessageReceived: (JavascriptMessage message) {
           var jsonString = message.message;
-          var imageSyncArray = jsonDecode(jsonString)['imageSyncArray'] as List;
+          var jsonResponse = jsonDecode(jsonString);
+          var imageSyncArray = jsonResponse['imageSyncArray'] as List;
+          var shouldClearArrayInDart =
+              jsonResponse['shouldClearArrayInDart'] as bool;
           var imageIdList = List<String>();
 
-          // var imageSyncItemListLength = GlobalState.imageSyncItemList.length;
+          // If the page is being initialized, we should clear all old data from imageSyncItemList to avoid duplicate data
+          if (shouldClearArrayInDart) GlobalState.imageSyncItemList.clear();
 
           var latestImageSyncItemList = imageSyncArray.map((imageSync) {
             var _imageSyncItem = ImageSyncItem.fromJson(imageSync);
@@ -201,7 +205,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
 
           // TODO: For Debug, insert an additional ImageSyncItem
 //          GlobalState.imageSyncItemList.add(ImageSyncItem(imageId: '1598237287220013', imageIndex: 1, syncId: 1));
-        }),
+        }), // SyncImageSyncArrayToDart
     JavascriptChannel(
         name: 'GetBase64ByImageId',
         onMessageReceived: (JavascriptMessage message) {

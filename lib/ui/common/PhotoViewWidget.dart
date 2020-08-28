@@ -147,7 +147,7 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
     var _currentImageSyncItem = GlobalState.imageSyncItemList[index];
 
     if (_currentImageSyncItem.byteData == null) {
-      return AssetImage("assets/appImages/loading.gif");
+      return AssetImage("assets/appImages/loading2.gif");
     } else {
       return MemoryImage(_currentImageSyncItem.byteData);
     }

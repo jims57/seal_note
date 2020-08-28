@@ -510,11 +510,11 @@ function base64ToBytes(str) {
         TriggerMultiImagePickerFromJs.postMessage('');
     }
 
-    function syncImageSyncArrayToDart() {
-        Print.postMessage('syncImageSyncArrayToDart()');
+    function syncImageSyncArrayToDart(shouldClearArrayInDart = false) { // Sync imageSyncArray to dart, *shouldClearArrayInDart* means we should clear all the item in imageSyncItemList in dart, it should be used when initializing this page, avoiding different notes' images mix up
+        Print.postMessage('syncImageSyncArrayToDart('+shouldClearArrayInDart+')');
 
         var jsonString = JSON.stringify(imageSyncArray); // Convert array to string
-        jsonString = '{"imageSyncArray": '+ jsonString +'}';
+        jsonString = '{"imageSyncArray": '+ jsonString +', "shouldClearArrayInDart" : '+shouldClearArrayInDart+' }';
 
         SyncImageSyncArrayToDart.postMessage(jsonString);
     }
@@ -556,7 +556,7 @@ function base64ToBytes(str) {
                 saveImageSyncToArray(imageId, 3);
             });
 
-            syncImageSyncArrayToDart(); // Always sync with imageSyncItemList in dart
+            syncImageSyncArrayToDart(false); // Always sync with imageSyncItemList in dart
 
             removeAllImagesInsertOrderAttributes(); // Remove all the insertorder attribute for these images
 
@@ -752,7 +752,7 @@ function base64ToBytes(str) {
                     }
                 });
 
-                syncImageSyncArrayToDart(); // Sync the update to dart
+                syncImageSyncArrayToDart(false); // Sync the update to dart
 
                 // Remove item from imageSyncArray, sicne it isn't in the page now
                 $.each(deletedImageIds, function(index, item) {
@@ -841,9 +841,9 @@ function base64ToBytes(str) {
 
         addAllOldImagesToSyncArray();
 
-        syncImageSyncArrayToDart();
+        syncImageSyncArrayToDart(true);
         
-        Print.postMessage('end()');
+        Print.postMessage('Page initialization end()');
 
     });
 </script>
