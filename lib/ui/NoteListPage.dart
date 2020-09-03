@@ -222,6 +222,7 @@ class _NoteListPageState extends State<NoteListPage> {
         onPressed: () {
           GlobalState.appState.detailPageStatus = 3;
           GlobalState.isQuillReadOnly = false;
+          GlobalState.isCreatingNote = true;
 
           if (GlobalState.screenType == 1) {
             Navigator.of(GlobalState.noteListPageContext)

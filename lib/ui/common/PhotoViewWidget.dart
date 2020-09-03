@@ -110,7 +110,8 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
                   ),
                   onTap: () {
                     setState(() {
-                      _currentImageNo = 3;
+                      // _currentImageNo = 3;
+                      // GlobalState.flutterWebviewPlugin.evalJavascript("javascript:setQuillToReadOnly(${GlobalState.isQuillReadOnly});");
 
                       GlobalState.appState.widgetNo = 2;
 

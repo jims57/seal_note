@@ -47,6 +47,7 @@ class GlobalState with ChangeNotifier {
 
   // Quill editor
   static bool isQuillReadOnly = true;
+  static bool isCreatingNote = false; // Indicating if the user is creating a new note
 
   // Photo Views
   static List<ImageSyncItem> imageSyncItemList = List<ImageSyncItem>();

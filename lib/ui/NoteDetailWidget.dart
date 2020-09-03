@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:async';
 
+// import 'package:crypto/crypto.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
@@ -12,7 +14,10 @@ import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/util/converter/ImageConverter.dart';
+import 'package:seal_note/util/crypto/CryptoHandler.dart';
+import 'package:seal_note/util/file/FileHandler.dart';
 import 'package:seal_note/util/route/ScaleRoute.dart';
+import 'package:uuid/uuid.dart';
 
 import 'common/PhotoViewWidget.dart';
 import 'package:seal_note/model/ImageSyncItem.dart';
@@ -76,9 +81,29 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
           print(message.message);
         }), // Print
     JavascriptChannel(
-        name: 'UpdateQuillStatus',
+        name: 'CheckIfOldNote',
         onMessageReceived: (JavascriptMessage message) {
           print(message.message);
+
+          // var encodedHtml ='<p>这个是好东西。</p><p><img id="d9ddb2824e1053b4ed1c8a3633477a07-12c94-001"></p><p>一样的图片。</p>';
+          if (GlobalState.isCreatingNote) {
+            // If it is create a new note
+            // Need to replace the Quill's content with the encoded html from the note
+            GlobalState.flutterWebviewPlugin.evalJavascript(
+                "javascript:replaceQuillContentWithOldNoteContent('');");
+          } else {
+            // If it is an old note
+            var encodedHtml =
+                '&lt;p&gt;这个是好东西2。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-12c94-001&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;';
+
+            GlobalState.flutterWebviewPlugin.evalJavascript(
+                "javascript:replaceQuillContentWithOldNoteContent('$encodedHtml');");
+          }
+        }), // CheckIfOldNote
+    JavascriptChannel(
+        name: 'UpdateQuillStatus',
+        onMessageReceived: (JavascriptMessage message) {
+          // print(message.message);
           if (GlobalState.isQuillReadOnly) {
             GlobalState.flutterWebviewPlugin
                 .evalJavascript("javascript:setQuillToReadOnly(true);");
@@ -94,25 +119,51 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
           try {
             await MultiImagePicker.pickImages(maxImages: 9, enableCamera: true)
                 .then((assets) async {
-              int timestamp = DateTime.now().millisecondsSinceEpoch;
+              var batchId = UniqueKey().toString().substring(
+                  2, 7); // Indicating the batch number, format: [#b0e7a]
+
               int insertOrder = 1;
               int assetsCount = assets.length;
 
               assets.forEach((asset) async {
+                var imageIdentifier = asset.identifier;
+                var imageMd5 =
+                    CryptoHandler.convertStringToMd5(imageIdentifier);
+
                 // Get imageId, format = timestamp+insertOrder[3 bits]
                 String paddedInsertOrder =
                     insertOrder.toString().padLeft(3, '0');
 
-                int expectedImageIndex = insertOrder - 1; // Index is always less than its order
+                int expectedImageIndex =
+                    insertOrder - 1; // Index is always less than its order
 
                 insertOrder++;
-
-                String imageId = '$timestamp$paddedInsertOrder';
-                GlobalState.imageId = imageId;
 
                 ByteData imageBytes = await asset.getByteData(quality: 80);
 
                 Uint8List imageUint8List = imageBytes.buffer.asUint8List();
+
+                // Get the image md5, directly use image Uint8List as string to crypto it
+                // String imageUint8ListString = imageUint8List.toString();
+                // var imageMd5 =
+                //     CryptoHandler.convertStringToMd5(imageUint8ListString);
+
+                // imageId format: {imageMd5}-{batchId}-{3 bit insertOrder}
+                // String imageId = '$imageMd5-$batchId-$paddedInsertOrder';
+                String imageId = '$imageMd5-$batchId-$paddedInsertOrder';
+                GlobalState.imageId = imageId;
+
+                // Save the image's Uint8List into a file at Document Directory
+                String fileName =
+                    '$imageMd5.jpg'; // Directly use imageId as the file name with .jpg extension
+
+                // Check if the image already exists or not
+                bool isFileExisting =
+                    await FileHandler.checkIfFileExistsOrNot(fileName);
+                if (!isFileExisting) {
+                  // When the image isn't existing in Document Directory
+                  FileHandler.writeUint8ListToFile(imageUint8List, fileName);
+                }
 
                 // Save the image to imageSyncList
                 var imageSyncItem = ImageSyncItem(
@@ -226,6 +277,26 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
             GlobalState.appState.firstImageIndex = imageIndex;
           });
         }), // GetBase64ByImageId
+    JavascriptChannel(
+        name: 'GetAllImagesBase64FromImageFiles',
+        onMessageReceived: (JavascriptMessage message) {
+          var jsonString = message.message;
+          var jsonResponse = jsonDecode(jsonString);
+          var imageIdMapList = jsonResponse as List;
+
+          // Get the file name of the image
+          imageIdMapList.forEach((imageIdMap) {
+            var imageId = imageIdMap['imageId'].toString();
+            var imageMd5 = imageId.substring(0, 32);
+            var fileName = '$imageMd5.jpg';
+            FileHandler.readFileAsUint8List(fileName).then((imageUint8List) {
+              GlobalState.flutterWebviewPlugin.evalJavascript(
+                  "javascript:updateImageBase64($imageUint8List,'$imageId');");
+            });
+          });
+
+          // print(message.message);
+        }), // GetAllImagesBase64FromImageFiles
   ].toSet();
 
   @override
@@ -241,7 +312,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
                         encoding: Encoding.getByName('utf-8'))
                     .toString(),
                 appBar: AppBar(
-                  title: Text("Note detail2"),
+                  // title: Text("Note detail2"),
                   actions: [
                     IconButton(
                         icon: (GlobalState.isQuillReadOnly
@@ -282,7 +353,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
                 javascriptChannels: jsChannels,
                 initialChild: Container(
                   child: Center(
-                    child: CircularProgressIndicator(),
+                    child: Container(),
+                    // child: CircularProgressIndicator(),
                   ),
                 ),
                 hidden: true,

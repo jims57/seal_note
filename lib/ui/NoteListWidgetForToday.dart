@@ -275,6 +275,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     GlobalState.selectedNoteModel.id = index;
                     GlobalState.appState.detailPageStatus = 1;
                     GlobalState.isQuillReadOnly = true;
+                    GlobalState.isCreatingNote = false;
 
                     if (GlobalState.screenType == 1) {
                       Navigator.of(GlobalState.noteListPageContext)
