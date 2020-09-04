@@ -85,19 +85,35 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
         onMessageReceived: (JavascriptMessage message) {
           print(message.message);
 
-          // var encodedHtml ='<p>这个是好东西。</p><p><img id="d9ddb2824e1053b4ed1c8a3633477a07-12c94-001"></p><p>一样的图片。</p>';
+          var requestJson = json.decode(message.message);
+
+          var responseJsonString;
+
           if (GlobalState.isCreatingNote) {
             // If it is create a new note
             // Need to replace the Quill's content with the encoded html from the note
-            GlobalState.flutterWebviewPlugin.evalJavascript(
-                "javascript:replaceQuillContentWithOldNoteContent('');");
-          } else {
-            // If it is an old note
-            var encodedHtml =
-                '&lt;p&gt;这个是好东西2。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-12c94-001&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;';
+            responseJsonString = '{"isCreatingNote": true, "encodedHtml":""}';
 
             GlobalState.flutterWebviewPlugin.evalJavascript(
-                "javascript:replaceQuillContentWithOldNoteContent('$encodedHtml');");
+                "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
+          } else {
+            // If it is an old note
+
+            // Check which dummy data should be used
+            var isInMyPhone = requestJson['isInMyPhone'];
+
+            if (isInMyPhone) {
+              // For my phone to debug the old note
+              responseJsonString =
+                  '{"isCreatingNote": false, "encodedHtml":"&lt;p&gt;这个是好东西2。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;f9cab6db822c98712beb4212099af82f-12c94-001&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;"}';
+            } else {
+              // For simulator to debug
+              responseJsonString =
+                  '{"isCreatingNote": false, "encodedHtml":"&lt;p&gt;这个是好东西2。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-12c94-001&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;"}';
+            }
+
+            GlobalState.flutterWebviewPlugin.evalJavascript(
+                "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
           }
         }), // CheckIfOldNote
     JavascriptChannel(
@@ -297,6 +313,13 @@ class NoteDetailWidgetState extends State<NoteDetailWidget> {
 
           // print(message.message);
         }), // GetAllImagesBase64FromImageFiles
+    JavascriptChannel(
+        name: 'SaveNoteEncodedHtmlToSqlite',
+        onMessageReceived: (JavascriptMessage message) {
+          print(message.message);
+
+          GlobalState.flutterWebviewPlugin.evalJavascript("javascript:beginToCountElapsingMillisecond(500, true);");
+        }), // SaveNoteEncodedHtmlToSqlite
   ].toSet();
 
   @override

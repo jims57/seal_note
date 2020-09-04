@@ -1051,7 +1051,11 @@
         border: 1px solid #ccc;
         box-sizing: border-box;
         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        padding: 8px
+        /* padding: 8px */
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-top: 20px;
+        padding-bottom: 8px;
     }
 
     .ql-toolbar.ql-snow .ql-formats {
@@ -1432,22 +1436,29 @@
 
     // 【debug】
     var interactWithDart = false;
-    var printLogToDart = false;
     var useMultiImagePicker = false; // If false, using Quill's default image uploader
-    var isInMyPhone = true; 
     var shouldAddDummyImagesOnLoad = false;
     var base64HasData = false;
 
-    // For debug config
+    // For debug configurations
     var forWebDebug = false;
+    var printLogToDartFromJs = true;
+    var isInMyPhone = false; 
+    var keepPrintTimer = false;
+
     if(forWebDebug) { // For web
         interactWithDart = false;
-        printLogToDart = false;
+        printLogToDartFromJs = false;
         useMultiImagePicker = false;
+        isEditingMode = true;
     } else { // For app
         interactWithDart = true;
-        printLogToDart = true;
         useMultiImagePicker = true;
+    }
+
+    function getPageHtml() {
+        var htmlString = $('html').html();
+        if(printLogToDartFromJs) Print.postMessage(htmlString);
     }
 
     function loadDummyHtmlPage() {
@@ -1487,7 +1498,7 @@
     }
 
     function upsertCurrentImageAttributesAndStyles($theImage, imageId) {
-        if(printLogToDart) Print.postMessage('upsertCurrentImageAttributesAndStyles($theImage.length ='+$theImage.length+',imageId ='+imageId+')');
+        if(printLogToDartFromJs) Print.postMessage('upsertCurrentImageAttributesAndStyles($theImage.length ='+$theImage.length+',imageId ='+imageId+')');
 
         // Get insert order by imageId(Note: the last 3 bit represents insert order)
         var insertOrder = parseInt(imageId.slice(-3)); // Parse string to int to trim prefix zeroes
@@ -1544,7 +1555,7 @@
             }
         }
 
-        if(printLogToDart) Print.postMessage('orderImagesInserted() executed.');
+        if(printLogToDartFromJs) Print.postMessage('orderImagesInserted() executed.');
     }
 
     function appendBrToImageInserted() {
@@ -1573,7 +1584,7 @@
     }
 
     function getBase64ByImageId(imageId, shouldSendToDart = false) { // When send to dart, we will build imageSync json string, rather than base64 only
-        // if(printLogToDart) Print.postMessage('getBase64ByImageId(imageId = '+imageId+', shouldSendToDart = '+shouldSendToDart+')');
+        // if(printLogToDartFromJs) Print.postMessage('getBase64ByImageId(imageId = '+imageId+', shouldSendToDart = '+shouldSendToDart+')');
 
         var base64Result = '';
         // var $theImage = $('img#'+imageId);
@@ -1587,7 +1598,7 @@
 
         // For jsChannel
         if (shouldSendToDart) {
-            // if(printLogToDart) Print.postMessage('inside shouldSendToDart block');
+            // if(printLogToDartFromJs) Print.postMessage('inside shouldSendToDart block');
             var imageIndex = getImageIndexByImageJqueryObject($theImage);
             var base64 = getBase64ByImageId(imageId, false);
             var imageSyncJsonString = '{"imageId":"' + imageId + '","imageIndex":' + imageIndex + ',"base64":"' + base64 + '","syncId":1}';
@@ -1653,7 +1664,7 @@
 
     // 【Image sync】 syncId = { 0 = synced, 1 = to be added, 2 = to be deleted, 3 = to be updated}
     function saveImageSyncToArray(imageId, syncId) { // Save image sync data to arrary for the synchronization with the imageSyncItemList in dart
-        if(printLogToDart) Print.postMessage('saveImageSyncToArray(' + imageId + ',' + syncId + ')');
+        if(printLogToDartFromJs) Print.postMessage('saveImageSyncToArray(' + imageId + ',' + syncId + ')');
 
         var imageSyncJsonArray = getImageSyncJsonArrayFromImageSyncArray(imageId);
 
@@ -1697,7 +1708,7 @@
         // Get all images without *data-insertorder* attribute, these are old images(Already existing in the page before user pick images to insert)
         var $toBeAddedImages = $('img:not([data-insertorder])');
 
-        if(printLogToDart) Print.postMessage('$toBeAddedImages.length = ' + $toBeAddedImages.length);
+        if(printLogToDartFromJs) Print.postMessage('$toBeAddedImages.length = ' + $toBeAddedImages.length);
 
         $.each($toBeAddedImages, function (index, item) {
             var imageId = $(item).attr('id');
@@ -1717,24 +1728,6 @@
 
 
     // 【For quill editor】
-    // function initQuillEditor (){
-    //     quill = new Quill('#editor-container', {
-    //         modules: {
-    //             toolbar: '#toolbar'
-    //         },
-    //         placeholder: '添加笔记...',
-    //         readOnly: false,
-    //         theme: 'snow'
-    //     });
-
-    //     if(useMultiImagePicker) {
-    //         quill.getModule('toolbar').addHandler('image', () => {
-    //             if(printLogToDart) Print.postMessage('image()');
-    //             triggerMultiImagePickerFromJs();
-    //         }); 
-    //     }
-    // }
-
     quill = new Quill('#editor-container', {
         modules: {
             toolbar: '#toolbar'
@@ -1746,7 +1739,7 @@
 
     if(useMultiImagePicker) {
         quill.getModule('toolbar').addHandler('image', () => {
-            if(printLogToDart) Print.postMessage('image()');
+            if(printLogToDartFromJs) Print.postMessage('image()');
             triggerMultiImagePickerFromJs();
         }); 
     }
@@ -1769,20 +1762,69 @@
     function goToQuillCursorPostion() {
         setTimeout(function () {
             $('html, body').animate({ scrollTop: 0 }, 'slow');
+            // $('html, body').animate({scrollTop: $('div.ql-editor').offset().top -100 }, 'slow');
+            // $('html, body').animate({scrollTop: $('p').last().offset().top -100 }, 'slow');
             quill.focus();
-        }, 400)
+        }, 400);
+    }
+</script>
+
+<!-- Auto-save related -->
+<script>
+    // Timer
+    var elapsingMillisecondSinceLastChanges = 0; // Record how long has elapsed since the user last change the content of the editor
+    var elapsingTimerInterval;
+    var executeAutoSaveIntervalMillisecond = 3000; // How often (millisecond) will execute the auto-save
+
+    var oldNoteEncodedHtml = ''; // Record the old html to check if we should save to sqlite, if it doesn't change, we won't save to sqlite
+
+    function beginToCountElapsingMillisecond(intervalMillisecond = 1000, resetInterval = true) { 
+        // *intervalMillisecond* is deciding how long the update the elapsing time
+        // *resetInterval* to decide if you need to reset the interval when calling this function, if true, elapsingMillisecondSinceLastChanges will be set to zero
+
+        if (printLogToDartFromJs) {
+            Print.postMessage('beginToCountElapsingMillisecond(intervalMillisecond = ' + intervalMillisecond + ', resetInterval = ' + resetInterval + ') ');
+            Print.postMessage('elapsingMillisecondSinceLastChanges = ' + elapsingMillisecondSinceLastChanges);
+        }
+
+        // Always to reset the elapsing time every time when calling this function
+        if(resetInterval) elapsingMillisecondSinceLastChanges = 0;
+
+        // Always to clear interval to avoid the duplicate timers
+        clearElapsingTimerInterval();
+
+        elapsingTimerInterval = setInterval(function () {
+            // Log
+            if(keepPrintTimer) console.log('elapsingMillisecondSinceLastChanges = ' + elapsingMillisecondSinceLastChanges +'ms');
+            if(printLogToDartFromJs) {
+                if(keepPrintTimer) Print.postMessage('elapsingMillisecondSinceLastChanges = ' + elapsingMillisecondSinceLastChanges + 'ms');
+            }
+            
+            elapsingMillisecondSinceLastChanges += intervalMillisecond;
+            executeAutoSave(); // Always execute the auto-save to make it will auto automatically when the user is idle
+        }, intervalMillisecond); 
     }
 
-    // 【For debug】
-    function getPageHtml() {
-        var htmlString = $('html').html();
-        if(printLogToDart) Print.postMessage(htmlString);
+    function clearElapsingTimerInterval() { // Clear the elapsing timer interval, it won't count any more after this call
+        if(elapsingTimerInterval != undefined) clearInterval(elapsingTimerInterval);
     }
 
+    function executeAutoSave() {
+        // Check if it needs to execute the auto-save
+        if(elapsingMillisecondSinceLastChanges >= executeAutoSaveIntervalMillisecond) { // Every 3 second to check if there is any change, if yes, then save it
+            // TODO: Execute the auto-save here
+            saveNoteEncodedHtmlToSqlite();
+        }
+    }
+</script>
 
-    // 【For js to call dart】
-    function checkIfOldNote() { // Get the initial html content which will replace the editor's content, this function is basically used for reading an old note
-        if(interactWithDart) CheckIfOldNote.postMessage('');
+<!-- 【For js to call dart】 -->
+<script>
+    function checkIfOldNote(isInMyPhone) { // Get the initial html content which will replace the editor's content, this function is basically used for reading an old note
+        if(interactWithDart) {
+            var jsonString = '{"isInMyPhone": ' + isInMyPhone.toString() + '}';
+            CheckIfOldNote.postMessage(jsonString);
+        }
     }
 
     // Trigger Mutli-Image-Picker from js
@@ -1791,7 +1833,7 @@
     }
 
     function syncImageSyncArrayToDart(shouldClearArrayInDart = false) { // Sync imageSyncArray to dart, *shouldClearArrayInDart* means we should clear all the item in imageSyncItemList in dart, it should be used when initializing this page, avoiding different notes' images mix up
-        if(printLogToDart) Print.postMessage('syncImageSyncArrayToDart(' + shouldClearArrayInDart + ')');
+        if(printLogToDartFromJs) Print.postMessage('syncImageSyncArrayToDart(' + shouldClearArrayInDart + ')');
 
         var jsonString = JSON.stringify(imageSyncArray); // Convert array to string
         jsonString = '{"imageSyncArray": ' + jsonString + ', "shouldClearArrayInDart" : ' + shouldClearArrayInDart + ' }';
@@ -1800,12 +1842,12 @@
     }
 
     function getAllImagesBase64FromImageFiles() { // Get all base64 data of the images in this html page from image file at the Document Directory of the app
-        if(printLogToDart) Print.postMessage('getAllImagesBase64FromImageFiles()');
+        if(printLogToDartFromJs) Print.postMessage('getAllImagesBase64FromImageFiles()');
         
         // var $theImages = $('img:not([src])'); // Only get image without src attribute
         // var $theImages = $('img'); // Debug: Get all images for testing
         var $theImages = $('img:not([src^="data:image"])');// Get images without base64
-        if(printLogToDart) Print.postMessage('$theImages.length = ' + $theImages.length);
+        if(printLogToDartFromJs) Print.postMessage('$theImages.length = ' + $theImages.length);
         var imageArray = [];
 
         $.each($theImages, function (index, item) {
@@ -1826,30 +1868,71 @@
         if(interactWithDart) GetAllImagesBase64FromImageFiles.postMessage(imageArrayString);
     }
 
+    function saveNoteEncodedHtmlToSqlite() { // Save the note to sqlite, by passing to dart first
+        // if(printLogToDartFromJs) Print.postMessage('saveNoteEncodedHtmlToSqlite()');
 
-    // 【For dart to eval js】
-    function replaceQuillContentWithOldNoteContent(oldNoteEncodedHtml) { // *oldNoteEncodedHtml* is the encoded html of a note
-        if(printLogToDart) Print.postMessage('replaceQuillContentWithOldNoteContent(oldNoteEncodedHtml)');
+        var $theEditor = $('div.ql-editor');
+        var $theClonedEditor = $theEditor.clone(false,false);
+        $theClonedEditor.find('img').removeAttr('src');
+        $theClonedEditor.find('img').css('width','100%'); // Anyway, set the images' width back to 100% before saving to db
+        var newNoteHtml = $theClonedEditor.html();
+        var newNoteEncodedHtml = encodeHtml(newNoteHtml);
+
+        if(oldNoteEncodedHtml != newNoteEncodedHtml) { // If there is any change
+            if(printLogToDartFromJs) Print.postMessage('inside if(oldNoteEncodedHtml != newNoteEncodedHtml) {}');
+
+            oldNoteEncodedHtml = newNoteEncodedHtml; // Save to variable to future check
+
+            if(interactWithDart) {
+                SaveNoteEncodedHtmlToSqlite.postMessage(newNoteEncodedHtml);
+            } else { // If it don't need to interact with Dart, meaning it is web app, we reset the interval in js
+                // Reset the timer
+                beginToCountElapsingMillisecond(500, true); // Only it actually execute the save, we will reset the interval
+            }
+        }
+    }
+</script>
+
+<!-- 【For dart to eval js】 -->
+<script>
+    function replaceQuillContentWithOldNoteContent(responseJsonString) { // *responseJsonString* is the encoded html of a note
+        if(printLogToDartFromJs) Print.postMessage('replaceQuillContentWithOldNoteContent('+responseJsonString+')');
+
+        // Convert jsonString to json object
+        var responseJson = JSON.parse(responseJsonString);
         
-        if(oldNoteEncodedHtml == '') { // If empty string, means it is creating a new note
-            if(printLogToDart) Print.postMessage('inside if(oldNoteEncodedHtml == "") {}');
+        if(responseJson.isCreatingNote) { // If it is createing a new note
+            if(printLogToDartFromJs) Print.postMessage('inside if(responseJson.isCreatingNote) {}');
             isCreatingNote = true;
-        } else { // If it isn't empty string, means it is an old note, for it has encoded html coming
-            if(printLogToDart) Print.postMessage('inside if(oldNoteEncodedHtml != "") {}');
+            // syncImageSyncArrayToDart(true);
+        } else { // If it is an old note
+            if(printLogToDartFromJs) Print.postMessage('inside if(responseJson.isCreatingNote) else {}');
 
             isCreatingNote = false; // It is the old note
 
-            var oldNoteDecodedHtml = decodeHtml(oldNoteEncodedHtml);
+            var oldNoteDecodedHtml = decodeHtml(responseJson.encodedHtml);
 
-            $('div.ql-editor').children().replaceWith(oldNoteDecodedHtml);
+            // Make sure the quill is initialized successfully, robust enhanced
+            var $editorChildren = $('div.ql-editor').children();
+            if($editorChildren.length > 0) {
+                $editorChildren.replaceWith(oldNoteDecodedHtml);
 
-            getAllImagesBase64FromImageFiles();
+                getAllImagesBase64FromImageFiles();
 
-            upsertAllImagesIndex();
+                upsertAllImagesIndex();
 
-            updateTotalOfImagesInPageVar();
+                updateTotalOfImagesInPageVar();
 
-            addAllOldImagesToSyncArray();
+                addAllOldImagesToSyncArray();
+
+                // syncImageSyncArrayToDart(true);
+            } else { // When there is no such children, meaning maybe the quill isn't initialized completely
+                // Call recursive function(this function), until it go the children of the editor
+                setTimeout(function(){
+                    if(printLogToDartFromJs) Print.postMessage('recursively calling replaceQuillContentWithOldNoteContent('+responseJsonString+')');
+                    replaceQuillContentWithOldNoteContent(responseJsonString);
+                }, 300);
+            }
         }
 
         syncImageSyncArrayToDart(true);
@@ -1858,20 +1941,19 @@
     function insertImagesByMultiImagePicker(imageUint8List, imageId, total) {
         isUnderMultiImagePickerOperation = true;
 
-        // if(printLogToDart) Print.postMessage('insertOrder:' + insertOrder);
-        if(printLogToDart) Print.postMessage('begin: insertImagesByMultiImagePicker()');
+        // if(printLogToDartFromJs) Print.postMessage('insertOrder:' + insertOrder);
+        if(printLogToDartFromJs) Print.postMessage('begin: insertImagesByMultiImagePicker()');
 
-        if(printLogToDart) Print.postMessage(imageId);
+        if(printLogToDartFromJs) Print.postMessage(imageId);
 
         // Insert image tag to the html page
         // var base64String = bytesToBase64(imageUint8List);
         var base64String = convertUint8ListToBase64(imageUint8List);
         var scrString = 'data:image/jpg;base64,';
         scrString += base64String;
-        quill.insertEmbed(cursorIndex, 'image', scrString);
+        quill.insertEmbed(cursorIndex, 'image', scrString);        
 
         // Upsert the image additional attributes, such as id, image-index
-        // var $theImage = getImageJqueryObjectByBase64(scrString);
         // Not get the image object which has not imageId, those without imageId mean newly created ones.
         var $theImage = getImageJqueryObjectWithoutImageIdByBase64(scrString); 
         upsertCurrentImageAttributesAndStyles($theImage, imageId);
@@ -1879,9 +1961,13 @@
         // Update the count of images already in the html tree
         countOfImagesInsertedNow += 1;
 
+        if(countOfImagesInsertedNow == 1) { // When it is the first image to be inserted, we begin to count the elapsing time
+            beginToCountElapsingMillisecond(500, false); // The last change maybe happen in text-change event, so don't reset the interval
+        }
+
         // If it is the last image, it will trigger to reorder all the images with *data-insertorder* attribute ascendingly
         if (countOfImagesInsertedNow == total) {
-            if(printLogToDart) Print.postMessage('inside: if(countOfImagesInsertedNow == total) {}');
+            if(printLogToDartFromJs) Print.postMessage('inside: if(countOfImagesInsertedNow == total) {}');
 
             orderImagesInserted();
             upsertAllImagesIndex(); // Update all image index after the last image is inserted
@@ -1907,16 +1993,19 @@
                 quill.blur();
             }, 300)
 
+            // Execute the auto-save
+            executeAutoSave();
+
             isUnderMultiImagePickerOperation = false;
         }
     }
 
     function updateImageBase64(imageUint8List, imageId) { // Used the image's Uint8List
-        if(printLogToDart) Print.postMessage('updateImageBase64(imageUint8List, imageId = ' + imageId + ')');
+        if(printLogToDartFromJs) Print.postMessage('updateImageBase64(imageUint8List, imageId = ' + imageId + ')');
 
         var $theImage = getImageJqueryObjectByImageId(imageId);
 
-        if(printLogToDart) Print.postMessage('$theImage.attr("image-index") = ' + $theImage.attr('image-index'));
+        if(printLogToDartFromJs) Print.postMessage('$theImage.attr("image-index") = ' + $theImage.attr('image-index'));
 
         // Get the image base64
         var base64String = convertUint8ListToBase64(imageUint8List);
@@ -1927,7 +2016,7 @@
     }
 
     function setSomeImageSyncsToSyncedStatus(imageIdArray) { // Set some of imageSyncs passed in imageIdArray parameter to be synced status, that is syncId = 0
-        if(printLogToDart) Print.postMessage('setSomeImageSyncsToSyncedStatus()');
+        if(printLogToDartFromJs) Print.postMessage('setSomeImageSyncsToSyncedStatus()');
 
         $.each(imageIdArray, function (index, imageId) {
 
@@ -1949,7 +2038,7 @@
         isEditingMode = !isReadOnly; // Record the mode for quill
 
         if (isEditingMode) { // In edit mode
-            if(printLogToDart) Print.postMessage('setQuillToReadOnly() in if(isEditingMode=true)');
+            if(printLogToDartFromJs) Print.postMessage('setQuillToReadOnly() in if(isEditingMode=true)');
             $('img').css('width', '70%');
             $('#toolbar').show();
 
@@ -1967,7 +2056,7 @@
             $('img').css('width', '100%');
             $('#toolbar').hide();
 
-            if(printLogToDart) Print.postMessage('setQuillToReadOnly() in if(isEditingMode=false)');
+            if(printLogToDartFromJs) Print.postMessage('setQuillToReadOnly() in if(isEditingMode=false)');
 
             setTimeout(function () {
                 quill.enable(false);
@@ -1977,7 +2066,7 @@
                 // setTimeout(function () {
                 //     setEditorHeight(0, false);
                 // }, 300);
-            }, 300);
+            }, 400);
         }
 
     }
@@ -2021,7 +2110,7 @@
         keyboardIsBeingShown = false;
 
         if (isEditingMode || pickerIsBeingShown) { // In editing mode
-            setEditorHeight(keyboardHeight);
+            setEditorHeight(keyboardHeight, true);
             showBottomPanel(showBottomPanel);
         } else { // Not in editing mode
             setEditorHeight(0,false);
@@ -2030,7 +2119,10 @@
 
         pickerIsBeingShown = false;
     }
+</script>
 
+<!-- jQuery init -->
+<script>
     $(function () {
         //initQuillEditor();
 
@@ -2046,12 +2138,12 @@
 
             imageIndexClicked = $(this).attr('image-index');
 
-            if(printLogToDart) Print.postMessage('Image index clicked: ' + imageIndexClicked);
+            if(printLogToDartFromJs) Print.postMessage('Image index clicked: ' + imageIndexClicked);
 
             // setQuillToReadOnly(true);
             // quill.blur();
 
-            TriggerPhotoView.postMessage(imageIndexClicked);
+            if(interactWithDart) TriggerPhotoView.postMessage(imageIndexClicked);
 
             // quill.enable(false);
             setTimeout(function () {
@@ -2105,10 +2197,14 @@
 
         quill.on('text-change', function () {
             // console.log('Text change!');
-            if(printLogToDart) Print.postMessage('text change');
+            // if(printLogToDartFromJs) Print.postMessage('text change');
 
-            // Only not under multi image picker operation will check the image changes
+            // [For images handling] Only not under multi image picker operation will check the image changes
             if (!isUnderMultiImagePickerOperation) {
+                beginToCountElapsingMillisecond(500, false); // Always to begin to count the elapsing timer
+
+                if(printLogToDartFromJs) Print.postMessage('inside if (!isUnderMultiImagePickerOperation) {}');
+
                 // Listening the change of image in total
                 var newTotalOfImagesInPage = getImageTotalInPage();
                 var oldTotalOfImagesInPage = totalOfImagesInPage;
@@ -2143,7 +2239,7 @@
                         }
                     });
 
-                    if(printLogToDart) Print.postMessage('inside if(newTotalOfImagesInPage != oldTotalOfImagesInPage) {}');
+                    if(printLogToDartFromJs) Print.postMessage('inside if(newTotalOfImagesInPage != oldTotalOfImagesInPage) {}');
                     syncImageSyncArrayToDart(false); // Sync the update to dart
 
                     // Remove item from imageSyncArray, sicne it isn't in the page now
@@ -2155,7 +2251,17 @@
                 }
 
                 cursorIndex++;
+
+                executeAutoSave();
             }
+
+            // [For text handling]
+            // Check if the last line is <br> or not. We want to always add a <br> tag at the bottom of the page
+            // var $theEditor = $('div.ql-editor');
+            // var isBrAtBottom = $theEditor.children().last().children().last().is('br');
+            // if(!isBrAtBottom) { // If the last tag isn't <p><br><p>, we add it back to the page arbitrarily
+            //     $theEditor.append('<p><br></p>');
+            // }
         });
 
         quill.on('selection-change', function (range, oldRange, source) {
@@ -2163,15 +2269,15 @@
                 if (range.length == 0) {
                     cursorIndex = range.index;
                     console.log('User cursor is on', range.index);
-                    if(printLogToDart) Print.postMessage('index is: ' + range.index);
+                    if(printLogToDartFromJs) Print.postMessage('index is: ' + range.index);
                 } else { // When user has higlighted text
                     var text = quill.getText(range.index, range.length);
                     console.log('User has highlighted', text);
-                    if(printLogToDart) Print.postMessage('hightlighted is: ' + text);
+                    if(printLogToDartFromJs) Print.postMessage('hightlighted is: ' + text);
 
                     // Check if it is in read only mode, because in read only mode, we don't need to show keyboard and bottom panel
                     if (isEditingMode) { // In edit mode
-                        if(printLogToDart) Print.postMessage('Keyboard height is: ' + keyboardHeight.toString());
+                        if(printLogToDartFromJs) Print.postMessage('Keyboard height is: ' + keyboardHeight.toString());
                         setEditorHeight(keyboardHeight, true);
                         showBottomPanel(keyboardHeight);
                         hideBottomPanel();
@@ -2184,13 +2290,13 @@
                 goToQuillCursorPostion(); // Always move to the cursor's position
             } else {
                 console.log('Cursor not in the editor');
-                // if(printLogToDart) Print.postMessage('Cursor is not in editor: ');
+                // if(printLogToDartFromJs) Print.postMessage('Cursor is not in editor: ');
             }
         });
 
         quill.once('selection-change', function () {
             console.log('First selection-change!');
-            if (!shouldAddDummyImagesOnLoad) quill.deleteText(0, 7);
+            if (isCreatingNote || forWebDebug) quill.deleteText(0, 7);
             cursorIndex = 0;
         });
 
@@ -2198,7 +2304,7 @@
         if(interactWithDart) UpdateQuillStatus.postMessage('SetQuillEditMode() in js.');
 
         // testing
-        if(printLogToDart) Print.postMessage('page is initializing!');
+        if(printLogToDartFromJs) Print.postMessage('page is initializing!');
 
         if (shouldAddDummyImagesOnLoad) {
             var scrString1 = '5302536fc7ba0ca0f1610f2e85f9b278-12c00-001';
@@ -2224,23 +2330,8 @@
             addImageIdAttribute($theImage, imageId2);
         }
 
-        // For dummy html
-        // if(!isEditingMode) loadDummyHtmlPage();
+        checkIfOldNote(isInMyPhone);
 
-        // getAllImagesBase64FromImageFiles();
-
-        // upsertAllImagesIndex();
-
-        // updateTotalOfImagesInPageVar();
-
-        // addAllOldImagesToSyncArray();
-
-        // syncImageSyncArrayToDart(true);
-
-        checkIfOldNote();
-
-        // syncImageSyncArrayToDart(true);
-
-        if(printLogToDart) Print.postMessage('Page initialization end()');
+        if(printLogToDartFromJs) Print.postMessage('Page initialization end()');
     });
 </script>
