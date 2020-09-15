@@ -27,7 +27,7 @@ class AppState extends ChangeNotifier {
 
   set widgetNo(int value) {
     _widgetNo = value;
-    notifyListeners();
+    // notifyListeners();
   }
 
   // 1 = old note in read mode, 2 = old note in edit mode, 3 = creating a new note
@@ -46,6 +46,19 @@ class AppState extends ChangeNotifier {
 
   set firstImageIndex(int value) {
     _firstImageIndex = value;
+    notifyListeners();
+  }
+
+  // bool _isInDetailPage = false;
+  //
+  // bool get isInDetailPage => _isInDetailPage;
+  //
+  // set isInDetailPage(bool value) {
+  //   _isInDetailPage = value;
+  //   notifyListeners();
+  // }
+
+  void syncNoteDetailPageStatus() {
     notifyListeners();
   }
 }

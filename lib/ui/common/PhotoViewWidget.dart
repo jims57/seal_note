@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/util/file/FileHandler.dart';
 // import 'package:flutter/services.dart' show rootBundle;
 
 class PhotoViewWidget extends StatefulWidget {
@@ -54,15 +57,7 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
                   enableRotation: false,
                   onPageChanged: (newImageIndex) {
                     setState(() {
-                      if (GlobalState
-                              .imageSyncItemList[newImageIndex].byteData ==
-                          null) {
-                        var imageId = GlobalState
-                            .imageSyncItemList[newImageIndex].imageId;
-
-                        getBase64ByImageId(imageId);
-                      }
-
+                      checkAndGetCurrentImageUint8List(newImageIndex);
                       _currentImageNo = newImageIndex + 1;
                     });
                   },
@@ -115,7 +110,11 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
 
                       GlobalState.appState.widgetNo = 2;
 
+                      GlobalState.shouldTriggerPageTransitionAnimation = false;
+                      // GlobalState.masterDetailPageState.currentState.updatePageShowAndHide(shouldTriggerSetState: false, hasAnimation: false);
+
                       Navigator.pop(GlobalState.noteDetailWidgetContext);
+                      // GlobalState.shouldTriggerPageTransitionAnimation = true;
 
                       GlobalState.flutterWebviewPlugin.show();
                     });
@@ -140,10 +139,12 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
 
     sortImageSyncItemListByAsc();
 
-    // Check if
-    if (GlobalState.imageSyncItemList[_firstImageIndex].byteData == null) {
-      getBase64ByImageId(_firstImageId);
-    }
+    // Check if there is the Uint8List data for the first image about to be shown
+    // if (GlobalState.imageSyncItemList[_firstImageIndex].byteData == null) {
+    //   getBase64ByImageIdFromWebView(_firstImageId);
+    // }
+
+    checkAndGetCurrentImageUint8List(_firstImageIndex);
   }
 
   ImageProvider<Object> showImageForPhotView(index) {
@@ -191,8 +192,27 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
         .sort((a, b) => a.imageIndex.compareTo(b.imageIndex));
   }
 
-  void getBase64ByImageId(imageId) {
+  void getBase64ByImageIdFromWebView(imageId) {
     GlobalState.flutterWebviewPlugin
-        .evalJavascript("javascript:getBase64ByImageId('$imageId', true);");
+        .evalJavascript("javascript:getBase64ByImageIdFromWebView('$imageId', true);");
+  }
+
+  void checkAndGetCurrentImageUint8List(newImageIndex) {
+    if (GlobalState
+        .imageSyncItemList[newImageIndex].byteData ==
+        null) {
+      var imageId = GlobalState
+          .imageSyncItemList[newImageIndex].imageId;
+
+      // Get the image Uint8List from file directly
+      var fileName = FileHandler.getFileNameByImageId(imageId);
+      fileName = '$fileName.jpg';
+      FileHandler.readFileAsUint8List(fileName).then((imageUint8List) {
+        GlobalState.imageSyncItemList[newImageIndex].byteData = imageUint8List;
+        new Timer(const Duration(milliseconds: 500), () {
+          GlobalState.appState.firstImageIndex = GlobalState.appState.firstImageIndex;
+        });
+      });
+    }
   }
 }

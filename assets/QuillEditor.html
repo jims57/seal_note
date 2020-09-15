@@ -1054,7 +1054,7 @@
         /* padding: 8px */
         padding-left: 8px;
         padding-right: 8px;
-        padding-top: 20px;
+        padding-top: 30px;
         padding-bottom: 8px;
     }
 
@@ -1461,17 +1461,19 @@
         if(printLogToDartFromJs) Print.postMessage(htmlString);
     }
 
-    function loadDummyHtmlPage() {
-        shouldAddDummyImagesOnLoad = true;
-        var imageMd5;
-        if(isInMyPhone) {
-            imageMd5 = 'f9cab6db822c98712beb4212099af82f';
-        } else {
-            imageMd5 = 'd9ddb2824e1053b4ed1c8a3633477a07';
-        }
+    // function loadDummyHtmlPage() {
+    //     shouldAddDummyImagesOnLoad = true;
+    //     var imageMd5;
+    //     if(isInMyPhone) {
+    //         imageMd5 = 'f9cab6db822c98712beb4212099af82f';
+    //         image2Md5 = imageMd5;
+    //     } else {
+    //         imageMd5 = 'd9ddb2824e1053b4ed1c8a3633477a07';
+    //         image2Md5 = '30e4bae2b5dc6bc7e922efab62543c42';
+    //     }
 
-        $('div.ql-editor').children().replaceWith('<p>这个是好东西。</p><p><img id="'+imageMd5+'-12c94-001"></p><p>一样的图片。</p><p><img id="'+imageMd5+'-12c94-002"></p><p>一样的图片。</p>');
-    }
+    //     $('div.ql-editor').children().replaceWith('<p>这个是好东西。</p><p><img id="'+imageMd5+'-12c94-001"></p><p>一样的图片。</p><p><img id="'+image2Md5+'-12c94-002"></p><p>一样的图片。</p>');
+    // }
 
     // 【Image】
     // Update the images in the WebView by the byte data passed from the Multi-Image-Picker(Flutter widget).
@@ -1510,11 +1512,12 @@
         addImageIdAttribute($theImage, imageId);
 
         // Set the image css
-        if (isEditingMode) { // In edit mode
-            $theImage.css('width', '70%');
-        } else { // In readOnly mode
-            $theImage.css('width', '100%');
-        }
+        // setImageWidth($theImage, isEditingMode);
+        // if (isEditingMode) { // In edit mode
+        //     $theImage.css('width', '70%');
+        // } else { // In readOnly mode
+        //     $theImage.css('width', '100%');
+        // }
     }
 
     function orderImagesInserted() {
@@ -1583,8 +1586,8 @@
         return $theImage.attr('id');
     }
 
-    function getBase64ByImageId(imageId, shouldSendToDart = false) { // When send to dart, we will build imageSync json string, rather than base64 only
-        // if(printLogToDartFromJs) Print.postMessage('getBase64ByImageId(imageId = '+imageId+', shouldSendToDart = '+shouldSendToDart+')');
+    function getBase64ByImageIdFromWebView(imageId, shouldSendToDart = false) { // When send to dart, we will build imageSync json string, rather than base64 only
+        // if(printLogToDartFromJs) Print.postMessage('getBase64ByImageIdFromWebView(imageId = '+imageId+', shouldSendToDart = '+shouldSendToDart+')');
 
         var base64Result = '';
         // var $theImage = $('img#'+imageId);
@@ -1600,10 +1603,10 @@
         if (shouldSendToDart) {
             // if(printLogToDartFromJs) Print.postMessage('inside shouldSendToDart block');
             var imageIndex = getImageIndexByImageJqueryObject($theImage);
-            var base64 = getBase64ByImageId(imageId, false);
+            var base64 = getBase64ByImageIdFromWebView(imageId, false);
             var imageSyncJsonString = '{"imageId":"' + imageId + '","imageIndex":' + imageIndex + ',"base64":"' + base64 + '","syncId":1}';
 
-            GetBase64ByImageId.postMessage(imageSyncJsonString);
+            GetBase64ByImageIdFromWebView.postMessage(imageSyncJsonString);
         }
 
         return base64Result;
@@ -1661,6 +1664,24 @@
         $theImage.attr('id', imageId);
     }
 
+    function setImageWidth($theImage, isEditingMode) {
+        setTimeout(function () { 
+            if (isEditingMode) { // In edit mode
+                $theImage.css('width', '70%');
+            } else { // In readOnly mode
+                $theImage.css('width', '100%');
+            }           
+         }, 200);
+    }
+
+    function setAllInsertedImagesWidth(isEditingMode) {
+        var $allInsertedImages = $('img[data-insertorder]');
+
+        $.each($allInsertedImages, function (index, item) { 
+            var $theImage = $(item);
+            setImageWidth($theImage, isEditingMode);
+        });
+    }
 
     // 【Image sync】 syncId = { 0 = synced, 1 = to be added, 2 = to be deleted, 3 = to be updated}
     function saveImageSyncToArray(imageId, syncId) { // Save image sync data to arrary for the synchronization with the imageSyncItemList in dart
@@ -1679,7 +1700,7 @@
 
             imageSyncJson['imageId'] = imageId;
             imageSyncJson['imageIndex'] = getImageIndexByImageId(imageId);
-            // imageSyncJson['base64'] = getBase64ByImageId(imageId, false);
+            // imageSyncJson['base64'] = getBase64ByImageIdFromWebView(imageId, false);
             imageSyncJson['syncId'] = syncId;
 
             imageSyncArray.push(imageSyncJson);
@@ -1891,6 +1912,12 @@
             }
         }
     }
+
+    function notifyDartWebViewHasLoaded() { // When the html is loaded, notify dart so that it can handle further if necessary
+        if(printLogToDartFromJs) Print.postMessage('notifyDartWebViewHasLoaded()');
+
+        if(interactWithDart) NotifyDartWebViewHasLoaded.postMessage('');
+    }
 </script>
 
 <!-- 【For dart to eval js】 -->
@@ -1970,6 +1997,7 @@
             if(printLogToDartFromJs) Print.postMessage('inside: if(countOfImagesInsertedNow == total) {}');
 
             orderImagesInserted();
+            setAllInsertedImagesWidth(isEditingMode);
             upsertAllImagesIndex(); // Update all image index after the last image is inserted
             // appendBrToImageInserted();
 
@@ -2012,7 +2040,9 @@
 
         // Set the image's src attribute
         var srcString = 'data:image/jpg;base64,' + base64String;
-        $theImage.attr('src', srcString);
+        setTimeout(function(){
+            $theImage.attr('src', srcString);
+        }, 200);
     }
 
     function setSomeImageSyncsToSyncedStatus(imageIdArray) { // Set some of imageSyncs passed in imageIdArray parameter to be synced status, that is syncId = 0
@@ -2118,6 +2148,17 @@
         }
 
         pickerIsBeingShown = false;
+    }
+</script>
+
+<!-- For Debug -->
+<script>
+    function getEcho(message){
+        var result = 'Hello,' + message;
+
+        if(printLogToDartFromJs) Print.postMessage(result);
+
+        return result;
     }
 </script>
 
@@ -2332,6 +2373,9 @@
 
         checkIfOldNote(isInMyPhone);
 
+        notifyDartWebViewHasLoaded();
+
         if(printLogToDartFromJs) Print.postMessage('Page initialization end()');
+
     });
 </script>

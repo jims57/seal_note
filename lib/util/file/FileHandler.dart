@@ -1,5 +1,7 @@
 import 'dart:io';
+
 // import 'dart:io' show io ;
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:moor/moor.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -53,7 +55,7 @@ class FileHandler {
     }
   }
 
-  static Future<File>  writeStringToFile(
+  static Future<File> writeStringToFile(
       String stringContentToWrite, String fileName) async {
     final file = await _getLocalFile(fileName);
 
@@ -61,10 +63,33 @@ class FileHandler {
     return file.writeAsString('$stringContentToWrite');
   }
 
-  static Future<File> writeUint8ListToFile(Uint8List uint8list, String fileName) async {
+  static Future<File> writeUint8ListToFile(
+      Uint8List uint8list, String fileName) async {
     final file = await _getLocalFile(fileName);
 
     // Write the file
     return file.writeAsBytes(uint8list);
   }
+
+  static Future<Uint8List> compressUint8List(
+    Uint8List uint8List, {
+    minHeight = 250,
+    minWidth = 250,
+    quality = 100,
+  }) async {
+    var compressedUint8List = await FlutterImageCompress.compressWithList(
+      uint8List,
+      minHeight: minHeight,
+      minWidth: minWidth,
+      quality: quality,
+    );
+
+    return compressedUint8List;
+  }
+
+  static String getFileNameByImageId(String imageId) {
+    return imageId.substring(0, 32);
+  }
+
+
 }

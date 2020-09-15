@@ -22,21 +22,19 @@ import 'package:uuid/uuid.dart';
 
 import 'common/PhotoViewWidget.dart';
 import 'package:seal_note/model/ImageSyncItem.dart';
-import 'package:seal_note/util/appTools/RestartWidget.dart';
-import 'package:after_layout/after_layout.dart';
 
-// import '';
-
-class NoteDetailWidget extends StatefulWidget {
+class NoteDetailWidget2 extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return NoteDetailWidgetState();
+    return NoteDetailWidget2State();
   }
 }
 
-class NoteDetailWidgetState extends State<NoteDetailWidget>
-    with AfterLayoutMixin<NoteDetailWidget> {
+class NoteDetailWidget2State extends State<NoteDetailWidget2> {
   KeyboardUtils _keyboardUtils = KeyboardUtils();
+  // final _flutterWebviewPlugin = FlutterWebviewPlugin();
+
+  // String htmlString = '';
 
   int _idKeyboardListener;
 
@@ -44,19 +42,18 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   void initState() {
     super.initState();
 
-    if (GlobalState.flutterWebviewPlugin == null) {
-      GlobalState.flutterWebviewPlugin = FlutterWebviewPlugin();
-    }
+    // if(GlobalState.flutterWebviewPlugin2 == null) {
+    //   GlobalState.flutterWebviewPlugin2 = FlutterWebviewPlugin();
+    // }
     GlobalState.noteDetailWidgetContext = context;
 
     _idKeyboardListener = _keyboardUtils.add(
         listener: KeyboardListener(willHideKeyboard: () {
-      GlobalState.flutterWebviewPlugin
-          .evalJavascript("javascript:hideKeyboard();");
-    }, willShowKeyboard: (double keyboardHeight) {
-      GlobalState.flutterWebviewPlugin
-          .evalJavascript("javascript:showKeyboard($keyboardHeight);");
-    }));
+          GlobalState.flutterWebviewPlugin.evalJavascript("javascript:hideKeyboard();");
+        }, willShowKeyboard: (double keyboardHeight) {
+          GlobalState.flutterWebviewPlugin
+              .evalJavascript("javascript:showKeyboard($keyboardHeight);");
+        }));
 
     // rootBundle.loadString('assets/QuillEditor.html').then((value) {
     //   setState(() {
@@ -65,22 +62,12 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     //   });
     // });
 
-    // GlobalState.flutterWebviewPlugin.close();
-  }
-
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
+    // GlobalState.flutterWebviewPlugin2.close();
   }
 
   @override
   void dispose() {
-    GlobalState.flutterWebviewPlugin.dispose();
-
-    if (GlobalState.isInNoteDetailPageInsideScreenType1) {
-      GlobalState.isInNoteDetailPageInsideScreenType1 = false;
-    }
+    // _flutterWebviewPlugin.dispose();
 
     _keyboardUtils.unsubscribeListener(subscribingId: _idKeyboardListener);
     if (_keyboardUtils.canCallDispose()) {
@@ -96,12 +83,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         onMessageReceived: (JavascriptMessage message) {
           print(message.message);
         }), // Print
-    JavascriptChannel(
-        name: 'NotifyDartWebViewHasLoaded',
-        onMessageReceived: (JavascriptMessage message) {
-          // print(message.message);
-          GlobalState.isClickingNoteListItem = false;
-        }), // NotifyDartWebViewHasLoaded
     JavascriptChannel(
         name: 'CheckIfOldNote',
         onMessageReceived: (JavascriptMessage message) {
@@ -127,11 +108,11 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
             if (isInMyPhone) {
               // For my phone to debug the old note
               responseJsonString =
-                  '{"isCreatingNote": false, "encodedHtml":"&lt;p&gt;这个是好东西2。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;f9cab6db822c98712beb4212099af82f-12c94-001&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;"}';
+              '{"isCreatingNote": false, "encodedHtml":"&lt;p&gt;这个是好东西2。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;f9cab6db822c98712beb4212099af82f-12c94-001&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;"}';
             } else {
               // For simulator to debug
               responseJsonString =
-                  '{"isCreatingNote": false, "encodedHtml":"&lt;p&gt;这个是好东西2。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-12c94-001&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;30e4bae2b5dc6bc7e922efab62543c42-12c94-002&quot;&gt;&lt;/p&gt;"}';
+              '{"isCreatingNote": false, "encodedHtml":"&lt;p&gt;这个是好东西2。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-12c94-001&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;30e4bae2b5dc6bc7e922efab62543c42-12c94-002&quot;&gt;&lt;/p&gt;"}';
             }
 
             GlobalState.flutterWebviewPlugin.evalJavascript(
@@ -151,7 +132,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           }
         }), // UpdateQuillStatus
     JavascriptChannel(
-        // Trigger multi image picker from js
+      // Trigger multi image picker from js
         name: 'TriggerMultiImagePickerFromJs',
         onMessageReceived: (JavascriptMessage message) async {
           try {
@@ -166,11 +147,11 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
               assets.forEach((asset) async {
                 var imageIdentifier = asset.identifier;
                 var imageMd5 =
-                    CryptoHandler.convertStringToMd5(imageIdentifier);
+                CryptoHandler.convertStringToMd5(imageIdentifier);
 
                 // Get imageId, format = timestamp+insertOrder[3 bits]
                 String paddedInsertOrder =
-                    insertOrder.toString().padLeft(3, '0');
+                insertOrder.toString().padLeft(3, '0');
 
                 int expectedImageIndex =
                     insertOrder - 1; // Index is always less than its order
@@ -200,7 +181,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
                 // Check if the image already exists or not
                 bool isFileExisting =
-                    await FileHandler.checkIfFileExistsOrNot(fileName);
+                await FileHandler.checkIfFileExistsOrNot(fileName);
                 if (!isFileExisting) {
                   // When the image isn't existing in Document Directory
                   FileHandler.writeUint8ListToFile(imageUint8List, fileName);
@@ -258,7 +239,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           var jsonResponse = jsonDecode(jsonString);
           var imageSyncArray = jsonResponse['imageSyncArray'] as List;
           var shouldClearArrayInDart =
-              jsonResponse['shouldClearArrayInDart'] as bool;
+          jsonResponse['shouldClearArrayInDart'] as bool;
           var imageIdList = List<String>();
 
           // If the page is being initialized, we should clear all old data from imageSyncItemList to avoid duplicate data
@@ -284,11 +265,11 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
             } else if (_syncId == 2) {
               // For deletion operation
               GlobalState.imageSyncItemList.removeWhere(
-                  (imageSyncItem) => imageSyncItem.imageId == _imageId);
+                      (imageSyncItem) => imageSyncItem.imageId == _imageId);
             } else if (_syncId == 3) {
               // For update operation
               var theImageSyncItem = GlobalState.imageSyncItemList.firstWhere(
-                  (imageSyncItem) => imageSyncItem.imageId == _imageId);
+                      (imageSyncItem) => imageSyncItem.imageId == _imageId);
 
               theImageSyncItem.imageIndex = _imageIndex;
               theImageSyncItem.syncId = 0;
@@ -310,7 +291,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           var imageSyncItemString = message.message;
 
           var imageSyncItem =
-              ImageSyncItem.fromJson(json.decode(imageSyncItemString));
+          ImageSyncItem.fromJson(json.decode(imageSyncItemString));
           var imageIndex = imageSyncItem.imageIndex;
           GlobalState.imageSyncItemList[imageIndex] = imageSyncItem;
 
@@ -339,7 +320,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
             FileHandler.readFileAsUint8List(fileName).then((imageUint8List) {
               // Anyway to compress the image before passing to the WebView
               FileHandler.compressUint8List(imageUint8List,
-                      minWidth: 250, minHeight: 250)
+                  minWidth: 250, minHeight: 250)
                   .then((compressedImageUint8List) {
                 GlobalState.flutterWebviewPlugin.evalJavascript(
                     "javascript:updateImageBase64($compressedImageUint8List,'$imageId');");
@@ -361,106 +342,155 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
   @override
   Widget build(BuildContext context) {
+    var s = 's';
+
     return Consumer<DetailPageChangeNotifier>(
       builder: (ctx, detailPageChangeNotifier, child) {
         switch (GlobalState.appState.widgetNo) {
           case 2:
             {
-              if (GlobalState.webViewScaffold == null) {
-                GlobalState.webViewScaffold = WebviewScaffold(
-                  url: new Uri.dataFromString(GlobalState.htmlString,
-                          mimeType: 'text/html',
-                          encoding: Encoding.getByName('utf-8'))
-                      .toString(),
-                  appBar: AppBar(
-                    actions: [
-                      IconButton(
-                          icon: (GlobalState.isQuillReadOnly
-                              ? Icon(Icons.edit)
-                              : Icon(Icons.done)),
-                          onPressed: () {
-                            setState(() {
-                              GlobalState.appState.detailPageStatus = 2;
-                              if (GlobalState.isQuillReadOnly) {
-                                // If it is currently in readonly mode
-                                GlobalState.flutterWebviewPlugin.evalJavascript(
-                                    "javascript:setQuillToReadOnly(false);");
-                              } else {
-                                // If it is in edit mode
-                                GlobalState.flutterWebviewPlugin.evalJavascript(
-                                    "javascript:setQuillToReadOnly(true);");
-                              }
+              // if (GlobalState.webViewScaffold == null) {
+              //   GlobalState.webViewScaffold = WebviewScaffold(
+              //     url: new Uri.dataFromString(GlobalState.htmlString2,
+              //             mimeType: 'text/html',
+              //             encoding: Encoding.getByName('utf-8'))
+              //         .toString(),
+              //     appBar: AppBar(
+              //       // title: Text("Note detail2"),
+              //       actions: [
+              //         IconButton(
+              //             icon: (GlobalState.isQuillReadOnly
+              //                 ? Icon(Icons.edit)
+              //                 : Icon(Icons.done)),
+              //             onPressed: () {
+              //               setState(() {
+              //                 GlobalState.appState.detailPageStatus = 2;
+              //                 if (GlobalState.isQuillReadOnly) {
+              //                   // If it is currently in readonly mode
+              //                   GlobalState.flutterWebviewPlugin.evalJavascript(
+              //                       "javascript:setQuillToReadOnly(false);");
+              //                 } else {
+              //                   // If it is in edit mode
+              //                   GlobalState.flutterWebviewPlugin.evalJavascript(
+              //                       "javascript:setQuillToReadOnly(true);");
+              //                 }
+              //
+              //                 // Switch the readonly status
+              //                 GlobalState.isQuillReadOnly =
+              //                     !GlobalState.isQuillReadOnly;
+              //               });
+              //             }),
+              //         IconButton(
+              //             icon: Icon(Icons.text_fields),
+              //             onPressed: () {
+              //               GlobalState.flutterWebviewPlugin
+              //                   .evalJavascript("javascript:getPageHtml();");
+              //             }),
+              //         IconButton(
+              //             icon: Icon(Icons.shop),
+              //             onPressed: () {
+              //               GlobalState.flutterWebviewPlugin.evalJavascript(
+              //                   "javascript:getBase64ByImageIdFromWebView('${GlobalState.imageId}',true);");
+              //             }),
+              //       ],
+              //     ),
+              //     javascriptChannels: jsChannels,
+              //     initialChild: Container(
+              //       child: Center(
+              //         child: Container(),
+              //         // child: CircularProgressIndicator(),
+              //       ),
+              //     ),
+              //     hidden: true,
+              //     scrollBar: false,
+              //     withJavascript: true,
+              //     withLocalStorage: true,
+              //     withZoom: false,
+              //     allowFileURLs: true,
+              //   );
+              // } else {
+              //   // GlobalState.flutterWebviewPlugin.reload();
+              //   /*if (GlobalState.needRefreshWebView) {
+              //   GlobalState.flutterWebviewPlugin.reload();
+              //   GlobalState.needRefreshWebView = false;
+              // }*/
+              //   // Timer(const Duration(seconds: 5), () {
+              //   //   setState(() {
+              //   //     GlobalState.htmlString2 = '<div>jims58</div>';
+              //   //     GlobalState.flutterWebviewPlugin.reloadUrl('http://www.baidu.com');
+              //   //   });
+              //   //   // GlobalState.flutterWebviewPlugin.reload();
+              //   // });
+              //
+              // }
 
-                              // Switch the readonly status
-                              GlobalState.isQuillReadOnly =
-                                  !GlobalState.isQuillReadOnly;
-                            });
-                          }),
-                      IconButton(
-                          icon: Icon(Icons.text_fields),
-                          onPressed: () {
-                            GlobalState.flutterWebviewPlugin
-                                .evalJavascript("javascript:getPageHtml();");
-                          }),
-                      IconButton(
-                          icon: Icon(Icons.shop),
-                          onPressed: () {
-                            GlobalState.rotationCounter += 1;
+              // if(GlobalState.webViewScaffold !=null){
+              //   GlobalState.htmlString2 = '<div>jims58</div>';
+              // }
 
-                            setState(() {
-                              GlobalState.htmlString =
-                                  GlobalState.rotationCounter.toString();
-                            });
-                          }),
+              GlobalState.rotationCounter +=1;
+              GlobalState.htmlString2 = '${GlobalState.rotationCounter}';
 
-                      // Consumer<AppState>(
-                      //   builder: (ctx, appState, child) {
-                      //     if (GlobalState.screenType == 1) {
-                      //       return IconButton(
-                      //           icon: Icon(Icons.arrow_left),
-                      //           onPressed: () {
-                      //             GlobalState.isHandlingNoteDetailPage = true;
-                      //             GlobalState.isInNoteDetailPage = false;
-                      //             GlobalState.masterDetailPageState.currentState
-                      //                 .updatePageShowAndHide(
-                      //                     shouldTriggerSetState: true);
-                      //           });
-                      //     } else {
-                      //       return Container();
-                      //     }
-                      //   },
-                      // )
+              return  WebviewScaffold(
+                url: new Uri.dataFromString(GlobalState.htmlString2,
+                    mimeType: 'text/html',
+                    encoding: Encoding.getByName('utf-8'))
+                    .toString(),
+                appBar: AppBar(
+                  // title: Text("Note detail2"),
+                  actions: [
+                    IconButton(
+                        icon: (GlobalState.isQuillReadOnly
+                            ? Icon(Icons.edit)
+                            : Icon(Icons.done)),
+                        onPressed: () {
+                          setState(() {
+                            GlobalState.appState.detailPageStatus = 2;
+                            if (GlobalState.isQuillReadOnly) {
+                              // If it is currently in readonly mode
+                              GlobalState.flutterWebviewPlugin.evalJavascript(
+                                  "javascript:setQuillToReadOnly(false);");
+                            } else {
+                              // If it is in edit mode
+                              GlobalState.flutterWebviewPlugin.evalJavascript(
+                                  "javascript:setQuillToReadOnly(true);");
+                            }
 
-                      (GlobalState.screenType == 1)
-                          ? IconButton(
-                              icon: Icon(Icons.arrow_left),
-                              onPressed: () {
-                                GlobalState.isHandlingNoteDetailPage = true;
-                                GlobalState.isInNoteDetailPage = false;
-                                GlobalState.masterDetailPageState.currentState
-                                    .updatePageShowAndHide(
-                                        shouldTriggerSetState: true);
-                              })
-                          : Container(),
-                    ],
+                            // Switch the readonly status
+                            GlobalState.isQuillReadOnly =
+                            !GlobalState.isQuillReadOnly;
+                          });
+                        }),
+                    IconButton(
+                        icon: Icon(Icons.text_fields),
+                        onPressed: () {
+                          GlobalState.flutterWebviewPlugin
+                              .evalJavascript("javascript:getPageHtml();");
+                        }),
+                    IconButton(
+                        icon: Icon(Icons.shop),
+                        onPressed: () {
+                          GlobalState.flutterWebviewPlugin.evalJavascript(
+                              "javascript:getBase64ByImageIdFromWebView('${GlobalState.imageId}',true);");
+                        }),
+                  ],
+                ),
+                javascriptChannels: jsChannels,
+                initialChild: Container(
+                  child: Center(
+                    child: Container(),
+                    // child: CircularProgressIndicator(),
                   ),
-                  javascriptChannels: jsChannels,
-                  initialChild: Container(
-                    child: Center(
-                      child: Container(),
-                      // child: CircularProgressIndicator(),
-                    ),
-                  ),
-                  hidden: true,
-                  scrollBar: false,
-                  withJavascript: true,
-                  withLocalStorage: true,
-                  withZoom: false,
-                  allowFileURLs: true,
-                );
-              }
+                ),
+                hidden: true,
+                scrollBar: false,
+                withJavascript: true,
+                withLocalStorage: true,
+                withZoom: false,
+                allowFileURLs: true,
+              );
 
-              return GlobalState.webViewScaffold;
+              // return GlobalState.webViewScaffold2;
             }
 
             break;
@@ -472,12 +502,5 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         }
       },
     );
-  }
-
-  @override
-  void afterFirstLayout(BuildContext context) {
-    // GlobalState.isClickingNoteListItem = false;
-    var s = 's';
-    // TODO: implement afterFirstLayout
   }
 }

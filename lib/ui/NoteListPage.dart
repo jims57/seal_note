@@ -16,8 +16,7 @@ import 'NoteListWidget.dart';
 typedef void ItemSelectedCallback();
 
 class NoteListPage extends StatefulWidget {
-  NoteListPage(
-      {Key key, @required this.itemCount, @required this.onItemSelected})
+  NoteListPage({Key key, this.itemCount, this.onItemSelected})
       : super(key: key);
 
   final int itemCount;
@@ -31,7 +30,7 @@ class _NoteListPageState extends State<NoteListPage> {
   final GlobalKey<NoteListWidgetState> _noteListWidgetState =
       GlobalKey<NoteListWidgetState>();
 
-  Database _database;
+  // Database _database;
 
   // Folder option items
   double _folderOptionCaptionSize = 16.0;
@@ -40,7 +39,7 @@ class _NoteListPageState extends State<NoteListPage> {
   @override
   void initState() {
     GlobalState.noteListPageContext = context;
-    _database = Provider.of<Database>(context, listen: false);
+    // _database = Provider.of<Database>(context, listen: false);
 
     super.initState();
   }
@@ -53,21 +52,24 @@ class _NoteListPageState extends State<NoteListPage> {
           (GlobalState.screenType == 3
               ? Container()
               : IconButton(
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                        context, SlideRightRoute(page: FolderListPage()));
-                  },
-                )),
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              GlobalState.isHandlingFolderPage = true;
+              GlobalState.isInFolderPage = true;
+              GlobalState.masterDetailPageState.currentState.updatePageShowAndHide(shouldTriggerSetState: true);
+              // Navigator.push(
+              //     context, SlideRightRoute(page: FolderListPage()));
+            },
+          )),
           (GlobalState.screenType == 2
               ? Container()
               : Text(
-                  '文件夹',
-                  style: TextStyle(fontSize: 14.0),
-                )),
+            '文件夹',
+            style: TextStyle(fontSize: 14.0),
+          )),
         ],
         tailChildren: [
           IconButton(
@@ -124,7 +126,7 @@ class _NoteListPageState extends State<NoteListPage> {
                                             return Container(
                                                 alignment: Alignment.centerLeft,
                                                 height:
-                                                    _folderOptionCaptionTitleHeight,
+                                                _folderOptionCaptionTitleHeight,
                                                 color: Colors.transparent,
                                                 padding: const EdgeInsets.only(
                                                     left: 15.0),
@@ -153,11 +155,11 @@ class _NoteListPageState extends State<NoteListPage> {
                                       height: _folderOptionCaptionTitleHeight,
                                       child: Center(
                                           child: Text(
-                                        '文件夹选项',
-                                        style: TextStyle(
-                                            fontSize: _folderOptionCaptionSize,
-                                            fontWeight: FontWeight.w400),
-                                      )),
+                                            '文件夹选项',
+                                            style: TextStyle(
+                                                fontSize: _folderOptionCaptionSize,
+                                                fontWeight: FontWeight.w400),
+                                          )),
                                     ),
                                   ),
                                   // Folder option caption finish button
@@ -169,7 +171,7 @@ class _NoteListPageState extends State<NoteListPage> {
                                         height: _folderOptionCaptionTitleHeight,
                                         alignment: Alignment.centerRight,
                                         padding:
-                                            const EdgeInsets.only(right: 15.0),
+                                        const EdgeInsets.only(right: 15.0),
                                         child: Text(
                                           '完成',
                                           style: TextStyle(
@@ -224,15 +226,17 @@ class _NoteListPageState extends State<NoteListPage> {
           GlobalState.isQuillReadOnly = false;
           GlobalState.isCreatingNote = true;
 
+          setState(() {
+            GlobalState.rotationCounter += 1;
+          });
+
           if (GlobalState.screenType == 1) {
             Navigator.of(GlobalState.noteListPageContext)
                 .push(MaterialPageRoute(builder: (ctx) {
 //              return NoteDetailWidget();
               return NoteDetailWidget();
             }));
-          } else {
-
-          }
+          } else {}
 
 //          _database.deleteAllNotes().then((value) {
 //            _noteListWidgetState
