@@ -184,6 +184,7 @@ class _FolderOptionSliverChildListDelegateState
                   ),
                   onTap: () {},
                 ),
+
                 // Delete folder option
                 GestureDetector(
                   child: Container(

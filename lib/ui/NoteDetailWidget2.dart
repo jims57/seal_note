@@ -428,8 +428,8 @@ class NoteDetailWidget2State extends State<NoteDetailWidget2> {
               //   GlobalState.htmlString2 = '<div>jims58</div>';
               // }
 
-              GlobalState.rotationCounter +=1;
-              GlobalState.htmlString2 = '${GlobalState.rotationCounter}';
+              // GlobalState.rotationCounter +=1;
+              // GlobalState.htmlString2 = '${GlobalState.rotationCounter}';
 
               return  WebviewScaffold(
                 url: new Uri.dataFromString(GlobalState.htmlString2,

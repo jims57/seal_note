@@ -3,13 +3,9 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/data/database/database.dart';
-import 'package:seal_note/ui/NoteDetailPage.dart';
 import 'package:seal_note/ui/NoteDetailWidget.dart';
+import 'package:seal_note/ui/common/AppBarBackButtonWidget.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
-import 'package:seal_note/util/route/SlideRightRoute.dart';
-
-import 'FolderListPage.dart';
 import 'folderOption/FolderOptionListWidget.dart';
 import 'NoteListWidget.dart';
 
@@ -45,59 +41,18 @@ class _NoteListPageState extends State<NoteListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(
+        // Note list app bar
         leadingChildren: [
-          GestureDetector(
-            child: Container(
-              // color: Colors.red,
-              height: double.infinity,
-              padding: EdgeInsets.only(left: 10.0,right: 10.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  (GlobalState.screenType == 3
-                      ? Container()
-                      : Icon(
-                          Icons.arrow_back_ios,
-                          color: Colors.white,
-                        )),
-                  (GlobalState.screenType == 2
-                      ? Container()
-                      : Text(
-                          '文件夹', // folder button // folder back button
-                          style: TextStyle(fontSize: 14.0),
-                        )),
-                ],
-              ),
-            ),
-            onTap: () {
-              GlobalState.isHandlingFolderPage = true;
-              GlobalState.isInFolderPage = true;
-              GlobalState.masterDetailPageState.currentState
-                  .updatePageShowAndHide(shouldTriggerSetState: true);
-            },
-          ),
-
-          // (GlobalState.screenType == 3
-          //     ? Container()
-          //     : IconButton(
-          //   icon: Icon(
-          //     Icons.arrow_back_ios,
-          //     color: Colors.white,
-          //   ),
-          //   onPressed: () {
-          //     GlobalState.isHandlingFolderPage = true;
-          //     GlobalState.isInFolderPage = true;
-          //     GlobalState.masterDetailPageState.currentState.updatePageShowAndHide(shouldTriggerSetState: true);
-          //     // Navigator.push(
-          //     //     context, SlideRightRoute(page: FolderListPage()));
-          //   },
-          // )),
-          // (GlobalState.screenType == 2
-          //     ? Container()
-          //     : Text(
-          //   '文件夹', // folder button
-          //   style: TextStyle(fontSize: 14.0),
-          // )),
+          // new app bar back button widget
+          AppBarBackButtonWidget(
+              textWidth: 50.0,
+              title: '文件夹', // Folder back button
+              onTap: () {
+                GlobalState.isHandlingFolderPage = true;
+                GlobalState.isInFolderPage = true;
+                GlobalState.masterDetailPageState.currentState
+                    .updatePageShowAndHide(shouldTriggerSetState: true);
+              }),
         ],
         tailChildren: [
           IconButton(
@@ -108,15 +63,16 @@ class _NoteListPageState extends State<NoteListPage> {
             onPressed: () {
               GlobalState.appState.isInFolderOptionSubPanel = false;
 
-              showModalBottomSheet<void>(
+              showModalBottomSheet<void>( // bottom modal window
                 barrierColor: Colors.black12,
                 backgroundColor: Colors.transparent,
                 context: context,
                 builder: (BuildContext context) {
                   return Container(
-                    width: 100,
+                    width: 50,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      // color: Colors.white,
+                      color: Colors.red,
                       borderRadius: const BorderRadius.only(
                           topLeft: const Radius.circular(15),
                           topRight: const Radius.circular(15)),
@@ -125,7 +81,8 @@ class _NoteListPageState extends State<NoteListPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          height: 50,
+                          // height: 50,
+                          // color: Colors.green,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -240,7 +197,9 @@ class _NoteListPageState extends State<NoteListPage> {
             },
           ),
         ],
-        title: Text('英语知识'),
+        title: Text('英语知识[考研必备知识点2020秋季]'),
+        // title: Text('英语知识'),
+        showSyncStatus: true,
         leadingWidth: 90,
         tailWidth: 40,
       ),

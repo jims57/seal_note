@@ -116,8 +116,11 @@ class MasterDetailPageState extends State<
             margin: getNoteListPageLeftEdgeInset(),
             width: noteListPageWidth,
             // color: Colors.red,
-            // child: NoteListWidget(),
-            child: NoteListPage(),
+            // child: NoteListPage(),
+            child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              home: NoteListPage(),
+            ),
           ), // Note list page
           SlideTransition(
             // Folder page
@@ -152,9 +155,6 @@ class MasterDetailPageState extends State<
         ],
       ),
     );
-
-    // Sync detail page status
-    // GlobalState.appState.syncNoteDetailPageStatus();
 
     // Anyway we set it back to the default(true)
     GlobalState.shouldTriggerPageTransitionAnimation = true;

@@ -27,15 +27,18 @@ class AppBarWidget extends StatefulWidget with PreferredSizeWidget {
   AppBarWidget(
       {Key key,
       @required this.leadingChildren,
+      this.title,
       @required this.tailChildren,
-      @required this.title,
-      this.leadingWidth: 110,
-      this.tailWidth: 30})
+      this.showSyncStatus =
+          true, // Check if we should show the sync text and icon below the title
+      this.leadingWidth: 100,
+      this.tailWidth: 40})
       : super(key: key);
 
   final List<Widget> leadingChildren;
-  final List<Widget> tailChildren;
   final Widget title;
+  final List<Widget> tailChildren;
+  final bool showSyncStatus;
   final double leadingWidth;
   final double tailWidth;
 
@@ -69,11 +72,10 @@ class _AppBarWidgetState extends State<AppBarWidget>
 
   @override
   Widget build(BuildContext context) {
+    // App bar widget build method
     // Get title size
     double _titleWidth = _getAppBarTitleWidth(
         GlobalState.screenWidth, widget.leadingWidth, widget.tailWidth);
-
-    double _offsetToRight = widget.leadingWidth - widget.tailWidth;
 
     // Get AppBar height
     double _appBarHeight = widget.preferredSize.height;
@@ -94,24 +96,28 @@ class _AppBarWidgetState extends State<AppBarWidget>
                     ? Container()
                     : Container(
                         width: widget.leadingWidth,
+                        // color: Colors.red,
+                        color: Colors.transparent,
                         height: _appBarHeight,
                         child: Stack(
                           children: _getContainerList(widget.leadingChildren),
                           alignment: Alignment.centerLeft,
                         ),
-                      )),
+                      )), // Leading container
                 Container(
                   width: widget.tailWidth,
                   height: _appBarHeight,
                   alignment: Alignment.centerRight,
+                  // color: Colors.red,
+                  // padding: EdgeInsets.only(right:30.0),
                   child: Stack(
                     children: _getContainerList(widget.tailChildren),
                   ),
-                )
+                ) // Tailing container
               ],
             ),
-          ),
-          Container(
+          ), // App bar left and right container(leading and tailing parts)
+          Container( // App bar title container including sync statuc
             alignment: Alignment.center,
             width: _titleWidth,
             height: _appBarHeight,
@@ -119,43 +125,47 @@ class _AppBarWidgetState extends State<AppBarWidget>
             child: Stack(
               alignment: Alignment.center,
               children: [
-                Container(child: widget.title),
-                Consumer<AppState>(
-                  builder: (ctx, appState, child) {
-                    if (!appState.isExecutingSync) {
-                      return Container();
-                    } else {
-                      return Container(
-                        margin: EdgeInsets.only(top: 40.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            AnimatedBuilder(
-                              animation: _animationController,
-                              builder: (ctx, child) {
-                                return Transform.rotate(
-                                  angle: _animationController.value * 2 * pi,
-                                  child: child,
-                                );
-                              },
-                              child: Icon(
-                                Icons.sync,
-                                size: 8.0,
+                Container(
+                    child: (widget.title == null) ? Text('') : widget.title),
+                (widget.showSyncStatus)
+                    ? Consumer<AppState>(
+                        builder: (ctx, appState, child) {
+                          if (!appState.isExecutingSync) {
+                            return Container();
+                          } else {
+                            return Container(
+                              margin: EdgeInsets.only(top: 40.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  AnimatedBuilder(
+                                    animation: _animationController,
+                                    builder: (ctx, child) {
+                                      return Transform.rotate(
+                                        angle:
+                                            _animationController.value * 2 * pi,
+                                        child: child,
+                                      );
+                                    },
+                                    child: Icon(
+                                      Icons.sync,
+                                      size: 8.0,
+                                    ),
+                                  ),
+                                  Text(
+                                    '同步中...',
+                                    style: TextStyle(fontSize: 8.0),
+                                  ),
+                                ],
                               ),
-                            ),
-                            Text(
-                              '同步中...',
-                              style: TextStyle(fontSize: 8.0),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                ),
+                            );
+                          }
+                        },
+                      )
+                    : Container(), // Show sync status
               ],
             ),
-          )
+          ) // Title container
         ],
       ),
       titleSpacing: 0.0,
