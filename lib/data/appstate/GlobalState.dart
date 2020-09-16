@@ -39,12 +39,12 @@ class GlobalState with ChangeNotifier {
   static bool isHandlingNoteDetailPage = false;
 
   static bool shouldTriggerPageTransitionAnimation = true;
-  static const int pageTransitionAnimationDurationMilliseconds = 300;
+  static const int pageTransitionAnimationDurationMilliseconds = 200;
 
   // Pages' width
   // Note: The following default values for the width are as far as large screen(screenType = 3) is concerned
-  static final double folderPageDefaultWidth = 300.0;
-  static final double noteListPageDefaultWidth = 250.0;
+  static final double folderPageDefaultWidth = 250.0;
+  static final double noteListPageDefaultWidth = 270.0;
   static final double noteDetailPageDefaultWidth = 200.0;
 
   // Contexts

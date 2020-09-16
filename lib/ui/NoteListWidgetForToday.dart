@@ -83,7 +83,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { // note list widget build method
     return RefreshIndicator(
       onRefresh: _getRefresh,
       child: (_noteList.length == 0
@@ -120,7 +120,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                 return GestureDetector(
                   child: Container(
-                    color: Colors.red,
+                    // color: Colors.red,
                     margin:
                         const EdgeInsets.only(top: 5.0, left: 8.0, right: 8.0),
                     child: Container(

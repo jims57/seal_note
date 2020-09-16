@@ -25,8 +25,6 @@ import 'package:seal_note/model/ImageSyncItem.dart';
 import 'package:seal_note/util/appTools/RestartWidget.dart';
 import 'package:after_layout/after_layout.dart';
 
-// import '';
-
 class NoteDetailWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -361,106 +359,104 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
   @override
   Widget build(BuildContext context) {
+    // note detail build method
     return Consumer<DetailPageChangeNotifier>(
       builder: (ctx, detailPageChangeNotifier, child) {
         switch (GlobalState.appState.widgetNo) {
           case 2:
             {
-              if (GlobalState.webViewScaffold == null) {
-                GlobalState.webViewScaffold = WebviewScaffold(
-                  url: new Uri.dataFromString(GlobalState.htmlString,
-                          mimeType: 'text/html',
-                          encoding: Encoding.getByName('utf-8'))
-                      .toString(),
-                  appBar: AppBar(
-                    actions: [
-                      IconButton(
-                          icon: (GlobalState.isQuillReadOnly
-                              ? Icon(Icons.edit)
-                              : Icon(Icons.done)),
-                          onPressed: () {
-                            setState(() {
-                              GlobalState.appState.detailPageStatus = 2;
-                              if (GlobalState.isQuillReadOnly) {
-                                // If it is currently in readonly mode
-                                GlobalState.flutterWebviewPlugin.evalJavascript(
-                                    "javascript:setQuillToReadOnly(false);");
-                              } else {
-                                // If it is in edit mode
-                                GlobalState.flutterWebviewPlugin.evalJavascript(
-                                    "javascript:setQuillToReadOnly(true);");
-                              }
+              return WebviewScaffold(
+                url: new Uri.dataFromString(GlobalState.htmlString,
+                        mimeType: 'text/html',
+                        encoding: Encoding.getByName('utf-8'))
+                    .toString(),
+                appBar: AppBar(
+                  actions: [
+                    IconButton(
+                        icon: (GlobalState.isQuillReadOnly
+                            ? Icon(Icons.edit)
+                            : Icon(Icons.done)),
+                        onPressed: () {
+                          setState(() {
+                            GlobalState.appState.detailPageStatus = 2;
+                            if (GlobalState.isQuillReadOnly) {
+                              // If it is currently in readonly mode
+                              GlobalState.flutterWebviewPlugin.evalJavascript(
+                                  "javascript:setQuillToReadOnly(false);");
+                            } else {
+                              // If it is in edit mode
+                              GlobalState.flutterWebviewPlugin.evalJavascript(
+                                  "javascript:setQuillToReadOnly(true);");
+                            }
 
-                              // Switch the readonly status
-                              GlobalState.isQuillReadOnly =
-                                  !GlobalState.isQuillReadOnly;
-                            });
-                          }),
-                      IconButton(
-                          icon: Icon(Icons.text_fields),
-                          onPressed: () {
-                            GlobalState.flutterWebviewPlugin
-                                .evalJavascript("javascript:getPageHtml();");
-                          }),
-                      IconButton(
-                          icon: Icon(Icons.shop),
-                          onPressed: () {
-                            GlobalState.rotationCounter += 1;
+                            // Switch the readonly status
+                            GlobalState.isQuillReadOnly =
+                                !GlobalState.isQuillReadOnly;
+                          });
+                        }),
+                    IconButton(
+                        icon: Icon(Icons.text_fields),
+                        onPressed: () {
+                          GlobalState.flutterWebviewPlugin
+                              .evalJavascript("javascript:getPageHtml();");
+                        }),
+                    IconButton(
+                        icon: Icon(Icons.shop),
+                        onPressed: () {
+                          GlobalState.rotationCounter += 1;
 
-                            setState(() {
-                              GlobalState.htmlString =
-                                  GlobalState.rotationCounter.toString();
-                            });
-                          }),
+                          setState(() {
+                            GlobalState.htmlString =
+                                GlobalState.rotationCounter.toString();
+                          });
+                        }),
 
-                      // Consumer<AppState>(
-                      //   builder: (ctx, appState, child) {
-                      //     if (GlobalState.screenType == 1) {
-                      //       return IconButton(
-                      //           icon: Icon(Icons.arrow_left),
-                      //           onPressed: () {
-                      //             GlobalState.isHandlingNoteDetailPage = true;
-                      //             GlobalState.isInNoteDetailPage = false;
-                      //             GlobalState.masterDetailPageState.currentState
-                      //                 .updatePageShowAndHide(
-                      //                     shouldTriggerSetState: true);
-                      //           });
-                      //     } else {
-                      //       return Container();
-                      //     }
-                      //   },
-                      // )
+                    // Consumer<AppState>(
+                    //   builder: (ctx, appState, child) {
+                    //     if (GlobalState.screenType == 1) {
+                    //       return IconButton(
+                    //           icon: Icon(Icons.arrow_left),
+                    //           onPressed: () {
+                    //             GlobalState.isHandlingNoteDetailPage = true;
+                    //             GlobalState.isInNoteDetailPage = false;
+                    //             GlobalState.masterDetailPageState.currentState
+                    //                 .updatePageShowAndHide(
+                    //                     shouldTriggerSetState: true);
+                    //           });
+                    //     } else {
+                    //       return Container();
+                    //     }
+                    //   },
+                    // )
 
-                      (GlobalState.screenType == 1)
-                          ? IconButton(
-                              icon: Icon(Icons.arrow_left),
-                              onPressed: () {
-                                GlobalState.isHandlingNoteDetailPage = true;
-                                GlobalState.isInNoteDetailPage = false;
-                                GlobalState.masterDetailPageState.currentState
-                                    .updatePageShowAndHide(
-                                        shouldTriggerSetState: true);
-                              })
-                          : Container(),
-                    ],
+                    // Left button
+                    (GlobalState.screenType == 1)
+                        ? IconButton(
+                            icon: Icon(Icons.arrow_left),
+                            onPressed: () {
+                              GlobalState.isHandlingNoteDetailPage = true;
+                              GlobalState.isInNoteDetailPage = false;
+                              GlobalState.masterDetailPageState.currentState
+                                  .updatePageShowAndHide(
+                                      shouldTriggerSetState: true);
+                            })
+                        : Container(),
+                  ],
+                ),
+                javascriptChannels: jsChannels,
+                initialChild: Container(
+                  child: Center(
+                    child: Container(),
+                    // child: CircularProgressIndicator(),
                   ),
-                  javascriptChannels: jsChannels,
-                  initialChild: Container(
-                    child: Center(
-                      child: Container(),
-                      // child: CircularProgressIndicator(),
-                    ),
-                  ),
-                  hidden: true,
-                  scrollBar: false,
-                  withJavascript: true,
-                  withLocalStorage: true,
-                  withZoom: false,
-                  allowFileURLs: true,
-                );
-              }
-
-              return GlobalState.webViewScaffold;
+                ),
+                hidden: true,
+                scrollBar: false,
+                withJavascript: true,
+                withLocalStorage: true,
+                withZoom: false,
+                allowFileURLs: true,
+              );
             }
 
             break;

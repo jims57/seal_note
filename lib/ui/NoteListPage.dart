@@ -30,8 +30,6 @@ class _NoteListPageState extends State<NoteListPage> {
   final GlobalKey<NoteListWidgetState> _noteListWidgetState =
       GlobalKey<NoteListWidgetState>();
 
-  // Database _database;
-
   // Folder option items
   double _folderOptionCaptionSize = 16.0;
   double _folderOptionCaptionTitleHeight = 40.0;
@@ -39,7 +37,6 @@ class _NoteListPageState extends State<NoteListPage> {
   @override
   void initState() {
     GlobalState.noteListPageContext = context;
-    // _database = Provider.of<Database>(context, listen: false);
 
     super.initState();
   }
@@ -49,27 +46,58 @@ class _NoteListPageState extends State<NoteListPage> {
     return Scaffold(
       appBar: AppBarWidget(
         leadingChildren: [
-          (GlobalState.screenType == 3
-              ? Container()
-              : IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
+          GestureDetector(
+            child: Container(
+              // color: Colors.red,
+              height: double.infinity,
+              padding: EdgeInsets.only(left: 10.0,right: 10.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  (GlobalState.screenType == 3
+                      ? Container()
+                      : Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                        )),
+                  (GlobalState.screenType == 2
+                      ? Container()
+                      : Text(
+                          '文件夹', // folder button // folder back button
+                          style: TextStyle(fontSize: 14.0),
+                        )),
+                ],
+              ),
             ),
-            onPressed: () {
+            onTap: () {
               GlobalState.isHandlingFolderPage = true;
               GlobalState.isInFolderPage = true;
-              GlobalState.masterDetailPageState.currentState.updatePageShowAndHide(shouldTriggerSetState: true);
-              // Navigator.push(
-              //     context, SlideRightRoute(page: FolderListPage()));
+              GlobalState.masterDetailPageState.currentState
+                  .updatePageShowAndHide(shouldTriggerSetState: true);
             },
-          )),
-          (GlobalState.screenType == 2
-              ? Container()
-              : Text(
-            '文件夹',
-            style: TextStyle(fontSize: 14.0),
-          )),
+          ),
+
+          // (GlobalState.screenType == 3
+          //     ? Container()
+          //     : IconButton(
+          //   icon: Icon(
+          //     Icons.arrow_back_ios,
+          //     color: Colors.white,
+          //   ),
+          //   onPressed: () {
+          //     GlobalState.isHandlingFolderPage = true;
+          //     GlobalState.isInFolderPage = true;
+          //     GlobalState.masterDetailPageState.currentState.updatePageShowAndHide(shouldTriggerSetState: true);
+          //     // Navigator.push(
+          //     //     context, SlideRightRoute(page: FolderListPage()));
+          //   },
+          // )),
+          // (GlobalState.screenType == 2
+          //     ? Container()
+          //     : Text(
+          //   '文件夹', // folder button
+          //   style: TextStyle(fontSize: 14.0),
+          // )),
         ],
         tailChildren: [
           IconButton(
@@ -126,7 +154,7 @@ class _NoteListPageState extends State<NoteListPage> {
                                             return Container(
                                                 alignment: Alignment.centerLeft,
                                                 height:
-                                                _folderOptionCaptionTitleHeight,
+                                                    _folderOptionCaptionTitleHeight,
                                                 color: Colors.transparent,
                                                 padding: const EdgeInsets.only(
                                                     left: 15.0),
@@ -155,11 +183,11 @@ class _NoteListPageState extends State<NoteListPage> {
                                       height: _folderOptionCaptionTitleHeight,
                                       child: Center(
                                           child: Text(
-                                            '文件夹选项',
-                                            style: TextStyle(
-                                                fontSize: _folderOptionCaptionSize,
-                                                fontWeight: FontWeight.w400),
-                                          )),
+                                        '文件夹选项',
+                                        style: TextStyle(
+                                            fontSize: _folderOptionCaptionSize,
+                                            fontWeight: FontWeight.w400),
+                                      )),
                                     ),
                                   ),
                                   // Folder option caption finish button
@@ -171,7 +199,7 @@ class _NoteListPageState extends State<NoteListPage> {
                                         height: _folderOptionCaptionTitleHeight,
                                         alignment: Alignment.centerRight,
                                         padding:
-                                        const EdgeInsets.only(right: 15.0),
+                                            const EdgeInsets.only(right: 15.0),
                                         child: Text(
                                           '完成',
                                           style: TextStyle(

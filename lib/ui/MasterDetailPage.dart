@@ -107,6 +107,7 @@ class MasterDetailPageState extends State<
 
   @override
   Widget build(BuildContext context) {
+    // master detail build method
     var scaffold = Scaffold(
       body: Stack(
         children: [
