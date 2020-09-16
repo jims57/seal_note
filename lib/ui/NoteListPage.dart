@@ -73,7 +73,9 @@ class _NoteListPageState extends State<NoteListPage> {
                 // isScrollControlled: true,
                 builder: (BuildContext context) {
                   return FractionallySizedBox(
-                    heightFactor: (GlobalState.screenType == 1) ? 0.7 : ((GlobalState.screenType==2)?1.4:0.6),
+                    heightFactor: (GlobalState.screenType == 1)
+                        ? 0.7
+                        : ((GlobalState.screenType == 2) ? 1.4 : 0.6),
                     child: Container(
                       // Bottom modal window container
                       // width: 50,
@@ -158,12 +160,17 @@ class _NoteListPageState extends State<NoteListPage> {
                                       child: Container(
                                         height: _folderOptionCaptionTitleHeight,
                                         child: Center(
-                                            child: Text(
-                                          '文件夹选项',
-                                          style: TextStyle(
+                                            child: SizedBox(
+                                          // width: 160,
+                                          child: Text(
+                                            '文件夹选项',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
                                               fontSize:
                                                   _folderOptionCaptionSize,
-                                              fontWeight: FontWeight.w400),
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
                                         )),
                                       ),
                                     ),
