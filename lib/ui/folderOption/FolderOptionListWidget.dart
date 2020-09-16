@@ -34,7 +34,9 @@ class _FolderOptionSliverChildListDelegateState
                 // Review plan option
                 GestureDetector(
                   child: Container(
-                    color: Colors.transparent,
+                    // color: Colors.transparent,
+                    // color: Colors.red,
+                    color: Colors.white,
                     height: GlobalState.folderOptionItemHeight,
                     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Row(
@@ -70,7 +72,8 @@ class _FolderOptionSliverChildListDelegateState
                 // Order option
                 GestureDetector(
                   child: Container(
-                    color: Colors.transparent,
+                    // color: Colors.transparent,
+                    color: Colors.white,
                     height: GlobalState.folderOptionItemHeight,
                     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Row(
@@ -113,7 +116,8 @@ class _FolderOptionSliverChildListDelegateState
                 // Rename option
                 GestureDetector(
                   child: Container(
-                    color: Colors.transparent,
+                    // color: Colors.transparent,
+                    color: Colors.white,
                     height: GlobalState.folderOptionItemHeight,
                     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Row(
@@ -150,7 +154,8 @@ class _FolderOptionSliverChildListDelegateState
                 // Edit option
                 GestureDetector(
                   child: Container(
-                    color: Colors.transparent,
+                    // color: Colors.transparent,
+                    color: Colors.white,
                     height: GlobalState.folderOptionItemHeight,
                     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Row(
@@ -188,7 +193,8 @@ class _FolderOptionSliverChildListDelegateState
                 // Delete folder option
                 GestureDetector(
                   child: Container(
-                    color: Colors.transparent,
+                    // color: Colors.transparent,
+                    color: Colors.white,
                     height: GlobalState.folderOptionItemHeight,
                     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Row(

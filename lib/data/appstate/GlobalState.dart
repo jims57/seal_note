@@ -69,6 +69,7 @@ class GlobalState with ChangeNotifier {
 
   // Folder Options
   static double folderOptionItemHeight = 40.0;
+  // static double folderOptionItemHeight = 35.0;
 
   // WebView
   static String htmlString = '';
