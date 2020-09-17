@@ -10,11 +10,12 @@ import 'NoteListWidget.dart';
 typedef void ItemSelectedCallback();
 
 class NoteListPage extends StatefulWidget {
-  NoteListPage({Key key, this.itemCount, this.onItemSelected})
-      : super(key: key);
+  // NoteListPage({Key key, this.itemCount, this.onItemSelected})
+  // NoteListPage({Key key, this.itemCount})
+  //     : super(key: key);
 
-  final int itemCount;
-  final ItemSelectedCallback onItemSelected;
+  // final int itemCount;
+  // final ItemSelectedCallback onItemSelected;
 
   @override
   State<StatefulWidget> createState() => _NoteListPageState();
@@ -92,23 +93,23 @@ class _NoteListPageState extends State<NoteListPage> {
       body: NoteListWidget(
         key: _noteListWidgetState,
       ),
+      // Note list floating button
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          GlobalState.appState.detailPageStatus = 3;
+          // Update action status
           GlobalState.isQuillReadOnly = false;
           GlobalState.isCreatingNote = true;
+          GlobalState.isHandlingNoteDetailPage = true;
+          GlobalState.isInNoteDetailPage = true;
 
-          setState(() {
-            GlobalState.rotationCounter += 1;
-          });
+          // Set the Quill to the edit mode
+          GlobalState.flutterWebviewPlugin
+              .evalJavascript("javascript:setQuillToReadOnly(false);");
 
-          if (GlobalState.screenType == 1) {
-            Navigator.of(GlobalState.noteListPageContext)
-                .push(MaterialPageRoute(builder: (ctx) {
-              return NoteDetailWidget();
-            }));
-          } else {}
+          // Refresh tree
+          GlobalState.masterDetailPageState.currentState
+              .updatePageShowAndHide(shouldTriggerSetState: true);
         },
       ),
     );

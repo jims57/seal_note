@@ -445,7 +445,7 @@ class NoteDetailWidget2State extends State<NoteDetailWidget2> {
                             : Icon(Icons.done)),
                         onPressed: () {
                           setState(() {
-                            GlobalState.appState.detailPageStatus = 2;
+                            // GlobalState.appState.detailPageStatus = 2;
                             if (GlobalState.isQuillReadOnly) {
                               // If it is currently in readonly mode
                               GlobalState.flutterWebviewPlugin.evalJavascript(

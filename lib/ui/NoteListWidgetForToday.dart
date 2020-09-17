@@ -279,7 +279,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     GlobalState.isClickingNoteListItem = true;
 
                     GlobalState.selectedNoteModel.id = index;
-                    GlobalState.appState.detailPageStatus = 1;
+                    // GlobalState.appState.detailPageStatus = 1;
                     GlobalState.isQuillReadOnly = true;
                     GlobalState.isCreatingNote = false;
 

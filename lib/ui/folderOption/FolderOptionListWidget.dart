@@ -138,7 +138,7 @@ class _FolderOptionSliverChildListDelegateState
           ),
         ),
         Container(
-          color: Colors.pink,
+          color: Colors.white,
           height: GlobalState.folderOptionItemHeight * 5,
           // height: 20,
           child: CustomScrollView(

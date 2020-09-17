@@ -375,21 +375,25 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                         encoding: Encoding.getByName('utf-8'))
                     .toString(),
 
-                appBar: AppBarWidget(showSyncStatus: false,leadingWidth: 220.0, tailWidth: 40,leadingChildren: [
-                  (GlobalState.screenType == 1)
-                      ? AppBarBackButtonWidget(
-                    textWidth:180.0 ,
-                          // title: '英语知识',
-                          title: '英语知识[考研必备知识点2020秋季]',
-                          onTap: () {
-                            GlobalState.isHandlingNoteDetailPage = true;
-                            GlobalState.isInNoteDetailPage = false;
-                            GlobalState.masterDetailPageState.currentState
-                                .updatePageShowAndHide(
-                                    shouldTriggerSetState: true);
-                          })
-                      : Container()
-                ],
+                appBar: AppBarWidget(
+                    showSyncStatus: false,
+                    leadingWidth: 220.0,
+                    tailWidth: 40,
+                    leadingChildren: [
+                      (GlobalState.screenType == 1)
+                          ? AppBarBackButtonWidget(
+                              textWidth: 180.0,
+                              // title: '英语知识',
+                              title: '英语知识[考研必备知识点2020秋季]',
+                              onTap: () {
+                                GlobalState.isHandlingNoteDetailPage = true;
+                                GlobalState.isInNoteDetailPage = false;
+                                GlobalState.masterDetailPageState.currentState
+                                    .updatePageShowAndHide(
+                                        shouldTriggerSetState: true);
+                              })
+                          : Container()
+                    ],
                     tailChildren: [
                       // edit web view button // edit note button
                       IconButton(
@@ -398,13 +402,18 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                               : Icon(Icons.done)),
                           onPressed: () {
                             setState(() {
-                              GlobalState.appState.detailPageStatus = 2;
+                              // GlobalState.appState.detailPageStatus = 2;
+
                               if (GlobalState.isQuillReadOnly) {
                                 // If it is currently in readonly mode
+
+                                // Set it to the edit mode
                                 GlobalState.flutterWebviewPlugin.evalJavascript(
                                     "javascript:setQuillToReadOnly(false);");
                               } else {
                                 // If it is in edit mode
+
+                                // Set it to the read only mode
                                 GlobalState.flutterWebviewPlugin.evalJavascript(
                                     "javascript:setQuillToReadOnly(true);");
                               }
@@ -415,64 +424,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                             });
                           })
                     ]),
-
-                // appBar: AppBar(
-                //   actions: [
-                //     IconButton(
-                //         icon: (GlobalState.isQuillReadOnly
-                //             ? Icon(Icons.edit)
-                //             : Icon(Icons.done)),
-                //         onPressed: () {
-                //           setState(() {
-                //             GlobalState.appState.detailPageStatus = 2;
-                //             if (GlobalState.isQuillReadOnly) {
-                //               // If it is currently in readonly mode
-                //               GlobalState.flutterWebviewPlugin.evalJavascript(
-                //                   "javascript:setQuillToReadOnly(false);");
-                //             } else {
-                //               // If it is in edit mode
-                //               GlobalState.flutterWebviewPlugin.evalJavascript(
-                //                   "javascript:setQuillToReadOnly(true);");
-                //             }
-                //
-                //             // Switch the readonly status
-                //             GlobalState.isQuillReadOnly =
-                //                 !GlobalState.isQuillReadOnly;
-                //           });
-                //         }),
-                //     // IconButton(
-                //     //     icon: Icon(Icons.text_fields),
-                //     //     onPressed: () {
-                //     //       GlobalState.flutterWebviewPlugin
-                //     //           .evalJavascript("javascript:getPageHtml();");
-                //     //     }),
-                //
-                //     // IconButton(
-                //     //     icon: Icon(Icons.shop),
-                //     //     onPressed: () {
-                //     //       GlobalState.rotationCounter += 1;
-                //     //
-                //     //       setState(() {
-                //     //         GlobalState.htmlString =
-                //     //             GlobalState.rotationCounter.toString();
-                //     //       });
-                //     //     }),
-                //
-                //     // Left button
-                //     (GlobalState.screenType == 1)
-                //         ? IconButton(
-                //             icon: Icon(Icons.arrow_left),
-                //             onPressed: () {
-                //               GlobalState.isHandlingNoteDetailPage = true;
-                //               GlobalState.isInNoteDetailPage = false;
-                //               GlobalState.masterDetailPageState.currentState
-                //                   .updatePageShowAndHide(
-                //                       shouldTriggerSetState: true);
-                //             })
-                //         : Container(),
-                //   ],
-                // ),
-
                 javascriptChannels: jsChannels,
                 initialChild: Container(
                   child: Center(

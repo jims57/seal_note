@@ -31,14 +31,14 @@ class AppState extends ChangeNotifier {
   }
 
   // 1 = old note in read mode, 2 = old note in edit mode, 3 = creating a new note
-  int _detailPageStatus = 1;
-
-  int get detailPageStatus => _detailPageStatus;
-
-  set detailPageStatus(int value) {
-    _detailPageStatus = value;
-    notifyListeners();
-  }
+  // int _detailPageStatus = 1;
+  //
+  // int get detailPageStatus => _detailPageStatus;
+  //
+  // set detailPageStatus(int value) {
+  //   _detailPageStatus = value;
+  //   notifyListeners();
+  // }
 
   int _firstImageIndex = 0;
 
@@ -58,7 +58,7 @@ class AppState extends ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void syncNoteDetailPageStatus() {
-    notifyListeners();
-  }
+  // void syncNoteDetailPageStatus() {
+  //   notifyListeners();
+  // }
 }
