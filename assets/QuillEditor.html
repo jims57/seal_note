@@ -1415,7 +1415,7 @@
     var quill;
     var cursorIndex = 0;
     var toolbarHeight;
-    var screenHeight;
+    var webViewScreenHeight;
     var appBarHeight;
     var keyboardHeight = 0;
     var toolbarIsBeingClicked = false;
@@ -1765,7 +1765,9 @@
         }); 
     }
 
-    function setEditorHeight(bottomCtrlHeight, showToolbar = true) {
+    function setEditorHeight(bottomPanelHeight, showToolbar = true) {
+        // bottomPanelHeight is the grey panel with the equal height to the keyboard height
+
         var currentToolbarHeight = 0;
 
         // if(showToolbar === undefined) showToolbar = true;
@@ -1775,7 +1777,7 @@
             currentToolbarHeight = 0;
         }
 
-        var editorHeight = screenHeight - currentToolbarHeight - bottomCtrlHeight;
+        var editorHeight = webViewScreenHeight - currentToolbarHeight - bottomPanelHeight;
 
         document.getElementById('editor-container').style.height = editorHeight;
     }
@@ -2149,6 +2151,27 @@
 
         pickerIsBeingShown = false;
     }
+
+    function setEditorHeightWithNewWebViewScreenHeight(newWebViewScreenHeight, bottomPanelHeight, showToolbar = true) {
+        webViewScreenHeight = newWebViewScreenHeight;
+
+        setEditorHeight(bottomPanelHeight, showToolbar);
+    }
+
+    // function updateScreenHeight(newScreenHeight, newKeyboardHeight, shouldAdjustEditorHeight = true) { 
+    // // function updateScreenHeight(shouldAdjustEditorHeight = true) { 
+    //     // Sometimes, we need to notify the webView that the screen height is changed after the device has rotated,
+    //     // Thus, the height of the Quill should adjust accordingly in this situation.
+
+    //     if(printLogToDartFromJs) Print.postMessage('updateScreenHeight(newScreenHeight='+newScreenHeight+', shouldAdjustEditorHeight='+shouldAdjustEditorHeight.toString()+')');
+
+    //     screenHeight = newScreenHeight;
+
+    //     // screenHeight = $(window.top).height();
+
+    //     // screenHeight = newScreenHeight;
+    //     if (shouldAdjustEditorHeight) setEditorHeight(newKeyboardHeight, true);
+    // }
 </script>
 
 <!-- For Debug -->
@@ -2160,6 +2183,18 @@
 
         return result;
     }
+
+    // function printScreenHeight(screenHeighInDart) {
+    //     var screenHeightInJs = screenHeight;
+    //     var newScreenHeightInJs = $(window.top).height();
+    //     var result = 'screenHeighInDart = '+screenHeighInDart+'.\n(D-Value1 = '+(screenHeighInDart - screenHeightInJs)+')screenHeightInJs = ' + screenHeightInJs+'.\n(D-Value2 = '+(screenHeighInDart - newScreenHeightInJs)+')newScreenHeightInJs = '+newScreenHeightInJs;
+
+    //     console.log(result);
+
+    //     if(printLogToDartFromJs) {
+    //         Print.postMessage(result);
+    //     }
+    // }
 </script>
 
 <!-- jQuery init -->
@@ -2169,7 +2204,8 @@
 
         toolbarHeight = $('#toolbar').outerHeight();
 
-        screenHeight = $(window.top).height();
+        webViewScreenHeight = $(window.top).height();
+        if(printLogToDartFromJs) Print.postMessage('Setting webViewScreenHeight = ' + webViewScreenHeight +' when initializing');
 
         setEditorHeight(0, true);
 

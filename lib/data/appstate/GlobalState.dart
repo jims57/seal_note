@@ -3,6 +3,7 @@ import 'package:seal_note/data/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:seal_note/model/ImageSyncItem.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
+import 'package:seal_note/ui/common/AppBarWidget.dart';
 
 import 'AppState.dart';
 import 'DetailPageState.dart';
@@ -26,6 +27,13 @@ class GlobalState with ChangeNotifier {
       screenType; // 1 = small screen, 2 = medium screen, 3 = large screen
   static double screenWidth;
   static double screenHeight;
+  static double appBarHeight;
+  static double webViewHeight;
+  static int rotatedTimes;
+
+  // Keyboard related
+  static double keyboardHeight = 0.0;
+  static bool isKeyboardEventHandling = false;
 
   // Pages
   static final double folderPageDefaultFromDx = -1.0;
@@ -62,6 +70,8 @@ class GlobalState with ChangeNotifier {
 
   // State objects
   static GlobalKey<MasterDetailPageState> masterDetailPageState;
+  static GlobalKey<AppBarWidgetState> webViewScaffoldAppBarWidgetState;
+
 
   // Change Notifier
   static AppState appState;
@@ -69,17 +79,20 @@ class GlobalState with ChangeNotifier {
 
   // Folder Options
   static double folderOptionItemHeight = 40.0;
+
   // static double folderOptionItemHeight = 35.0;
 
   // WebView
   static String htmlString = '';
   static bool isClickingNoteListItem = false;
+  static bool hasWebViewLoaded = false; // Check if the WebView is loaded or not
 
   // static bool isInDetailPage = false;
 
   // TODO: Testing
   static String htmlString2 = '<div>jims57</div>';
-  static int rotationCounter = 0;
+
+  // static int rotationCounter = 0;
   static bool isInNoteDetailPageInsideScreenType1 = false;
   static FlutterWebviewPlugin flutterWebviewPlugin;
 

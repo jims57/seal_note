@@ -46,22 +46,39 @@ class AppBarWidget extends StatefulWidget with PreferredSizeWidget {
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 
   @override
-  State<StatefulWidget> createState() => _AppBarWidgetState();
+  State<StatefulWidget> createState() => AppBarWidgetState();
 }
 
-class _AppBarWidgetState extends State<AppBarWidget>
+class AppBarWidgetState extends State<AppBarWidget>
     with SingleTickerProviderStateMixin, AfterLayoutMixin<AppBarWidget> {
   AppState _appState;
   AnimationController _animationController;
 
   @override
   void initState() {
+    // Record app bar height
+    if (GlobalState.appBarHeight == null) {
+      // GlobalState.appBarHeight = widget.preferredSize.height;
+      // GlobalState.appBarHeight = MediaQuery.of(context).size.height;
+      // GlobalState.appBarHeight = Scaffold.of(context).appBarMaxHeight;
+    }
+
     _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 2))
           ..repeat();
     _appState = Provider.of<AppState>(context, listen: false);
 
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+
+    // preferredSize.height;
+    GlobalState.appBarHeight = Scaffold.of(context).appBarMaxHeight;
+
+    super.didChangeDependencies();
   }
 
   @override
@@ -108,7 +125,7 @@ class _AppBarWidgetState extends State<AppBarWidget>
                   width: widget.tailWidth,
                   height: _appBarHeight,
                   alignment: Alignment.centerRight,
-                  // color: Colors.red,
+                  // color: Colors.green,
                   // padding: EdgeInsets.only(right:30.0),
                   child: Stack(
                     children: _getContainerList(widget.tailChildren),
@@ -117,7 +134,8 @@ class _AppBarWidgetState extends State<AppBarWidget>
               ],
             ),
           ), // App bar left and right container(leading and tailing parts)
-          Container( // App bar title container including sync statuc
+          Container(
+            // App bar title container including sync statuc
             alignment: Alignment.center,
             width: _titleWidth,
             height: _appBarHeight,
@@ -175,5 +193,13 @@ class _AppBarWidgetState extends State<AppBarWidget>
   @override
   void afterFirstLayout(BuildContext context) {
     _appState.isExecutingSync = true;
+  }
+
+  // Private methods
+  double getAppBarHeight() {
+    var appBarHeight = Scaffold.of(context).appBarMaxHeight;
+    // GlobalState.appBarHeight = appBarHeight;
+
+    return appBarHeight;
   }
 }

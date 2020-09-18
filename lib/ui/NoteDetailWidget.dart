@@ -40,8 +40,14 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
   int _idKeyboardListener;
 
+  // App bar width related
+  double appBarTailWidth = 90.0;
+
   @override
   void initState() {
+    GlobalState.webViewScaffoldAppBarWidgetState =
+        GlobalKey<AppBarWidgetState>();
+
     super.initState();
 
     if (GlobalState.flutterWebviewPlugin == null) {
@@ -51,9 +57,17 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
     _idKeyboardListener = _keyboardUtils.add(
         listener: KeyboardListener(willHideKeyboard: () {
+      GlobalState.isKeyboardEventHandling = true;
+      GlobalState.keyboardHeight = 0.0;
+
+      // Hide keyboard event
       GlobalState.flutterWebviewPlugin
           .evalJavascript("javascript:hideKeyboard();");
     }, willShowKeyboard: (double keyboardHeight) {
+      GlobalState.isKeyboardEventHandling = true;
+      GlobalState.keyboardHeight = keyboardHeight;
+
+      // Show keyboard event
       GlobalState.flutterWebviewPlugin
           .evalJavascript("javascript:showKeyboard($keyboardHeight);");
     }));
@@ -101,6 +115,20 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         onMessageReceived: (JavascriptMessage message) {
           // print(message.message);
           GlobalState.isClickingNoteListItem = false;
+
+          // If the WebView isn't loaded yet, we try to set the height in one second
+          // double webViewHeight =
+          //     GlobalState.screenHeight - GlobalState.appBarHeight;
+          if (GlobalState.rotatedTimes > 0) {
+            GlobalState.flutterWebviewPlugin.evalJavascript(
+                "javascript:updateScreenHeight(${GlobalState.webViewHeight},${GlobalState.keyboardHeight},true);");
+          }
+
+          // Record the status of whether the WebView is loaded or note in dart
+          GlobalState.hasWebViewLoaded = true;
+
+          // When the WebView is loaded successfully, set the Quill's height
+          // Because the device
         }), // NotifyDartWebViewHasLoaded
     JavascriptChannel(
         name: 'CheckIfOldNote',
@@ -376,9 +404,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                     .toString(),
 
                 appBar: AppBarWidget(
+                  key: GlobalState.webViewScaffoldAppBarWidgetState,
                     showSyncStatus: false,
-                    leadingWidth: 220.0,
-                    tailWidth: 40,
+                    leadingWidth: getAppBarLeadingWidth(),
+                    tailWidth: appBarTailWidth,
                     leadingChildren: [
                       (GlobalState.screenType == 1)
                           ? AppBarBackButtonWidget(
@@ -396,6 +425,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                     ],
                     tailChildren: [
                       // edit web view button // edit note button
+                      // web view action button
                       IconButton(
                           icon: (GlobalState.isQuillReadOnly
                               ? Icon(Icons.edit)
@@ -422,7 +452,20 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                               GlobalState.isQuillReadOnly =
                                   !GlobalState.isQuillReadOnly;
                             });
-                          })
+                          }),
+                      IconButton(
+                          // web view test button // test button // run button // test run button
+                          icon: Icon(Icons.directions_run),
+                          onPressed: () {
+                            var d = GlobalState.webViewScaffoldAppBarWidgetState.currentState.getAppBarHeight();
+
+                            var s= 's';
+                            // GlobalState.flutterWebviewPlugin.evalJavascript(
+                            //     "javascript:printScreenHeight(${GlobalState.screenHeight});");
+
+                            // GlobalState.flutterWebviewPlugin.evalJavascript(
+                            //     "javascript:updateScreenHeight(${GlobalState.webViewHeight},${GlobalState.keyboardHeight},true);");
+                          }),
                     ]),
                 javascriptChannels: jsChannels,
                 initialChild: Container(
@@ -456,5 +499,26 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     // GlobalState.isClickingNoteListItem = false;
     var s = 's';
     // TODO: implement afterFirstLayout
+  }
+
+  // Private methods
+  double getAppBarLeadingWidth() {
+    double leadingWidth = 0.0;
+    double appBarWidth = 0.0;
+
+    if (GlobalState.screenType == 1) {
+      appBarWidth = GlobalState.screenWidth;
+    } else if (GlobalState.screenType == 2) {
+      appBarWidth =
+          GlobalState.screenWidth - GlobalState.noteListPageDefaultWidth;
+    } else {
+      appBarWidth = GlobalState.screenWidth -
+          GlobalState.folderPageDefaultWidth -
+          GlobalState.noteListPageDefaultWidth;
+    }
+
+    leadingWidth = (appBarWidth - appBarTailWidth);
+
+    return leadingWidth;
   }
 }

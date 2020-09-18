@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
@@ -20,11 +22,8 @@ class MasterDetailPage extends StatefulWidget {
   State<StatefulWidget> createState() => MasterDetailPageState();
 }
 
-class MasterDetailPageState extends State<
-        MasterDetailPage> // with CheckDeviceMixin, TickerProviderStateMixin,AfterLayoutMixin<MasterDetailPage> {
-    with
-        CheckDeviceMixin,
-        TickerProviderStateMixin {
+class MasterDetailPageState extends State<MasterDetailPage>
+    with CheckDeviceMixin, TickerProviderStateMixin {
   bool isFirstLoad = true;
 
   double folderPageFromDx = -1.0;
@@ -67,15 +66,55 @@ class MasterDetailPageState extends State<
 
   @override
   void didChangeDependencies() {
+    // Record rotation times
+    if (GlobalState.rotatedTimes == null) {
+      GlobalState.rotatedTimes = 0;
+    } else {
+      GlobalState.rotatedTimes += 1;
+    }
+
     GlobalState.screenHeight = getScreenHeight(context);
     GlobalState.screenWidth = getScreenWidth(context);
     GlobalState.screenType = checkScreenType(GlobalState.screenWidth);
+
+
     GlobalState.themeColor = Theme.of(context).primaryColor;
 
     updatePageShowAndHide(
         shouldTriggerSetState: false,
         resetFolderAndDetailPageToDefaultDx: isFirstLoad);
-    if (isFirstLoad) isFirstLoad = false;
+
+    // Check if it is the first load, sometimes, the subsequent performance will be ommitted
+    if (isFirstLoad) {
+      isFirstLoad = false;
+    } else {
+      Timer(const Duration(milliseconds: 500), () {
+
+        var newAppBarHeight = GlobalState.webViewScaffoldAppBarWidgetState.currentState.getAppBarHeight();
+
+        // Check if it is rotating // check if rotation // check rotation action
+        if(GlobalState.appBarHeight != newAppBarHeight){
+          GlobalState.appBarHeight = newAppBarHeight;
+          var newWebViewScreenHeight = GlobalState.screenHeight - GlobalState.appBarHeight;
+
+          GlobalState.flutterWebviewPlugin.evalJavascript("javascript:setEditorHeightWithNewWebViewScreenHeight($newWebViewScreenHeight, 0, false);");
+
+          print(GlobalState.appBarHeight);
+        }
+
+
+      });
+
+
+      // Adjust the height of the Quill accordingly after rotation
+      if (GlobalState.hasWebViewLoaded &&
+          !GlobalState.isKeyboardEventHandling) {
+        // GlobalState.flutterWebviewPlugin
+        //     .evalJavascript("javascript:updateScreenHeight(${GlobalState.webViewHeight},${GlobalState.keyboardHeight},true);");
+      }
+
+      GlobalState.isKeyboardEventHandling = false;
+    }
 
     super.didChangeDependencies();
   }
@@ -321,7 +360,8 @@ class MasterDetailPageState extends State<
 
 // @override
 // void afterFirstLayout(BuildContext context) {
+//   var s ='s';
 //   // Anyway we set it back to the default(true)
-//   GlobalState.shouldTriggerPageTransitionAnimation = true;
+//   // GlobalState.shouldTriggerPageTransitionAnimation = true;
 // }
 }
