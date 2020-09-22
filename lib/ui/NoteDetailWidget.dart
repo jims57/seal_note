@@ -60,9 +60,14 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
       GlobalState.isKeyboardEventHandling = true;
       GlobalState.keyboardHeight = 0.0;
 
+      var showToolbar = false;
+
+      // Check if it is in edit mode and decide we should show the toolbar or note
+      if(!GlobalState.isQuillReadOnly) showToolbar = true;
+
       // Hide keyboard event
       GlobalState.flutterWebviewPlugin
-          .evalJavascript("javascript:hideKeyboard();");
+          .evalJavascript("javascript:hideKeyboard($showToolbar);");
     }, willShowKeyboard: (double keyboardHeight) {
       GlobalState.isKeyboardEventHandling = true;
       GlobalState.keyboardHeight = keyboardHeight;

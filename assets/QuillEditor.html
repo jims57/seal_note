@@ -2122,7 +2122,7 @@
         actionSum = 0;
     }
 
-    function hideKeyboard() { // Hide keyboard from dart code
+    function hideKeyboard(showToolbar = false) { // Hide keyboard from dart code
         // Calculate the actual action
         if (actionSum == 1) { //keyboard is pressed Done(The keyboard is going to hide)
             isEditingMode = false;
@@ -2147,7 +2147,7 @@
             setEditorHeight(keyboardHeight, true);
             showBottomPanel(showBottomPanel);
         } else { // Not in editing mode
-            setEditorHeight(0,false);
+            setEditorHeight(0,showToolbar);
             hideBottomPanel();
         }
 
