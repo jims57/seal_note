@@ -77,7 +77,6 @@ class MasterDetailPageState extends State<MasterDetailPage>
     GlobalState.screenWidth = getScreenWidth(context);
     GlobalState.screenType = checkScreenType(GlobalState.screenWidth);
 
-
     GlobalState.themeColor = Theme.of(context).primaryColor;
 
     updatePageShowAndHide(
@@ -88,23 +87,31 @@ class MasterDetailPageState extends State<MasterDetailPage>
     if (isFirstLoad) {
       isFirstLoad = false;
     } else {
-      Timer(const Duration(milliseconds: 500), () {
-
-        var newAppBarHeight = GlobalState.webViewScaffoldAppBarWidgetState.currentState.getAppBarHeight();
+      Timer(const Duration(milliseconds: 2000), () {
+        var newAppBarHeight = GlobalState
+            .webViewScaffoldAppBarWidgetState.currentState
+            .getAppBarHeight();
 
         // Check if it is rotating // check if rotation // check rotation action
-        if(GlobalState.appBarHeight != newAppBarHeight){
+        if (GlobalState.appBarHeight != newAppBarHeight) {
           GlobalState.appBarHeight = newAppBarHeight;
-          var newWebViewScreenHeight = GlobalState.screenHeight - GlobalState.appBarHeight;
+          var newWebViewScreenHeight =
+              GlobalState.screenHeight - GlobalState.appBarHeight;
+          var showToolbar = false;
 
-          GlobalState.flutterWebviewPlugin.evalJavascript("javascript:setEditorHeightWithNewWebViewScreenHeight($newWebViewScreenHeight, 0, false);");
+          // Check if it should show the toolbar
+          if (!GlobalState.isQuillReadOnly) {
+            // If it is in edit mode
+            showToolbar = true;
+          }
+
+          // GlobalState.flutterWebviewPlugin.evalJavascript("javascript:setEditorHeightWithNewWebViewScreenHeight($newWebViewScreenHeight, 0, false);");
+          GlobalState.flutterWebviewPlugin.evalJavascript(
+              "javascript:setEditorHeightWithNewWebViewScreenHeight($newWebViewScreenHeight, ${GlobalState.keyboardHeight}, $showToolbar);");
 
           print(GlobalState.appBarHeight);
         }
-
-
       });
-
 
       // Adjust the height of the Quill accordingly after rotation
       if (GlobalState.hasWebViewLoaded &&
