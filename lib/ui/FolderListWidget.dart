@@ -3,29 +3,42 @@ import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 
 class FolderListWidget extends StatefulWidget {
-  // FolderListWidget({Key key, @required this.folderPageWidth})
-  //     : super(key: key);
-
-  // final double folderPageWidth;
-
   @override
   State<StatefulWidget> createState() => _FolderListWidgetState();
 }
 
 class _FolderListWidgetState extends State<FolderListWidget> {
-  @override
-  Widget build(BuildContext context) {
+  List<GestureDetector> childrenWidgetList = List.generate(100, (index) {
     return GestureDetector(
-      child: Center(child: Text('I am folder list[Folder Page]')),
+      key: Key('$index'),
+      child: Text(
+        'index=>$index',
+        // key: Key('$index'),
+      ),
       onTap: () {
         GlobalState.isHandlingFolderPage = true;
         GlobalState.isInFolderPage = false;
         GlobalState.masterDetailPageState.currentState
             .updatePageShowAndHide(shouldTriggerSetState: true);
-
-        // if (GlobalState.screenType != 3)
-        //   Navigator.pop(GlobalState.noteListPageContext);
       },
+    );
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: (GlobalState.screenHeight -
+          GlobalState.folderPageTopContainerHeight -
+          GlobalState.folderPageBottomContainerHeight),
+      padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
+      child: ReorderableListView(
+        children: childrenWidgetList,
+        onReorder: (oldIndex, newIndex) {
+          var oldWidget = childrenWidgetList.removeAt(oldIndex);
+
+          childrenWidgetList.insert(newIndex, oldWidget);
+        },
+      ),
     );
   }
 }

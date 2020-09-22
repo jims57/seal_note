@@ -2,6 +2,7 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:seal_note/data/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:seal_note/model/ImageSyncItem.dart';
+import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
 
@@ -69,13 +70,17 @@ class GlobalState with ChangeNotifier {
   static SelectedNoteModel selectedNoteModel;
 
   // State objects
+  static GlobalKey<FolderListPageState> folderListPageState;
   static GlobalKey<MasterDetailPageState> masterDetailPageState;
-  static GlobalKey<AppBarWidgetState> webViewScaffoldAppBarWidgetState;
-
+  static GlobalKey<AppBarWidgetState> appBarWidgetState;
 
   // Change Notifier
   static AppState appState;
   static DetailPageChangeNotifier detailPageChangeNotifier;
+
+  // Folder page
+  static double folderPageTopContainerHeight = 40.0;
+  static double folderPageBottomContainerHeight = 40.0;
 
   // Folder Options
   static double folderOptionItemHeight = 40.0;

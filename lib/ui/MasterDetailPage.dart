@@ -50,6 +50,9 @@ class MasterDetailPageState extends State<MasterDetailPage>
     GlobalState.detailPageChangeNotifier =
         Provider.of<DetailPageChangeNotifier>(context, listen: false);
 
+    // States
+    GlobalState.folderListPageState = GlobalKey<FolderListPageState>();
+
     rootBundle.loadString('assets/QuillEditor.html').then((htmlString) {
       GlobalState.htmlString = htmlString;
       GlobalState.appState.widgetNo = 2;
@@ -87,10 +90,15 @@ class MasterDetailPageState extends State<MasterDetailPage>
     if (isFirstLoad) {
       isFirstLoad = false;
     } else {
-      Timer(const Duration(milliseconds: 1000), () {
+      // Get app bar height after rotation
+      Timer(const Duration(milliseconds: 200), () {
         var newAppBarHeight = GlobalState
-            .webViewScaffoldAppBarWidgetState.currentState
+            .appBarWidgetState.currentState
             .getAppBarHeight();
+
+        // Update folder page app bar and trigger setState()
+        GlobalState.folderPageTopContainerHeight = newAppBarHeight;
+        GlobalState.folderListPageState.currentState.triggerSetState();
 
         // Check if it is rotating // check if rotation // check rotation action
         if (GlobalState.appBarHeight != newAppBarHeight) {
@@ -180,7 +188,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
               width: folderPageWidth,
               color: Colors.green,
               // child: FolderListWidget(),
-              child: FolderListPage(),
+              child: FolderListPage(key: GlobalState.folderListPageState,),
             ),
           ), // Folder page
           SlideTransition(

@@ -25,9 +25,9 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       title:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
       content:
-          stringType.mapFromDatabaseResponse(data['${effectivePrefix}body']),
+          stringType.mapFromDatabaseResponse(data['${effectivePrefix}content']),
       created: dateTimeType
-          .mapFromDatabaseResponse(data['${effectivePrefix}createdT']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}created']),
     );
   }
   @override
@@ -40,10 +40,10 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       map['title'] = Variable<String>(title);
     }
     if (!nullToAbsent || content != null) {
-      map['body'] = Variable<String>(content);
+      map['content'] = Variable<String>(content);
     }
     if (!nullToAbsent || created != null) {
-      map['createdT'] = Variable<DateTime>(created);
+      map['created'] = Variable<DateTime>(created);
     }
     return map;
   }
@@ -141,8 +141,8 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
-      if (content != null) 'body': content,
-      if (created != null) 'createdT': created,
+      if (content != null) 'content': content,
+      if (created != null) 'created': created,
     });
   }
 
@@ -169,10 +169,10 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
       map['title'] = Variable<String>(title.value);
     }
     if (content.present) {
-      map['body'] = Variable<String>(content.value);
+      map['content'] = Variable<String>(content.value);
     }
     if (created.present) {
-      map['createdT'] = Variable<DateTime>(created.value);
+      map['created'] = Variable<DateTime>(created.value);
     }
     return map;
   }
@@ -217,7 +217,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
   GeneratedTextColumn get content => _content ??= _constructContent();
   GeneratedTextColumn _constructContent() {
     return GeneratedTextColumn(
-      'body',
+      'content',
       $tableName,
       true,
     );
@@ -229,7 +229,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
   GeneratedDateTimeColumn get created => _created ??= _constructCreated();
   GeneratedDateTimeColumn _constructCreated() {
     return GeneratedDateTimeColumn(
-      'createdT',
+      'created',
       $tableName,
       true,
     );
@@ -257,13 +257,13 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
     } else if (isInserting) {
       context.missing(_titleMeta);
     }
-    if (data.containsKey('body')) {
+    if (data.containsKey('content')) {
       context.handle(_contentMeta,
-          content.isAcceptableOrUnknown(data['body'], _contentMeta));
+          content.isAcceptableOrUnknown(data['content'], _contentMeta));
     }
-    if (data.containsKey('createdT')) {
+    if (data.containsKey('created')) {
       context.handle(_createdMeta,
-          created.isAcceptableOrUnknown(data['createdT'], _createdMeta));
+          created.isAcceptableOrUnknown(data['created'], _createdMeta));
     }
     return context;
   }
@@ -282,13 +282,288 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
   }
 }
 
+class FolderEntry extends DataClass implements Insertable<FolderEntry> {
+  final int id;
+  final String name;
+  final int order;
+  final int planId;
+  FolderEntry(
+      {@required this.id,
+      @required this.name,
+      @required this.order,
+      this.planId});
+  factory FolderEntry.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
+    return FolderEntry(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
+      order: intType.mapFromDatabaseResponse(data['${effectivePrefix}order']),
+      planId: intType.mapFromDatabaseResponse(data['${effectivePrefix}planId']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || name != null) {
+      map['name'] = Variable<String>(name);
+    }
+    if (!nullToAbsent || order != null) {
+      map['order'] = Variable<int>(order);
+    }
+    if (!nullToAbsent || planId != null) {
+      map['planId'] = Variable<int>(planId);
+    }
+    return map;
+  }
+
+  FoldersCompanion toCompanion(bool nullToAbsent) {
+    return FoldersCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      order:
+          order == null && nullToAbsent ? const Value.absent() : Value(order),
+      planId:
+          planId == null && nullToAbsent ? const Value.absent() : Value(planId),
+    );
+  }
+
+  factory FolderEntry.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return FolderEntry(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      order: serializer.fromJson<int>(json['order']),
+      planId: serializer.fromJson<int>(json['planId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'order': serializer.toJson<int>(order),
+      'planId': serializer.toJson<int>(planId),
+    };
+  }
+
+  FolderEntry copyWith({int id, String name, int order, int planId}) =>
+      FolderEntry(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        order: order ?? this.order,
+        planId: planId ?? this.planId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('FolderEntry(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('order: $order, ')
+          ..write('planId: $planId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(name.hashCode, $mrjc(order.hashCode, planId.hashCode))));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is FolderEntry &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.order == this.order &&
+          other.planId == this.planId);
+}
+
+class FoldersCompanion extends UpdateCompanion<FolderEntry> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<int> order;
+  final Value<int> planId;
+  const FoldersCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.order = const Value.absent(),
+    this.planId = const Value.absent(),
+  });
+  FoldersCompanion.insert({
+    this.id = const Value.absent(),
+    @required String name,
+    @required int order,
+    this.planId = const Value.absent(),
+  })  : name = Value(name),
+        order = Value(order);
+  static Insertable<FolderEntry> custom({
+    Expression<int> id,
+    Expression<String> name,
+    Expression<int> order,
+    Expression<int> planId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (order != null) 'order': order,
+      if (planId != null) 'planId': planId,
+    });
+  }
+
+  FoldersCompanion copyWith(
+      {Value<int> id,
+      Value<String> name,
+      Value<int> order,
+      Value<int> planId}) {
+    return FoldersCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      order: order ?? this.order,
+      planId: planId ?? this.planId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (order.present) {
+      map['order'] = Variable<int>(order.value);
+    }
+    if (planId.present) {
+      map['planId'] = Variable<int>(planId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FoldersCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('order: $order, ')
+          ..write('planId: $planId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $FoldersTable extends Folders with TableInfo<$FoldersTable, FolderEntry> {
+  final GeneratedDatabase _db;
+  final String _alias;
+  $FoldersTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedIntColumn _id;
+  @override
+  GeneratedIntColumn get id => _id ??= _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _nameMeta = const VerificationMeta('name');
+  GeneratedTextColumn _name;
+  @override
+  GeneratedTextColumn get name => _name ??= _constructName();
+  GeneratedTextColumn _constructName() {
+    return GeneratedTextColumn('name', $tableName, false,
+        minTextLength: 1, maxTextLength: 200);
+  }
+
+  final VerificationMeta _orderMeta = const VerificationMeta('order');
+  GeneratedIntColumn _order;
+  @override
+  GeneratedIntColumn get order => _order ??= _constructOrder();
+  GeneratedIntColumn _constructOrder() {
+    return GeneratedIntColumn(
+      'order',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _planIdMeta = const VerificationMeta('planId');
+  GeneratedIntColumn _planId;
+  @override
+  GeneratedIntColumn get planId => _planId ??= _constructPlanId();
+  GeneratedIntColumn _constructPlanId() {
+    return GeneratedIntColumn(
+      'planId',
+      $tableName,
+      true,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, name, order, planId];
+  @override
+  $FoldersTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'folders';
+  @override
+  final String actualTableName = 'folders';
+  @override
+  VerificationContext validateIntegrity(Insertable<FolderEntry> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name'], _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('order')) {
+      context.handle(
+          _orderMeta, order.isAcceptableOrUnknown(data['order'], _orderMeta));
+    } else if (isInserting) {
+      context.missing(_orderMeta);
+    }
+    if (data.containsKey('planId')) {
+      context.handle(_planIdMeta,
+          planId.isAcceptableOrUnknown(data['planId'], _planIdMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  FolderEntry map(Map<String, dynamic> data, {String tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return FolderEntry.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $FoldersTable createAlias(String alias) {
+    return $FoldersTable(_db, alias);
+  }
+}
+
 abstract class _$Database extends GeneratedDatabase {
   _$Database(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   _$Database.connect(DatabaseConnection c) : super.connect(c);
   $NotesTable _notes;
   $NotesTable get notes => _notes ??= $NotesTable(this);
+  $FoldersTable _folders;
+  $FoldersTable get folders => _folders ??= $FoldersTable(this);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [notes];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [notes, folders];
 }

@@ -5,26 +5,44 @@ import 'package:after_layout/after_layout.dart';
 import 'FolderListWidget.dart';
 
 class FolderListPage extends StatefulWidget {
+  FolderListPage({Key key}) : super(key: key);
+
   @override
-  State<StatefulWidget> createState() => _FolderListPageState();
+  State<StatefulWidget> createState() => FolderListPageState();
 }
 
-class _FolderListPageState extends State<FolderListPage>
-    with AfterLayoutMixin<FolderListPage> {
-  bool _canPop = false;
+class FolderListPageState extends State<FolderListPage> {
+  // with AfterLayoutMixin<FolderListPage> {
+  // bool _canPop = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FolderListWidget(),
+      body: Column(
+        children: [
+          Container(
+            height: GlobalState.folderPageTopContainerHeight,
+            color: Colors.red,
+          ),
+          FolderListWidget(),
+          Container(
+            height: GlobalState.folderPageBottomContainerHeight,
+            color: Colors.green,
+          ),
+        ],
+      ),
     );
   }
 
-  @override
-  void afterFirstLayout(BuildContext context) {
-    if (GlobalState.screenType == 3) {
-      _canPop = Navigator.canPop(GlobalState.noteListPageContext);
-      if (_canPop) Navigator.pop(GlobalState.noteListPageContext);
-    }
+  // @override
+  // void afterFirstLayout(BuildContext context) {
+  //   if (GlobalState.screenType == 3) {
+  //     _canPop = Navigator.canPop(GlobalState.noteListPageContext);
+  //     if (_canPop) Navigator.pop(GlobalState.noteListPageContext);
+  //   }
+  // }
+
+  void triggerSetState() {
+    setState(() {});
   }
 }

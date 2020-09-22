@@ -198,7 +198,6 @@ class AppBarWidgetState extends State<AppBarWidget>
   // Private methods
   double getAppBarHeight() {
     var appBarHeight = Scaffold.of(context).appBarMaxHeight;
-    // GlobalState.appBarHeight = appBarHeight;
 
     return appBarHeight;
   }

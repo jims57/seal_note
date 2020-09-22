@@ -1,6 +1,22 @@
 import 'package:moor/moor.dart';
+import 'dart:async';
+// import 'dart:core';
 
 part 'database.g.dart';
+
+@DataClassName('FolderEntry')
+class Folders extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get name => text().withLength(min: 1, max: 200)();
+
+  IntColumn get order => integer()();
+
+  IntColumn get planId => integer().nullable().named('planId')();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
 
 @DataClassName('NoteEntry')
 class Notes extends Table {
@@ -8,9 +24,9 @@ class Notes extends Table {
 
   TextColumn get title => text().withLength(min: 2, max: 200)();
 
-  TextColumn get content => text().nullable().named('body')();
+  TextColumn get content => text().nullable().named('content')();
 
-  DateTimeColumn get created => dateTime().nullable().named('createdT')();
+  DateTimeColumn get created => dateTime().nullable().named('created')();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -27,7 +43,7 @@ class Notes extends Table {
 //  });
 //}
 
-@UseMoor(tables: [Notes])
+@UseMoor(tables: [Notes, Folders])
 class Database extends _$Database {
   Database(QueryExecutor e) : super(e);
 
@@ -72,4 +88,10 @@ class Database extends _$Database {
   Future<int> deleteAllNotes() {
     return (delete(notes)).go();
   }
+
+  // Future<List<FolderEntry>> get getAllFolders => select(folders)..orderBy([(t) => OrderingTerm(expression: t.order)]).get();
+  Future<List<FolderEntry>>  getAllFolders(){
+    return (select(folders)..orderBy([(t) => OrderingTerm(expression: t.order)])).get();
+  }
+
 }

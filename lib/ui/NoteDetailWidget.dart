@@ -45,7 +45,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
   @override
   void initState() {
-    GlobalState.webViewScaffoldAppBarWidgetState =
+    GlobalState.appBarWidgetState =
         GlobalKey<AppBarWidgetState>();
 
     super.initState();
@@ -409,7 +409,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                     .toString(),
 
                 appBar: AppBarWidget(
-                  key: GlobalState.webViewScaffoldAppBarWidgetState,
+                  key: GlobalState.appBarWidgetState,
                     showSyncStatus: false,
                     leadingWidth: getAppBarLeadingWidth(),
                     tailWidth: appBarTailWidth,
@@ -467,7 +467,12 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                           // web view test button // test button // run button // test run button
                           icon: Icon(Icons.directions_run),
                           onPressed: () {
-                            var d = GlobalState.webViewScaffoldAppBarWidgetState.currentState.getAppBarHeight();
+                            GlobalState.database.getAllFolders().then((folders) {
+                              var v = folders;
+
+                            });
+
+                            var d = GlobalState.appBarWidgetState.currentState.getAppBarHeight();
 
                             var s= 's';
                             // GlobalState.flutterWebviewPlugin.evalJavascript(
