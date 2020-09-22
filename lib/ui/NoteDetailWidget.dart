@@ -415,13 +415,18 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                     tailWidth: appBarTailWidth,
                     leadingChildren: [
                       (GlobalState.screenType == 1)
-                          ? AppBarBackButtonWidget(
+                          ? AppBarBackButtonWidget( // note detail back button
                               textWidth: 180.0,
                               // title: '英语知识',
                               title: '英语知识[考研必备知识点2020秋季]',
                               onTap: () {
                                 GlobalState.isHandlingNoteDetailPage = true;
                                 GlobalState.isInNoteDetailPage = false;
+
+                                // If the Quill is in edit mode, we set it back to read only after clicking the back button
+                                if(!GlobalState.isQuillReadOnly) toggleQuillModeBetweenReadOnlyAndEdit();
+                                // GlobalState.isQuillReadOnly = true;
+
                                 GlobalState.masterDetailPageState.currentState
                                     .updatePageShowAndHide(
                                         shouldTriggerSetState: true);
@@ -430,33 +435,33 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                     ],
                     tailChildren: [
                       // edit web view button // edit note button
-                      // web view action button
+                      // web view action button // note detail edit button
                       IconButton(
                           icon: (GlobalState.isQuillReadOnly
                               ? Icon(Icons.edit)
                               : Icon(Icons.done)),
                           onPressed: () {
-                            setState(() {
-                              // GlobalState.appState.detailPageStatus = 2;
+                            toggleQuillModeBetweenReadOnlyAndEdit();
 
-                              if (GlobalState.isQuillReadOnly) {
-                                // If it is currently in readonly mode
-
-                                // Set it to the edit mode
-                                GlobalState.flutterWebviewPlugin.evalJavascript(
-                                    "javascript:setQuillToReadOnly(false);");
-                              } else {
-                                // If it is in edit mode
-
-                                // Set it to the read only mode
-                                GlobalState.flutterWebviewPlugin.evalJavascript(
-                                    "javascript:setQuillToReadOnly(true);");
-                              }
-
-                              // Switch the readonly status
-                              GlobalState.isQuillReadOnly =
-                                  !GlobalState.isQuillReadOnly;
-                            });
+                            // setState(() {
+                            //   if (GlobalState.isQuillReadOnly) {
+                            //     // If it is currently in readonly mode
+                            //
+                            //     // Set it to the edit mode
+                            //     GlobalState.flutterWebviewPlugin.evalJavascript(
+                            //         "javascript:setQuillToReadOnly(false);");
+                            //   } else {
+                            //     // If it is in edit mode
+                            //
+                            //     // Set it to the read only mode
+                            //     GlobalState.flutterWebviewPlugin.evalJavascript(
+                            //         "javascript:setQuillToReadOnly(true);");
+                            //   }
+                            //
+                            //   // Switch the readonly status
+                            //   GlobalState.isQuillReadOnly =
+                            //       !GlobalState.isQuillReadOnly;
+                            // });
                           }),
                       IconButton(
                           // web view test button // test button // run button // test run button
@@ -507,6 +512,28 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   }
 
   // Private methods
+  void toggleQuillModeBetweenReadOnlyAndEdit(){
+    setState(() {
+      if (GlobalState.isQuillReadOnly) {
+        // If it is currently in readonly mode
+
+        // Set it to the edit mode
+        GlobalState.flutterWebviewPlugin.evalJavascript(
+            "javascript:setQuillToReadOnly(false);");
+      } else {
+        // If it is in edit mode
+
+        // Set it to the read only mode
+        GlobalState.flutterWebviewPlugin.evalJavascript(
+            "javascript:setQuillToReadOnly(true);");
+      }
+
+      // Switch the readonly status
+      GlobalState.isQuillReadOnly =
+      !GlobalState.isQuillReadOnly;
+    });
+  }
+
   double getAppBarLeadingWidth() {
     double leadingWidth = 0.0;
     double appBarWidth = 0.0;
