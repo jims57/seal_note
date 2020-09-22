@@ -1,14 +1,8 @@
 // Import packages
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/util/appTools/RestartWidget.dart';
-import 'package:seal_note/util/converter/ImageConverter.dart';
-import 'package:seal_note/util/crypto/CryptoHandler.dart';
-import 'package:seal_note/util/file/FileHandler.dart';
 
 // Import custom files
 import 'data/appstate/AppState.dart';
@@ -67,18 +61,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-// class MyApp extends StatelessWidget  {
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     GlobalState.myAppContext = context;
-//
-//     // TODO: For Debug
-//
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       home: MasterDetailPage(),
-//     );
-//   }
-// }
