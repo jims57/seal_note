@@ -1765,7 +1765,7 @@
         }); 
     }
 
-    function setEditorHeight(bottomPanelHeight, showToolbar = true) {
+    function setEditorHeight(bottomPanelHeight, showToolbar = true, goToCursorPosition = false) {
         // bottomPanelHeight is the grey panel with the equal height to the keyboard height
 
         var currentToolbarHeight = 0;
@@ -1780,6 +1780,8 @@
         var editorHeight = webViewScreenHeight - currentToolbarHeight - bottomPanelHeight;
 
         document.getElementById('editor-container').style.height = editorHeight;
+
+        if(goToCursorPosition) goToQuillCursorPostion();
     }
 
     function goToQuillCursorPostion() {
@@ -2155,7 +2157,10 @@
     function setEditorHeightWithNewWebViewScreenHeight(newWebViewScreenHeight, bottomPanelHeight, showToolbar = true) {
         webViewScreenHeight = newWebViewScreenHeight;
 
-        setEditorHeight(bottomPanelHeight, showToolbar);
+        setEditorHeight(bottomPanelHeight, showToolbar, true);
+
+        // Anyway, we force the Quill move to the cursor position
+        //goToQuillCursorPostion();
     }
 
     // function updateScreenHeight(newScreenHeight, newKeyboardHeight, shouldAdjustEditorHeight = true) { 

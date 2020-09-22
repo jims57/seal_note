@@ -87,7 +87,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
     if (isFirstLoad) {
       isFirstLoad = false;
     } else {
-      Timer(const Duration(milliseconds: 2000), () {
+      Timer(const Duration(milliseconds: 1000), () {
         var newAppBarHeight = GlobalState
             .webViewScaffoldAppBarWidgetState.currentState
             .getAppBarHeight();
