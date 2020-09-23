@@ -16,8 +16,18 @@ class _FolderListWidgetState extends State<FolderListWidget> {
         // key: Key('$index'),
       ),
       onTap: () {
+        // click on folder item // click folder item
+        // if(GlobalState.screenType ==3){
+        //   GlobalState.isHandlingFolderPage = false;
+        //   GlobalState.isInFolderPage = false;
+        // }else{
+        //   GlobalState.isHandlingFolderPage = true;
+        //   GlobalState.isInFolderPage = false;
+        // }
+
         GlobalState.isHandlingFolderPage = true;
         GlobalState.isInFolderPage = false;
+
         GlobalState.masterDetailPageState.currentState
             .updatePageShowAndHide(shouldTriggerSetState: true);
       },
@@ -26,7 +36,7 @@ class _FolderListWidgetState extends State<FolderListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return  ListTile(leading: Icon(Icons.volume_off), title: Text("Volume Off"),);
+    // return  ListTile(leading: Icon(Icons.volume_off), title: Text("Volume Off"),);
 
     return Container(
       height: (GlobalState.screenHeight -

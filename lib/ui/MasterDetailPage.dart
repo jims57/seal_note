@@ -230,6 +230,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
   }
 
   // Handle Page show and hide
+  // update page show and hide // set page show and hide
   void updatePageShowAndHide(
       {@required bool shouldTriggerSetState,
       bool resetFolderAndDetailPageToDefaultDx = false,
@@ -298,7 +299,15 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
           _setFolderPageAnimation(hasAnimation: hasAnimation);
         } else {
-          folderPageFromDx = folderPageToDx;
+          // folderPageFromDx = folderPageToDx;
+
+          // Check if it should show the folder page
+          if(GlobalState.isInFolderPage){
+            folderPageFromDx = folderPageToDx;
+          } else {
+            folderPageFromDx = -1.0;
+            folderPageToDx = -1.0;
+          }
         }
 
         // It will only check it when the action is for the note detail page
@@ -326,8 +335,18 @@ class MasterDetailPageState extends State<MasterDetailPage>
         folderPageToDx = 0.0;
         noteDetailPageFromDx = 0.0;
         noteDetailPageToDx = 0.0;
-      } else {}
+      } else { // Handle the large screen
+        folderPageFromDx = 0.0;
+        folderPageToDx = 0.0;
+        noteDetailPageFromDx = 0.0;
+        noteDetailPageToDx =0.0;
+      }
     }
+
+    // Update the current width for pages
+    GlobalState.currentFolderPageWidth = folderPageWidth;
+    GlobalState.currentNoteListPageWidth = noteListPageWidth;
+    GlobalState.currentNoteDetailPageWidth = noteDetailPageWidth;
 
     if (shouldTriggerSetState) triggerSetState();
   }

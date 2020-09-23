@@ -53,8 +53,13 @@ class GlobalState with ChangeNotifier {
   // Pages' width
   // Note: The following default values for the width are as far as large screen(screenType = 3) is concerned
   static final double folderPageDefaultWidth = 250.0;
+  static double currentFolderPageWidth = 250.0;
+
   static final double noteListPageDefaultWidth = 270.0;
+  static double currentNoteListPageWidth = 270.0;
+
   static final double noteDetailPageDefaultWidth = 200.0;
+  static double currentNoteDetailPageWidth = 200.0;
 
   // Contexts
   static BuildContext myAppContext;

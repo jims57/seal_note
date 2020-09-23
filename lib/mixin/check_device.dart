@@ -4,7 +4,7 @@ mixin CheckDeviceMixin {
   int checkScreenType(double screenWidth) {
     int _screenType = 1;
 
-    if (screenWidth > 1000) {
+    if (screenWidth >= 1000) {
       _screenType = 3;
     } else if (screenWidth <= 600) {
       _screenType = 1;

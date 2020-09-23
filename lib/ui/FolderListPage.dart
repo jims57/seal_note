@@ -17,41 +17,43 @@ class FolderListPageState extends State<FolderListPage> {
 
   @override
   Widget build(BuildContext context) {
-    ScrollController _scrollController = ScrollController();
+    // ScrollController _scrollController = ScrollController();
 
-    return Scaffold(
-      body: Column(
-        children: [
-          Container(
-            height: GlobalState.screenHeight -
-                GlobalState.folderPageBottomContainerHeight,
-            color: Colors.red,
-            child: CustomScrollView(
-              slivers: [
-                SliverAppBar(
-                  title: Text("文件夹"),
-                  // collapsedHeight: 70,
-                  // expandedHeight: 90.0,
-                ),
-                // FolderListWidget()
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                    getFolderItemList()
+    // return Scaffold(
+    //   body: Column(
+    //     children: [
+    //       Container(
+    //         height: GlobalState.screenHeight -
+    //             GlobalState.folderPageBottomContainerHeight,
+    //         color: Colors.red,
+    //         child: CustomScrollView(
+    //           slivers: [
+    //             SliverAppBar(
+    //               title: Text("文件夹"),
+    //               // collapsedHeight: 70,
+    //               // expandedHeight: 90.0,
+    //             ),
+    //             // FolderListWidget()
+    //             SliverList(
+    //               delegate: SliverChildListDelegate(
+    //                 getFolderItemList()
+    //
+    //                   // [Container(height: 500,child: FolderListWidget(),)]),
+    //                   // [Container(height: 500,color: Colors.yellow,)],
+    //                   ),
+    //             )
+    //           ],
+    //         ),
+    //       ),
+    //       Container(
+    //         height: GlobalState.folderPageBottomContainerHeight,
+    //         color: Colors.green,
+    //       )
+    //     ],
+    //   ),
+    // );
 
-                      // [Container(height: 500,child: FolderListWidget(),)]),
-                      // [Container(height: 500,color: Colors.yellow,)],
-                      ),
-                )
-              ],
-            ),
-          ),
-          Container(
-            height: GlobalState.folderPageBottomContainerHeight,
-            color: Colors.green,
-          )
-        ],
-      ),
-    );
+    // return Scaffold(body: Container(color: Colors.red,height: 500,),);
 
     return Scaffold(
       body: Container(
@@ -59,9 +61,27 @@ class FolderListPageState extends State<FolderListPage> {
         child: Column(
           children: [
             Container(
-              height: GlobalState.folderPageTopContainerHeight,
-              color: Colors.red,
-            ),
+                alignment: Alignment.centerLeft,
+                height: GlobalState.folderPageTopContainerHeight,
+                // color: Colors.red,
+                child: Row(
+                  children: [
+                    Container(
+                      child: Text(
+                        '文件夹',
+                        style: TextStyle(
+                            fontSize: 25.0, fontWeight: FontWeight.w500),
+                      ),
+                      width: GlobalState.currentFolderPageWidth / 2,
+                      padding: EdgeInsets.only(left: 15.0),
+                      color: Colors.blue,
+                    ),
+                    Container(
+                      color: Colors.red,
+                      width: GlobalState.currentFolderPageWidth / 2,
+                    )
+                  ],
+                )),
             FolderListWidget(),
             Container(
               height: GlobalState.folderPageBottomContainerHeight,
@@ -73,21 +93,23 @@ class FolderListPageState extends State<FolderListPage> {
     );
   }
 
-  List<GestureDetector> getFolderItemList() {
-    List<GestureDetector> childrenWidgetList = List.generate(100, (index) {
-      return GestureDetector(
-        key: Key('$index'),
-        child: ListTile(title: Center(child: Text('index=>$index')),),
-        onTap: () {
-          GlobalState.isHandlingFolderPage = true;
-          GlobalState.isInFolderPage = false;
-          GlobalState.masterDetailPageState.currentState
-              .updatePageShowAndHide(shouldTriggerSetState: true);
-        },
-      );
-    });
-
-    return childrenWidgetList;
+  // List<GestureDetector> getFolderItemList() {
+  //   List<GestureDetector> childrenWidgetList = List.generate(100, (index) {
+  //     return GestureDetector(
+  //       key: Key('$index'),
+  //       child: ListTile(
+  //         title: Center(child: Text('index=>$index')),
+  //       ),
+  //       onTap: () {
+  //         GlobalState.isHandlingFolderPage = true;
+  //         GlobalState.isInFolderPage = false;
+  //         GlobalState.masterDetailPageState.currentState
+  //             .updatePageShowAndHide(shouldTriggerSetState: true);
+  //       },
+  //     );
+  //   });
+  //
+  //   return childrenWidgetList;
 
     // List<ListTile> folderItemList = List<ListTile>();
     //
@@ -102,7 +124,7 @@ class FolderListPageState extends State<FolderListPage> {
     // ));
     //
     // return folderItemList;
-  }
+  // }
 
   // @override
   // void afterFirstLayout(BuildContext context) {
