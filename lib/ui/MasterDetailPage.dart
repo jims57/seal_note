@@ -359,6 +359,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
   @override
   void afterFirstLayout(BuildContext context) {
     var s = 's';
+    print('Screen height:${GlobalState.screenHeight}');
+    print('Screen width:${GlobalState.screenWidth}');
   }
 
   // Private methods

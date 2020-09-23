@@ -17,6 +17,42 @@ class FolderListPageState extends State<FolderListPage> {
 
   @override
   Widget build(BuildContext context) {
+    ScrollController _scrollController = ScrollController();
+
+    return Scaffold(
+      body: Column(
+        children: [
+          Container(
+            height: GlobalState.screenHeight -
+                GlobalState.folderPageBottomContainerHeight,
+            color: Colors.red,
+            child: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  title: Text("文件夹"),
+                  // collapsedHeight: 70,
+                  // expandedHeight: 90.0,
+                ),
+                // FolderListWidget()
+                SliverList(
+                  delegate: SliverChildListDelegate(
+                    getFolderItemList()
+
+                      // [Container(height: 500,child: FolderListWidget(),)]),
+                      // [Container(height: 500,color: Colors.yellow,)],
+                      ),
+                )
+              ],
+            ),
+          ),
+          Container(
+            height: GlobalState.folderPageBottomContainerHeight,
+            color: Colors.green,
+          )
+        ],
+      ),
+    );
+
     return Scaffold(
       body: Container(
         height: GlobalState.screenHeight,
@@ -35,6 +71,37 @@ class FolderListPageState extends State<FolderListPage> {
         ),
       ),
     );
+  }
+
+  List<GestureDetector> getFolderItemList() {
+    List<GestureDetector> childrenWidgetList = List.generate(100, (index) {
+      return GestureDetector(
+        key: Key('$index'),
+        child: ListTile(title: Center(child: Text('index=>$index')),),
+        onTap: () {
+          GlobalState.isHandlingFolderPage = true;
+          GlobalState.isInFolderPage = false;
+          GlobalState.masterDetailPageState.currentState
+              .updatePageShowAndHide(shouldTriggerSetState: true);
+        },
+      );
+    });
+
+    return childrenWidgetList;
+
+    // List<ListTile> folderItemList = List<ListTile>();
+    //
+    // folderItemList.add(ListTile(
+    //   leading: Icon(Icons.volume_off),
+    //   title: Text("Volume Off"),
+    // ));
+    //
+    // folderItemList.add(ListTile(
+    //   leading: Icon(Icons.volume_off),
+    //   title: Text("Volume Off"),
+    // ));
+    //
+    // return folderItemList;
   }
 
   // @override
