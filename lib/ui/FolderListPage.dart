@@ -18,18 +18,21 @@ class FolderListPageState extends State<FolderListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Container(
-            height: GlobalState.folderPageTopContainerHeight,
-            color: Colors.red,
-          ),
-          FolderListWidget(),
-          Container(
-            height: GlobalState.folderPageBottomContainerHeight,
-            color: Colors.green,
-          ),
-        ],
+      body: Container(
+        height: GlobalState.screenHeight,
+        child: Column(
+          children: [
+            Container(
+              height: GlobalState.folderPageTopContainerHeight,
+              color: Colors.red,
+            ),
+            FolderListWidget(),
+            Container(
+              height: GlobalState.folderPageBottomContainerHeight,
+              color: Colors.green,
+            ),
+          ],
+        ),
       ),
     );
   }

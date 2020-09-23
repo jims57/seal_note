@@ -359,9 +359,6 @@ class MasterDetailPageState extends State<MasterDetailPage>
   @override
   void afterFirstLayout(BuildContext context) {
     var s = 's';
-    // Anyway we set it back to the default(true)
-    // GlobalState.shouldTriggerPageTransitionAnimation = true;
-    // GlobalState.folderListPageState.currentState.triggerSetState();
   }
 
   // Private methods

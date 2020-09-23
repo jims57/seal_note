@@ -29,7 +29,7 @@ class _FolderListWidgetState extends State<FolderListWidget> {
     return Container(
       height: (GlobalState.screenHeight -
           GlobalState.folderPageTopContainerHeight -
-          GlobalState.folderPageBottomContainerHeight),
+          GlobalState.folderPageBottomContainerHeight-GlobalState.keyboardHeight),
       padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
       child: ReorderableListView(
         children: childrenWidgetList,

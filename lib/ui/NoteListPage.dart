@@ -10,13 +10,6 @@ import 'NoteListWidget.dart';
 typedef void ItemSelectedCallback();
 
 class NoteListPage extends StatefulWidget {
-  // NoteListPage({Key key, this.itemCount, this.onItemSelected})
-  // NoteListPage({Key key, this.itemCount})
-  //     : super(key: key);
-
-  // final int itemCount;
-  // final ItemSelectedCallback onItemSelected;
-
   @override
   State<StatefulWidget> createState() => _NoteListPageState();
 }
@@ -49,7 +42,8 @@ class _NoteListPageState extends State<NoteListPage> {
                 GlobalState.masterDetailPageState.currentState
                     .updatePageShowAndHide(shouldTriggerSetState: true);
 
-                GlobalState.masterDetailPageState.currentState.refreshFolderListPageAppBarHeight();
+                GlobalState.masterDetailPageState.currentState
+                    .refreshFolderListPageAppBarHeight();
               }),
         ],
         tailChildren: [
