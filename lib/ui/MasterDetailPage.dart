@@ -95,7 +95,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
     } else {
       // Get app bar height after rotation
       // after rotation
-      Timer(const Duration(milliseconds: 200), () {
+      Timer(const Duration(milliseconds: 700), () {
         var newAppBarHeight =
             GlobalState.appBarWidgetState.currentState.getAppBarHeight();
 
