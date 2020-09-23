@@ -39,6 +39,7 @@ class _NoteListPageState extends State<NoteListPage> {
         // Note list app bar
         leadingChildren: [
           // new app bar back button widget
+          // note list back button
           AppBarBackButtonWidget(
               textWidth: 50.0,
               title: '文件夹', // Folder back button
@@ -47,6 +48,8 @@ class _NoteListPageState extends State<NoteListPage> {
                 GlobalState.isInFolderPage = true;
                 GlobalState.masterDetailPageState.currentState
                     .updatePageShowAndHide(shouldTriggerSetState: true);
+
+                GlobalState.masterDetailPageState.currentState.refreshFolderListPageAppBarHeight();
               }),
         ],
         tailChildren: [

@@ -23,7 +23,10 @@ class MasterDetailPage extends StatefulWidget {
 }
 
 class MasterDetailPageState extends State<MasterDetailPage>
-    with CheckDeviceMixin, TickerProviderStateMixin {
+    with
+        CheckDeviceMixin,
+        TickerProviderStateMixin,
+        AfterLayoutMixin<MasterDetailPage> {
   bool isFirstLoad = true;
 
   double folderPageFromDx = -1.0;
@@ -91,14 +94,18 @@ class MasterDetailPageState extends State<MasterDetailPage>
       isFirstLoad = false;
     } else {
       // Get app bar height after rotation
+      // after rotation
       Timer(const Duration(milliseconds: 200), () {
-        var newAppBarHeight = GlobalState
-            .appBarWidgetState.currentState
-            .getAppBarHeight();
+        var newAppBarHeight =
+            GlobalState.appBarWidgetState.currentState.getAppBarHeight();
 
-        // Update folder page app bar and trigger setState()
-        GlobalState.folderPageTopContainerHeight = newAppBarHeight;
-        GlobalState.folderListPageState.currentState.triggerSetState();
+        // Update the app bar's height on the folder list page
+        refreshFolderListPageAppBarHeight();
+
+        //
+        // // Update folder page app bar and trigger setState()
+        // GlobalState.folderPageTopContainerHeight = newAppBarHeight;
+        // GlobalState.folderListPageState.currentState.triggerSetState();
 
         // Check if it is rotating // check if rotation // check rotation action
         if (GlobalState.appBarHeight != newAppBarHeight) {
@@ -188,7 +195,9 @@ class MasterDetailPageState extends State<MasterDetailPage>
               width: folderPageWidth,
               color: Colors.green,
               // child: FolderListWidget(),
-              child: FolderListPage(key: GlobalState.folderListPageState,),
+              child: FolderListPage(
+                key: GlobalState.folderListPageState,
+              ),
             ),
           ), // Folder page
           SlideTransition(
@@ -347,6 +356,14 @@ class MasterDetailPageState extends State<MasterDetailPage>
     }
   }
 
+  @override
+  void afterFirstLayout(BuildContext context) {
+    var s = 's';
+    // Anyway we set it back to the default(true)
+    // GlobalState.shouldTriggerPageTransitionAnimation = true;
+    // GlobalState.folderListPageState.currentState.triggerSetState();
+  }
+
   // Private methods
   void _setFolderPageAnimation({bool hasAnimation = true}) {
     // Check if it is in the folder page
@@ -373,10 +390,11 @@ class MasterDetailPageState extends State<MasterDetailPage>
     }
   }
 
-// @override
-// void afterFirstLayout(BuildContext context) {
-//   var s ='s';
-//   // Anyway we set it back to the default(true)
-//   // GlobalState.shouldTriggerPageTransitionAnimation = true;
-// }
+  // Public methods
+  void refreshFolderListPageAppBarHeight() {
+    // Update folder page app bar and trigger setState()
+    GlobalState.folderPageTopContainerHeight =
+        GlobalState.appBarWidgetState.currentState.getAppBarHeight();
+    GlobalState.folderListPageState.currentState.triggerSetState();
+  }
 }
