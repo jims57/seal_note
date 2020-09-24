@@ -31,6 +31,7 @@ class AppBarWidget extends StatefulWidget with PreferredSizeWidget {
       @required this.tailChildren,
       this.showSyncStatus =
           true, // Check if we should show the sync text and icon below the title
+        this.forceToShowLeadingWidgets = false,
       this.leadingWidth: 100,
       this.tailWidth: 40})
       : super(key: key);
@@ -39,6 +40,7 @@ class AppBarWidget extends StatefulWidget with PreferredSizeWidget {
   final Widget title;
   final List<Widget> tailChildren;
   final bool showSyncStatus;
+  final bool forceToShowLeadingWidgets;
   final double leadingWidth;
   final double tailWidth;
 
@@ -109,7 +111,7 @@ class AppBarWidgetState extends State<AppBarWidget>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                (GlobalState.screenType == 3
+                ((GlobalState.screenType == 3&& !widget.forceToShowLeadingWidgets)
                     ? Container()
                     : Container(
                         width: widget.leadingWidth,
