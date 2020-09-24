@@ -20,7 +20,9 @@ class FolderListPageState extends State<FolderListPage> {
         forceToShowLeadingWidgets: true,
         showSyncStatus: false,
         leadingWidth: GlobalState.currentFolderPageWidth / 2,
+        tailWidth: GlobalState.currentFolderPageWidth / 4,
         leadingChildren: [
+          // folder page title // folder page caption
           Container(
             padding: EdgeInsets.only(left: 15.0),
             child: Text(
@@ -33,12 +35,22 @@ class FolderListPageState extends State<FolderListPage> {
           )
         ],
         tailChildren: [
-          IconButton(
-              icon: Icon(
+          // folder page add button // add folder button
+          // new folder button
+          GestureDetector(
+            child: Container(
+              color: Colors.transparent,
+              width: double.infinity,
+              alignment: Alignment.centerRight,
+              padding: EdgeInsets.only(right: 15.0),
+              child: Icon(
                 Icons.create_new_folder,
                 color: Colors.white,
+                size: 28.0,
               ),
-              onPressed: null)
+            ),
+            onTap: () {},
+          )
         ],
       ),
       body: Container(

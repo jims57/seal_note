@@ -14,6 +14,7 @@ class _FolderListWidgetState extends State<FolderListWidget> {
       key: Key('FolderListWidget$index'),
       child: Container(
         height: 60.0,
+        // folder list item // folder item
         child: Column(
           children: [
             Container(
@@ -26,9 +27,9 @@ class _FolderListWidgetState extends State<FolderListWidget> {
                     Icons.folder_open_outlined,
                     size: 25.0,
                     // color: Color(0xfffffbb5),
-                    color: Color(0xff696a6b),
+                    // color: Color(0xff696a6b),
                     // color: Color.fromRGBO(0, 0, 0, 0.5),
-                    // color: Color.fromRGBO(0, 0, 255, 0.5),
+                    color: Color.fromRGBO(0, 0, 255, 0.5),
                   ),
                   Container(
                       padding: EdgeInsets.only(left: 5.0),
@@ -67,11 +68,6 @@ class _FolderListWidgetState extends State<FolderListWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // height: (GlobalState.screenHeight -
-      //     GlobalState.folderPageBottomContainerHeight -
-      //     GlobalState.appBarHeight -
-      //     GlobalState.keyboardHeight),
-      // color: Colors.yellow,
       padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
       child: ReorderableListView(
         children: childrenWidgetList,

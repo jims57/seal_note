@@ -31,9 +31,9 @@ class AppBarWidget extends StatefulWidget with PreferredSizeWidget {
       @required this.tailChildren,
       this.showSyncStatus =
           true, // Check if we should show the sync text and icon below the title
-        this.forceToShowLeadingWidgets = false,
+      this.forceToShowLeadingWidgets = false,
       this.leadingWidth: 100,
-      this.tailWidth: 40})
+      this.tailWidth: 60})
       : super(key: key);
 
   final List<Widget> leadingChildren;
@@ -58,13 +58,6 @@ class AppBarWidgetState extends State<AppBarWidget>
 
   @override
   void initState() {
-    // Record app bar height
-    if (GlobalState.appBarHeight == null) {
-      // GlobalState.appBarHeight = widget.preferredSize.height;
-      // GlobalState.appBarHeight = MediaQuery.of(context).size.height;
-      // GlobalState.appBarHeight = Scaffold.of(context).appBarMaxHeight;
-    }
-
     _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 2))
           ..repeat();
@@ -111,7 +104,8 @@ class AppBarWidgetState extends State<AppBarWidget>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ((GlobalState.screenType == 3&& !widget.forceToShowLeadingWidgets)
+                ((GlobalState.screenType == 3 &&
+                        !widget.forceToShowLeadingWidgets)
                     ? Container()
                     : Container(
                         width: widget.leadingWidth,
