@@ -42,66 +42,14 @@ class FolderListPageState extends State<FolderListPage> {
         ],
       ),
       body: Container(
-        height: GlobalState.screenHeight - GlobalState.appBarHeight,
-        // height: 200,
+        height: double.infinity,
         child: Column(
           children: [
-            // Container(
-            //     alignment: Alignment.bottomCenter,
-            //     height: GlobalState.folderPageTopContainerHeight,
-            //     color: GlobalState.themeColor,
-            //     padding: EdgeInsets.only(bottom: 10.0),
-            //     child: Row(
-            //       // crossAxisAlignment: CrossAxisAlignment.center,
-            //       children: [
-            //         Container(
-            //           child: Text(
-            //             '文件夹',
-            //             style: TextStyle(
-            //                 color: Colors.white,
-            //                 fontSize: 25.0,
-            //                 fontWeight: FontWeight.w500),
-            //           ),
-            //           width: GlobalState.currentFolderPageWidth / 2,
-            //           padding: EdgeInsets.only(left: 15.0),
-            //           // color: Colors.red,
-            //         ),
-            //         Container(
-            //           // color: Colors.red,
-            //           width: GlobalState.currentFolderPageWidth / 2,
-            //           padding: EdgeInsets.only(right: 15.0),
-            //           child: Row(
-            //             mainAxisAlignment: MainAxisAlignment.end,
-            //             children: [
-            //               Icon(
-            //                 Icons.create_new_folder,
-            //                 size: 25.0,
-            //                 color: Colors.white,
-            //               )
-            //             ],
-            //           ),
-            //         )
-            //       ],
-            //     )),
-            // Divider(
-            //   height: 1,
-            //   color: Colors.black12,
-            //   thickness: 1,
-            //   indent: 15.0,
-            //   endIndent: 15.0,
-            // ),
-            FolderListWidget(),
+            Expanded(child: FolderListWidget()),
             Container(
               height: GlobalState.folderPageBottomContainerHeight,
-              // color: Colors.green,
-              // alignment: Alignment.centerLeft,
               child: Column(
                 children: [
-                  // Divider(
-                  //   height: 1,
-                  //   color: Colors.black12,
-                  //   thickness: 1,
-                  // ),
                   Container(
                     // alignment: Alignment.centerLeft,
                     height: GlobalState.folderPageBottomContainerHeight,

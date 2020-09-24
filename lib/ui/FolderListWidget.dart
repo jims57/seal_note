@@ -67,10 +67,10 @@ class _FolderListWidgetState extends State<FolderListWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: (GlobalState.screenHeight -
-          GlobalState.folderPageBottomContainerHeight -
-          GlobalState.appBarHeight -
-          GlobalState.keyboardHeight),
+      // height: (GlobalState.screenHeight -
+      //     GlobalState.folderPageBottomContainerHeight -
+      //     GlobalState.appBarHeight -
+      //     GlobalState.keyboardHeight),
       // color: Colors.yellow,
       padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
       child: ReorderableListView(
