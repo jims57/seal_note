@@ -83,7 +83,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
     GlobalState.screenWidth = getScreenWidth(context);
     GlobalState.screenType = checkScreenType(GlobalState.screenWidth);
 
-    GlobalState.themeColor = Theme.of(context).primaryColor;
+    GlobalState.themeBlueColor = Theme.of(context).primaryColor;
 
     updatePageShowAndHide(
         shouldTriggerSetState: false,

@@ -72,7 +72,7 @@ class _FolderOptionSliverChildListDelegateState
                                 padding: const EdgeInsets.only(left: 15.0),
                                 child: Icon(
                                   Icons.keyboard_arrow_left,
-                                  color: GlobalState.themeColor,
+                                  color: GlobalState.themeBlueColor,
                                 ));
                           } else {
                             return Container();
@@ -117,7 +117,7 @@ class _FolderOptionSliverChildListDelegateState
                         padding: const EdgeInsets.only(right: 15.0),
                         child: Text(
                           '完成',
-                          style: TextStyle(color: GlobalState.themeColor),
+                          style: TextStyle(color: GlobalState.themeBlueColor),
                         ),
                       ),
                       onTap: () {

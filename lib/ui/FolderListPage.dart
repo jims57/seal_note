@@ -58,16 +58,15 @@ class FolderListPageState extends State<FolderListPage> {
         child: Column(
           children: [
             Expanded(child: FolderListWidget()),
-            Container(
+            Container( // folder page bottom panel // setting panel
               height: GlobalState.folderPageBottomContainerHeight,
               child: Column(
                 children: [
                   Container(
-                    // alignment: Alignment.centerLeft,
                     height: GlobalState.folderPageBottomContainerHeight,
                     // color: Colors.green,
                     // color: Color(0xfff9fafb),
-                    color: Color(0xffecedee),
+                    color: GlobalState.themeGreyColor,
                     padding: EdgeInsets.only(left: 15.0, right: 15.0),
                     child: Row(
                       // mainAxisAlignment: MainAxisAlignment.start,

@@ -180,7 +180,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                           SlideAction(
                             child: Container(
                               constraints: BoxConstraints.expand(),
-                              color: GlobalState.themeColor,
+                              color: GlobalState.themeBlueColor,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -254,7 +254,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                                 Scaffold.of(context).showSnackBar(SnackBar(
                                   content: Text('SB'),
-                                  backgroundColor: GlobalState.themeColor,
+                                  backgroundColor: GlobalState.themeBlueColor,
                                   behavior: SnackBarBehavior.fixed,
                                   action: SnackBarAction(
                                     label: '撤消',
