@@ -66,20 +66,26 @@ class _FolderListWidgetState extends State<FolderListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // return  ListTile(leading: Icon(Icons.volume_off), title: Text("Volume Off"),);
-
     return Container(
       height: (GlobalState.screenHeight -
           GlobalState.folderPageBottomContainerHeight -
           GlobalState.appBarHeight -
           GlobalState.keyboardHeight),
+      // color: Colors.yellow,
       padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
       child: ReorderableListView(
         children: childrenWidgetList,
         onReorder: (oldIndex, newIndex) {
-          var oldWidget = childrenWidgetList.removeAt(oldIndex);
+          setState(() {
+            // These two lines are workarounds for ReorderableListView problems
+            if (newIndex > childrenWidgetList.length)
+              newIndex = childrenWidgetList.length;
+            if (oldIndex < newIndex) newIndex--;
 
-          childrenWidgetList.insert(newIndex, oldWidget);
+            var oldWidget = childrenWidgetList.removeAt(oldIndex);
+
+            childrenWidgetList.insert(newIndex, oldWidget);
+          });
         },
       ),
     );
