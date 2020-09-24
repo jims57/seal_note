@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/ui/NoteDetailWidget.dart';
 import 'package:seal_note/ui/common/AppBarBackButtonWidget.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
 import 'folderOption/FolderOptionListWidget.dart';

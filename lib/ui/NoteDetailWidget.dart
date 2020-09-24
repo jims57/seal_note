@@ -415,7 +415,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                     leadingChildren: [
                       (GlobalState.screenType == 1)
                           ? AppBarBackButtonWidget(
-                              // note detail back button
+                              // note detail back button // detail back button
+                              // detail page back button // webView back button
                               textWidth: 180.0,
                               // title: '英语知识',
                               title: '英语知识[考研必备知识点2020秋季]',
@@ -425,7 +426,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
                                 // If the Quill is in edit mode, we set it back to read only after clicking the back button
                                 if (!GlobalState.isQuillReadOnly)
-                                  toggleQuillModeBetweenReadOnlyAndEdit();
+                                  toggleQuillModeBetweenReadOnlyAndEdit(
+                                      keepNoteDetailPageOpen: false);
                                 // GlobalState.isQuillReadOnly = true;
 
                                 GlobalState.masterDetailPageState.currentState
@@ -443,7 +445,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                               ? Icon(Icons.edit)
                               : Icon(Icons.done)),
                           onPressed: () {
-                            toggleQuillModeBetweenReadOnlyAndEdit();
+                            toggleQuillModeBetweenReadOnlyAndEdit(
+                                keepNoteDetailPageOpen: true);
                           }),
                       IconButton(
                           // web view test button // test button // run button // test run button
@@ -501,12 +504,20 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   }
 
   // Private methods
-  void toggleQuillModeBetweenReadOnlyAndEdit() {
+  void toggleQuillModeBetweenReadOnlyAndEdit(
+      {bool keepNoteDetailPageOpen = true}) {
     // toggle edit mode // toggle read only mode
+
     setState(() {
       // Both edit and read only mode will view it as handling the detail page
       GlobalState.isHandlingNoteDetailPage = true;
-      GlobalState.isInNoteDetailPage = true;
+
+      // Check if it keeps stay at the detail page or note after executing this
+      if (keepNoteDetailPageOpen) {
+        GlobalState.isInNoteDetailPage = true;
+      } else {
+        GlobalState.isInNoteDetailPage = false;
+      }
 
       if (GlobalState.isQuillReadOnly) {
         // If it is currently in readonly mode
