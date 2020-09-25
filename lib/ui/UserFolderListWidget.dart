@@ -35,15 +35,34 @@ class _UserFolderListWidgetState extends State<UserFolderListWidget> {
       if (index == widget.folderTotal - 1) isLastItem = true;
 
       return getFolderListItem(
-          index: index, folderName: '英语知识$index',numberToShow: index, showDivider: true,showZero: true);
+          index: index,
+          folderName: '英语知识$index',
+          numberToShow: index,
+          showDivider: true,
+          showZero: true);
     });
 
     childrenWidgetList.insert(
-        0, getFolderListItem(folderName: '今日',numberToShow: 546, showBadgeBackgroundColor: true,canSwipe: false));
+        0,
+        getFolderListItem(
+            folderName: '今日',
+            numberToShow: 546,
+            showBadgeBackgroundColor: true,
+            canSwipe: true,
+            isRoundTopCorner: true,));
+
     childrenWidgetList.insert(
-        1, getFolderListItem(folderName: '全部笔记', numberToShow: 2203,canSwipe: false));
+        1,
+        getFolderListItem(
+            folderName: '全部笔记', numberToShow: 2203, canSwipe: false));
+
     childrenWidgetList.add(getFolderListItem(
-        folderName: '删除笔记',numberToShow: 43, canSwipe: false, showDivider: false));
+      folderName: '删除笔记',
+      numberToShow: 43,
+      canSwipe: false,
+      showDivider: false,
+      isRoundBottomCorner: true,
+    ));
 
     super.initState();
   }
@@ -57,131 +76,30 @@ class _UserFolderListWidgetState extends State<UserFolderListWidget> {
           left: 15.0,
           right: 15.0),
       // color: Colors.red,
-      child: ClipRRect(
-        borderRadius: const BorderRadius.only(
-            topLeft: const Radius.circular(10),
-            topRight: const Radius.circular(10),
-            bottomLeft: const Radius.circular(10),
-            bottomRight: const Radius.circular(10)),
-        child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          child: Container(
-            height: GlobalState.screenHeight -
-                GlobalState.appBarHeight -
-                GlobalState.folderPageBottomContainerHeight -
-                folderListPanelMarginForTopOrBottom * 2,
-            // color: Colors.green,
-            child: ReorderableListView(
-              children: childrenWidgetList,
-              onReorder: (oldIndex, newIndex) {
-                setState(() {
-                  // These two lines are workarounds for ReorderableListView problems
-                  if (newIndex > childrenWidgetList.length)
-                    newIndex = childrenWidgetList.length;
-                  if (oldIndex < newIndex) newIndex--;
+      child: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Container(
+          height: GlobalState.screenHeight -
+              GlobalState.appBarHeight -
+              GlobalState.folderPageBottomContainerHeight -
+              folderListPanelMarginForTopOrBottom * 2,
+          // color: Colors.green,
+          child: ReorderableListView(
+            children: childrenWidgetList,
+            onReorder: (oldIndex, newIndex) {
+              setState(() {
+                // These two lines are workarounds for ReorderableListView problems
+                if (newIndex > childrenWidgetList.length)
+                  newIndex = childrenWidgetList.length;
+                if (oldIndex < newIndex) newIndex--;
 
-                  var oldWidget = childrenWidgetList.removeAt(oldIndex);
+                var oldWidget = childrenWidgetList.removeAt(oldIndex);
 
-                  childrenWidgetList.insert(newIndex, oldWidget);
-                });
-              },
-            ),
+                childrenWidgetList.insert(newIndex, oldWidget);
+              });
+            },
           ),
         ),
-
-        // child: Container(
-        //   // padding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 15.0, right: 15.0),
-        //   // color: Colors.red,
-        //   child: CustomScrollView(
-        //     slivers: [
-        //       SliverList(
-        //         delegate: SliverChildListDelegate(
-        //           [
-        //             Stack(
-        //               children: [
-        //                 Container(
-        //                   height:
-        //                       folderListItemHeight * (defaultFolderTotal - 1),
-        //                   // color: Colors.red,
-        //                   child: Column(
-        //                     children: [
-        //                       getFolderListItem(
-        //                           folderName: '今日', canSwipe: false),
-        //                       getFolderListItem(
-        //                           folderName: '全部笔记', canSwipe: false),
-        //                       // getFolderListItem(folderName: '删除笔记',canSwipe: false),
-        //                     ],
-        //                   ),
-        //                 ),
-        //                 Container(
-        //                   margin: EdgeInsets.only(
-        //                       top: folderListItemHeight *
-        //                           (widget.folderTotal +
-        //                               defaultFolderTotal -
-        //                               1)),
-        //                   height: folderListItemHeight * 1,
-        //                   color: Colors.red,
-        //                   child: Column(
-        //                     children: [
-        //                       getFolderListItem(
-        //                           folderName: '删除笔记', canSwipe: false),
-        //                     ],
-        //                   ),
-        //                 ),
-        //                 Container(
-        //                   // height: GlobalState.screenHeight -
-        //                   //     GlobalState.appBarHeight -
-        //                   //     GlobalState.folderPageBottomContainerHeight -
-        //                   //     (folderListItemHeight * defaultFolderTotal),
-        //
-        //                   margin: EdgeInsets.only(
-        //                       top: folderListItemHeight *
-        //                           (defaultFolderTotal - 1)),
-        //                   height:
-        //                       folderListItemHeight * widget.folderTotal + 200,
-        //                   child: ReorderableListView(
-        //                     children: childrenWidgetList,
-        //                     onReorder: (oldIndex, newIndex) {
-        //                       setState(() {
-        //                         // These two lines are workarounds for ReorderableListView problems
-        //                         if (newIndex > childrenWidgetList.length)
-        //                           newIndex = childrenWidgetList.length;
-        //                         if (oldIndex < newIndex) newIndex--;
-        //
-        //                         var oldWidget =
-        //                             childrenWidgetList.removeAt(oldIndex);
-        //
-        //                         childrenWidgetList.insert(newIndex, oldWidget);
-        //                       });
-        //                     },
-        //                   ),
-        //                 ),
-        //               ],
-        //             )
-        //
-        //
-        //           ],
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        //
-        //   // child: ReorderableListView(
-        //   //   children: childrenWidgetList,
-        //   //   onReorder: (oldIndex, newIndex) {
-        //   //     setState(() {
-        //   //       // These two lines are workarounds for ReorderableListView problems
-        //   //       if (newIndex > childrenWidgetList.length)
-        //   //         newIndex = childrenWidgetList.length;
-        //   //       if (oldIndex < newIndex) newIndex--;
-        //   //
-        //   //       var oldWidget = childrenWidgetList.removeAt(oldIndex);
-        //   //
-        //   //       childrenWidgetList.insert(newIndex, oldWidget);
-        //   //     });
-        //   //   },
-        //   // ),
-        // ),
       ),
     );
   }
@@ -195,113 +113,127 @@ class _UserFolderListWidgetState extends State<UserFolderListWidget> {
       bool isFirstItem = false,
       bool showDivider = true,
       bool showBadgeBackgroundColor = false,
-      bool showZero = true}) {
+      bool showZero = true,
+      bool isRoundTopCorner = false,
+      bool isRoundBottomCorner = false}) {
     return GestureDetector(
       key: (index == 0) ? Key('$folderName') : Key('getFolderListItem$index'),
-      child: Container(
-        // folder list item // folder item
-        height: folderListItemHeight,
-        child: Slidable(
-          actionPane: SlidableDrawerActionPane(),
-          actionExtentRatio: 0.25,
-          child: Column(
-            children: [
-              Container(
-                // folder list item content
-                padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                decoration: BoxDecoration(
-                  color: GlobalState.themeWhiteColorAtiOSTodo,
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      height: folderListItemHeight - 1,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 3,
-                            child: Row(
-                              children: [
-                                Icon(
-                                  // folder list item icon // folder item icon // folder icon
-                                  Icons.folder_open_outlined,
-                                  size: 25.0,
-                                  color: GlobalState.themeLightBlueColor07,
-                                ),
-                                Container(
-                                    // folder name // folder list item name
-                                    padding: EdgeInsets.only(left: 5.0),
-                                    child: Text(
-                                      // (index == 0) ? '今日' : '英语知识$index',
-                                      '$folderName',
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.black87,
-                                      ),
-                                    )),
-                              ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.only(
+          topLeft:
+              (isRoundTopCorner) ? Radius.circular(10) : Radius.circular(0),
+          topRight:
+              (isRoundTopCorner) ? Radius.circular(10) : Radius.circular(0),
+          bottomLeft:
+              (isRoundBottomCorner) ? Radius.circular(10) : Radius.circular(0),
+          bottomRight:
+              (isRoundBottomCorner) ? Radius.circular(10) : Radius.circular(0),
+        ),
+        child: Container(
+          // folder list item // folder item
+          height: folderListItemHeight,
+          child: Slidable(
+            actionPane: SlidableDrawerActionPane(),
+            actionExtentRatio: 0.25,
+            child: Column(
+              children: [
+                Container(
+                  // folder list item content
+                  padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                  decoration: BoxDecoration(
+                    color: GlobalState.themeWhiteColorAtiOSTodo,
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: folderListItemHeight - 1,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    // folder list item icon // folder item icon // folder icon
+                                    Icons.folder_open_outlined,
+                                    size: 25.0,
+                                    color: GlobalState.themeLightBlueColor07,
+                                  ),
+                                  Container(
+                                      // folder name // folder list item name
+                                      padding: EdgeInsets.only(left: 5.0),
+                                      child: Text(
+                                        // (index == 0) ? '今日' : '英语知识$index',
+                                        '$folderName',
+                                        style: TextStyle(
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.black87,
+                                        ),
+                                      )),
+                                ],
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: FolderListItemRightPartWidget(
-                              numberToShow: numberToShow,
-                              showBadgeBackgroundColor:
-                                  showBadgeBackgroundColor,
-                              showZero: showZero,
+                            Expanded(
+                              flex: 1,
+                              child: FolderListItemRightPartWidget(
+                                numberToShow: numberToShow,
+                                showBadgeBackgroundColor:
+                                    showBadgeBackgroundColor,
+                                showZero: showZero,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                // folder list item line // folder list item bottom line
-                height: 1,
-                width: double.infinity,
-                child: Row(
-                  children: [
-                    Container(
-                      // folder list item left bottom line // left bottom line
-                      color: GlobalState.themeWhiteColorAtiOSTodo,
-                      height: 1,
-                      width: 40,
-                    ),
-                    Expanded(
-                      // folder list item right bottom line // right bottom line
-                      child: Container(
-                        color: (showDivider)
-                            ? GlobalState.themeGreyColorAtiOSTodoForBackground
-                            : GlobalState.themeWhiteColorAtiOSTodo,
+                Container(
+                  // folder list item line // folder list item bottom line
+                  height: 1,
+                  width: double.infinity,
+                  child: Row(
+                    children: [
+                      Container(
+                        // folder list item left bottom line // left bottom line
+                        color: GlobalState.themeWhiteColorAtiOSTodo,
                         height: 1,
+                        width: 40,
                       ),
-                    )
+                      Expanded(
+                        // folder list item right bottom line // right bottom line
+                        child: Container(
+                          color: (showDivider)
+                              ? GlobalState.themeGreyColorAtiOSTodoForBackground
+                              : GlobalState.themeWhiteColorAtiOSTodo,
+                          height: 1,
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+            secondaryActions: (!canSwipe)
+                ? []
+                : <Widget>[
+                    IconSlideAction(
+                      caption: '复习计划',
+                      color: GlobalState.themeGreenColorAtiOSTodo,
+                      foregroundColor: Colors.white,
+                      icon: Icons.calendar_today_outlined,
+                      //          onTap: () => _showSnackBar('More'),
+                    ),
+                    IconSlideAction(
+                      caption: '更多',
+                      color: GlobalState.themeGreyColorAtiOSTodo,
+                      foregroundColor: Colors.white,
+                      icon: Icons.more_horiz,
+                      //          onTap: () => _showSnackBar('More'),
+                    ),
                   ],
-                ),
-              )
-            ],
           ),
-          secondaryActions: (!canSwipe)
-              ? []
-              : <Widget>[
-                  IconSlideAction(
-                    caption: '复习计划',
-                    color: GlobalState.themeGreenColorAtiOSTodo,
-                    foregroundColor: Colors.white,
-                    icon: Icons.calendar_today_outlined,
-                    //          onTap: () => _showSnackBar('More'),
-                  ),
-                  IconSlideAction(
-                    caption: '更多',
-                    color: GlobalState.themeGreyColorAtiOSTodo,
-                    foregroundColor: Colors.white,
-                    icon: Icons.more_horiz,
-                    //          onTap: () => _showSnackBar('More'),
-                  ),
-                ],
         ),
       ),
       onTap: () {
