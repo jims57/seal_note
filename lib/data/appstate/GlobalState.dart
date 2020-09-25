@@ -18,6 +18,7 @@ class GlobalState with ChangeNotifier {
   GlobalState._internal();
 
   // Colors
+  static Color themeBlackColor = Color(0xff000000);
   static Color themeBlueColor;
   static Color themeGreenColorAtiOSTodo = Color(0xff67d844);
   static Color themeLightBlueColor07 = Color.fromRGBO(43, 152, 240, 0.7);

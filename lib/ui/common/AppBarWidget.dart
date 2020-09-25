@@ -33,7 +33,8 @@ class AppBarWidget extends StatefulWidget with PreferredSizeWidget {
           true, // Check if we should show the sync text and icon below the title
       this.forceToShowLeadingWidgets = false,
       this.leadingWidth: 100,
-      this.tailWidth: 60})
+      this.tailWidth: 60,
+      this.backgroundColor})
       : super(key: key);
 
   final List<Widget> leadingChildren;
@@ -43,6 +44,7 @@ class AppBarWidget extends StatefulWidget with PreferredSizeWidget {
   final bool forceToShowLeadingWidgets;
   final double leadingWidth;
   final double tailWidth;
+  final Color backgroundColor;
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
@@ -56,8 +58,16 @@ class AppBarWidgetState extends State<AppBarWidget>
   AppState _appState;
   AnimationController _animationController;
 
+  Color backgroundColor;
+
   @override
   void initState() {
+    if (widget.backgroundColor == null) {
+      backgroundColor = GlobalState.themeBlueColor;
+    } else {
+      backgroundColor = widget.backgroundColor;
+    }
+
     _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 2))
           ..repeat();
@@ -98,6 +108,7 @@ class AppBarWidgetState extends State<AppBarWidget>
 
     return AppBar(
       elevation: 0.0,
+      backgroundColor: backgroundColor,
       title: Stack(
         children: [
           Container(

@@ -17,6 +17,8 @@ class FolderListPageState extends State<FolderListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(
+        // folder page app bar // folder list page app bar
+        backgroundColor: GlobalState.themeGreyColorAtiOSTodoForBackground,
         forceToShowLeadingWidgets: true,
         showSyncStatus: false,
         leadingWidth: GlobalState.currentFolderPageWidth / 2,
@@ -28,7 +30,7 @@ class FolderListPageState extends State<FolderListPage> {
             child: Text(
               '文件夹',
               style: TextStyle(
-                  color: Colors.white,
+                  color: GlobalState.themeBlackColor,
                   fontSize: 25.0,
                   fontWeight: FontWeight.w500),
             ),
@@ -45,7 +47,8 @@ class FolderListPageState extends State<FolderListPage> {
               padding: EdgeInsets.only(right: 15.0),
               child: Icon(
                 Icons.create_new_folder,
-                color: Colors.white,
+                // color: Colors.white,
+                color: GlobalState.themeBlueColor,
                 size: 28.0,
               ),
             ),
@@ -70,32 +73,41 @@ class FolderListPageState extends State<FolderListPage> {
         child: Column(
           children: [
             Expanded(child: FolderListWidget()),
-            Container( // folder page bottom panel // setting panel
+            Container(
+              // folder page bottom panel // setting panel
+              // folder page setting panel
               height: GlobalState.folderPageBottomContainerHeight,
               child: Column(
                 children: [
                   Container(
                     height: GlobalState.folderPageBottomContainerHeight,
-                    // color: Colors.green,
-                    // color: Color(0xfff9fafb),
-                    color: GlobalState.themeGreyColor,
-                    padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                    color: GlobalState.themeGreyColorAtiOSTodoForBackground,
+                    // padding: EdgeInsets.only(left: 0.0, right: 15.0),
                     child: Row(
                       // mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.settings,
-                                size: 20,
-                              ),
-                              Text(
-                                '设置',
-                                style: TextStyle(fontSize: 10),
-                              )
-                            ])
+                        GestureDetector(
+                          child: Container(
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.settings,
+                                    size: 20,
+                                  ),
+                                  Text(
+                                    '设置',
+                                    style: TextStyle(fontSize: 10),
+                                  )
+                                ]),
+                            color: Colors.transparent,
+                            padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                          ),
+                          onTap: () { // setting event // click setting event
+
+                          },
+                        )
                       ],
                     ),
                   ),

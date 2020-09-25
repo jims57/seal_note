@@ -33,9 +33,6 @@ class _FolderListWidgetState extends State<FolderListWidget> {
         child: Container(
           // folder list item // folder item
           height: folderListItemHeight,
-          // padding: EdgeInsets.only(left: 15.0, right: 15.0),
-          // color: GlobalState.themeGreyColorAtiOSTodoForBackground,
-          // color: Colors.red,
           child: Slidable(
             actionPane: SlidableDrawerActionPane(),
             actionExtentRatio: 0.25,
@@ -43,7 +40,6 @@ class _FolderListWidgetState extends State<FolderListWidget> {
               children: [
                 Container(
                   // folder list item content
-                  // height: 59.0,
                   padding: EdgeInsets.only(left: 10.0, right: 10.0),
                   // color: Colors.transparent,
                   // color: Colors.green,
@@ -76,11 +72,6 @@ class _FolderListWidgetState extends State<FolderListWidget> {
                                     // folder list item icon // folder item icon // folder icon
                                     Icons.folder_open_outlined,
                                     size: 25.0,
-                                    // color: Color(0xfffffbb5),
-                                    // color: Color(0xff696a6b),
-                                    // color: Color(0xff2b98f0),
-                                    // color: Color.fromRGBO(0, 0, 0, 0.5),
-                                    // color: Color.fromRGBO(43, 152, 240, 0.7),
                                     color: GlobalState.themeLightBlueColor07,
                                   ),
                                   Container(
@@ -120,15 +111,21 @@ class _FolderListWidgetState extends State<FolderListWidget> {
                   width: double.infinity,
                   child: Row(
                     children: [
-                      Container( // folder list item left bottom line // left bottom line
+                      Container(
+                        // folder list item left bottom line // left bottom line
                         // color: Colors.green,
                         color: GlobalState.themeWhiteColorAtiOSTodo,
                         height: 1,
                         width: 40,
                       ),
-                      Expanded( // folder list item right bottom line // right bottom line
+                      Expanded(
+                        // folder list item right bottom line // right bottom line
                         child: Container(
-                          color: GlobalState.themeGreyColorAtiOSTodoForBackground,
+                          color: (isLastItem)
+                              ? GlobalState.themeWhiteColorAtiOSTodo
+                              : GlobalState
+                                  .themeGreyColorAtiOSTodoForBackground,
+                          // color: Colors.red,
                           height: 1,
                           // width: 100,
                         ),
@@ -155,64 +152,6 @@ class _FolderListWidgetState extends State<FolderListWidget> {
               ),
             ],
           ),
-
-          // child: Column(
-          //   children: [
-          //     Container(
-          //       height: 59.0,
-          //       padding: EdgeInsets.only(left: 15.0, right: 15.0),
-          //       color: Colors.transparent,
-          //       child: Row(
-          //         children: [
-          //           Expanded(
-          //             flex: 3,
-          //             child: Row(
-          //               children: [
-          //                 Icon(
-          //                   // folder list item icon // folder item icon // folder icon
-          //                   Icons.folder_open_outlined,
-          //                   size: 25.0,
-          //                   // color: Color(0xfffffbb5),
-          //                   // color: Color(0xff696a6b),
-          //                   // color: Color(0xff2b98f0),
-          //                   // color: Color.fromRGBO(0, 0, 0, 0.5),
-          //                   // color: Color.fromRGBO(43, 152, 240, 0.7),
-          //                   color: GlobalState.themeLightBlueColor07,
-          //                 ),
-          //                 Container(
-          //                     // folder name // folder list item name
-          //                     padding: EdgeInsets.only(left: 5.0),
-          //                     child: Text(
-          //                       (index == 0) ? '今日' : '英语知识$index',
-          //                       style: TextStyle(
-          //                         fontSize: 20.0,
-          //                         fontWeight: FontWeight.w400,
-          //                         color: Colors.black87,
-          //                       ),
-          //                     )),
-          //               ],
-          //             ),
-          //           ),
-          //           Expanded(
-          //             flex: 1,
-          //             child: FolderListItemRightPartWidget(
-          //               numberToShow: (index == 0) ? 653 : index,
-          //               showBadgeBackgroundColor: (index == 0) ? true : false,
-          //               showZero: false,
-          //             ),
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //     Divider(
-          //       height: 1,
-          //       color: Colors.black12,
-          //       thickness: 1,
-          //       indent: 15.0,
-          //       endIndent: 15.0,
-          //     )
-          //   ],
-          // ),
         ),
         onTap: () {
           // click on folder item // click folder item
