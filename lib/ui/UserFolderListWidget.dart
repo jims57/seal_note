@@ -16,8 +16,9 @@ class UserFolderListWidget extends StatefulWidget {
 }
 
 class _UserFolderListWidgetState extends State<UserFolderListWidget> {
-  int defaultFolderTotal = 3;
+  int defaultFolderTotal = 1;
   double folderListItemHeight = 60.0;
+  double folderListPanelMarginForTopOrBottom = 5.0;
   List<Widget> childrenWidgetList;
 
   @override
@@ -43,143 +44,147 @@ class _UserFolderListWidgetState extends State<UserFolderListWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 15.0, right: 15.0),
+      padding: EdgeInsets.only(top: folderListPanelMarginForTopOrBottom,
+          bottom: folderListPanelMarginForTopOrBottom,
+          left: 15.0,
+          right: 15.0),
       // color: Colors.red,
-      child: CustomScrollView(
-        slivers: [
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                Stack(
-                  children: [
-                    Container(
-                      height: folderListItemHeight * (defaultFolderTotal - 1),
-                      // color: Colors.red,
-                      child: Column(
-                        children: [
-                          getFolderListItem(folderName: '今日', canSwipe: false),
-                          getFolderListItem(
-                              folderName: '全部笔记', canSwipe: false),
-                          // getFolderListItem(folderName: '删除笔记',canSwipe: false),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(
-                          top: folderListItemHeight *
-                              (widget.folderTotal + defaultFolderTotal - 1)),
-                      height: folderListItemHeight * 1,
-                      color: Colors.red,
-                      child: Column(
-                        children: [
-                          getFolderListItem(
-                              folderName: '删除笔记', canSwipe: false),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      // height: GlobalState.screenHeight -
-                      //     GlobalState.appBarHeight -
-                      //     GlobalState.folderPageBottomContainerHeight -
-                      //     (folderListItemHeight * defaultFolderTotal),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.only(
+            topLeft: const Radius.circular(10),
+            topRight: const Radius.circular(10),
+            bottomLeft: const Radius.circular(10),
+            bottomRight: const Radius.circular(10)),
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Container(
+            // height: folderListItemHeight*widget.folderTotal,
+            // height: folderListItemHeight*20,
+            height: GlobalState.screenHeight -
+                GlobalState.appBarHeight -
+                GlobalState.folderPageBottomContainerHeight - folderListPanelMarginForTopOrBottom*2,
+            // color: Colors.green,
+            child: ReorderableListView(
+              children: childrenWidgetList,
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  // These two lines are workarounds for ReorderableListView problems
+                  if (newIndex > childrenWidgetList.length)
+                    newIndex = childrenWidgetList.length;
+                  if (oldIndex < newIndex) newIndex--;
 
-                      margin: EdgeInsets.only(
-                          top: folderListItemHeight * (defaultFolderTotal - 1)),
-                      height: folderListItemHeight * widget.folderTotal + 200,
-                      child: ReorderableListView(
-                        children: childrenWidgetList,
-                        onReorder: (oldIndex, newIndex) {
-                          setState(() {
-                            // These two lines are workarounds for ReorderableListView problems
-                            if (newIndex > childrenWidgetList.length)
-                              newIndex = childrenWidgetList.length;
-                            if (oldIndex < newIndex) newIndex--;
+                  var oldWidget = childrenWidgetList.removeAt(oldIndex);
 
-                            var oldWidget =
-                                childrenWidgetList.removeAt(oldIndex);
-
-                            childrenWidgetList.insert(newIndex, oldWidget);
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                )
-
-                // Container(
-                //   height: folderListItemHeight * (defaultFolderTotal-1),
-                //   color: Colors.red,
-                //   child: Column(
-                //     children: [
-                //       getFolderListItem(folderName: '今日',canSwipe: false),
-                //       getFolderListItem(folderName: '全部笔记2',canSwipe: false),
-                //       // getFolderListItem(folderName: '删除笔记',canSwipe: false),
-                //     ],
-                //   ),
-                // ),
-                // Container(
-                //   // height: GlobalState.screenHeight -
-                //   //     GlobalState.appBarHeight -
-                //   //     GlobalState.folderPageBottomContainerHeight -
-                //   //     (folderListItemHeight * defaultFolderTotal),
-                //   height: folderListItemHeight * widget.folderTotal+100,
-                //   child: ReorderableListView(
-                //     children: childrenWidgetList,
-                //     onReorder: (oldIndex, newIndex) {
-                //       setState(() {
-                //         // These two lines are workarounds for ReorderableListView problems
-                //         if (newIndex > childrenWidgetList.length)
-                //           newIndex = childrenWidgetList.length;
-                //         if (oldIndex < newIndex) newIndex--;
-                //
-                //         var oldWidget = childrenWidgetList.removeAt(oldIndex);
-                //
-                //         childrenWidgetList.insert(newIndex, oldWidget);
-                //       });
-                //     },
-                //   ),
-                // ),
-
-                // Container(
-                //   height: folderListItemHeight * 1,
-                //   color: Colors.red,
-                //   child: Column(
-                //     children: [
-                //       getFolderListItem(folderName: '删除笔记',canSwipe: false),
-                //     ],
-                //   ),
-                // ),
-              ],
+                  childrenWidgetList.insert(newIndex, oldWidget);
+                });
+              },
             ),
           ),
-        ],
-      ),
+        ),
 
-      // child: ReorderableListView(
-      //   children: childrenWidgetList,
-      //   onReorder: (oldIndex, newIndex) {
-      //     setState(() {
-      //       // These two lines are workarounds for ReorderableListView problems
-      //       if (newIndex > childrenWidgetList.length)
-      //         newIndex = childrenWidgetList.length;
-      //       if (oldIndex < newIndex) newIndex--;
-      //
-      //       var oldWidget = childrenWidgetList.removeAt(oldIndex);
-      //
-      //       childrenWidgetList.insert(newIndex, oldWidget);
-      //     });
-      //   },
-      // ),
+        // child: Container(
+        //   // padding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 15.0, right: 15.0),
+        //   // color: Colors.red,
+        //   child: CustomScrollView(
+        //     slivers: [
+        //       SliverList(
+        //         delegate: SliverChildListDelegate(
+        //           [
+        //             Stack(
+        //               children: [
+        //                 Container(
+        //                   height:
+        //                       folderListItemHeight * (defaultFolderTotal - 1),
+        //                   // color: Colors.red,
+        //                   child: Column(
+        //                     children: [
+        //                       getFolderListItem(
+        //                           folderName: '今日', canSwipe: false),
+        //                       getFolderListItem(
+        //                           folderName: '全部笔记', canSwipe: false),
+        //                       // getFolderListItem(folderName: '删除笔记',canSwipe: false),
+        //                     ],
+        //                   ),
+        //                 ),
+        //                 Container(
+        //                   margin: EdgeInsets.only(
+        //                       top: folderListItemHeight *
+        //                           (widget.folderTotal +
+        //                               defaultFolderTotal -
+        //                               1)),
+        //                   height: folderListItemHeight * 1,
+        //                   color: Colors.red,
+        //                   child: Column(
+        //                     children: [
+        //                       getFolderListItem(
+        //                           folderName: '删除笔记', canSwipe: false),
+        //                     ],
+        //                   ),
+        //                 ),
+        //                 Container(
+        //                   // height: GlobalState.screenHeight -
+        //                   //     GlobalState.appBarHeight -
+        //                   //     GlobalState.folderPageBottomContainerHeight -
+        //                   //     (folderListItemHeight * defaultFolderTotal),
+        //
+        //                   margin: EdgeInsets.only(
+        //                       top: folderListItemHeight *
+        //                           (defaultFolderTotal - 1)),
+        //                   height:
+        //                       folderListItemHeight * widget.folderTotal + 200,
+        //                   child: ReorderableListView(
+        //                     children: childrenWidgetList,
+        //                     onReorder: (oldIndex, newIndex) {
+        //                       setState(() {
+        //                         // These two lines are workarounds for ReorderableListView problems
+        //                         if (newIndex > childrenWidgetList.length)
+        //                           newIndex = childrenWidgetList.length;
+        //                         if (oldIndex < newIndex) newIndex--;
+        //
+        //                         var oldWidget =
+        //                             childrenWidgetList.removeAt(oldIndex);
+        //
+        //                         childrenWidgetList.insert(newIndex, oldWidget);
+        //                       });
+        //                     },
+        //                   ),
+        //                 ),
+        //               ],
+        //             )
+        //
+        //
+        //           ],
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        //
+        //   // child: ReorderableListView(
+        //   //   children: childrenWidgetList,
+        //   //   onReorder: (oldIndex, newIndex) {
+        //   //     setState(() {
+        //   //       // These two lines are workarounds for ReorderableListView problems
+        //   //       if (newIndex > childrenWidgetList.length)
+        //   //         newIndex = childrenWidgetList.length;
+        //   //       if (oldIndex < newIndex) newIndex--;
+        //   //
+        //   //       var oldWidget = childrenWidgetList.removeAt(oldIndex);
+        //   //
+        //   //       childrenWidgetList.insert(newIndex, oldWidget);
+        //   //     });
+        //   //   },
+        //   // ),
+        // ),
+      ),
     );
   }
 
   // Private method
-  Widget getFolderListItem(
-      {int index = 0,
-      @required String folderName,
-      bool canSwipe = true,
-      bool isFirstItem = false,
-      bool showDivider = true}) {
+  Widget getFolderListItem({int index = 0,
+    @required String folderName,
+    bool canSwipe = true,
+    bool isFirstItem = false,
+    bool showDivider = true}) {
     return GestureDetector(
       key: (index == 0) ? Key('$folderName') : Key('getFolderListItem$index'),
       child: Container(
@@ -224,7 +229,7 @@ class _UserFolderListWidgetState extends State<UserFolderListWidget> {
                                   color: GlobalState.themeLightBlueColor07,
                                 ),
                                 Container(
-                                    // folder name // folder list item name
+                                  // folder name // folder list item name
                                     padding: EdgeInsets.only(left: 5.0),
                                     child: Text(
                                       // (index == 0) ? '今日' : '英语知识$index',
@@ -243,7 +248,7 @@ class _UserFolderListWidgetState extends State<UserFolderListWidget> {
                             child: FolderListItemRightPartWidget(
                               numberToShow: (index == 0) ? 653 : index,
                               showBadgeBackgroundColor:
-                                  (index == 0) ? true : false,
+                              (index == 0) ? true : false,
                               showZero: false,
                             ),
                           ),
@@ -282,21 +287,21 @@ class _UserFolderListWidgetState extends State<UserFolderListWidget> {
           secondaryActions: (!canSwipe)
               ? []
               : <Widget>[
-                  IconSlideAction(
-                    caption: '复习计划',
-                    color: GlobalState.themeGreenColorAtiOSTodo,
-                    foregroundColor: Colors.white,
-                    icon: Icons.calendar_today_outlined,
-                    //          onTap: () => _showSnackBar('More'),
-                  ),
-                  IconSlideAction(
-                    caption: '更多',
-                    color: GlobalState.themeGreyColorAtiOSTodo,
-                    foregroundColor: Colors.white,
-                    icon: Icons.more_horiz,
-                    //          onTap: () => _showSnackBar('More'),
-                  ),
-                ],
+            IconSlideAction(
+              caption: '复习计划',
+              color: GlobalState.themeGreenColorAtiOSTodo,
+              foregroundColor: Colors.white,
+              icon: Icons.calendar_today_outlined,
+              //          onTap: () => _showSnackBar('More'),
+            ),
+            IconSlideAction(
+              caption: '更多',
+              color: GlobalState.themeGreyColorAtiOSTodo,
+              foregroundColor: Colors.white,
+              icon: Icons.more_horiz,
+              //          onTap: () => _showSnackBar('More'),
+            ),
+          ],
         ),
       ),
       onTap: () {

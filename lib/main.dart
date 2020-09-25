@@ -1,3 +1,42 @@
+// import 'package:flutter/material.dart';
+// import 'package:flutter/cupertino.dart';
+//
+// void main() => runApp(MyApp());
+//
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: Scaffold(
+//         appBar: AppBar(
+//           title: Text('Welcome to Flutter'),
+//         ),
+//         body: ParentWidget(),
+//       ),
+//     );
+//   }
+// }
+//
+// class ParentWidget extends StatefulWidget {
+//   @override
+//   State<StatefulWidget> createState() => ParentWidgetState();
+// }
+//
+// class ParentWidgetState extends State<ParentWidget> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return SingleChildScrollView(
+//       physics: AlwaysScrollableScrollPhysics(),
+//       child: Container(
+//         // color: Colors.red,
+//         height: 200,
+//         width: 100,
+//         child: Text('cccc'),
+//       ),
+//     );
+//   }
+// }
+
 // Import packages
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
