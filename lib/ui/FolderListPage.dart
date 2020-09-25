@@ -53,6 +53,7 @@ class FolderListPageState extends State<FolderListPage> {
           )
         ],
       ),
+      backgroundColor: GlobalState.themeGreyColorAtiOSTodoForBackground,
       body: Container(
         height: double.infinity,
         child: Column(

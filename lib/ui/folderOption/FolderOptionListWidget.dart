@@ -36,9 +36,9 @@ class _FolderOptionSliverChildListDelegateState
           height: GlobalState.folderOptionItemHeight + 10,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: const BorderRadius.only(
-                topLeft: const Radius.circular(15),
-                topRight: const Radius.circular(15)),
+            borderRadius:  BorderRadius.only(
+                topLeft:  Radius.circular(GlobalState.borderRadius15),
+                topRight:  Radius.circular(GlobalState.borderRadius15)),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -50,8 +50,8 @@ class _FolderOptionSliverChildListDelegateState
                 height: 4.0,
                 decoration: BoxDecoration(
                   color: Colors.black12,
-                  borderRadius: const BorderRadius.all(
-                    const Radius.circular(5),
+                  borderRadius:  BorderRadius.all(
+                     Radius.circular(GlobalState.borderRadius15),
                   ),
                 ),
               ),

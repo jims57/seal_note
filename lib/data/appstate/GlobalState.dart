@@ -19,10 +19,18 @@ class GlobalState with ChangeNotifier {
 
   // Colors
   static Color themeBlueColor;
+  static Color themeGreenColorAtiOSTodo = Color(0xff67d844);
   static Color themeLightBlueColor07 = Color.fromRGBO(43, 152, 240, 0.7);
   static Color themeLightBlueColor02 = Color.fromRGBO(43, 152, 240, 0.2);
   static Color themeGreyColor = Color(0xffecedee);
+  static Color themeGreyColorAtiOSTodo = Color(0xffbbbbc0);
+  static Color themeGreyColorAtiOSTodoForBackground = Color(0xfff2f2f6);
   static Color themeGrey350Color = Colors.grey[350];
+  static Color themeWhiteColorAtiOSTodo = Color(0xffffffff);
+
+  // Borders
+  static double borderRadius15 = 15.0;
+  static double borderRadius40 = 40.0;
 
   // Database
   static Database database;

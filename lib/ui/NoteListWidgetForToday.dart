@@ -173,7 +173,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                           elevation: 1.1,
                           shape: RoundedRectangleBorder(
                             side: BorderSide.none,
-                            borderRadius: BorderRadius.circular(15.0),
+                            borderRadius: BorderRadius.circular(GlobalState.borderRadius15),
                           ),
                         ),
                         actions: <Widget>[
