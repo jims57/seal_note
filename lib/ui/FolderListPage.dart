@@ -3,7 +3,7 @@ import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
 
-import 'FolderListWidget.dart';
+import 'UserFolderListWidget.dart';
 
 class FolderListPage extends StatefulWidget {
   FolderListPage({Key key}) : super(key: key);
@@ -61,7 +61,11 @@ class FolderListPageState extends State<FolderListPage> {
         height: double.infinity,
         child: Column(
           children: [
-            Expanded(child: FolderListWidget()),
+            Expanded(
+              child: UserFolderListWidget(
+                folderTotal: 2,
+              ),
+            ),
             Container(
               // folder page bottom panel // setting panel
               // folder page setting panel
