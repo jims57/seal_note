@@ -61,7 +61,6 @@ class _FolderListWidgetState extends State<FolderListWidget> {
                     children: [
                       Container(
                         height: folderListItemHeight - 1,
-                        // color: Colors.yellow,
                         child: Row(
                           children: [
                             Expanded(
@@ -121,11 +120,10 @@ class _FolderListWidgetState extends State<FolderListWidget> {
                       Expanded(
                         // folder list item right bottom line // right bottom line
                         child: Container(
-                          color: (isLastItem)
-                              ? GlobalState.themeWhiteColorAtiOSTodo
+                          color: (!isLastItem)
+                              ? GlobalState.themeGreyColorAtiOSTodoForBackground
                               : GlobalState
-                                  .themeGreyColorAtiOSTodoForBackground,
-                          // color: Colors.red,
+                                  .themeWhiteColorAtiOSTodo,
                           height: 1,
                           // width: 100,
                         ),
