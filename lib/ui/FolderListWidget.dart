@@ -164,24 +164,58 @@ class _FolderListWidgetState extends State<FolderListWidget> {
       );
     });
 
-    return Container(
-      padding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 15.0, right: 15.0),
-      // color: Colors.red,
-      child: ReorderableListView(
-        children: childrenWidgetList,
-        onReorder: (oldIndex, newIndex) {
-          setState(() {
-            // These two lines are workarounds for ReorderableListView problems
-            if (newIndex > childrenWidgetList.length)
-              newIndex = childrenWidgetList.length;
-            if (oldIndex < newIndex) newIndex--;
+    return CustomScrollView(
+      slivers: [
+        SliverList(
+          delegate: SliverChildListDelegate(
+            [
+              Container(
+                padding: EdgeInsets.only(
+                    top: 5.0, bottom: 5.0, left: 15.0, right: 15.0),
+                // color: Colors.red,
+                height: GlobalState.screenHeight -
+                    GlobalState.folderPageBottomContainerHeight -
+                    GlobalState.appBarHeight,
+                child: ReorderableListView(
+                  children: childrenWidgetList,
+                  onReorder: (oldIndex, newIndex) {
+                    setState(() {
+                      // These two lines are workarounds for ReorderableListView problems
+                      if (newIndex > childrenWidgetList.length)
+                        newIndex = childrenWidgetList.length;
+                      if (oldIndex < newIndex) newIndex--;
 
-            var oldWidget = childrenWidgetList.removeAt(oldIndex);
+                      var oldWidget = childrenWidgetList.removeAt(oldIndex);
 
-            childrenWidgetList.insert(newIndex, oldWidget);
-          });
-        },
-      ),
+                      childrenWidgetList.insert(newIndex, oldWidget);
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
+
+    // return Container(
+    //   padding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 15.0, right: 15.0),
+    //   // color: Colors.red,
+    //   child: ReorderableListView(
+    //     children: childrenWidgetList,
+    //     onReorder: (oldIndex, newIndex) {
+    //       setState(() {
+    //         // These two lines are workarounds for ReorderableListView problems
+    //         if (newIndex > childrenWidgetList.length)
+    //           newIndex = childrenWidgetList.length;
+    //         if (oldIndex < newIndex) newIndex--;
+    //
+    //         var oldWidget = childrenWidgetList.removeAt(oldIndex);
+    //
+    //         childrenWidgetList.insert(newIndex, oldWidget);
+    //       });
+    //     },
+    //   ),
+    // );
   }
 }

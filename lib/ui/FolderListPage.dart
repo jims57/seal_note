@@ -57,17 +57,6 @@ class FolderListPageState extends State<FolderListPage> {
         ],
       ),
       backgroundColor: GlobalState.themeGreyColorAtiOSTodoForBackground,
-      // body: Container(
-      //   color: Colors.red,
-      //   padding: EdgeInsets.all(15),
-      //   child: Container(
-      //     // color: Colors.green,
-      //     decoration: BoxDecoration(
-      //       border: Border(bottom: BorderSide(color: Colors.green, width: 1)),
-      //     ),
-      //   ),
-      // ),
-
       body: Container(
         height: double.infinity,
         child: Column(
@@ -104,8 +93,8 @@ class FolderListPageState extends State<FolderListPage> {
                             color: Colors.transparent,
                             padding: EdgeInsets.only(left: 15.0, right: 15.0),
                           ),
-                          onTap: () { // setting event // click setting event
-
+                          onTap: () {
+                            // setting event // click setting event
                           },
                         )
                       ],
