@@ -13,13 +13,13 @@ class FolderListWidget extends StatefulWidget {
 
 class _FolderListWidgetState extends State<FolderListWidget> {
   double folderListItemHeight = 60.0;
+  List<Widget> childrenWidgetList;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
     int folderTotal = 5;
 
-    List<GestureDetector> childrenWidgetList =
-        List.generate(folderTotal, (index) {
+    childrenWidgetList = List.generate(folderTotal, (index) {
       // Check if it is the first or last item
       bool isFirstItem = false;
       bool isLastItem = false;
@@ -41,8 +41,6 @@ class _FolderListWidgetState extends State<FolderListWidget> {
                 Container(
                   // folder list item content
                   padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                  // color: Colors.transparent,
-                  // color: Colors.green,
                   decoration: BoxDecoration(
                     color: GlobalState.themeWhiteColorAtiOSTodo,
                     // color: Colors.red,
@@ -77,7 +75,8 @@ class _FolderListWidgetState extends State<FolderListWidget> {
                                       // folder name // folder list item name
                                       padding: EdgeInsets.only(left: 5.0),
                                       child: Text(
-                                        (index == 0) ? '今日' : '英语知识$index',
+                                        // (index == 0) ? '今日' : '英语知识$index',
+                                        '英语知识$index',
                                         style: TextStyle(
                                           fontSize: 20.0,
                                           fontWeight: FontWeight.w400,
@@ -99,20 +98,17 @@ class _FolderListWidgetState extends State<FolderListWidget> {
                           ],
                         ),
                       ),
-                      // Container(height: 1.0,color: Colors.red,)
                     ],
                   ),
                 ),
                 Container(
                   // folder list item line // folder list item bottom line
-                  // color: Colors.red,
                   height: 1,
                   width: double.infinity,
                   child: Row(
                     children: [
                       Container(
                         // folder list item left bottom line // left bottom line
-                        // color: Colors.green,
                         color: GlobalState.themeWhiteColorAtiOSTodo,
                         height: 1,
                         width: 40,
@@ -122,10 +118,8 @@ class _FolderListWidgetState extends State<FolderListWidget> {
                         child: Container(
                           color: (!isLastItem)
                               ? GlobalState.themeGreyColorAtiOSTodoForBackground
-                              : GlobalState
-                                  .themeWhiteColorAtiOSTodo,
+                              : GlobalState.themeWhiteColorAtiOSTodo,
                           height: 1,
-                          // width: 100,
                         ),
                       )
                     ],
@@ -162,58 +156,76 @@ class _FolderListWidgetState extends State<FolderListWidget> {
       );
     });
 
-    return CustomScrollView(
-      slivers: [
-        SliverList(
-          delegate: SliverChildListDelegate(
-            [
-              Container(
-                padding: EdgeInsets.only(
-                    top: 5.0, bottom: 5.0, left: 15.0, right: 15.0),
-                // color: Colors.red,
-                height: GlobalState.screenHeight -
-                    GlobalState.folderPageBottomContainerHeight -
-                    GlobalState.appBarHeight,
-                child: ReorderableListView(
-                  children: childrenWidgetList,
-                  onReorder: (oldIndex, newIndex) {
-                    setState(() {
-                      // These two lines are workarounds for ReorderableListView problems
-                      if (newIndex > childrenWidgetList.length)
-                        newIndex = childrenWidgetList.length;
-                      if (oldIndex < newIndex) newIndex--;
+    super.initState();
+  }
 
-                      var oldWidget = childrenWidgetList.removeAt(oldIndex);
+  @override
+  Widget build(BuildContext context) {
+    ;
 
-                      childrenWidgetList.insert(newIndex, oldWidget);
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+    // App first container
 
-    // return Container(
-    //   padding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 15.0, right: 15.0),
-    //   // color: Colors.red,
-    //   child: ReorderableListView(
-    //     children: childrenWidgetList,
-    //     onReorder: (oldIndex, newIndex) {
-    //       setState(() {
-    //         // These two lines are workarounds for ReorderableListView problems
-    //         if (newIndex > childrenWidgetList.length)
-    //           newIndex = childrenWidgetList.length;
-    //         if (oldIndex < newIndex) newIndex--;
+    // return CustomScrollView(
+    //   slivers: [
+    //     SliverList(
+    //       delegate: SliverChildListDelegate(
+    //         [
+    //           Container(
+    //             padding: EdgeInsets.only(
+    //                 top: 0.0, bottom: 5.0, left: 15.0, right: 15.0),
+    //             // color: Colors.red,
+    //             // height: GlobalState.screenHeight -
+    //             //     GlobalState.folderPageBottomContainerHeight -
+    //             //     GlobalState.appBarHeight,
+    //             child: Column(
+    //               children: [
+    //                 Container(
+    //                   child: ReorderableListView(
+    //                     children: childrenWidgetList,
+    //                     onReorder: (oldIndex, newIndex) {
+    //                       setState(() {
+    //                         // These two lines are workarounds for ReorderableListView problems
+    //                         if (newIndex > childrenWidgetList.length)
+    //                           newIndex = childrenWidgetList.length;
+    //                         if (oldIndex < newIndex) newIndex--;
     //
-    //         var oldWidget = childrenWidgetList.removeAt(oldIndex);
+    //                         var oldWidget = childrenWidgetList.removeAt(oldIndex);
     //
-    //         childrenWidgetList.insert(newIndex, oldWidget);
-    //       });
-    //     },
-    //   ),
+    //                         childrenWidgetList.insert(newIndex, oldWidget);
+    //                       });
+    //                     },
+    //                   ),
+    //                   height: GlobalState.screenHeight -
+    //                       GlobalState.folderPageBottomContainerHeight -
+    //                       GlobalState.appBarHeight,
+    //                 ),
+    //               ],
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //   ],
     // );
+
+    return Container(
+      padding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 15.0, right: 15.0),
+      // color: Colors.red,
+      child: ReorderableListView(
+        children: childrenWidgetList,
+        onReorder: (oldIndex, newIndex) {
+          setState(() {
+            // These two lines are workarounds for ReorderableListView problems
+            if (newIndex > childrenWidgetList.length)
+              newIndex = childrenWidgetList.length;
+            if (oldIndex < newIndex) newIndex--;
+
+            var oldWidget = childrenWidgetList.removeAt(oldIndex);
+
+            childrenWidgetList.insert(newIndex, oldWidget);
+          });
+        },
+      ),
+    );
   }
 }
