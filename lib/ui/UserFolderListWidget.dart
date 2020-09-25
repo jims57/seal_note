@@ -35,8 +35,15 @@ class _UserFolderListWidgetState extends State<UserFolderListWidget> {
       if (index == widget.folderTotal - 1) isLastItem = true;
 
       return getFolderListItem(
-          index: index, folderName: '英语知识$index', showDivider: true);
+          index: index, folderName: '英语知识$index',numberToShow: index, showDivider: true,showZero: true);
     });
+
+    childrenWidgetList.insert(
+        0, getFolderListItem(folderName: '今日',numberToShow: 546, showBadgeBackgroundColor: true,canSwipe: false));
+    childrenWidgetList.insert(
+        1, getFolderListItem(folderName: '全部笔记', numberToShow: 2203,canSwipe: false));
+    childrenWidgetList.add(getFolderListItem(
+        folderName: '删除笔记',numberToShow: 43, canSwipe: false, showDivider: false));
 
     super.initState();
   }
@@ -44,7 +51,8 @@ class _UserFolderListWidgetState extends State<UserFolderListWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: folderListPanelMarginForTopOrBottom,
+      padding: EdgeInsets.only(
+          top: folderListPanelMarginForTopOrBottom,
           bottom: folderListPanelMarginForTopOrBottom,
           left: 15.0,
           right: 15.0),
@@ -58,11 +66,10 @@ class _UserFolderListWidgetState extends State<UserFolderListWidget> {
         child: SingleChildScrollView(
           physics: AlwaysScrollableScrollPhysics(),
           child: Container(
-            // height: folderListItemHeight*widget.folderTotal,
-            // height: folderListItemHeight*20,
             height: GlobalState.screenHeight -
                 GlobalState.appBarHeight -
-                GlobalState.folderPageBottomContainerHeight - folderListPanelMarginForTopOrBottom*2,
+                GlobalState.folderPageBottomContainerHeight -
+                folderListPanelMarginForTopOrBottom * 2,
             // color: Colors.green,
             child: ReorderableListView(
               children: childrenWidgetList,
@@ -180,11 +187,15 @@ class _UserFolderListWidgetState extends State<UserFolderListWidget> {
   }
 
   // Private method
-  Widget getFolderListItem({int index = 0,
-    @required String folderName,
-    bool canSwipe = true,
-    bool isFirstItem = false,
-    bool showDivider = true}) {
+  Widget getFolderListItem(
+      {int index = 0,
+      @required String folderName,
+      @required int numberToShow,
+      bool canSwipe = true,
+      bool isFirstItem = false,
+      bool showDivider = true,
+      bool showBadgeBackgroundColor = false,
+      bool showZero = true}) {
     return GestureDetector(
       key: (index == 0) ? Key('$folderName') : Key('getFolderListItem$index'),
       child: Container(
@@ -200,17 +211,6 @@ class _UserFolderListWidgetState extends State<UserFolderListWidget> {
                 padding: EdgeInsets.only(left: 10.0, right: 10.0),
                 decoration: BoxDecoration(
                   color: GlobalState.themeWhiteColorAtiOSTodo,
-                  // color: Colors.red,
-                  // borderRadius: BorderRadius.only(
-                  //   topLeft: Radius.circular(
-                  //       (isFirstItem) ? GlobalState.borderRadius15 : 0),
-                  //   topRight: Radius.circular(
-                  //       (isFirstItem) ? GlobalState.borderRadius15 : 0),
-                  //   bottomLeft: Radius.circular(
-                  //       (isLastItem) ? GlobalState.borderRadius15 : 0),
-                  //   bottomRight: Radius.circular(
-                  //       (isLastItem) ? GlobalState.borderRadius15 : 0),
-                  // ),
                 ),
                 child: Column(
                   children: [
@@ -229,7 +229,7 @@ class _UserFolderListWidgetState extends State<UserFolderListWidget> {
                                   color: GlobalState.themeLightBlueColor07,
                                 ),
                                 Container(
-                                  // folder name // folder list item name
+                                    // folder name // folder list item name
                                     padding: EdgeInsets.only(left: 5.0),
                                     child: Text(
                                       // (index == 0) ? '今日' : '英语知识$index',
@@ -246,10 +246,10 @@ class _UserFolderListWidgetState extends State<UserFolderListWidget> {
                           Expanded(
                             flex: 1,
                             child: FolderListItemRightPartWidget(
-                              numberToShow: (index == 0) ? 653 : index,
+                              numberToShow: numberToShow,
                               showBadgeBackgroundColor:
-                              (index == 0) ? true : false,
-                              showZero: false,
+                                  showBadgeBackgroundColor,
+                              showZero: showZero,
                             ),
                           ),
                         ],
@@ -287,21 +287,21 @@ class _UserFolderListWidgetState extends State<UserFolderListWidget> {
           secondaryActions: (!canSwipe)
               ? []
               : <Widget>[
-            IconSlideAction(
-              caption: '复习计划',
-              color: GlobalState.themeGreenColorAtiOSTodo,
-              foregroundColor: Colors.white,
-              icon: Icons.calendar_today_outlined,
-              //          onTap: () => _showSnackBar('More'),
-            ),
-            IconSlideAction(
-              caption: '更多',
-              color: GlobalState.themeGreyColorAtiOSTodo,
-              foregroundColor: Colors.white,
-              icon: Icons.more_horiz,
-              //          onTap: () => _showSnackBar('More'),
-            ),
-          ],
+                  IconSlideAction(
+                    caption: '复习计划',
+                    color: GlobalState.themeGreenColorAtiOSTodo,
+                    foregroundColor: Colors.white,
+                    icon: Icons.calendar_today_outlined,
+                    //          onTap: () => _showSnackBar('More'),
+                  ),
+                  IconSlideAction(
+                    caption: '更多',
+                    color: GlobalState.themeGreyColorAtiOSTodo,
+                    foregroundColor: Colors.white,
+                    icon: Icons.more_horiz,
+                    //          onTap: () => _showSnackBar('More'),
+                  ),
+                ],
         ),
       ),
       onTap: () {

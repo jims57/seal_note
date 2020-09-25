@@ -63,7 +63,7 @@ class FolderListPageState extends State<FolderListPage> {
           children: [
             Expanded(
               child: UserFolderListWidget(
-                folderTotal: 300,
+                folderTotal: 30,
               ),
             ),
             Container(
