@@ -3,6 +3,7 @@ import 'package:seal_note/data/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:seal_note/model/ImageSyncItem.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
+import 'package:seal_note/ui/FolderListWidget.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
 
@@ -89,8 +90,13 @@ class GlobalState with ChangeNotifier {
 
   // State objects
   static GlobalKey<FolderListPageState> folderListPageState;
+  static GlobalKey<FolderListWidgetState> folderListWidgetState;
+
   static GlobalKey<MasterDetailPageState> masterDetailPageState;
   static GlobalKey<AppBarWidgetState> appBarWidgetState;
+
+  // Overlay
+  static OverlayEntry overlayEntry;
 
   // Change Notifier
   static AppState appState;
@@ -99,6 +105,17 @@ class GlobalState with ChangeNotifier {
   // Folder page
   static double folderPageTopContainerHeight = 40.0;
   static double folderPageBottomContainerHeight = 40.0;
+  static double folderListItemHeight = 60.0;
+  static bool shouldReorderFolderListItem = false;
+  static bool isPointerDown = false;
+
+  // Folder total
+  static int defaultFolderTotal = 0;
+  static int userFolderTotal = 0;
+  static int allFolderTotal = 0; // All folder including default folders
+
+  // Default folders
+  static List<int> defaultFolderIndexList = List<int>();
 
   // Folder Options
   static double folderOptionItemHeight = 40.0;

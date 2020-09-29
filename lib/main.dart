@@ -1,5 +1,5 @@
 // import 'package:flutter/material.dart';
-// import 'package:flutter/cupertino.dart';
+// import 'package:flutter/rendering.dart';
 //
 // void main() => runApp(MyApp());
 //
@@ -8,9 +8,7 @@
 //   Widget build(BuildContext context) {
 //     return MaterialApp(
 //       home: Scaffold(
-//         appBar: AppBar(
-//           title: Text('Welcome to Flutter'),
-//         ),
+//         appBar: AppBar(),
 //         body: ParentWidget(),
 //       ),
 //     );
@@ -24,20 +22,87 @@
 //
 // class ParentWidgetState extends State<ParentWidget> {
 //   @override
+//   void initState() {
+//     super.initState();
+//   }
+//
+//   @override
 //   Widget build(BuildContext context) {
-//     return SingleChildScrollView(
-//       physics: AlwaysScrollableScrollPhysics(),
-//       child: Container(
-//         // color: Colors.red,
-//         height: 200,
-//         width: 100,
-//         child: Text('cccc'),
-//       ),
+//     return Column(
+//       children: [
+//         Container(
+//           height: 60,
+//           width: 10,
+//           color: Colors.red,
+//           child: Text('Line 1'),
+//         ),
+//         AddIconButtonWidget(),
+//       ],
 //     );
 //   }
 // }
+//
+// class AddIconButtonWidget extends StatefulWidget {
+//   @override
+//   _AddIconButtonWidgetState createState() => _AddIconButtonWidgetState();
+// }
+//
+// class _AddIconButtonWidgetState extends State<AddIconButtonWidget> {
+//   OverlayEntry _overlayEntry;
+//   double dValue = 5.0;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       height: 100,
+//       width: 200,
+//       child: IconButton(
+//           icon: Icon(Icons.add),
+//           onPressed: () {
+//             if (this._overlayEntry != null) {
+//               this._overlayEntry.remove();
+//             }
+//
+//             dValue += 5.0;
+//
+//             this._overlayEntry = this._createOverlayEntry();
+//             Overlay.of(context).insert(this._overlayEntry);
+//           }),
+//     );
+//   }
+//
+//   OverlayEntry _createOverlayEntry() {
+//     RenderBox renderBox = context.findRenderObject();
+//     var size = renderBox.size;
+//     var offset = renderBox.localToGlobal(Offset.zero);
+//
+//     return OverlayEntry(
+//         // builder: (context) => Container(
+//         builder: (context) => Positioned(
+//               height: 200,
+//               width: 100,
+//               top: offset.dy + size.height,
+//               left: offset.dx + size.width / 2 + dValue,
+//               child: Material(
+//                 elevation: 4.0,
+//                 child: ListView(
+//                   padding: EdgeInsets.zero,
+//                   shrinkWrap: true,
+//                   children: <Widget>[
+//                     ListTile(
+//                       title: Text('Syria'),
+//                     ),
+//                     ListTile(
+//                       title: Text('Lebanon'),
+//                     )
+//                   ],
+//                 ),
+//               ),
+//             ));
+//   }
+// }
 
-// Import packages
+//Import packages
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

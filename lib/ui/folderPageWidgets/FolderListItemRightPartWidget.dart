@@ -46,7 +46,7 @@ class _FolderListItemRightPartWidgetState
                               ? GlobalState.themeBlueColor
                               : Colors.transparent,
                           borderRadius: BorderRadius.all(
-                               Radius.circular(GlobalState.borderRadius40))),
+                              Radius.circular(GlobalState.borderRadius40))),
                       child: Text(
                         '${widget.numberToShow}',
                         style: TextStyle(

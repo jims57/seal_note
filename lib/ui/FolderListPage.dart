@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:after_layout/after_layout.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
 
-import 'UserFolderListWidget.dart';
+import 'FolderListWidget.dart';
 
 class FolderListPage extends StatefulWidget {
   FolderListPage({Key key}) : super(key: key);
@@ -13,6 +12,12 @@ class FolderListPage extends StatefulWidget {
 }
 
 class FolderListPageState extends State<FolderListPage> {
+  @override
+  void initState() {
+    GlobalState.folderListWidgetState = GlobalKey<FolderListWidgetState>();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,8 +67,9 @@ class FolderListPageState extends State<FolderListPage> {
         child: Column(
           children: [
             Expanded(
-              child: UserFolderListWidget(
-                folderTotal: 30,
+              child: FolderListWidget(
+                key: GlobalState.folderListWidgetState,
+                userFolderTotal: 3,
               ),
             ),
             Container(
