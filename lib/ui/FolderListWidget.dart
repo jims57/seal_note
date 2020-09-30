@@ -412,16 +412,21 @@ class _UserFolderListListenerWidgetState
                   widget.folderListPanelMarginForTopOrBottom -
                   12.0,
               right: widget.folderListPanelMarginForTopOrBottom,
-              child: Icon(
-                Icons.block,
-                color: _showBlockIconColor(
-                    shouldShowBlockIcon: shouldShowBlockIcon),
-                // color: (!widget.isDefaultFolder &&
-                //         !shouldShowBlockIcon &&
-                //         GlobalState.isPointerDown)
-                //     ? Colors.transparent
-                //     : Colors.grey,
-                size: 24.0,
+              child: Container(
+                height: 24,
+                width: 24,
+                decoration: BoxDecoration(
+                    color: _showBlockIconColor(
+                        shouldShowBlockIcon: shouldShowBlockIcon,
+                        isForBlockIcon: false),
+                    shape: BoxShape.circle),
+                child: Icon(
+                  Icons.block_flipped,
+                  color: _showBlockIconColor(
+                      shouldShowBlockIcon: shouldShowBlockIcon,
+                      isForBlockIcon: true),
+                  size: 20.0,
+                ),
               ),
             ));
   }
@@ -448,17 +453,28 @@ class _UserFolderListListenerWidgetState
     return showBlockIcon;
   }
 
-  Color _showBlockIconColor({@required bool shouldShowBlockIcon}) {
+  Color _showBlockIconColor(
+      {@required bool shouldShowBlockIcon, isForBlockIcon = true}) {
+    // isForBlockIcon = true, means it is for the block icon color, otherwise, for the background color the container of the block icon
+
+    Color foreColor = GlobalState.themeWhiteColorAtiOSTodo;
+
+    // Check it it is for the background color of the container
+    if (!isForBlockIcon) {
+      // For the background color of the container
+      foreColor = GlobalState.themeGreyColorAtiOSTodoForBlockIconBackground;
+    }
+
     Color color = Colors.transparent;
     if (GlobalState.isPointerDown) {
       // When the pointer is down
       if (widget.isDefaultFolder) {
         // It is a default folder
-        color = Colors.grey;
+        color = foreColor;
       } else {
         // It is a user folder
         if (shouldShowBlockIcon) {
-          color = Colors.grey;
+          color = foreColor;
         } else {
           color = Colors.transparent;
         }

@@ -28,6 +28,7 @@ class GlobalState with ChangeNotifier {
   static Color themeGreyColorAtiOSTodo = Color(0xffbbbbc0);
   static Color themeGreyColorAtiOSTodoForBackground = Color(0xfff2f2f6);
   static Color themeGrey350Color = Colors.grey[350];
+  static Color themeGreyColorAtiOSTodoForBlockIconBackground = Color(0xff8e8e93);
   static Color themeWhiteColorAtiOSTodo = Color(0xffffffff);
 
   // Borders
