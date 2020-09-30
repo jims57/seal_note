@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:provider/provider.dart';
+import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -24,17 +28,8 @@ class FolderListWidgetState extends State<FolderListWidget> {
   double folderListPanelMarginForTopOrBottom = 5.0;
   List<Widget> childrenWidgetList;
 
-  // Positions
-  double draggedWidgetDx;
-  double draggedWidgetDy;
-  double pointerDx;
-  double pointerDy;
-
   @override
   void initState() {
-    // int folderTotal = 5;
-    // markerDy = -(60.0 * 3 + 76);
-
     GlobalState.userFolderTotal = widget.userFolderTotal;
     GlobalState.allFolderTotal = GlobalState.userFolderTotal;
 
@@ -47,14 +42,6 @@ class FolderListWidgetState extends State<FolderListWidget> {
     GlobalState.defaultFolderIndexList.clear();
 
     childrenWidgetList = List.generate(widget.userFolderTotal, (index) {
-      // Check if it is the first or last item
-      bool isFirstItem = false;
-      bool isLastItem = false;
-      // bool canSwipeAction = false;
-
-      if (index == 0) isFirstItem = true;
-      if (index == widget.userFolderTotal - 1) isLastItem = true;
-
       return getFolderListItem(
           index: index,
           folderName: '英语知识$index',
@@ -285,28 +272,44 @@ class _UserFolderListListenerWidgetState
                           children: [
                             Expanded(
                               flex: 3,
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    // folder list item icon // folder item icon // folder icon
-                                    Icons.folder_open_outlined,
-                                    size: 25.0,
-                                    color: GlobalState.themeLightBlueColor07,
-                                  ),
-                                  Container(
-                                      // folder name // folder list item name
-                                      padding: EdgeInsets.only(left: 5.0),
-                                      child: Text(
-                                        // (index == 0) ? '今日' : '英语知识$index',
-                                        '${widget.folderName}',
-                                        style: TextStyle(
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.black87,
-                                        ),
-                                      )),
-                                ],
-                              ),
+                              child: Consumer<AppState>(
+                                  builder: (cxt, appState, child) {
+                                var isDefaultFolder = widget.isDefaultFolder;
+                                return Row(
+                                  children: [
+                                    Icon(
+                                      // folder list item icon // folder item icon // folder icon
+                                      Icons.folder_open_outlined,
+                                      size: 25.0,
+                                      // color: GlobalState.themeLightBlueColor07,
+                                      color: (GlobalState
+                                                  .shouldMakeDefaultFoldersGrey &&
+                                              isDefaultFolder)
+                                          ? GlobalState.themeGreyColorAtiOSTodo
+                                          : GlobalState.themeLightBlueColor07,
+                                    ),
+                                    Container(
+                                        // folder name // folder list item name
+                                        padding: EdgeInsets.only(left: 5.0),
+                                        child: Text(
+                                          // (index == 0) ? '今日' : '英语知识$index',
+                                          '${widget.folderName}',
+                                          style: TextStyle(
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.w400,
+                                            // color: Colors.black87,
+                                            color: (GlobalState
+                                                        .shouldMakeDefaultFoldersGrey &&
+                                                    isDefaultFolder)
+                                                ? GlobalState
+                                                    .themeGreyColorAtiOSTodo
+                                                : GlobalState
+                                                    .themeBlackColor87ForFontForeColor,
+                                          ),
+                                        )),
+                                  ],
+                                );
+                              }),
                             ),
                             Expanded(
                               flex: 1,
@@ -315,6 +318,7 @@ class _UserFolderListListenerWidgetState
                                 showBadgeBackgroundColor:
                                     widget.showBadgeBackgroundColor,
                                 showZero: widget.showZero,
+                                isDefaultFolderRightPart: widget.isDefaultFolder,
                               ),
                             ),
                           ],
@@ -370,8 +374,18 @@ class _UserFolderListListenerWidgetState
           ),
         ),
       ),
+      onPointerDown: (opd) {
+        print('onPointerDown()');
+        // GlobalState.shouldMakeDefaultFoldersGrey = true;
+        GlobalState.appState.shouldMakeDefaultFoldersGrey = true;
+        // GlobalState.folderListPageState.currentState.triggerSetState();
+        // Timer(const Duration(seconds: 1), () {GlobalState.folderListPageState.currentState.triggerSetState();});
+      },
       onPointerUp: (opp) {
         GlobalState.isPointerDown = false;
+        GlobalState.appState.shouldMakeDefaultFoldersGrey = false;
+        print('onPointerUp()');
+
         _showOverlay();
       },
       onPointerMove: (opm) {
@@ -379,6 +393,153 @@ class _UserFolderListListenerWidgetState
         _showOverlay();
       },
     );
+
+    // return Listener(
+    //   child: ClipRRect(
+    //     borderRadius: BorderRadius.only(
+    //       topLeft: (widget.isRoundTopCorner)
+    //           ? Radius.circular(10)
+    //           : Radius.circular(0),
+    //       topRight: (widget.isRoundTopCorner)
+    //           ? Radius.circular(10)
+    //           : Radius.circular(0),
+    //       bottomLeft: (widget.isRoundBottomCorner)
+    //           ? Radius.circular(10)
+    //           : Radius.circular(0),
+    //       bottomRight: (widget.isRoundBottomCorner)
+    //           ? Radius.circular(10)
+    //           : Radius.circular(0),
+    //     ),
+    //     child: Container(
+    //       // folder list item // folder item
+    //       height: widget.folderListItemHeight,
+    //       // color: Colors.green,
+    //       child: Slidable(
+    //         actionPane: SlidableDrawerActionPane(),
+    //         actionExtentRatio: 0.25,
+    //         child: Column(
+    //           children: [
+    //             Container(
+    //               // folder list item content
+    //               padding: EdgeInsets.only(left: 10.0, right: 10.0),
+    //               decoration: BoxDecoration(
+    //                 color: GlobalState.themeWhiteColorAtiOSTodo,
+    //               ),
+    //               child: Column(
+    //                 children: [
+    //                   Container(
+    //                     height: widget.folderListItemHeight - 1,
+    //                     child: Row(
+    //                       children: [
+    //                         Expanded(
+    //                           flex: 3,
+    //                           child: Row(
+    //                             children: [
+    //                               Icon(
+    //                                 // folder list item icon // folder item icon // folder icon
+    //                                 Icons.folder_open_outlined,
+    //                                 size: 25.0,
+    //                                 // color: GlobalState.themeLightBlueColor07,
+    //                                 color: (GlobalState
+    //                                         .shouldMakeDefaultFoldersGrey)
+    //                                     ? Colors.grey
+    //                                     : Colors.red,
+    //                               ),
+    //                               Container(
+    //                                   // folder name // folder list item name
+    //                                   padding: EdgeInsets.only(left: 5.0),
+    //                                   child: Text(
+    //                                     // (index == 0) ? '今日' : '英语知识$index',
+    //                                     '${widget.folderName}',
+    //                                     style: TextStyle(
+    //                                       fontSize: 20.0,
+    //                                       fontWeight: FontWeight.w400,
+    //                                       color: Colors.black87,
+    //                                     ),
+    //                                   )),
+    //                             ],
+    //                           ),
+    //                         ),
+    //                         Expanded(
+    //                           flex: 1,
+    //                           child: FolderListItemRightPartWidget(
+    //                             numberToShow: widget.numberToShow,
+    //                             showBadgeBackgroundColor:
+    //                                 widget.showBadgeBackgroundColor,
+    //                             showZero: widget.showZero,
+    //                           ),
+    //                         ),
+    //                       ],
+    //                     ),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //             Container(
+    //               // folder list item line // folder list item bottom line
+    //               height: 1,
+    //               width: double.infinity,
+    //               child: Row(
+    //                 children: [
+    //                   Container(
+    //                     // folder list item left bottom line // left bottom line
+    //                     color: GlobalState.themeWhiteColorAtiOSTodo,
+    //                     height: 1,
+    //                     width: 40,
+    //                   ),
+    //                   Expanded(
+    //                     // folder list item right bottom line // right bottom line
+    //                     child: Container(
+    //                       color: (widget.showDivider)
+    //                           ? GlobalState.themeGreyColorAtiOSTodoForBackground
+    //                           : GlobalState.themeWhiteColorAtiOSTodo,
+    //                       height: 1,
+    //                     ),
+    //                   )
+    //                 ],
+    //               ),
+    //             )
+    //           ],
+    //         ),
+    //         secondaryActions: (!widget.canSwipe)
+    //             ? []
+    //             : <Widget>[
+    //                 IconSlideAction(
+    //                   caption: '复习计划',
+    //                   color: GlobalState.themeGreenColorAtiOSTodo,
+    //                   foregroundColor: Colors.white,
+    //                   icon: Icons.calendar_today_outlined,
+    //                   //          onTap: () => _showSnackBar('More'),
+    //                 ),
+    //                 IconSlideAction(
+    //                   caption: '更多',
+    //                   color: GlobalState.themeGreyColorAtiOSTodo,
+    //                   foregroundColor: Colors.white,
+    //                   icon: Icons.more_horiz,
+    //                   //          onTap: () => _showSnackBar('More'),
+    //                 ),
+    //               ],
+    //       ),
+    //     ),
+    //   ),
+    //   onPointerDown: (opd) {
+    //     print('onPointerDown()');
+    //     GlobalState.shouldMakeDefaultFoldersGrey = true;
+    //     // GlobalState.folderListPageState.currentState.triggerSetState();
+    //     // Timer(const Duration(seconds: 1), () {GlobalState.folderListPageState.currentState.triggerSetState();});
+    //   },
+    //   onPointerUp: (opp) {
+    //     GlobalState.isPointerDown = false;
+    //     GlobalState.shouldMakeDefaultFoldersGrey = false;
+    //     print('onPointerUp()');
+    //
+    //     _showOverlay();
+    //   },
+    //   onPointerMove: (opm) {
+    //     GlobalState.isPointerDown = true;
+    //     _showOverlay();
+    //   },
+    // );
   }
 
   void _showOverlay() {

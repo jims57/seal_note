@@ -30,6 +30,7 @@ class GlobalState with ChangeNotifier {
   static Color themeGrey350Color = Colors.grey[350];
   static Color themeGreyColorAtiOSTodoForBlockIconBackground = Color(0xff8e8e93);
   static Color themeWhiteColorAtiOSTodo = Color(0xffffffff);
+  static Color themeBlackColor87ForFontForeColor = Colors.black87;
 
   // Borders
   static double borderRadius15 = 15.0;
@@ -109,6 +110,8 @@ class GlobalState with ChangeNotifier {
   static double folderListItemHeight = 60.0;
   static bool shouldReorderFolderListItem = false;
   static bool isPointerDown = false;
+  static bool shouldMakeDefaultFoldersGrey = false;
+
 
   // Folder total
   static int defaultFolderTotal = 0;

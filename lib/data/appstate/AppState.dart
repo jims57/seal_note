@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
+import 'GlobalState.dart';
+
 class AppState extends ChangeNotifier {
   bool _isExecutingSync = true;
 
@@ -30,16 +32,6 @@ class AppState extends ChangeNotifier {
     // notifyListeners();
   }
 
-  // 1 = old note in read mode, 2 = old note in edit mode, 3 = creating a new note
-  // int _detailPageStatus = 1;
-  //
-  // int get detailPageStatus => _detailPageStatus;
-  //
-  // set detailPageStatus(int value) {
-  //   _detailPageStatus = value;
-  //   notifyListeners();
-  // }
-
   int _firstImageIndex = 0;
 
   int get firstImageIndex => _firstImageIndex;
@@ -49,16 +41,17 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // bool _isInDetailPage = false;
-  //
-  // bool get isInDetailPage => _isInDetailPage;
-  //
-  // set isInDetailPage(bool value) {
-  //   _isInDetailPage = value;
-  //   notifyListeners();
-  // }
+  bool _shouldMakeDefaultFoldersGrey = false;
 
-  // void syncNoteDetailPageStatus() {
-  //   notifyListeners();
-  // }
+  // ignore: unnecessary_getters_setters
+  bool get shouldMakeDefaultFoldersGrey => _shouldMakeDefaultFoldersGrey;
+
+  // ignore: unnecessary_getters_setters
+  set shouldMakeDefaultFoldersGrey(bool value) {
+    _shouldMakeDefaultFoldersGrey = value;
+
+    GlobalState.shouldMakeDefaultFoldersGrey = value;
+
+    notifyListeners();
+  }
 }
