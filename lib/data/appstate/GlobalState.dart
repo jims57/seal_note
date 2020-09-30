@@ -28,7 +28,8 @@ class GlobalState with ChangeNotifier {
   static Color themeGreyColorAtiOSTodo = Color(0xffbbbbc0);
   static Color themeGreyColorAtiOSTodoForBackground = Color(0xfff2f2f6);
   static Color themeGrey350Color = Colors.grey[350];
-  static Color themeGreyColorAtiOSTodoForBlockIconBackground = Color(0xff8e8e93);
+  static Color themeGreyColorAtiOSTodoForBlockIconBackground =
+      Color(0xff8e8e93);
   static Color themeWhiteColorAtiOSTodo = Color(0xffffffff);
   static Color themeBlackColor87ForFontForeColor = Colors.black87;
 
@@ -65,6 +66,11 @@ class GlobalState with ChangeNotifier {
 
   static bool shouldTriggerPageTransitionAnimation = true;
   static const int pageTransitionAnimationDurationMilliseconds = 200;
+
+  // Title String
+  static final String defaultFolderNameForToday ='今天';
+  static final String defaultFolderNameForAllNotes ='全部笔记';
+  static final String defaultFolderNameForDeletion ='删除笔记';
 
   // Pages' width
   // Note: The following default values for the width are as far as large screen(screenType = 3) is concerned
@@ -112,7 +118,6 @@ class GlobalState with ChangeNotifier {
   static bool isPointerDown = false;
   static bool shouldMakeDefaultFoldersGrey = false;
 
-
   // Folder total
   static int defaultFolderTotal = 0;
   static int userFolderTotal = 0;
@@ -124,7 +129,9 @@ class GlobalState with ChangeNotifier {
   // Folder Options
   static double folderOptionItemHeight = 40.0;
 
-  // static double folderOptionItemHeight = 35.0;
+  // User folder available dy
+  static double userFolderListItemMinAvailableDy = double.negativeInfinity;
+  static double userFolderListItemMaxAvailableDy = double.infinity;
 
   // WebView
   static String htmlString = '';

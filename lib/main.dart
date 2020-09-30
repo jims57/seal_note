@@ -86,6 +86,9 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    // var d = double.negativeInfinity;
+    // var b = (d<0);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: MasterDetailPage(

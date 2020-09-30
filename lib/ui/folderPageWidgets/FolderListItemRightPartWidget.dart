@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +27,15 @@ class FolderListItemRightPartWidget extends StatefulWidget {
 
 class _FolderListItemRightPartWidgetState
     extends State<FolderListItemRightPartWidget> {
+  BuildContext folderListItemRightPartWidgetContext;
+
+  @override
+  void initState() {
+    folderListItemRightPartWidgetContext = context;
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -61,26 +72,6 @@ class _FolderListItemRightPartWidgetState
                             overflow: TextOverflow.ellipsis,
                           ));
                     }),
-
-              // : Container(
-              //     padding: EdgeInsets.only(
-              //         left: 5.0, right: 5.0, top: 1.0, bottom: 1.0),
-              //     decoration: BoxDecoration(
-              //         color: (widget.showBadgeBackgroundColor)
-              //             ? GlobalState.themeBlueColor
-              //             // ? Colors.red
-              //             : Colors.transparent,
-              //         borderRadius: BorderRadius.all(
-              //             Radius.circular(GlobalState.borderRadius40))),
-              //     child: Text(
-              //       '${widget.numberToShow}',
-              //       style: TextStyle(
-              //           color: (widget.showBadgeBackgroundColor)
-              //               ? Colors.white
-              //               : GlobalState.themeGrey350Color,
-              //           fontWeight: FontWeight.bold),
-              //       overflow: TextOverflow.ellipsis,
-              //     )),
             ),
           ),
           Icon(
