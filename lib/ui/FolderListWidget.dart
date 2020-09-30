@@ -372,6 +372,7 @@ class _UserFolderListListenerWidgetState
       ),
       onPointerDown: (opd) {
         GlobalState.isPointerDown = true;
+        _showOverlay();
       },
       onPointerUp: (opp) {
         GlobalState.isPointerDown = false;
