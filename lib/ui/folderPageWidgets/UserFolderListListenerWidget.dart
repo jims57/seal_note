@@ -102,7 +102,11 @@ class _UserFolderListListenerWidgetState
                               flex: 3,
                               child: Consumer<AppState>(
                                   builder: (cxt, appState, child) {
-                                updateUserFolderListItemAvailableDy();
+                                // Only the pointer is down, it will trigger update available dy
+                                if (GlobalState.isPointerDown &&
+                                    !GlobalState.isPointerMoving) {
+                                  updateUserFolderListItemAvailableDy();
+                                }
 
                                 var isDefaultFolder = widget.isDefaultFolder;
                                 return Row(
@@ -209,6 +213,7 @@ class _UserFolderListListenerWidgetState
       onPointerDown: (opd) {
         print('onPointerDown()');
         GlobalState.appState.shouldMakeDefaultFoldersGrey = true;
+        GlobalState.isPointerDown = true;
 
         // When the pointer is down, we should clear the available dy in GlobalState to get the right dy
         // Avoiding the old values effect the right outcomes
@@ -216,13 +221,15 @@ class _UserFolderListListenerWidgetState
       },
       onPointerUp: (opp) {
         GlobalState.isPointerDown = false;
+        GlobalState.isPointerMoving = false;
         GlobalState.appState.shouldMakeDefaultFoldersGrey = false;
         print('onPointerUp()');
 
         _showOverlay();
       },
       onPointerMove: (opm) {
-        GlobalState.isPointerDown = true;
+        // GlobalState.isPointerDown = true;
+        GlobalState.isPointerMoving = true;
         _showOverlay();
       },
     );
@@ -322,7 +329,9 @@ class _UserFolderListListenerWidgetState
     }
 
     Color color = Colors.transparent;
-    if (GlobalState.isPointerDown) {
+
+    if ( GlobalState.isPointerMoving) { // It won't show the block icon until the pointer is moving
+
       // When the pointer is down
       if (widget.isDefaultFolder) {
         // It is a default folder
@@ -348,7 +357,7 @@ class _UserFolderListListenerWidgetState
     Timer(const Duration(milliseconds: 500), () {
       var isDefaultFolder = widget.isDefaultFolder;
 
-      // Only default folder decide the available topBorderDy
+      // Only default folders will decide the available topBorderDy
       if (isDefaultFolder) {
         RenderBox renderBox =
             userFolderListListenerWidgetContext.findRenderObject();
@@ -375,5 +384,6 @@ class _UserFolderListListenerWidgetState
   void resetUserFolderListItemAvailableDy() {
     GlobalState.userFolderListItemMaxAvailableDy = double.infinity;
     GlobalState.userFolderListItemMinAvailableDy = double.negativeInfinity;
+    print('resetUserFolderListItemAvailableDy()');
   }
 }
