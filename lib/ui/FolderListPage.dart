@@ -69,7 +69,7 @@ class FolderListPageState extends State<FolderListPage> {
             Expanded(
               child: FolderListWidget(
                 key: GlobalState.folderListWidgetState,
-                userFolderTotal: 20,
+                userFolderTotal: 3,
               ),
             ),
             Container(

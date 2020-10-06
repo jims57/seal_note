@@ -45,6 +45,8 @@ class UserFolderListListenerWidget extends StatefulWidget {
 class _UserFolderListListenerWidgetState
     extends State<UserFolderListListenerWidget> {
   BuildContext userFolderListListenerWidgetContext;
+  Timer _timer;
+  int _totalCount;
 
   @override
   void initState() {
@@ -212,7 +214,7 @@ class _UserFolderListListenerWidgetState
       ),
       onPointerDown: (opd) {
         print('onPointerDown()');
-        GlobalState.appState.shouldMakeDefaultFoldersGrey = true;
+        startCountdown(resetTotalCount: true);
         GlobalState.isPointerDown = true;
 
         // When the pointer is down, we should clear the available dy in GlobalState to get the right dy
@@ -222,14 +224,31 @@ class _UserFolderListListenerWidgetState
       onPointerUp: (opp) {
         GlobalState.isPointerDown = false;
         GlobalState.isPointerMoving = false;
+        // GlobalState.isFolderListScrolling = true;
         GlobalState.appState.shouldMakeDefaultFoldersGrey = false;
-        print('onPointerUp()');
+
+        stopCountdown();
+
+        // print('onPointerUp()');
 
         _showOverlay();
       },
       onPointerMove: (opm) {
-        // GlobalState.isPointerDown = true;
         GlobalState.isPointerMoving = true;
+
+        print('onPointerMove()');
+
+        if (_totalCount < 0) {
+          stopCountdown();
+          GlobalState.appState.shouldMakeDefaultFoldersGrey = true;
+          print('_totalCount<0');
+        }
+
+        // Only when the folder list isn't under the scrolling event, it will make default folders become grey
+        // if (!GlobalState.isFolderListScrolling) {
+        //   GlobalState.appState.shouldMakeDefaultFoldersGrey = true;
+        // }
+
         _showOverlay();
       },
     );
@@ -249,7 +268,7 @@ class _UserFolderListListenerWidgetState
     var offset = renderBox.localToGlobal(Offset.zero);
     var folderListItemDy = offset.dy;
 
-    print('folderListItemDy=${offset.dy}');
+    // print('folderListItemDy=${offset.dy}');
 
     // var minAvailableDy = GlobalState.appBarHeight +
     //     widget.folderListPanelMarginForTopOrBottom +
@@ -301,18 +320,6 @@ class _UserFolderListListenerWidgetState
       GlobalState.shouldReorderFolderListItem = false;
     }
 
-    // if (folderListItemDy <
-    //         (minAvailableDy - GlobalState.folderListItemHeight / 4) ||
-    //     folderListItemDy > maxAvailableDy) {
-    //   showBlockIcon = true;
-    //   GlobalState.shouldReorderFolderListItem = false;
-    // }
-
-    // If the pointer isn't down, we don't show the block icon
-    // if (!GlobalState.isPointerDown) {
-    //   showBlockIcon = false;
-    // }
-
     return showBlockIcon;
   }
 
@@ -330,8 +337,7 @@ class _UserFolderListListenerWidgetState
 
     Color color = Colors.transparent;
 
-    if ( GlobalState.isPointerMoving) { // It won't show the block icon until the pointer is moving
-
+    if (GlobalState.isPointerMoving) {
       // When the pointer is down
       if (widget.isDefaultFolder) {
         // It is a default folder
@@ -384,6 +390,21 @@ class _UserFolderListListenerWidgetState
   void resetUserFolderListItemAvailableDy() {
     GlobalState.userFolderListItemMaxAvailableDy = double.infinity;
     GlobalState.userFolderListItemMinAvailableDy = double.negativeInfinity;
-    print('resetUserFolderListItemAvailableDy()');
+    // print('resetUserFolderListItemAvailableDy()');
+  }
+
+  void startCountdown({bool resetTotalCount = true}) {
+    if (resetTotalCount) {
+      _totalCount = 500;
+    }
+
+    _timer = Timer.periodic(Duration(milliseconds: 50), (timer) {
+      _totalCount -= 50;
+      print('$_totalCount');
+    });
+  }
+
+  void stopCountdown() {
+    _timer.cancel();
   }
 }

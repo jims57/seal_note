@@ -22,12 +22,23 @@ class FolderListWidgetState extends State<FolderListWidget> {
   double folderListPanelMarginForTopOrBottom = 5.0;
   List<Widget> childrenWidgetList;
 
+  ScrollController controller;
+
   @override
   void initState() {
     GlobalState.userFolderTotal = widget.userFolderTotal;
     GlobalState.allFolderTotal = GlobalState.userFolderTotal;
 
+    // controller = new ScrollController()..addListener(_scrollListener);
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // controller.removeListener(_scrollListener);
+
+    super.dispose();
   }
 
   @override
@@ -88,6 +99,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
           right: 15.0),
       // color: Colors.red,
       child: SingleChildScrollView(
+        // controller: controller,
         physics: AlwaysScrollableScrollPhysics(),
         child: Container(
           // color: (todayTitle == '今日3333') ? Colors.red : Colors.green,
@@ -97,7 +109,6 @@ class FolderListWidgetState extends State<FolderListWidget> {
               folderListPanelMarginForTopOrBottom * 2,
           // color: Colors.green,
           child: ReorderableListView(
-            // header: Container(,child: Text('Folder')),
             children: childrenWidgetList,
             onReorder: (oldIndex, newIndex) {
               setState(() {
@@ -187,4 +198,9 @@ class FolderListWidgetState extends State<FolderListWidget> {
       },
     );
   }
+
+  // void _scrollListener() {
+  //   // GlobalState.isFolderListScrolling = true;
+  //   print('folder list is scrolling()');
+  // }
 }

@@ -117,6 +117,7 @@ class GlobalState with ChangeNotifier {
   static bool shouldReorderFolderListItem = false;
   static bool isPointerDown = false;
   static bool isPointerMoving = false;
+  // static bool isFolderListScrolling = true;
   static bool shouldMakeDefaultFoldersGrey = false;
 
   // Folder total
