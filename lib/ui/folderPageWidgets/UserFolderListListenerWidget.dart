@@ -105,8 +105,7 @@ class _UserFolderListListenerWidgetState
                               child: Consumer<AppState>(
                                   builder: (cxt, appState, child) {
                                 // Only the pointer is down, it will trigger update available dy
-                                if (GlobalState.isPointerDown &&
-                                    !GlobalState.isPointerMoving) {
+                                if (GlobalState.isPointerDown) {
                                   updateUserFolderListItemAvailableDy();
                                 }
 
@@ -268,14 +267,6 @@ class _UserFolderListListenerWidgetState
     var offset = renderBox.localToGlobal(Offset.zero);
     var folderListItemDy = offset.dy;
 
-    // print('folderListItemDy=${offset.dy}');
-
-    // var minAvailableDy = GlobalState.appBarHeight +
-    //     widget.folderListPanelMarginForTopOrBottom +
-    //     widget.folderListItemHeight * 2;
-    // var maxAvailableDy = GlobalState.appBarHeight +
-    //     widget.folderListPanelMarginForTopOrBottom +
-    //     (GlobalState.allFolderTotal - 1) * widget.folderListItemHeight;
     var shouldShowBlockIcon = _shouldShowBlockIcon(
         folderListItemDy: folderListItemDy,
         minAvailableDy: GlobalState.userFolderListItemMinAvailableDy,
@@ -375,13 +366,13 @@ class _UserFolderListListenerWidgetState
         if (widget.folderName == GlobalState.defaultFolderNameForDeletion) {
           // If it is the deletion folder
           GlobalState.userFolderListItemMaxAvailableDy = topBorderDy;
-        } else {
+        } else if (widget.folderName ==
+            GlobalState.defaultFolderNameForAllNotes) {
+          // When it is All Notes folder
+
           // Other default folders except the deletion folder
           var bottomBorderDy = topBorderDy + (folderListItemHeight / 4) * 3;
-
-          if (bottomBorderDy > GlobalState.userFolderListItemMinAvailableDy) {
-            GlobalState.userFolderListItemMinAvailableDy = bottomBorderDy;
-          }
+          GlobalState.userFolderListItemMinAvailableDy = bottomBorderDy;
         }
       }
     });
