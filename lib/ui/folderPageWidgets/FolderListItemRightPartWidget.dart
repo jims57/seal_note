@@ -10,12 +10,14 @@ class FolderListItemRightPartWidget extends StatefulWidget {
   FolderListItemRightPartWidget(
       {Key key,
       @required this.numberToShow,
+      this.badgeBackgroundColor = GlobalState.themeBlueColor,
       this.showBadgeBackgroundColor = false,
       this.showZero = false,
       this.isDefaultFolderRightPart = false})
       : super(key: key);
 
   final int numberToShow;
+  final Color badgeBackgroundColor;
   final bool showBadgeBackgroundColor;
   final bool showZero;
   final bool isDefaultFolderRightPart;
@@ -58,7 +60,7 @@ class _FolderListItemRightPartWidgetState
                                               .shouldMakeDefaultFoldersGrey &&
                                           widget.isDefaultFolderRightPart)
                                       ? GlobalState.themeGreyColorAtiOSTodo
-                                      : GlobalState.themeBlueColor)
+                                      : widget.badgeBackgroundColor)
                                   : Colors.transparent,
                               borderRadius: BorderRadius.all(
                                   Radius.circular(GlobalState.borderRadius40))),

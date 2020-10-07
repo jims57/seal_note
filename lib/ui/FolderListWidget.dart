@@ -14,7 +14,6 @@ class FolderListWidget extends StatefulWidget {
 }
 
 class FolderListWidgetState extends State<FolderListWidget> {
-  String todayTitle = '今日';
   bool isPointerDown = false;
 
   int defaultFolderTotal = 1;
@@ -29,15 +28,11 @@ class FolderListWidgetState extends State<FolderListWidget> {
     GlobalState.userFolderTotal = widget.userFolderTotal;
     GlobalState.allFolderTotal = GlobalState.userFolderTotal;
 
-    // controller = new ScrollController()..addListener(_scrollListener);
-
     super.initState();
   }
 
   @override
   void dispose() {
-    // controller.removeListener(_scrollListener);
-
     super.dispose();
   }
 
@@ -48,6 +43,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
 
     childrenWidgetList = List.generate(widget.userFolderTotal, (index) {
       return getFolderListItem(
+          iconColor: GlobalState.themeLightBlueColorAtiOSTodo,
           index: index,
           folderName: '英语知识$index',
           numberToShow: index,
@@ -58,10 +54,13 @@ class FolderListWidgetState extends State<FolderListWidget> {
     childrenWidgetList.insert(
         0,
         getFolderListItem(
+          icon: Icons.today_outlined,
+          iconColor: GlobalState.themeOrangeColorAtiOSTodo,
           index: 0,
           isDefaultFolder: true,
-          folderName: '$todayTitle',
+          folderName: '${GlobalState.defaultFolderNameForToday}',
           numberToShow: 546,
+          badgeBackgroundColor: GlobalState.themeOrangeColorAtiOSTodo,
           showBadgeBackgroundColor: true,
           canSwipe: false,
           isRoundTopCorner: true,
@@ -70,16 +69,20 @@ class FolderListWidgetState extends State<FolderListWidget> {
     childrenWidgetList.insert(
         1,
         getFolderListItem(
+            icon: Icons.archive_outlined,
+            iconColor: GlobalState.themeBrownColorAtiOSTodo,
             index: 1,
             isDefaultFolder: true,
-            folderName: '全部笔记',
+            folderName: '${GlobalState.defaultFolderNameForAllNotes}',
             numberToShow: 2203,
             canSwipe: false));
 
     childrenWidgetList.add(getFolderListItem(
+      icon: Icons.delete_sweep_outlined,
+      iconColor: GlobalState.themeGreyColorAtiOSTodoForFolderGroupBackground,
       index: GlobalState.allFolderTotal,
       isDefaultFolder: true,
-      folderName: '删除笔记',
+      folderName: '${GlobalState.defaultFolderNameForDeletion}',
       numberToShow: 43,
       canSwipe: false,
       showDivider: false,
@@ -97,17 +100,13 @@ class FolderListWidgetState extends State<FolderListWidget> {
           bottom: folderListPanelMarginForTopOrBottom,
           left: 15.0,
           right: 15.0),
-      // color: Colors.red,
       child: SingleChildScrollView(
-        // controller: controller,
         physics: AlwaysScrollableScrollPhysics(),
         child: Container(
-          // color: (todayTitle == '今日3333') ? Colors.red : Colors.green,
           height: GlobalState.screenHeight -
               GlobalState.appBarHeight -
               GlobalState.folderPageBottomContainerHeight -
               folderListPanelMarginForTopOrBottom * 2,
-          // color: Colors.green,
           child: ReorderableListView(
             children: childrenWidgetList,
             onReorder: (oldIndex, newIndex) {
@@ -153,11 +152,14 @@ class FolderListWidgetState extends State<FolderListWidget> {
   Widget getFolderListItem(
       {int index = 0,
       bool isDefaultFolder = false,
+      IconData icon = Icons.folder_open_outlined,
+      Color iconColor = GlobalState.themeLightBlueColor07,
       @required String folderName,
       @required int numberToShow,
       bool canSwipe = true,
       bool isFirstItem = false,
       bool showDivider = true,
+      Color badgeBackgroundColor = GlobalState.themeBlueColor,
       bool showBadgeBackgroundColor = false,
       bool showZero = true,
       bool isRoundTopCorner = false,
@@ -175,9 +177,12 @@ class FolderListWidgetState extends State<FolderListWidget> {
           ? Key('defaultFolderListItem$index')
           : Key('userFolderListItem$index'),
       child: UserFolderListListenerWidget(
+        icon: icon,
+        iconColor: iconColor,
         folderName: folderName,
         numberToShow: numberToShow,
         isDefaultFolder: isDefaultFolder,
+        badgeBackgroundColor: badgeBackgroundColor,
         showBadgeBackgroundColor: showBadgeBackgroundColor,
         showZero: showZero,
         showDivider: showDivider,
@@ -198,9 +203,4 @@ class FolderListWidgetState extends State<FolderListWidget> {
       },
     );
   }
-
-// void _scrollListener() {
-//   // GlobalState.isFolderListScrolling = true;
-//   print('folder list is scrolling()');
-// }
 }

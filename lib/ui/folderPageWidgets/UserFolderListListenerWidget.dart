@@ -11,9 +11,12 @@ import 'FolderListItemRightPartWidget.dart';
 class UserFolderListListenerWidget extends StatefulWidget {
   UserFolderListListenerWidget(
       {Key key,
+      this.icon = Icons.folder_open_outlined,
+      this.iconColor = GlobalState.themeLightBlueColor07,
       @required this.folderName,
       @required this.numberToShow,
       this.isDefaultFolder = false,
+      this.badgeBackgroundColor = GlobalState.themeBlueColor,
       this.showBadgeBackgroundColor = false,
       this.showZero = false,
       this.showDivider = true,
@@ -24,9 +27,12 @@ class UserFolderListListenerWidget extends StatefulWidget {
       this.isRoundBottomCorner = false})
       : super(key: key);
 
+  final IconData icon;
+  final Color iconColor;
   final String folderName;
   final int numberToShow;
   final bool isDefaultFolder;
+  final Color badgeBackgroundColor;
   final bool showBadgeBackgroundColor;
   final bool showZero;
   final bool showDivider;
@@ -46,7 +52,7 @@ class _UserFolderListListenerWidgetState
     extends State<UserFolderListListenerWidget> {
   BuildContext userFolderListListenerWidgetContext;
   Timer _timer;
-  int _totalCount;
+  int _totalCountdownMilliseconds;
 
   @override
   void initState() {
@@ -114,25 +120,22 @@ class _UserFolderListListenerWidgetState
                                   children: [
                                     Icon(
                                       // folder list item icon // folder item icon // folder icon
-                                      Icons.folder_open_outlined,
+                                      widget.icon,
                                       size: 25.0,
-                                      // color: GlobalState.themeLightBlueColor07,
                                       color: (GlobalState
                                                   .shouldMakeDefaultFoldersGrey &&
                                               isDefaultFolder)
                                           ? GlobalState.themeGreyColorAtiOSTodo
-                                          : GlobalState.themeLightBlueColor07,
+                                          : widget.iconColor,
                                     ),
                                     Container(
                                         // folder name // folder list item name
                                         padding: EdgeInsets.only(left: 5.0),
                                         child: Text(
-                                          // (index == 0) ? '今日' : '英语知识$index',
                                           '${widget.folderName}',
                                           style: TextStyle(
                                             fontSize: 20.0,
                                             fontWeight: FontWeight.w400,
-                                            // color: Colors.black87,
                                             color: (GlobalState
                                                         .shouldMakeDefaultFoldersGrey &&
                                                     isDefaultFolder)
@@ -151,6 +154,8 @@ class _UserFolderListListenerWidgetState
                               flex: 1,
                               child: FolderListItemRightPartWidget(
                                 numberToShow: widget.numberToShow,
+                                badgeBackgroundColor:
+                                    widget.badgeBackgroundColor,
                                 showBadgeBackgroundColor:
                                     widget.showBadgeBackgroundColor,
                                 showZero: widget.showZero,
@@ -233,7 +238,7 @@ class _UserFolderListListenerWidgetState
 
         print('onPointerMove()');
 
-        if (_totalCount <= 0) {
+        if (_totalCountdownMilliseconds <= 0) {
           stopCountdown();
 
           GlobalState.isAfterLongPress = true;
@@ -327,8 +332,6 @@ class _UserFolderListListenerWidgetState
     Color color = Colors.transparent;
 
     if (GlobalState.isPointerMoving) {
-      // if (GlobalState.isPointerMoving &&
-      //     GlobalState.shouldMakeDefaultFoldersGrey) {
       // When the pointer is down
       if (widget.isDefaultFolder) {
         // It is a default folder
@@ -386,12 +389,12 @@ class _UserFolderListListenerWidgetState
 
   void startCountdown({bool resetTotalCount = true}) {
     if (resetTotalCount) {
-      _totalCount = 500;
+      _totalCountdownMilliseconds = 500;
     }
 
     _timer = Timer.periodic(Duration(milliseconds: 50), (timer) {
-      _totalCount -= 50;
-      print('$_totalCount');
+      _totalCountdownMilliseconds -= 50;
+      print('$_totalCountdownMilliseconds');
     });
   }
 

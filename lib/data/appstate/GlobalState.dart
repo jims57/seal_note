@@ -19,19 +19,23 @@ class GlobalState with ChangeNotifier {
   GlobalState._internal();
 
   // Colors
-  static Color themeBlackColor = Color(0xff000000);
-  static Color themeBlueColor;
-  static Color themeGreenColorAtiOSTodo = Color(0xff67d844);
-  static Color themeLightBlueColor07 = Color.fromRGBO(43, 152, 240, 0.7);
-  static Color themeLightBlueColor02 = Color.fromRGBO(43, 152, 240, 0.2);
-  static Color themeGreyColor = Color(0xffecedee);
-  static Color themeGreyColorAtiOSTodo = Color(0xffbbbbc0);
-  static Color themeGreyColorAtiOSTodoForBackground = Color(0xfff2f2f6);
+  static const Color themeBlackColor = Color(0xff000000);
+  static const Color themeBlueColor = Color(0xff2b98f0);
+  static const Color themeGreenColorAtiOSTodo = Color(0xff67d844);
+  static const Color themeLightBlueColor07 = Color.fromRGBO(43, 152, 240, 0.7);
+  static const Color themeLightBlueColor02 = Color.fromRGBO(43, 152, 240, 0.2);
+  static const Color themeGreyColor = Color(0xffecedee);
+  static const Color themeGreyColorAtiOSTodo = Color(0xffbbbbc0);
+  static const Color themeGreyColorAtiOSTodoForFolderGroupBackground = Color(0xff898a8e);
+  static const Color themeGreyColorAtiOSTodoForBackground = Color(0xfff2f2f6);
   static Color themeGrey350Color = Colors.grey[350];
-  static Color themeGreyColorAtiOSTodoForBlockIconBackground =
+  static const Color themeGreyColorAtiOSTodoForBlockIconBackground =
       Color(0xff8e8e93);
-  static Color themeWhiteColorAtiOSTodo = Color(0xffffffff);
-  static Color themeBlackColor87ForFontForeColor = Colors.black87;
+  static const Color themeWhiteColorAtiOSTodo = Color(0xffffffff);
+  static const Color themeBlackColor87ForFontForeColor = Colors.black87;
+  static const Color themeOrangeColorAtiOSTodo = Color(0xfffa9426);
+  static const Color themeBrownColorAtiOSTodo = Color(0xff9a8565);
+  static const Color themeLightBlueColorAtiOSTodo = Color(0xff2aaff5);
 
   // Borders
   static double borderRadius15 = 15.0;
@@ -68,9 +72,9 @@ class GlobalState with ChangeNotifier {
   static const int pageTransitionAnimationDurationMilliseconds = 200;
 
   // Title String
-  static final String defaultFolderNameForToday ='今天';
-  static final String defaultFolderNameForAllNotes ='全部笔记';
-  static final String defaultFolderNameForDeletion ='删除笔记';
+  static final String defaultFolderNameForToday = '今天';
+  static final String defaultFolderNameForAllNotes = '全部笔记';
+  static final String defaultFolderNameForDeletion = '删除笔记';
 
   // Pages' width
   // Note: The following default values for the width are as far as large screen(screenType = 3) is concerned

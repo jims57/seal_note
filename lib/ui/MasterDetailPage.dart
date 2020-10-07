@@ -83,13 +83,11 @@ class MasterDetailPageState extends State<MasterDetailPage>
     GlobalState.screenWidth = getScreenWidth(context);
     GlobalState.screenType = checkScreenType(GlobalState.screenWidth);
 
-    GlobalState.themeBlueColor = Theme.of(context).primaryColor;
-
     updatePageShowAndHide(
         shouldTriggerSetState: false,
         resetFolderAndDetailPageToDefaultDx: isFirstLoad);
 
-    // Check if it is the first load, sometimes, the subsequent performance will be ommitted
+    // Check if it is the first load, sometimes, the subsequent performance will be omitted
     if (isFirstLoad) {
       isFirstLoad = false;
     } else {
@@ -101,11 +99,6 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
         // Update the app bar's height on the folder list page
         refreshFolderListPageAppBarHeight();
-
-        //
-        // // Update folder page app bar and trigger setState()
-        // GlobalState.folderPageTopContainerHeight = newAppBarHeight;
-        // GlobalState.folderListPageState.currentState.triggerSetState();
 
         // Check if it is rotating // check if rotation // check rotation action
         if (GlobalState.appBarHeight != newAppBarHeight) {
@@ -120,7 +113,6 @@ class MasterDetailPageState extends State<MasterDetailPage>
             showToolbar = true;
           }
 
-          // GlobalState.flutterWebviewPlugin.evalJavascript("javascript:setEditorHeightWithNewWebViewScreenHeight($newWebViewScreenHeight, 0, false);");
           GlobalState.flutterWebviewPlugin.evalJavascript(
               "javascript:setEditorHeightWithNewWebViewScreenHeight($newWebViewScreenHeight, ${GlobalState.keyboardHeight}, $showToolbar);");
 
@@ -130,10 +122,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
       // Adjust the height of the Quill accordingly after rotation
       if (GlobalState.hasWebViewLoaded &&
-          !GlobalState.isKeyboardEventHandling) {
-        // GlobalState.flutterWebviewPlugin
-        //     .evalJavascript("javascript:updateScreenHeight(${GlobalState.webViewHeight},${GlobalState.keyboardHeight},true);");
-      }
+          !GlobalState.isKeyboardEventHandling) {}
 
       GlobalState.isKeyboardEventHandling = false;
     }
@@ -302,7 +291,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
           // folderPageFromDx = folderPageToDx;
 
           // Check if it should show the folder page
-          if(GlobalState.isInFolderPage){
+          if (GlobalState.isInFolderPage) {
             folderPageFromDx = folderPageToDx;
           } else {
             folderPageFromDx = -1.0;
@@ -335,11 +324,12 @@ class MasterDetailPageState extends State<MasterDetailPage>
         folderPageToDx = 0.0;
         noteDetailPageFromDx = 0.0;
         noteDetailPageToDx = 0.0;
-      } else { // Handle the large screen
+      } else {
+        // Handle the large screen
         folderPageFromDx = 0.0;
         folderPageToDx = 0.0;
         noteDetailPageFromDx = 0.0;
-        noteDetailPageToDx =0.0;
+        noteDetailPageToDx = 0.0;
       }
     }
 
