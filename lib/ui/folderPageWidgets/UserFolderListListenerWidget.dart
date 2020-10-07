@@ -223,32 +223,25 @@ class _UserFolderListListenerWidgetState
       onPointerUp: (opp) {
         GlobalState.isPointerDown = false;
         GlobalState.isPointerMoving = false;
-        // GlobalState.isFolderListScrolling = true;
+        GlobalState.isAfterLongPress = false;
         GlobalState.appState.shouldMakeDefaultFoldersGrey = false;
 
         stopCountdown();
-
-        // print('onPointerUp()');
-
-        _showOverlay();
       },
       onPointerMove: (opm) {
         GlobalState.isPointerMoving = true;
 
         print('onPointerMove()');
 
-        if (_totalCount < 0) {
+        if (_totalCount <= 0) {
           stopCountdown();
+
+          GlobalState.isAfterLongPress = true;
           GlobalState.appState.shouldMakeDefaultFoldersGrey = true;
-          print('_totalCount<0');
+          _showOverlay();
+
+          print('_totalCount<=0');
         }
-
-        // Only when the folder list isn't under the scrolling event, it will make default folders become grey
-        // if (!GlobalState.isFolderListScrolling) {
-        //   GlobalState.appState.shouldMakeDefaultFoldersGrey = true;
-        // }
-
-        _showOverlay();
       },
     );
   }
@@ -307,8 +300,13 @@ class _UserFolderListListenerWidgetState
 
     if (folderListItemDy < minAvailableDy ||
         folderListItemDy > maxAvailableDy) {
-      showBlockIcon = true;
+      // When beyond the available dy
+      if (GlobalState.isAfterLongPress) showBlockIcon = true;
       GlobalState.shouldReorderFolderListItem = false;
+    } else {
+      // When inside the available dy
+      if (GlobalState.isAfterLongPress) showBlockIcon = false;
+      GlobalState.shouldReorderFolderListItem = true;
     }
 
     return showBlockIcon;
@@ -329,6 +327,8 @@ class _UserFolderListListenerWidgetState
     Color color = Colors.transparent;
 
     if (GlobalState.isPointerMoving) {
+      // if (GlobalState.isPointerMoving &&
+      //     GlobalState.shouldMakeDefaultFoldersGrey) {
       // When the pointer is down
       if (widget.isDefaultFolder) {
         // It is a default folder

@@ -199,8 +199,8 @@ class FolderListWidgetState extends State<FolderListWidget> {
     );
   }
 
-  // void _scrollListener() {
-  //   // GlobalState.isFolderListScrolling = true;
-  //   print('folder list is scrolling()');
-  // }
+// void _scrollListener() {
+//   // GlobalState.isFolderListScrolling = true;
+//   print('folder list is scrolling()');
+// }
 }
