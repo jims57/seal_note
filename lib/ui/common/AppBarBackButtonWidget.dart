@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 
 class AppBarBackButtonWidget extends StatefulWidget {
-  AppBarBackButtonWidget({Key key, this.title, this.textWidth = 50.0, @required this.onTap})
+  AppBarBackButtonWidget(
+      {Key key,
+      this.title,
+      this.foreColor = GlobalState.themeBlackColorForFont,
+      this.textWidth = 50.0,
+      @required this.onTap})
       : super(key: key);
 
   final String title;
+  final Color foreColor;
   final double textWidth;
   final GestureTapCallback onTap;
 
@@ -19,12 +25,9 @@ class _AppBarBackButtonWidgetState extends State<AppBarBackButtonWidget> {
     // app bar back button build method
     return GestureDetector(
       child: Container(
-        // color: Colors.black,
         color: Colors.transparent,
         height: double.infinity,
-        // width: double.infinity,
         padding: EdgeInsets.only(left: 10.0, right: 0.0),
-        // width: 100,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -32,7 +35,7 @@ class _AppBarBackButtonWidgetState extends State<AppBarBackButtonWidget> {
                 ? Container()
                 : Icon(
                     Icons.arrow_back_ios,
-                    color: Colors.white,
+                    color: GlobalState.themeBlueColor,
                   )),
             (GlobalState.screenType == 2 || widget.title == null
                 ? Container()
@@ -40,8 +43,9 @@ class _AppBarBackButtonWidgetState extends State<AppBarBackButtonWidget> {
                     width: widget.textWidth,
                     child: Text(
                       '${widget.title}', // folder button // folder back button
-                      style: TextStyle(fontSize: 14.0),
-                      // overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: 14.0,
+                          color: GlobalState.themeBlueColor),
                     ),
                   )),
           ],

@@ -20,6 +20,7 @@ class GlobalState with ChangeNotifier {
 
   // Colors
   static const Color themeBlackColor = Color(0xff000000);
+  static const Color themeBlackColorForFont = Color(0xff000000);
   static const Color themeBlueColor = Color(0xff2b98f0);
   static const Color themeGreenColorAtiOSTodo = Color(0xff67d844);
   static const Color themeLightBlueColor07 = Color.fromRGBO(43, 152, 240, 0.7);
@@ -27,7 +28,7 @@ class GlobalState with ChangeNotifier {
   static const Color themeGreyColor = Color(0xffecedee);
   static const Color themeGreyColorAtiOSTodo = Color(0xffbbbbc0);
   static const Color themeGreyColorAtiOSTodoForFolderGroupBackground = Color(0xff898a8e);
-  static const Color themeGreyColorAtiOSTodoForBackground = Color(0xfff2f2f6);
+  static const Color themeGreyColorAtiOSTodoForBackground = Color(0xfff1f2f6); //Color(0xfff2f2f6);
   static Color themeGrey350Color = Colors.grey[350];
   static const Color themeGreyColorAtiOSTodoForBlockIconBackground =
       Color(0xff8e8e93);
@@ -36,6 +37,7 @@ class GlobalState with ChangeNotifier {
   static const Color themeOrangeColorAtiOSTodo = Color(0xfffa9426);
   static const Color themeBrownColorAtiOSTodo = Color(0xff9a8565);
   static const Color themeLightBlueColorAtiOSTodo = Color(0xff2aaff5);
+  // static const Color themeWhiteColorForNoteDetailPageBackground = Color(0xfffeffff); //Color(0xfffafafa);
 
   // Borders
   static double borderRadius15 = 15.0;

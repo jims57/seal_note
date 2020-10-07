@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:async';
 
-// import 'package:crypto/crypto.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
@@ -11,7 +9,6 @@ import 'package:keyboard_utils/keyboard_listener.dart';
 import 'package:keyboard_utils/keyboard_utils.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/DetailPageState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/ui/common/AppBarBackButtonWidget.dart';
@@ -20,11 +17,9 @@ import 'package:seal_note/util/converter/ImageConverter.dart';
 import 'package:seal_note/util/crypto/CryptoHandler.dart';
 import 'package:seal_note/util/file/FileHandler.dart';
 import 'package:seal_note/util/route/ScaleRoute.dart';
-import 'package:uuid/uuid.dart';
 
 import 'common/PhotoViewWidget.dart';
 import 'package:seal_note/model/ImageSyncItem.dart';
-import 'package:seal_note/util/appTools/RestartWidget.dart';
 import 'package:after_layout/after_layout.dart';
 
 class NoteDetailWidget extends StatefulWidget {
@@ -75,15 +70,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
       GlobalState.flutterWebviewPlugin
           .evalJavascript("javascript:showKeyboard($keyboardHeight);");
     }));
-
-    // rootBundle.loadString('assets/QuillEditor.html').then((value) {
-    //   setState(() {
-    //     GlobalState.appState.widgetNo = 2;
-    //     htmlString = value;
-    //   });
-    // });
-
-    // GlobalState.flutterWebviewPlugin.close();
   }
 
   @override
@@ -117,12 +103,9 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     JavascriptChannel(
         name: 'NotifyDartWebViewHasLoaded',
         onMessageReceived: (JavascriptMessage message) {
-          // print(message.message);
           GlobalState.isClickingNoteListItem = false;
 
           // If the WebView isn't loaded yet, we try to set the height in one second
-          // double webViewHeight =
-          //     GlobalState.screenHeight - GlobalState.appBarHeight;
           if (GlobalState.rotatedTimes > 0) {
             GlobalState.flutterWebviewPlugin.evalJavascript(
                 "javascript:updateScreenHeight(${GlobalState.webViewHeight},${GlobalState.keyboardHeight},true);");
@@ -130,9 +113,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
           // Record the status of whether the WebView is loaded or note in dart
           GlobalState.hasWebViewLoaded = true;
-
-          // When the WebView is loaded successfully, set the Quill's height
-          // Because the device
         }), // NotifyDartWebViewHasLoaded
     JavascriptChannel(
         name: 'CheckIfOldNote',
@@ -210,19 +190,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                 insertOrder++;
 
                 ByteData imageBytes = await asset.getByteData(quality: 90);
-                // ByteData imageBytes90 = await asset.getByteData(quality: 90);
 
                 Uint8List imageUint8List = imageBytes.buffer.asUint8List();
 
-                // Uint8List imageUint8List90 = imageBytes90.buffer.asUint8List();
-
-                // Get the image md5, directly use image Uint8List as string to crypto it
-                // String imageUint8ListString = imageUint8List.toString();
-                // var imageMd5 =
-                //     CryptoHandler.convertStringToMd5(imageUint8ListString);
-
                 // imageId format: {imageMd5}-{batchId}-{3 bit insertOrder}
-                // String imageId = '$imageMd5-$batchId-$paddedInsertOrder';
                 String imageId = '$imageMd5-$batchId-$paddedInsertOrder';
                 GlobalState.imageId = imageId;
 
@@ -257,10 +228,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
                 insertOrder++;
               });
-
-              // TODO: Try to insert <br> after image
-              // Reorder images inserted just and remove their *data-insertorder* attribute to prevent another operation of Multi Image Picker will use it again
-              // GlobalState.flutterWebviewPlugin.evalJavascript("javascript:orderImagesInserted();");
             });
           } on NoImagesSelectedException catch (e) {
             print('No image selected');
@@ -332,9 +299,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
             GlobalState.flutterWebviewPlugin.evalJavascript(
                 "javascript:setSomeImageSyncsToSyncedStatus($imageIdList);");
           }
-
-          // TODO: For Debug, insert an additional ImageSyncItem
-//          GlobalState.imageSyncItemList.add(ImageSyncItem(imageId: '1598237287220013', imageIndex: 1, syncId: 1));
         }), // SyncImageSyncArrayToDart
     JavascriptChannel(
         name: 'GetBase64ByImageIdFromWebView',
@@ -378,8 +342,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
               });
             });
           });
-
-          // print(message.message);
         }), // GetAllImagesBase64FromImageFiles
     JavascriptChannel(
         name: 'SaveNoteEncodedHtmlToSqlite',
@@ -406,8 +368,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                         mimeType: 'text/html',
                         encoding: Encoding.getByName('utf-8'))
                     .toString(),
-
                 appBar: AppBarWidget(
+                    // detail page app bar // detail app bar
+                    backgroundColor:
+                        GlobalState.themeGreyColorAtiOSTodoForBackground,
                     key: GlobalState.appBarWidgetState,
                     showSyncStatus: false,
                     leadingWidth: getAppBarLeadingWidth(),
@@ -419,7 +383,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                               // detail page back button // webView back button
                               textWidth: 180.0,
                               // title: '英语知识',
-                              title: '英语知识[考研必备知识点2020秋季]',
+                              title: '  ',
                               onTap: () {
                                 GlobalState.isHandlingNoteDetailPage = true;
                                 GlobalState.isInNoteDetailPage = false;
@@ -428,7 +392,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                 if (!GlobalState.isQuillReadOnly)
                                   toggleQuillModeBetweenReadOnlyAndEdit(
                                       keepNoteDetailPageOpen: false);
-                                // GlobalState.isQuillReadOnly = true;
 
                                 GlobalState.masterDetailPageState.currentState
                                     .updatePageShowAndHide(
@@ -439,41 +402,40 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                     tailChildren: [
                       // edit web view button // edit note button
                       // web view action button // note detail edit button
-                      // edit detail button
+                      // edit detail button // detail edit button
                       IconButton(
                           icon: (GlobalState.isQuillReadOnly
-                              ? Icon(Icons.edit)
-                              : Icon(Icons.done)),
+                              ? Icon(
+                                  Icons.edit,
+                                  color: GlobalState.themeBlueColor,
+                                )
+                              : Icon(
+                                  Icons.done,
+                                  color: GlobalState.themeBlueColor,
+                                )),
                           onPressed: () {
                             toggleQuillModeBetweenReadOnlyAndEdit(
                                 keepNoteDetailPageOpen: true);
                           }),
                       IconButton(
                           // web view test button // test button // run button // test run button
-                          icon: Icon(Icons.directions_run),
+                          icon: Icon(
+                            Icons.directions_run,
+                            color: GlobalState.themeBlueColor,
+                          ),
                           onPressed: () {
                             GlobalState.database
                                 .getAllFolders()
                                 .then((folders) {
                               var v = folders;
                             });
-
-                            var d = GlobalState.appBarWidgetState.currentState
-                                .getAppBarHeight();
-
-                            var s = 's';
-                            // GlobalState.flutterWebviewPlugin.evalJavascript(
-                            //     "javascript:printScreenHeight(${GlobalState.screenHeight});");
-
-                            // GlobalState.flutterWebviewPlugin.evalJavascript(
-                            //     "javascript:updateScreenHeight(${GlobalState.webViewHeight},${GlobalState.keyboardHeight},true);");
                           }),
                     ]),
                 javascriptChannels: jsChannels,
                 initialChild: Container(
+                  color: GlobalState.themeGreyColorAtiOSTodoForBackground,
                   child: Center(
                     child: Container(),
-                    // child: CircularProgressIndicator(),
                   ),
                 ),
                 hidden: true,
@@ -497,11 +459,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   }
 
   @override
-  void afterFirstLayout(BuildContext context) {
-    // GlobalState.isClickingNoteListItem = false;
-    var s = 's';
-    // TODO: implement afterFirstLayout
-  }
+  void afterFirstLayout(BuildContext context) {}
 
   // Private methods
   void toggleQuillModeBetweenReadOnlyAndEdit(

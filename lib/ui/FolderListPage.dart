@@ -35,7 +35,7 @@ class FolderListPageState extends State<FolderListPage> {
             child: Text(
               '文件夹',
               style: TextStyle(
-                  color: GlobalState.themeBlackColor,
+                  color: GlobalState.themeBlackColorForFont,
                   fontSize: 25.0,
                   fontWeight: FontWeight.w500),
             ),
@@ -69,7 +69,8 @@ class FolderListPageState extends State<FolderListPage> {
             Expanded(
               child: FolderListWidget(
                 key: GlobalState.folderListWidgetState,
-                userFolderTotal: 3,
+                // folder count // user folder total // user folder count
+                userFolderTotal: 20,
               ),
             ),
             Container(

@@ -159,6 +159,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
   Widget build(BuildContext context) {
     // master detail build method
     var scaffold = Scaffold(
+      // backgroundColor: Colors.red,
       body: Stack(
         children: [
           Container(
@@ -193,14 +194,13 @@ class MasterDetailPageState extends State<MasterDetailPage>
             // Note detail page
             position: getAnimation(
                 fromDx: noteDetailPageFromDx, toDx: noteDetailPageToDx),
-            // position: getAnimation(fromDx: 1.0, toDx: 0.0),
             transformHitTests: true,
             textDirection: TextDirection.ltr,
             child: Container(
                 // Note detail page
                 margin: getNoteDetailPageLeftEdgeInset(),
                 width: noteDetailPageWidth,
-                color: Colors.blue,
+                // color: Colors.red,
                 child: NoteDetailWidget()),
           ),
           // Note detail page

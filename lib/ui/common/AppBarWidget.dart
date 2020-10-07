@@ -80,7 +80,6 @@ class AppBarWidgetState extends State<AppBarWidget>
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
 
-    // preferredSize.height;
     GlobalState.appBarHeight = Scaffold.of(context).appBarMaxHeight;
 
     super.didChangeDependencies();
@@ -120,7 +119,6 @@ class AppBarWidgetState extends State<AppBarWidget>
                     ? Container()
                     : Container(
                         width: widget.leadingWidth,
-                        // color: Colors.red,
                         color: Colors.transparent,
                         height: _appBarHeight,
                         child: Stack(
@@ -132,8 +130,6 @@ class AppBarWidgetState extends State<AppBarWidget>
                   width: widget.tailWidth,
                   height: _appBarHeight,
                   alignment: Alignment.centerRight,
-                  // color: Colors.green,
-                  // padding: EdgeInsets.only(right:30.0),
                   child: Stack(
                     children: _getContainerList(widget.tailChildren),
                   ),
@@ -179,7 +175,10 @@ class AppBarWidgetState extends State<AppBarWidget>
                                   ),
                                   Text(
                                     '同步中...',
-                                    style: TextStyle(fontSize: 8.0),
+                                    style: TextStyle(
+                                        fontSize: 8.0,
+                                        color:
+                                            GlobalState.themeBlackColorForFont),
                                   ),
                                 ],
                               ),

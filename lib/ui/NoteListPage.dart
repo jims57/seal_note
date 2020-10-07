@@ -27,8 +27,10 @@ class _NoteListPageState extends State<NoteListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: GlobalState.themeGreyColorAtiOSTodoForBackground,
       appBar: AppBarWidget(
         // Note list app bar
+        backgroundColor: GlobalState.themeGreyColorAtiOSTodoForBackground,
         leadingChildren: [
           // new app bar back button widget
           // note list back button
@@ -49,7 +51,7 @@ class _NoteListPageState extends State<NoteListPage> {
           IconButton(
             icon: Icon(
               Icons.more_horiz,
-              color: Colors.white,
+              color: GlobalState.themeBlueColor,
             ),
             onPressed: () {
               GlobalState.appState.isInFolderOptionSubPanel = false;
@@ -57,18 +59,13 @@ class _NoteListPageState extends State<NoteListPage> {
               showModalBottomSheet<void>(
                 barrierColor: Colors.black12,
                 backgroundColor: Colors.transparent,
-                // backgroundColor: Colors.black,
                 context: context,
                 isScrollControlled: true,
                 builder: (BuildContext context) {
-                  // return Container(height: 200,color: Colors.red,);
                   return Container(
                     height: GlobalState.folderOptionItemHeight * 6 + 10,
-                    // color: Colors.yellow,
-                    // color: Colors.transparent,
                     child: MaterialApp(
                       debugShowCheckedModeBanner: false,
-                      // color: Colors.green,
                       home: Scaffold(
                         backgroundColor: Colors.transparent,
                         body: FolderOptionListWidget(),
@@ -80,8 +77,11 @@ class _NoteListPageState extends State<NoteListPage> {
             },
           ),
         ],
-        title: Text('英语知识[考研必备知识点2020秋季]'),
-        // title: Text('英语知识'),
+        title: Text(
+          '英语知识[考研必备知识点2020秋季]',
+          style: TextStyle(color: GlobalState.themeBlackColor87ForFontForeColor,fontSize: 16.0),
+          // style: TextStyle(color: Colors.red,),
+        ),
         showSyncStatus: true,
         leadingWidth: 90,
         tailWidth: 40,
