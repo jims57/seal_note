@@ -1,6 +1,5 @@
 import 'package:moor/moor.dart';
 import 'dart:async';
-// import 'dart:core';
 
 part 'database.g.dart';
 
@@ -13,6 +12,10 @@ class Folders extends Table {
   IntColumn get order => integer()();
 
   IntColumn get planId => integer().nullable().named('planId')();
+
+  IntColumn get numberToShow => integer().withDefault(const Constant(0)).named('numberToShow')();
+
+  BoolColumn get isDefaultFolder => boolean().withDefault(const Constant(false)).named('isDefaultFolder')();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -65,7 +68,7 @@ class Database extends _$Database {
 
   Future<List<NoteEntry>> upsertNotesInBatch(
       List<NoteEntry> noteEntryList) async {
-    await batch((batch){
+    await batch((batch) {
       batch.insertAllOnConflictUpdate(notes, noteEntryList);
     });
   }
@@ -89,9 +92,9 @@ class Database extends _$Database {
     return (delete(notes)).go();
   }
 
-  // Future<List<FolderEntry>> get getAllFolders => select(folders)..orderBy([(t) => OrderingTerm(expression: t.order)]).get();
-  Future<List<FolderEntry>>  getAllFolders(){
-    return (select(folders)..orderBy([(t) => OrderingTerm(expression: t.order)])).get();
+  Future<List<FolderEntry>> getAllFolders() {
+    return (select(folders)
+          ..orderBy([(t) => OrderingTerm(expression: t.order)]))
+        .get();
   }
-
 }

@@ -16,10 +16,10 @@ class FolderListWidget extends StatefulWidget {
 class FolderListWidgetState extends State<FolderListWidget> {
   bool isPointerDown = false;
 
-  int defaultFolderTotal = 1;
+  int defaultFolderTotal = 3;
 
   double folderListPanelMarginForTopOrBottom = 5.0;
-  List<Widget> childrenWidgetList;
+  List<Widget> childrenWidgetList = List<Widget>();
 
   ScrollController controller;
 
@@ -41,53 +41,50 @@ class FolderListWidgetState extends State<FolderListWidget> {
     //Always clear the existing record
     GlobalState.defaultFolderIndexList.clear();
 
-    childrenWidgetList = List.generate(widget.userFolderTotal, (index) {
-      return getFolderListItem(
-          iconColor: GlobalState.themeLightBlueColorAtiOSTodo,
+    GlobalState.database.getAllFolders().then((folders) {
+      for (var index = 0; index < folders.length; index++) {
+        var isDefaultFolder = folders[index].isDefaultFolder;
+        var folderName = '${folders[index].name}';
+        var numberToShow = folders[index].numberToShow;
+        var isTodayFolder = (isDefaultFolder &&
+            folderName == GlobalState.defaultFolderNameForToday);
+        var isAllNotesFolder = (isDefaultFolder &&
+            folderName == GlobalState.defaultFolderNameForAllNotes);
+        var isDeletionFolder = (isDefaultFolder &&
+            folderName == GlobalState.defaultFolderNameForDeletion);
+
+        childrenWidgetList.add(getFolderListItem(
+          icon: (isTodayFolder)
+              ? Icons.today_outlined
+              : ((isAllNotesFolder)
+                  ? Icons.archive_outlined
+                  : ((isDeletionFolder)
+                      ? Icons.delete_sweep_outlined
+                      : Icons.folder_open_outlined)),
+          iconColor: (isTodayFolder)
+              ? GlobalState.themeOrangeColorAtiOSTodo
+              : ((isAllNotesFolder)
+                  ? GlobalState.themeBrownColorAtiOSTodo
+                  : ((isDeletionFolder)
+                      ? GlobalState
+                          .themeGreyColorAtiOSTodoForFolderGroupBackground
+                      : GlobalState.themeLightBlueColorAtiOSTodo)),
           index: index,
-          folderName: '英语知识$index',
-          numberToShow: index,
+          isDefaultFolder: isDefaultFolder,
+          folderName: folderName,
+          numberToShow: numberToShow,
+          badgeBackgroundColor: (isTodayFolder)
+              ? GlobalState.themeOrangeColorAtiOSTodo
+              : GlobalState.themeOrangeColorAtiOSTodo,
+          showBadgeBackgroundColor: (isTodayFolder) ? true : false,
           showDivider: true,
-          showZero: true);
-    });
-
-    childrenWidgetList.insert(
-        0,
-        getFolderListItem(
-          icon: Icons.today_outlined,
-          iconColor: GlobalState.themeOrangeColorAtiOSTodo,
-          index: 0,
-          isDefaultFolder: true,
-          folderName: '${GlobalState.defaultFolderNameForToday}',
-          numberToShow: 546,
-          badgeBackgroundColor: GlobalState.themeOrangeColorAtiOSTodo,
-          showBadgeBackgroundColor: true,
-          canSwipe: false,
-          isRoundTopCorner: true,
+          showZero: true,
+          canSwipe: (isDefaultFolder) ? false : true,
+          isRoundTopCorner: (isTodayFolder) ? true : false,
+          isRoundBottomCorner: (isDeletionFolder) ? true : false,
         ));
-
-    childrenWidgetList.insert(
-        1,
-        getFolderListItem(
-            icon: Icons.archive_outlined,
-            iconColor: GlobalState.themeBrownColorAtiOSTodo,
-            index: 1,
-            isDefaultFolder: true,
-            folderName: '${GlobalState.defaultFolderNameForAllNotes}',
-            numberToShow: 2203,
-            canSwipe: false));
-
-    childrenWidgetList.add(getFolderListItem(
-      icon: Icons.delete_sweep_outlined,
-      iconColor: GlobalState.themeGreyColorAtiOSTodoForFolderGroupBackground,
-      index: GlobalState.allFolderTotal,
-      isDefaultFolder: true,
-      folderName: '${GlobalState.defaultFolderNameForDeletion}',
-      numberToShow: 43,
-      canSwipe: false,
-      showDivider: false,
-      isRoundBottomCorner: true,
-    ));
+      }
+    });
 
     super.didChangeDependencies();
   }
@@ -157,7 +154,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
       @required String folderName,
       @required int numberToShow,
       bool canSwipe = true,
-      bool isFirstItem = false,
+      // bool isFirstItem = false,
       bool showDivider = true,
       Color badgeBackgroundColor = GlobalState.themeBlueColor,
       bool showBadgeBackgroundColor = false,
