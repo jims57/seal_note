@@ -25,8 +25,8 @@ class FolderListWidgetState extends State<FolderListWidget> {
 
   @override
   void initState() {
-    GlobalState.userFolderTotal = widget.userFolderTotal;
-    GlobalState.allFolderTotal = GlobalState.userFolderTotal;
+    // GlobalState.userFolderTotal = widget.userFolderTotal;
+    // GlobalState.allFolderTotal = GlobalState.userFolderTotal;
 
     super.initState();
   }
@@ -42,6 +42,9 @@ class FolderListWidgetState extends State<FolderListWidget> {
     GlobalState.defaultFolderIndexList.clear();
 
     GlobalState.database.getAllFolders().then((folders) {
+      GlobalState.userFolderTotal = folders.length;
+      GlobalState.allFolderTotal = GlobalState.userFolderTotal;
+
       for (var index = 0; index < folders.length; index++) {
         var isDefaultFolder = folders[index].isDefaultFolder;
         var folderName = '${folders[index].name}';
@@ -57,18 +60,18 @@ class FolderListWidgetState extends State<FolderListWidget> {
           icon: (isTodayFolder)
               ? Icons.today_outlined
               : ((isAllNotesFolder)
-                  ? Icons.archive_outlined
-                  : ((isDeletionFolder)
-                      ? Icons.delete_sweep_outlined
-                      : Icons.folder_open_outlined)),
+              ? Icons.archive_outlined
+              : ((isDeletionFolder)
+              ? Icons.delete_sweep_outlined
+              : Icons.folder_open_outlined)),
           iconColor: (isTodayFolder)
               ? GlobalState.themeOrangeColorAtiOSTodo
               : ((isAllNotesFolder)
-                  ? GlobalState.themeBrownColorAtiOSTodo
-                  : ((isDeletionFolder)
-                      ? GlobalState
-                          .themeGreyColorAtiOSTodoForFolderGroupBackground
-                      : GlobalState.themeLightBlueColorAtiOSTodo)),
+              ? GlobalState.themeBrownColorAtiOSTodo
+              : ((isDeletionFolder)
+              ? GlobalState
+              .themeGreyColorAtiOSTodoForFolderGroupBackground
+              : GlobalState.themeLightBlueColorAtiOSTodo)),
           index: index,
           isDefaultFolder: isDefaultFolder,
           folderName: folderName,
@@ -146,21 +149,20 @@ class FolderListWidgetState extends State<FolderListWidget> {
     return isDefaultFolder;
   }
 
-  Widget getFolderListItem(
-      {int index = 0,
-      bool isDefaultFolder = false,
-      IconData icon = Icons.folder_open_outlined,
-      Color iconColor = GlobalState.themeLightBlueColor07,
-      @required String folderName,
-      @required int numberToShow,
-      bool canSwipe = true,
-      // bool isFirstItem = false,
-      bool showDivider = true,
-      Color badgeBackgroundColor = GlobalState.themeBlueColor,
-      bool showBadgeBackgroundColor = false,
-      bool showZero = true,
-      bool isRoundTopCorner = false,
-      bool isRoundBottomCorner = false}) {
+  Widget getFolderListItem({int index = 0,
+    bool isDefaultFolder = false,
+    IconData icon = Icons.folder_open_outlined,
+    Color iconColor = GlobalState.themeLightBlueColor07,
+    @required String folderName,
+    @required int numberToShow,
+    bool canSwipe = true,
+    // bool isFirstItem = false,
+    bool showDivider = true,
+    Color badgeBackgroundColor = GlobalState.themeBlueColor,
+    bool showBadgeBackgroundColor = false,
+    bool showZero = true,
+    bool isRoundTopCorner = false,
+    bool isRoundBottomCorner = false}) {
     // Check if this is a default folder, if yes, we need to add the folder total
     if (isDefaultFolder) {
       GlobalState.allFolderTotal += 1;
@@ -186,7 +188,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
         canSwipe: canSwipe,
         folderListItemHeight: GlobalState.folderListItemHeight,
         folderListPanelMarginForTopOrBottom:
-            folderListPanelMarginForTopOrBottom,
+        folderListPanelMarginForTopOrBottom,
         isRoundTopCorner: isRoundTopCorner,
         isRoundBottomCorner: isRoundBottomCorner,
       ),

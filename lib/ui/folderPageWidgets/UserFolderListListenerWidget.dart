@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
@@ -106,7 +105,7 @@ class _UserFolderListListenerWidgetState
                         child: Row(
                           children: [
                             Expanded(
-                              // folder list left part
+                              // folder list left part // folder item left part
                               flex: 3,
                               child: Consumer<AppState>(
                                   builder: (cxt, appState, child) {
@@ -128,23 +127,25 @@ class _UserFolderListListenerWidgetState
                                           ? GlobalState.themeGreyColorAtiOSTodo
                                           : widget.iconColor,
                                     ),
-                                    Container(
-                                        // folder name // folder list item name
-                                        padding: EdgeInsets.only(left: 5.0),
-                                        child: Text(
-                                          '${widget.folderName}',
-                                          style: TextStyle(
-                                            fontSize: 20.0,
-                                            fontWeight: FontWeight.w400,
-                                            color: (GlobalState
-                                                        .shouldMakeDefaultFoldersGrey &&
-                                                    isDefaultFolder)
-                                                ? GlobalState
-                                                    .themeGreyColorAtiOSTodo
-                                                : GlobalState
-                                                    .themeBlackColor87ForFontForeColor,
-                                          ),
-                                        )),
+                                    Expanded(
+                                      child: Container(
+                                          // folder name // folder list item name
+                                          padding: EdgeInsets.only(left: 5.0),
+                                          child: Text(
+                                            '${widget.folderName}',
+                                            style: TextStyle(
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.w400,
+                                              color: (GlobalState.shouldMakeDefaultFoldersGrey &&
+                                                      isDefaultFolder)
+                                                  ? GlobalState
+                                                      .themeGreyColorAtiOSTodo
+                                                  : GlobalState
+                                                      .themeBlackColor87ForFontForeColor,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          )),
+                                    ),
                                   ],
                                 );
                               }),
