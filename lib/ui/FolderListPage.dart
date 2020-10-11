@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
+import 'package:after_layout/after_layout.dart';
 
 import 'FolderListWidget.dart';
 
@@ -11,7 +12,7 @@ class FolderListPage extends StatefulWidget {
   State<StatefulWidget> createState() => FolderListPageState();
 }
 
-class FolderListPageState extends State<FolderListPage> {
+class FolderListPageState extends State<FolderListPage> with AfterLayoutMixin<FolderListPage> {
   @override
   void initState() {
     GlobalState.folderListWidgetState = GlobalKey<FolderListWidgetState>();
@@ -122,5 +123,10 @@ class FolderListPageState extends State<FolderListPage> {
 
   void triggerSetState() {
     setState(() {});
+  }
+
+  @override
+  void afterFirstLayout(BuildContext context) {
+    GlobalState.isFolderListPageLoaded = true;
   }
 }

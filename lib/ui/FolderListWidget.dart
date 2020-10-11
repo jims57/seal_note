@@ -41,53 +41,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
     //Always clear the existing record
     GlobalState.defaultFolderIndexList.clear();
 
-    GlobalState.database.getAllFolders().then((folders) {
-      GlobalState.userFolderTotal = folders.length;
-      GlobalState.allFolderTotal = GlobalState.userFolderTotal;
-
-      for (var index = 0; index < folders.length; index++) {
-        var isDefaultFolder = folders[index].isDefaultFolder;
-        var folderName = '${folders[index].name}';
-        var numberToShow = folders[index].numberToShow;
-        var isTodayFolder = (isDefaultFolder &&
-            folderName == GlobalState.defaultFolderNameForToday);
-        var isAllNotesFolder = (isDefaultFolder &&
-            folderName == GlobalState.defaultFolderNameForAllNotes);
-        var isDeletionFolder = (isDefaultFolder &&
-            folderName == GlobalState.defaultFolderNameForDeletion);
-
-        childrenWidgetList.add(getFolderListItem(
-          icon: (isTodayFolder)
-              ? Icons.today_outlined
-              : ((isAllNotesFolder)
-              ? Icons.archive_outlined
-              : ((isDeletionFolder)
-              ? Icons.delete_sweep_outlined
-              : Icons.folder_open_outlined)),
-          iconColor: (isTodayFolder)
-              ? GlobalState.themeOrangeColorAtiOSTodo
-              : ((isAllNotesFolder)
-              ? GlobalState.themeBrownColorAtiOSTodo
-              : ((isDeletionFolder)
-              ? GlobalState
-              .themeGreyColorAtiOSTodoForFolderGroupBackground
-              : GlobalState.themeLightBlueColorAtiOSTodo)),
-          index: index,
-          isDefaultFolder: isDefaultFolder,
-          folderName: folderName,
-          numberToShow: numberToShow,
-          badgeBackgroundColor: (isTodayFolder)
-              ? GlobalState.themeOrangeColorAtiOSTodo
-              : GlobalState.themeOrangeColorAtiOSTodo,
-          showBadgeBackgroundColor: (isTodayFolder) ? true : false,
-          showDivider: true,
-          showZero: true,
-          canSwipe: (isDefaultFolder) ? false : true,
-          isRoundTopCorner: (isTodayFolder) ? true : false,
-          isRoundBottomCorner: (isDeletionFolder) ? true : false,
-        ));
-      }
-    });
+    getAllFolders();
 
     super.didChangeDependencies();
   }
@@ -134,8 +88,12 @@ class FolderListWidgetState extends State<FolderListWidget> {
   }
 
   // Public methods
-  void triggerSetState() {
-    setState(() {});
+  void triggerSetState({bool forceToFetchFoldersFromDB = false}) {
+    setState(() {
+      if(forceToFetchFoldersFromDB){
+        getAllFolders();
+      }
+    });
   }
 
   // Private method
@@ -149,20 +107,21 @@ class FolderListWidgetState extends State<FolderListWidget> {
     return isDefaultFolder;
   }
 
-  Widget getFolderListItem({int index = 0,
-    bool isDefaultFolder = false,
-    IconData icon = Icons.folder_open_outlined,
-    Color iconColor = GlobalState.themeLightBlueColor07,
-    @required String folderName,
-    @required int numberToShow,
-    bool canSwipe = true,
-    // bool isFirstItem = false,
-    bool showDivider = true,
-    Color badgeBackgroundColor = GlobalState.themeBlueColor,
-    bool showBadgeBackgroundColor = false,
-    bool showZero = true,
-    bool isRoundTopCorner = false,
-    bool isRoundBottomCorner = false}) {
+  Widget getFolderListItem(
+      {int index = 0,
+      bool isDefaultFolder = false,
+      IconData icon = Icons.folder_open_outlined,
+      Color iconColor = GlobalState.themeLightBlueColor07,
+      @required String folderName,
+      @required int numberToShow,
+      bool canSwipe = true,
+      // bool isFirstItem = false,
+      bool showDivider = true,
+      Color badgeBackgroundColor = GlobalState.themeBlueColor,
+      bool showBadgeBackgroundColor = false,
+      bool showZero = true,
+      bool isRoundTopCorner = false,
+      bool isRoundBottomCorner = false}) {
     // Check if this is a default folder, if yes, we need to add the folder total
     if (isDefaultFolder) {
       GlobalState.allFolderTotal += 1;
@@ -188,7 +147,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
         canSwipe: canSwipe,
         folderListItemHeight: GlobalState.folderListItemHeight,
         folderListPanelMarginForTopOrBottom:
-        folderListPanelMarginForTopOrBottom,
+            folderListPanelMarginForTopOrBottom,
         isRoundTopCorner: isRoundTopCorner,
         isRoundBottomCorner: isRoundBottomCorner,
       ),
@@ -201,5 +160,57 @@ class FolderListWidgetState extends State<FolderListWidget> {
             .updatePageShowAndHide(shouldTriggerSetState: true);
       },
     );
+  }
+
+  void getAllFolders() {
+    childrenWidgetList.clear();
+
+    GlobalState.database.getAllFolders().then((folders) {
+      GlobalState.userFolderTotal = folders.length;
+      GlobalState.allFolderTotal = GlobalState.userFolderTotal;
+
+      for (var index = 0; index < folders.length; index++) {
+        var isDefaultFolder = folders[index].isDefaultFolder;
+        var folderName = '${folders[index].name}';
+        var numberToShow = folders[index].numberToShow;
+        var isTodayFolder = (isDefaultFolder &&
+            folderName == GlobalState.defaultFolderNameForToday);
+        var isAllNotesFolder = (isDefaultFolder &&
+            folderName == GlobalState.defaultFolderNameForAllNotes);
+        var isDeletionFolder = (isDefaultFolder &&
+            folderName == GlobalState.defaultFolderNameForDeletion);
+
+        childrenWidgetList.add(getFolderListItem(
+          icon: (isTodayFolder)
+              ? Icons.today_outlined
+              : ((isAllNotesFolder)
+                  ? Icons.archive_outlined
+                  : ((isDeletionFolder)
+                      ? Icons.delete_sweep_outlined
+                      : Icons.folder_open_outlined)),
+          iconColor: (isTodayFolder)
+              ? GlobalState.themeOrangeColorAtiOSTodo
+              : ((isAllNotesFolder)
+                  ? GlobalState.themeBrownColorAtiOSTodo
+                  : ((isDeletionFolder)
+                      ? GlobalState
+                          .themeGreyColorAtiOSTodoForFolderGroupBackground
+                      : GlobalState.themeLightBlueColorAtiOSTodo)),
+          index: index,
+          isDefaultFolder: isDefaultFolder,
+          folderName: folderName,
+          numberToShow: numberToShow,
+          badgeBackgroundColor: (isTodayFolder)
+              ? GlobalState.themeOrangeColorAtiOSTodo
+              : GlobalState.themeOrangeColorAtiOSTodo,
+          showBadgeBackgroundColor: (isTodayFolder) ? true : false,
+          showDivider: true,
+          showZero: true,
+          canSwipe: (isDefaultFolder) ? false : true,
+          isRoundTopCorner: (isTodayFolder) ? true : false,
+          isRoundBottomCorner: (isDeletionFolder) ? true : false,
+        ));
+      }
+    });
   }
 }

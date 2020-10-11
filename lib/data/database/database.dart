@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:moor/moor.dart';
 import 'dart:async';
+
+import 'package:seal_note/data/appstate/GlobalState.dart';
 
 part 'database.g.dart';
 
@@ -13,9 +17,14 @@ class Folders extends Table {
 
   IntColumn get planId => integer().nullable().named('planId')();
 
-  IntColumn get numberToShow => integer().withDefault(const Constant(0)).named('numberToShow')();
+  IntColumn get numberToShow =>
+      integer().withDefault(const Constant(0)).named('numberToShow')();
 
-  BoolColumn get isDefaultFolder => boolean().withDefault(const Constant(false)).named('isDefaultFolder')();
+  BoolColumn get isDefaultFolder =>
+      boolean().withDefault(const Constant(false)).named('isDefaultFolder')();
+
+  DateTimeColumn get created =>
+      dateTime().withDefault(Constant(DateTime.now())).named('created')();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -25,11 +34,52 @@ class Folders extends Table {
 class Notes extends Table {
   IntColumn get id => integer().autoIncrement()();
 
+  IntColumn get folderId =>
+      integer().withDefault(const Constant(3)).named('folderId')();
+
   TextColumn get title => text().withLength(min: 2, max: 200)();
 
-  TextColumn get content => text().nullable().named('content')();
+  TextColumn get content => text().nullable()();
 
-  DateTimeColumn get created => dateTime().nullable().named('created')();
+  DateTimeColumn get created =>
+      dateTime().withDefault(Constant(DateTime.now())).named('created')();
+
+  DateTimeColumn get nextReviewTime =>
+      dateTime().nullable().named('nextReviewTime')();
+
+  IntColumn get reviewProgress =>
+      integer().nullable().named('reviewProgress')();
+
+  IntColumn get reviewPlanId => integer().nullable().named('reviewPlanId')();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+@DataClassName('ReviewPlanEntry')
+class ReviewPlans extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get name => text()();
+
+  TextColumn get introduction => text()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+@DataClassName('ReviewPlanConfigEntry')
+class ReviewPlanConfigs extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  IntColumn get progressId => integer().named('progressId')();
+
+  IntColumn get order => integer()();
+
+  IntColumn get value => integer().withDefault(const Constant(1))();
+
+  // Unit for the value. { 1 = minute, 2 = hour, 3 = day, 4 = week, 5 = month, 6 = year }
+  IntColumn get unit => integer().withDefault(const Constant(1))();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -46,7 +96,7 @@ class Notes extends Table {
 //  });
 //}
 
-@UseMoor(tables: [Notes, Folders])
+@UseMoor(tables: [Folders, Notes, ReviewPlans, ReviewPlanConfigs])
 class Database extends _$Database {
   Database(QueryExecutor e) : super(e);
 
@@ -55,20 +105,39 @@ class Database extends _$Database {
   @override
   int get schemaVersion => 1;
 
+  // Initializing db
+  Future<bool> isDbInitialized() async {
+    // Whether the db has been initialized
+
+    bool isDbInitialized = true;
+    FolderEntry folderEntry = await (select(folders)
+          ..where((f) => f.name.equals(GlobalState.defaultFolderNameForToday))
+          ..where((f) => f.isDefaultFolder.equals(true)))
+        .getSingle();
+
+    if (folderEntry == null) isDbInitialized = false;
+
+    return isDbInitialized;
+  }
+
+  Future<void> upsertFoldersInBatch(List<FolderEntry> folderEntryList) async {
+    return await batch((batch) {
+      batch.insertAllOnConflictUpdate(folders, folderEntryList);
+    });
+  }
+
   Future<int> insertNote(NotesCompanion entry) {
     return into(notes).insert(entry);
   }
 
-  Future<List<NoteEntry>> insertNotesInBatch(
-      List<NoteEntry> noteEntryList) async {
-    await batch((batch) {
+  Future<void> insertNotesInBatch(List<NoteEntry> noteEntryList) async {
+    return await batch((batch) {
       batch.insertAll(notes, noteEntryList);
     });
   }
 
-  Future<List<NoteEntry>> upsertNotesInBatch(
-      List<NoteEntry> noteEntryList) async {
-    await batch((batch) {
+  Future<void> upsertNotesInBatch(List<NoteEntry> noteEntryList) async {
+    return await batch((batch) {
       batch.insertAllOnConflictUpdate(notes, noteEntryList);
     });
   }

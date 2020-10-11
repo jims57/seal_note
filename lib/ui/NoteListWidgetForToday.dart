@@ -26,8 +26,10 @@ class NoteListWidgetForToday extends StatefulWidget {
 
 class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   SelectedNoteModel _selectedNoteModel;
-  AppState _appState;
-  Database _database;
+
+  // AppState _appState;
+
+  // Database _database;
 
   List<NoteEntry> _noteList = List<NoteEntry>();
 
@@ -50,10 +52,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
   @override
   void initState() {
-    _database = Provider.of<Database>(context, listen: false);
-    GlobalState.database = _database;
+    // _database = Provider.of<Database>(context, listen: false);
+    // GlobalState.database = _database;
     _selectedNoteModel = Provider.of<SelectedNoteModel>(context, listen: false);
-    _appState = Provider.of<AppState>(context, listen: false);
+    // _appState = Provider.of<AppState>(context, listen: false);
     _isFirstLoad = true;
 
     initLoadingConfigs();
@@ -65,7 +67,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
     _pageNo++;
 
-    _database
+    // _database
+    GlobalState.database
         .getNotesByPageSize(pageNo: _pageNo, pageSize: _pageSize)
         .then((fetchedList) {
       if (fetchedList.isEmpty) {
@@ -317,7 +320,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
           content: Value('[refresh] content${i + 1}'),
           created: Value(now));
 
-      _database.insertNote(notesCompanion);
+      // _database.insertNote(notesCompanion);
+      GlobalState.database.insertNote(notesCompanion);
     }
 
     _selectedNoteModel.noteListWidgetForTodayState.currentState
@@ -331,7 +335,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     _isLoading = true;
     _hasMore = true;
 
-    _database
+    GlobalState.database
         .getNotesByPageSize(pageNo: _pageNo, pageSize: _pageSize)
         .then((value) {
       _noteList.addAll(value);
@@ -348,12 +352,14 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       _isFirstLoad = false;
 
       fetchPhotos(client: http.Client()).then((fetchedPhotoList) {
-        _database.upsertNotesInBatch(fetchedPhotoList).whenComplete(() {
+        GlobalState.database
+            .upsertNotesInBatch(fetchedPhotoList)
+            .whenComplete(() {
           _selectedNoteModel.noteListWidgetForTodayState.currentState
               .resetLoadingConfigsAfterUpdatingSqlite();
 
           Timer(Duration(seconds: 2), () {
-            _appState.isExecutingSync = false;
+            GlobalState.appState.isExecutingSync = false;
           });
         });
       }).catchError((e) {

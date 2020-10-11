@@ -3,13 +3,16 @@ import 'package:moor/moor.dart';
 import 'package:moor/ffi.dart';
 import 'package:path_provider/path_provider.dart' as paths;
 import 'package:path/path.dart' as p;
+import 'package:seal_note/data/appstate/GlobalState.dart';
 import '../database.dart';
 
 Database constructDb({bool logStatements = false}) {
   if (Platform.isIOS || Platform.isAndroid) {
     final executor = LazyDatabase(() async {
       final dataDir = await paths.getApplicationDocumentsDirectory();
-      final dbFile = File(p.join(dataDir.path, 'sealmobile4.sqlite'));
+      // db file // seal db file
+      final dbFile =
+          File(p.join(dataDir.path, GlobalState.dbNameForMobilePlatform));
       return VmDatabase(dbFile, logStatements: logStatements);
     });
     return Database(executor);
