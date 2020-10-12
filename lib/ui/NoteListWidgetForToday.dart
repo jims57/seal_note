@@ -4,17 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:moor/moor.dart' show Value;
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
-import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 import 'package:seal_note/data/database/database.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-
-import 'FolderListPage.dart';
-import 'NoteDetailPage.dart';
-import 'NoteDetailWidget.dart';
-import 'TestPage.dart';
 import 'httper/NoteHttper.dart';
 
 class NoteListWidgetForToday extends StatefulWidget {
@@ -25,12 +17,7 @@ class NoteListWidgetForToday extends StatefulWidget {
 }
 
 class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
-  SelectedNoteModel _selectedNoteModel;
-
-  // AppState _appState;
-
-  // Database _database;
-
+  List<NotesCompanion> _notesCompanionList = List<NotesCompanion>();
   List<NoteEntry> _noteList = List<NoteEntry>();
 
   int _pageNo;
@@ -52,10 +39,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
   @override
   void initState() {
-    // _database = Provider.of<Database>(context, listen: false);
-    // GlobalState.database = _database;
-    _selectedNoteModel = Provider.of<SelectedNoteModel>(context, listen: false);
-    // _appState = Provider.of<AppState>(context, listen: false);
     _isFirstLoad = true;
 
     initLoadingConfigs();
@@ -67,7 +50,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
     _pageNo++;
 
-    // _database
     GlobalState.database
         .getNotesByPageSize(pageNo: _pageNo, pageSize: _pageSize)
         .then((fetchedList) {
@@ -135,8 +117,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                           child: ListTile(
                             contentPadding: EdgeInsets.only(
                                 top: 15.0, bottom: 15, left: 10.0, right: 10.0),
-                            title: Text(
-                                'NoteID=>${_noteList[index].id.toString()}',
+                            title: Text('${_noteList[index].title}',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -147,7 +128,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '自2019年发生“修例风波”以来，香港各行各业深受其害，很多家庭收入锐减，都盼着尽快止暴制乱。杨志红痛心地说：“这一年的社会风波，暴露出香港在维护国家安全上存在巨大风险，使‘一国两制’香港实践遭遇前所未有的严峻挑战。',
+                                  '${_noteList[index].content}',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -313,19 +294,32 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   Future<Null> _getRefresh() async {
     await Future.delayed(Duration(seconds: 2));
 
+    _notesCompanionList.clear();
+
     for (var i = 0; i < _refreshCount; ++i) {
+      var title = '[refresh] title${i + 1}';
+      var content = '[refresh] content${i + 1}';
+
       final now = DateTime.now();
       NotesCompanion notesCompanion = NotesCompanion(
-          title: Value('[refresh] title${i + 1}'),
-          content: Value('[refresh] content${i + 1}'),
-          created: Value(now));
+          title: Value(title), content: Value(content), created: Value(now));
 
-      // _database.insertNote(notesCompanion);
-      GlobalState.database.insertNote(notesCompanion);
+      _notesCompanionList.add(notesCompanion);
+      // TODO: Need to add _noteList data
+
+      // GlobalState.database.insertNote(notesCompanion);
     }
 
-    _selectedNoteModel.noteListWidgetForTodayState.currentState
-        .resetLoadingConfigsAfterUpdatingSqlite();
+    // Insert the refreshed data in batch
+    GlobalState.database.insertNotesInBatch(_notesCompanionList).then((value) {
+      // _noteList.insert(0, NoteEntry(id: null, folderId: 3, title: 'Refreshed1111', created: null));
+
+      GlobalState.selectedNoteModel.noteListWidgetForTodayState.currentState
+          .resetLoadingConfigsAfterUpdatingSqlite();
+    });
+
+    // GlobalState.selectedNoteModel.noteListWidgetForTodayState.currentState
+    //     .resetLoadingConfigsAfterUpdatingSqlite();
   }
 
   void initLoadingConfigs() {
@@ -355,7 +349,11 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
         GlobalState.database
             .upsertNotesInBatch(fetchedPhotoList)
             .whenComplete(() {
-          _selectedNoteModel.noteListWidgetForTodayState.currentState
+          // TODO: To be deleted before releasing the app
+          //  After insert, update notes' content
+          GlobalState.database.upsertAllNotesContentByTitles(fetchedPhotoList);
+
+          GlobalState.selectedNoteModel.noteListWidgetForTodayState.currentState
               .resetLoadingConfigsAfterUpdatingSqlite();
 
           Timer(Duration(seconds: 2), () {
@@ -363,7 +361,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
           });
         });
       }).catchError((e) {
-        String errorMessage = e;
+        // String errorMessage = e;
       });
     }
   }

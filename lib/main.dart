@@ -1,67 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'dart:async';
-//
-// void main() {
-//   runApp(
-//     MaterialApp(
-//       home: MyWidget(),
-//     ),
-//   );
-// }
-//
-// class MyWidget extends StatefulWidget {
-//   State createState() => new _MyWidgetState();
-// }
-//
-// class _MyWidgetState extends State<MyWidget> {
-//   Timer _timer;
-//   int _start = 10;
-//
-//   void startTimer() {
-//     if (_timer != null) {
-//       _timer.cancel();
-//       _timer = null;
-//     } else {
-//       _timer = new Timer.periodic(
-//         const Duration(milliseconds: 500),
-//         (Timer timer) => setState(
-//           () {
-//             if (_start < 1) {
-//               timer.cancel();
-//             } else {
-//               _start = _start - 1;
-//             }
-//           },
-//         ),
-//       );
-//     }
-//   }
-//
-//   @override
-//   void dispose() {
-//     _timer.cancel();
-//     super.dispose();
-//   }
-//
-//   Widget build(BuildContext context) {
-//     return new Scaffold(
-//       appBar: AppBar(title: Text("Timer test")),
-//       body: Column(
-//         children: <Widget>[
-//           RaisedButton(
-//             onPressed: () {
-//               startTimer();
-//             },
-//             child: Text("start"),
-//           ),
-//           Text("$_start")
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-//
 //Import packages
 import 'dart:async';
 
@@ -113,6 +49,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     GlobalState.database = Provider.of<Database>(context, listen: false);
     GlobalState.appState = Provider.of<AppState>(context, listen: false);
+    GlobalState.selectedNoteModel =
+        Provider.of<SelectedNoteModel>(context, listen: false);
 
     GlobalState.myAppContext = context;
     GlobalState.masterDetailPageState = GlobalKey<MasterDetailPageState>();
@@ -187,14 +125,6 @@ class _MyAppState extends State<MyApp> {
         }
       }
     });
-
-    // Check if the db exists or not, if not, we need to initialize data for folders
-    // FileHandler.checkIfFileExistsOrNot(GlobalState.dbNameForMobilePlatform)
-    //     .then((isExisting) {
-    //       if(!isExisting){ // When the db doesn't exist, we
-    //
-    //       }
-    // });
 
     super.initState();
   }

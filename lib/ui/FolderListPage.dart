@@ -12,7 +12,8 @@ class FolderListPage extends StatefulWidget {
   State<StatefulWidget> createState() => FolderListPageState();
 }
 
-class FolderListPageState extends State<FolderListPage> with AfterLayoutMixin<FolderListPage> {
+class FolderListPageState extends State<FolderListPage>
+    with AfterLayoutMixin<FolderListPage> {
   @override
   void initState() {
     GlobalState.folderListWidgetState = GlobalKey<FolderListWidgetState>();

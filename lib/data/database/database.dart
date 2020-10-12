@@ -85,17 +85,6 @@ class ReviewPlanConfigs extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-//LazyDatabase _openConnection() {
-//  // the LazyDatabase util lets us find the right location for the file async.
-//  return LazyDatabase(() async {
-//    // put the database file, called db.sqlite here, into the documents folder
-//    // for your app.
-//    final dbFolder = await getApplicationDocumentsDirectory();
-//    final file = File(p.join(dbFolder.path, 'db.sqlite'));
-//    return VmDatabase(file);
-//  });
-//}
-
 @UseMoor(tables: [Folders, Notes, ReviewPlans, ReviewPlanConfigs])
 class Database extends _$Database {
   Database(QueryExecutor e) : super(e);
@@ -105,7 +94,7 @@ class Database extends _$Database {
   @override
   int get schemaVersion => 1;
 
-  // Initializing db
+  // [Begin] Initializing db
   Future<bool> isDbInitialized() async {
     // Whether the db has been initialized
 
@@ -120,21 +109,55 @@ class Database extends _$Database {
     return isDbInitialized;
   }
 
+  Future upsertAllNotesContentByTitles(List<NoteEntry> noteEntryList) async {
+    var result = await transaction(() async {
+      for (var noteEntry in noteEntryList) {
+        await (update(notes)..where((e) => e.id.equals(noteEntry.id)))
+            .write(NotesCompanion(
+          // string.substring(1, 4);
+          title: Value('标题${noteEntry.id}'),
+          content: Value(noteEntry.title),
+        ));
+      }
+    });
+
+    return result;
+  }
+
+  // [End] Initializing db
+
+  // [Begin] folders
+  Future<List<FolderEntry>> getAllFolders() {
+    return (select(folders)
+          ..orderBy([(t) => OrderingTerm(expression: t.order)]))
+        .get();
+  }
+
   Future<void> upsertFoldersInBatch(List<FolderEntry> folderEntryList) async {
     return await batch((batch) {
       batch.insertAllOnConflictUpdate(folders, folderEntryList);
     });
   }
 
+  // [End] folders
+
+  // [Begin] notes
   Future<int> insertNote(NotesCompanion entry) {
     return into(notes).insert(entry);
   }
 
-  Future<void> insertNotesInBatch(List<NoteEntry> noteEntryList) async {
-    return await batch((batch) {
-      batch.insertAll(notes, noteEntryList);
+  Future<void> insertNotesInBatch(
+      List<NotesCompanion> notesCompanionList) async {
+    batch((batch) {
+      batch.insertAll(notes, notesCompanionList);
     });
   }
+
+  // Future<void> insertNotesInBatch(List<NoteEntry> noteEntryList) async {
+  //   return await batch((batch) {
+  //     batch.insertAll(notes, noteEntryList);
+  //   });
+  // }
 
   Future<void> upsertNotesInBatch(List<NoteEntry> noteEntryList) async {
     return await batch((batch) {
@@ -142,7 +165,7 @@ class Database extends _$Database {
     });
   }
 
-  Future<List<NoteEntry>> get getAllNotes => select(notes).get();
+  // Future<List<NoteEntry>> get getAllNotes => select(notes).get();
 
   Future<List<NoteEntry>> getNotesByPageSize(
       {@required int pageNo, @required int pageSize}) {
@@ -160,10 +183,5 @@ class Database extends _$Database {
   Future<int> deleteAllNotes() {
     return (delete(notes)).go();
   }
-
-  Future<List<FolderEntry>> getAllFolders() {
-    return (select(folders)
-          ..orderBy([(t) => OrderingTerm(expression: t.order)]))
-        .get();
-  }
+// [End] notes
 }

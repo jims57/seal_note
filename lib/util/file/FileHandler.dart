@@ -90,6 +90,4 @@ class FileHandler {
   static String getFileNameByImageId(String imageId) {
     return imageId.substring(0, 32);
   }
-
-
 }
