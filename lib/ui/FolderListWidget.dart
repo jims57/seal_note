@@ -25,9 +25,6 @@ class FolderListWidgetState extends State<FolderListWidget> {
 
   @override
   void initState() {
-    // GlobalState.userFolderTotal = widget.userFolderTotal;
-    // GlobalState.allFolderTotal = GlobalState.userFolderTotal;
-
     super.initState();
   }
 
@@ -112,10 +109,10 @@ class FolderListWidgetState extends State<FolderListWidget> {
       bool isDefaultFolder = false,
       IconData icon = Icons.folder_open_outlined,
       Color iconColor = GlobalState.themeLightBlueColor07,
+      @required int folderId,
       @required String folderName,
       @required int numberToShow,
       bool canSwipe = true,
-      // bool isFirstItem = false,
       bool showDivider = true,
       Color badgeBackgroundColor = GlobalState.themeBlueColor,
       bool showBadgeBackgroundColor = false,
@@ -152,10 +149,19 @@ class FolderListWidgetState extends State<FolderListWidget> {
         isRoundBottomCorner: isRoundBottomCorner,
       ),
       onTap: () {
-        // click on folder item // click folder item
+        // click on folder item // click folder item // click folder list item event
+        // click folder item event
+
+        // Update the note list
+        GlobalState.isDefaultFolderSelected = isDefaultFolder;
+        GlobalState.selectedFolderId = folderId;
+        GlobalState.selectedFolderName = folderName;
+        GlobalState.noteListWidgetForTodayState.currentState
+            .triggerSetState();
+
+        // Switch the page
         GlobalState.isHandlingFolderPage = true;
         GlobalState.isInFolderPage = false;
-
         GlobalState.masterDetailPageState.currentState
             .updatePageShowAndHide(shouldTriggerSetState: true);
       },
@@ -171,6 +177,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
 
       for (var index = 0; index < folders.length; index++) {
         var isDefaultFolder = folders[index].isDefaultFolder;
+        var folderId = folders[index].id;
         var folderName = '${folders[index].name}';
         var numberToShow = folders[index].numberToShow;
         var isTodayFolder = (isDefaultFolder &&
@@ -198,6 +205,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
                       : GlobalState.themeLightBlueColorAtiOSTodo)),
           index: index,
           isDefaultFolder: isDefaultFolder,
+          folderId: folderId,
           folderName: folderName,
           numberToShow: numberToShow,
           badgeBackgroundColor: (isTodayFolder)

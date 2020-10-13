@@ -5,6 +5,7 @@ import 'package:seal_note/model/ImageSyncItem.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/FolderListWidget.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
+import 'package:seal_note/ui/NoteListWidgetForToday.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
 
 import 'AppState.dart';
@@ -81,6 +82,7 @@ class GlobalState with ChangeNotifier {
   static final String defaultFolderNameForToday = '今天';
   static final String defaultFolderNameForAllNotes = '全部笔记';
   static final String defaultFolderNameForDeletion = '删除笔记';
+  static final String defaultUserFolderNameForMyNotes = '我的笔记';
 
   // Pages' width
   // Note: The following default values for the width are as far as large screen(screenType = 3) is concerned
@@ -103,15 +105,18 @@ class GlobalState with ChangeNotifier {
   static BuildContext noteDetailWidgetContext;
   static BuildContext myWebViewPluginContext;
 
-  // Models
+  // Selected note related
+  static bool isDefaultFolderSelected = false;
+  static int selectedFolderId = 74;
+  static String selectedFolderName = defaultUserFolderNameForMyNotes;
   static SelectedNoteModel selectedNoteModel;
 
   // State objects
-  static GlobalKey<FolderListPageState> folderListPageState;
-  static GlobalKey<FolderListWidgetState> folderListWidgetState;
-
   static GlobalKey<MasterDetailPageState> masterDetailPageState;
   static GlobalKey<AppBarWidgetState> appBarWidgetState;
+  static GlobalKey<FolderListPageState> folderListPageState;
+  static GlobalKey<FolderListWidgetState> folderListWidgetState;
+  static GlobalKey<NoteListWidgetForTodayState> noteListWidgetForTodayState;
 
   // Overlay
   static OverlayEntry overlayEntry;

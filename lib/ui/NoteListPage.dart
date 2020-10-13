@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 import 'package:seal_note/ui/common/AppBarBackButtonWidget.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
 import 'folderOption/FolderOptionListWidget.dart';
@@ -78,10 +80,21 @@ class _NoteListPageState extends State<NoteListPage> {
           ),
         ],
         title: Text(
-          '英语知识[考研必备知识点2020秋季]',
+          // note list caption // note list page title
+          // note list title
+          '${GlobalState.selectedFolderName}',
           style: TextStyle(color: GlobalState.themeBlackColor87ForFontForeColor,fontSize: 16.0),
           // style: TextStyle(color: Colors.red,),
         ),
+        // title: Consumer<SelectedNoteModel>(builder: (ctx,note, child){
+        //   return Text(
+        //     // note list caption // note list page title
+        //     // note list title
+        //     '${note.folderName}',
+        //     style: TextStyle(color: GlobalState.themeBlackColor87ForFontForeColor,fontSize: 16.0),
+        //     // style: TextStyle(color: Colors.red,),
+        //   );
+        // },),
         showSyncStatus: true,
         leadingWidth: 90,
         tailWidth: 40,

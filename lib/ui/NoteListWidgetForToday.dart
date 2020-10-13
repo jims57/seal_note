@@ -291,6 +291,12 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     );
   }
 
+  void triggerSetState() {
+    setState(() {
+      initLoadingConfigs();
+    });
+  }
+
   Future<Null> _getRefresh() async {
     await Future.delayed(Duration(seconds: 2));
 
@@ -323,6 +329,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   void initLoadingConfigs() {
+    _noteList.clear();
+
     _pageNo = 1;
     _pageSize = 10;
 
@@ -367,7 +375,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   void resetLoadingConfigsAfterUpdatingSqlite() {
-    _noteList.clear();
+
 
     initLoadingConfigs();
   }
