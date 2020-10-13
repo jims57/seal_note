@@ -107,7 +107,7 @@ class GlobalState with ChangeNotifier {
 
   // Selected note related
   static bool isDefaultFolderSelected = false;
-  static int selectedFolderId = 74;
+  static int selectedFolderId = 3;
   static String selectedFolderName = defaultUserFolderNameForMyNotes;
   static SelectedNoteModel selectedNoteModel;
 

@@ -936,8 +936,8 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           .mapFromDatabaseResponse(data['${effectivePrefix}reviewProgress']),
       reviewPlanId: intType
           .mapFromDatabaseResponse(data['${effectivePrefix}reviewPlanId']),
-      isDeleted: boolType
-          .mapFromDatabaseResponse(data['${effectivePrefix}is_deleted']),
+      isDeleted:
+          boolType.mapFromDatabaseResponse(data['${effectivePrefix}isDeleted']),
       createdBy:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}createdBy']),
     );
@@ -973,7 +973,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       map['reviewPlanId'] = Variable<int>(reviewPlanId);
     }
     if (!nullToAbsent || isDeleted != null) {
-      map['is_deleted'] = Variable<bool>(isDeleted);
+      map['isDeleted'] = Variable<bool>(isDeleted);
     }
     if (!nullToAbsent || createdBy != null) {
       map['createdBy'] = Variable<int>(createdBy);
@@ -1193,7 +1193,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
       if (nextReviewTime != null) 'nextReviewTime': nextReviewTime,
       if (reviewProgress != null) 'reviewProgress': reviewProgress,
       if (reviewPlanId != null) 'reviewPlanId': reviewPlanId,
-      if (isDeleted != null) 'is_deleted': isDeleted,
+      if (isDeleted != null) 'isDeleted': isDeleted,
       if (createdBy != null) 'createdBy': createdBy,
     });
   }
@@ -1256,7 +1256,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
       map['reviewPlanId'] = Variable<int>(reviewPlanId.value);
     }
     if (isDeleted.present) {
-      map['is_deleted'] = Variable<bool>(isDeleted.value);
+      map['isDeleted'] = Variable<bool>(isDeleted.value);
     }
     if (createdBy.present) {
       map['createdBy'] = Variable<int>(createdBy.value);
@@ -1394,7 +1394,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
   @override
   GeneratedBoolColumn get isDeleted => _isDeleted ??= _constructIsDeleted();
   GeneratedBoolColumn _constructIsDeleted() {
-    return GeneratedBoolColumn('is_deleted', $tableName, false,
+    return GeneratedBoolColumn('isDeleted', $tableName, false,
         defaultValue: const Constant(false));
   }
 
@@ -1475,9 +1475,9 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
           reviewPlanId.isAcceptableOrUnknown(
               data['reviewPlanId'], _reviewPlanIdMeta));
     }
-    if (data.containsKey('is_deleted')) {
+    if (data.containsKey('isDeleted')) {
       context.handle(_isDeletedMeta,
-          isDeleted.isAcceptableOrUnknown(data['is_deleted'], _isDeletedMeta));
+          isDeleted.isAcceptableOrUnknown(data['isDeleted'], _isDeletedMeta));
     }
     if (data.containsKey('createdBy')) {
       context.handle(_createdByMeta,

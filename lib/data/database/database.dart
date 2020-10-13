@@ -77,7 +77,7 @@ class Notes extends Table {
 
   IntColumn get reviewPlanId => integer().nullable().named('reviewPlanId')();
 
-  BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
+  BoolColumn get isDeleted => boolean().withDefault(const Constant(false)).named('isDeleted')();
 
   IntColumn get createdBy =>
       integer().withDefault(const Constant(1)).named('createdBy')();
