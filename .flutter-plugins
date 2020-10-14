@@ -2,8 +2,9 @@
 flutter_image_compress=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_image_compress-0.7.0/
 flutter_webview_plugin=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_webview_plugin-0.3.11/
 keyboard_utils=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/keyboard_utils-1.2.4/
-multi_image_picker=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/multi_image_picker-4.7.11/
-path_provider=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.11/
+multi_image_picker=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/multi_image_picker-4.7.14/
+path_provider=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.18/
 path_provider_linux=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_linux-0.0.1+2/
-path_provider_macos=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4+3/
+path_provider_macos=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4+4/
+path_provider_windows=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_windows-0.0.4+1/
 sqlite3_flutter_libs=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/sqlite3_flutter_libs-0.2.0/

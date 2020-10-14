@@ -25,7 +25,7 @@ PODS:
   - Mantle (2.1.1):
     - Mantle/extobjc (= 2.1.1)
   - Mantle/extobjc (2.1.1)
-  - multi_image_picker (4.7.11):
+  - multi_image_picker (4.7.14):
     - BSImagePicker (~> 2.10.3)
     - Flutter
   - path_provider (0.0.1):
@@ -99,7 +99,7 @@ SPEC CHECKSUMS:
   keyboard_utils: ab24bc711be9e91a5937c20489056b8dd650fecc
   libwebp: 946cb3063cea9236285f7e9a8505d806d30e07f3
   Mantle: 35238ae6f2e2b2d474fa7b67fee82a59fea71915
-  multi_image_picker: bed13baf05c9f1ec602f353502274a92e78e4d35
+  multi_image_picker: c068931d08240565e0615fb01437d16984909183
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   SDWebImage: 62ae4a18473520c67b79e9724c31a63599cc9423
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21

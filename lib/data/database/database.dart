@@ -11,7 +11,10 @@ part 'database.g.dart';
 class Users extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  TextColumn get name => text().withLength(min: 1, max: 200)();
+  TextColumn get userName =>
+      text().withLength(min: 1, max: 200).named('userName')();
+
+  TextColumn get password => text().withLength(min: 6, max: 200)();
 
   TextColumn get nickName =>
       text().withLength(min: 1, max: 200).named('nickName')();
@@ -47,9 +50,6 @@ class Folders extends Table {
 
   IntColumn get createdBy =>
       integer().withDefault(const Constant(1)).named('createdBy')();
-
-// @override
-// Set<Column> get primaryKey => {id};
 }
 
 @DataClassName('NoteEntry')
@@ -63,31 +63,34 @@ class Notes extends Table {
 
   TextColumn get content => text().nullable()();
 
-  DateTimeColumn get created =>
-      dateTime().withDefault(Constant(DateTime.now()))();
+  TextColumn get created => text()
+      .withDefault(Constant(DateTime.now().toString()))
+      .map(const IsoDateTimeConverter())();
 
-  DateTimeColumn get updated =>
-      dateTime().nullable()();
+  TextColumn get updated => text()
+      .withDefault(Constant(DateTime.now().toString()))
+      .map(const IsoDateTimeConverter())();
 
-  DateTimeColumn get nextReviewTime =>
-      dateTime().nullable().named('nextReviewTime')();
+  TextColumn get nextReviewTime =>
+      text().nullable().map(const IsoDateTimeConverter())();
 
-  IntColumn get reviewProgress =>
-      integer().nullable().named('reviewProgress')();
+  IntColumn get reviewProgressNo =>
+      integer().nullable().named('reviewProgressNo')();
 
   IntColumn get reviewPlanId => integer().nullable().named('reviewPlanId')();
 
-  BoolColumn get isDeleted => boolean().withDefault(const Constant(false)).named('isDeleted')();
+  BoolColumn get isDeleted =>
+      boolean().withDefault(const Constant(false)).named('isDeleted')();
 
   IntColumn get createdBy =>
       integer().withDefault(const Constant(1)).named('createdBy')();
-
-// @override
-// Set<Column> get primaryKey => {id};
 }
 
 @DataClassName('ReviewPlanEntry')
 class ReviewPlans extends Table {
+  @override
+  String get tableName => 'reviewPlans';
+
   IntColumn get id => integer().autoIncrement()();
 
   TextColumn get name => text()();
@@ -96,13 +99,13 @@ class ReviewPlans extends Table {
 
   IntColumn get createdBy =>
       integer().withDefault(const Constant(1)).named('createdBy')();
-
-// @override
-// Set<Column> get primaryKey => {id};
 }
 
 @DataClassName('ReviewPlanConfigEntry')
 class ReviewPlanConfigs extends Table {
+  @override
+  String get tableName => 'reviewPlanConfigs';
+
   IntColumn get id => integer().autoIncrement()();
 
   IntColumn get progressId => integer().named('progressId')();
@@ -116,9 +119,6 @@ class ReviewPlanConfigs extends Table {
 
   IntColumn get createdBy =>
       integer().withDefault(const Constant(1)).named('createdBy')();
-
-// @override
-// Set<Column> get primaryKey => {id};
 }
 
 @UseMoor(tables: [Users, Folders, Notes, ReviewPlans, ReviewPlanConfigs])
@@ -136,9 +136,8 @@ class Database extends _$Database {
 
     bool isDbInitialized = true;
     FolderEntry folderEntry = await (select(folders)
-      ..where((f) =>
-          f.name.equals(GlobalState.defaultFolderNameForToday))..where((f) =>
-          f.isDefaultFolder.equals(true)))
+          ..where((f) => f.name.equals(GlobalState.defaultFolderNameForToday))
+          ..where((f) => f.isDefaultFolder.equals(true)))
         .getSingle();
 
     if (folderEntry == null) isDbInitialized = false;
@@ -149,8 +148,7 @@ class Database extends _$Database {
   Future upsertAllNotesContentByTitles(List<NoteEntry> noteEntryList) async {
     var result = await transaction(() async {
       for (var noteEntry in noteEntryList) {
-        await (update(notes)
-          ..where((e) => e.id.equals(noteEntry.id)))
+        await (update(notes)..where((e) => e.id.equals(noteEntry.id)))
             .write(NotesCompanion(
           // string.substring(1, 4);
           title: Value('标题${noteEntry.id}'),
@@ -167,7 +165,7 @@ class Database extends _$Database {
   // [Begin] folders
   Future<List<FolderEntry>> getAllFolders() {
     return (select(folders)
-      ..orderBy([(t) => OrderingTerm(expression: t.order)]))
+          ..orderBy([(t) => OrderingTerm(expression: t.order)]))
         .get();
   }
 
@@ -197,43 +195,66 @@ class Database extends _$Database {
     });
   }
 
-  // Future<List<NoteEntry>> get getAllNotes => select(notes).get();
-
   Future<List<NoteEntry>> getNotesByPageSize(
       {@required int pageNo, @required int pageSize}) {
     // Check if it is for default folders, because we need to get specific data for default folders
     if (GlobalState.isDefaultFolderSelected) {
-      // When it is for default folders
+      // When it is for default
+      // get today note list item // get today data from sqlite
+      // get today data
       if (GlobalState.selectedFolderName ==
           GlobalState.defaultFolderNameForToday) {
         // For Today folder
+        var now = DateTime.now();
+        String todayDateString = '${now.year}-${now.month}-${now.day}';
 
+        return (select(notes)
+              ..where((n) => n.isDeleted.equals(false))
+              ..where((n) => n.nextReviewTime.like('$todayDateString%'))
+              ..orderBy([
+                (n) => OrderingTerm(
+                    expression: n.updated, mode: OrderingMode.desc),
+                (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
+              ])
+              ..limit(pageSize, offset: pageSize * (pageNo - 1)))
+            .get();
       } else if (GlobalState.selectedFolderName ==
           GlobalState.defaultFolderNameForAllNotes) {
         // For All Notes folder
 
         // get all notes note list
         return (select(notes)
-          ..orderBy([
-                (n) =>
-                OrderingTerm(
-                    expression: n.created, mode: OrderingMode.desc),
-          ])
-          ..limit(pageSize, offset: pageSize * (pageNo - 1)))
+              ..where((n) => n.isDeleted.equals(false))
+              ..orderBy([
+                (n) => OrderingTerm(
+                    expression: n.updated, mode: OrderingMode.desc),
+                (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
+              ])
+              ..limit(pageSize, offset: pageSize * (pageNo - 1)))
             .get();
       } else {
         // For Deleted Notes folder
-
+        return (select(notes)
+              ..where((n) => n.isDeleted.equals(true))
+              ..orderBy([
+                (n) => OrderingTerm(
+                    expression: n.updated, mode: OrderingMode.desc),
+                (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
+              ])
+              ..limit(pageSize, offset: pageSize * (pageNo - 1)))
+            .get();
       }
     } else {
       // get user folder note list
       return (select(notes)
-        ..orderBy([
+            ..where((n) => n.folderId.equals(GlobalState.selectedFolderId))
+            ..where((n) => n.isDeleted.equals(false))
+            ..orderBy([
               (n) =>
-              OrderingTerm(expression: n.created, mode: OrderingMode.desc),
-        ])
-        ..where((n) => n.folderId.equals(GlobalState.selectedFolderId))
-        ..limit(pageSize, offset: pageSize * (pageNo - 1)))
+                  OrderingTerm(expression: n.updated, mode: OrderingMode.desc),
+              (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
+            ])
+            ..limit(pageSize, offset: pageSize * (pageNo - 1)))
           .get();
     }
   }
@@ -242,4 +263,22 @@ class Database extends _$Database {
     return (delete(notes)).go();
   }
 // [End] notes
+}
+
+class IsoDateTimeConverter extends TypeConverter<DateTime, String> {
+  const IsoDateTimeConverter();
+
+  @override
+  DateTime mapToDart(String fromDb) {
+    if (fromDb == null) {
+      return null;
+    } else {
+      return DateTime.parse(fromDb);
+    }
+  }
+
+  @override
+  String mapToSql(DateTime value) {
+    return value?.toIso8601String();
+  }
 }

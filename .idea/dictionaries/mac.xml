@@ -5,6 +5,7 @@
       <w>cupertino</w>
       <w>reorderable</w>
       <w>sqlite</w>
+      <w>strftime</w>
       <w>upsert</w>
     </words>
   </dictionary>

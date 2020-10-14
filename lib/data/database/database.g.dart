@@ -9,7 +9,8 @@ part of 'database.dart';
 // ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
 class UserEntry extends DataClass implements Insertable<UserEntry> {
   final int id;
-  final String name;
+  final String userName;
+  final String password;
   final String nickName;
   final String portrait;
   final String mobile;
@@ -17,7 +18,8 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
   final DateTime created;
   UserEntry(
       {@required this.id,
-      @required this.name,
+      @required this.userName,
+      @required this.password,
       @required this.nickName,
       this.portrait,
       this.mobile,
@@ -31,7 +33,10 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
     final dateTimeType = db.typeSystem.forDartType<DateTime>();
     return UserEntry(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
+      userName: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}userName']),
+      password: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}password']),
       nickName: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}nickName']),
       portrait: stringType
@@ -50,8 +55,11 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
     if (!nullToAbsent || id != null) {
       map['id'] = Variable<int>(id);
     }
-    if (!nullToAbsent || name != null) {
-      map['name'] = Variable<String>(name);
+    if (!nullToAbsent || userName != null) {
+      map['userName'] = Variable<String>(userName);
+    }
+    if (!nullToAbsent || password != null) {
+      map['password'] = Variable<String>(password);
     }
     if (!nullToAbsent || nickName != null) {
       map['nickName'] = Variable<String>(nickName);
@@ -74,7 +82,12 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
   UsersCompanion toCompanion(bool nullToAbsent) {
     return UsersCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      userName: userName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(userName),
+      password: password == null && nullToAbsent
+          ? const Value.absent()
+          : Value(password),
       nickName: nickName == null && nullToAbsent
           ? const Value.absent()
           : Value(nickName),
@@ -97,7 +110,8 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return UserEntry(
       id: serializer.fromJson<int>(json['id']),
-      name: serializer.fromJson<String>(json['name']),
+      userName: serializer.fromJson<String>(json['userName']),
+      password: serializer.fromJson<String>(json['password']),
       nickName: serializer.fromJson<String>(json['nickName']),
       portrait: serializer.fromJson<String>(json['portrait']),
       mobile: serializer.fromJson<String>(json['mobile']),
@@ -110,7 +124,8 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'name': serializer.toJson<String>(name),
+      'userName': serializer.toJson<String>(userName),
+      'password': serializer.toJson<String>(password),
       'nickName': serializer.toJson<String>(nickName),
       'portrait': serializer.toJson<String>(portrait),
       'mobile': serializer.toJson<String>(mobile),
@@ -121,7 +136,8 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
 
   UserEntry copyWith(
           {int id,
-          String name,
+          String userName,
+          String password,
           String nickName,
           String portrait,
           String mobile,
@@ -129,7 +145,8 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
           DateTime created}) =>
       UserEntry(
         id: id ?? this.id,
-        name: name ?? this.name,
+        userName: userName ?? this.userName,
+        password: password ?? this.password,
         nickName: nickName ?? this.nickName,
         portrait: portrait ?? this.portrait,
         mobile: mobile ?? this.mobile,
@@ -140,7 +157,8 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
   String toString() {
     return (StringBuffer('UserEntry(')
           ..write('id: $id, ')
-          ..write('name: $name, ')
+          ..write('userName: $userName, ')
+          ..write('password: $password, ')
           ..write('nickName: $nickName, ')
           ..write('portrait: $portrait, ')
           ..write('mobile: $mobile, ')
@@ -154,19 +172,22 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
   int get hashCode => $mrjf($mrjc(
       id.hashCode,
       $mrjc(
-          name.hashCode,
+          userName.hashCode,
           $mrjc(
-              nickName.hashCode,
+              password.hashCode,
               $mrjc(
-                  portrait.hashCode,
-                  $mrjc(mobile.hashCode,
-                      $mrjc(introduction.hashCode, created.hashCode)))))));
+                  nickName.hashCode,
+                  $mrjc(
+                      portrait.hashCode,
+                      $mrjc(mobile.hashCode,
+                          $mrjc(introduction.hashCode, created.hashCode))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is UserEntry &&
           other.id == this.id &&
-          other.name == this.name &&
+          other.userName == this.userName &&
+          other.password == this.password &&
           other.nickName == this.nickName &&
           other.portrait == this.portrait &&
           other.mobile == this.mobile &&
@@ -176,7 +197,8 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
 
 class UsersCompanion extends UpdateCompanion<UserEntry> {
   final Value<int> id;
-  final Value<String> name;
+  final Value<String> userName;
+  final Value<String> password;
   final Value<String> nickName;
   final Value<String> portrait;
   final Value<String> mobile;
@@ -184,7 +206,8 @@ class UsersCompanion extends UpdateCompanion<UserEntry> {
   final Value<DateTime> created;
   const UsersCompanion({
     this.id = const Value.absent(),
-    this.name = const Value.absent(),
+    this.userName = const Value.absent(),
+    this.password = const Value.absent(),
     this.nickName = const Value.absent(),
     this.portrait = const Value.absent(),
     this.mobile = const Value.absent(),
@@ -193,17 +216,20 @@ class UsersCompanion extends UpdateCompanion<UserEntry> {
   });
   UsersCompanion.insert({
     this.id = const Value.absent(),
-    @required String name,
+    @required String userName,
+    @required String password,
     @required String nickName,
     this.portrait = const Value.absent(),
     this.mobile = const Value.absent(),
     this.introduction = const Value.absent(),
     this.created = const Value.absent(),
-  })  : name = Value(name),
+  })  : userName = Value(userName),
+        password = Value(password),
         nickName = Value(nickName);
   static Insertable<UserEntry> custom({
     Expression<int> id,
-    Expression<String> name,
+    Expression<String> userName,
+    Expression<String> password,
     Expression<String> nickName,
     Expression<String> portrait,
     Expression<String> mobile,
@@ -212,7 +238,8 @@ class UsersCompanion extends UpdateCompanion<UserEntry> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (name != null) 'name': name,
+      if (userName != null) 'userName': userName,
+      if (password != null) 'password': password,
       if (nickName != null) 'nickName': nickName,
       if (portrait != null) 'portrait': portrait,
       if (mobile != null) 'mobile': mobile,
@@ -223,7 +250,8 @@ class UsersCompanion extends UpdateCompanion<UserEntry> {
 
   UsersCompanion copyWith(
       {Value<int> id,
-      Value<String> name,
+      Value<String> userName,
+      Value<String> password,
       Value<String> nickName,
       Value<String> portrait,
       Value<String> mobile,
@@ -231,7 +259,8 @@ class UsersCompanion extends UpdateCompanion<UserEntry> {
       Value<DateTime> created}) {
     return UsersCompanion(
       id: id ?? this.id,
-      name: name ?? this.name,
+      userName: userName ?? this.userName,
+      password: password ?? this.password,
       nickName: nickName ?? this.nickName,
       portrait: portrait ?? this.portrait,
       mobile: mobile ?? this.mobile,
@@ -246,8 +275,11 @@ class UsersCompanion extends UpdateCompanion<UserEntry> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (name.present) {
-      map['name'] = Variable<String>(name.value);
+    if (userName.present) {
+      map['userName'] = Variable<String>(userName.value);
+    }
+    if (password.present) {
+      map['password'] = Variable<String>(password.value);
     }
     if (nickName.present) {
       map['nickName'] = Variable<String>(nickName.value);
@@ -271,7 +303,8 @@ class UsersCompanion extends UpdateCompanion<UserEntry> {
   String toString() {
     return (StringBuffer('UsersCompanion(')
           ..write('id: $id, ')
-          ..write('name: $name, ')
+          ..write('userName: $userName, ')
+          ..write('password: $password, ')
           ..write('nickName: $nickName, ')
           ..write('portrait: $portrait, ')
           ..write('mobile: $mobile, ')
@@ -295,13 +328,22 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UserEntry> {
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
-  final VerificationMeta _nameMeta = const VerificationMeta('name');
-  GeneratedTextColumn _name;
+  final VerificationMeta _userNameMeta = const VerificationMeta('userName');
+  GeneratedTextColumn _userName;
   @override
-  GeneratedTextColumn get name => _name ??= _constructName();
-  GeneratedTextColumn _constructName() {
-    return GeneratedTextColumn('name', $tableName, false,
+  GeneratedTextColumn get userName => _userName ??= _constructUserName();
+  GeneratedTextColumn _constructUserName() {
+    return GeneratedTextColumn('userName', $tableName, false,
         minTextLength: 1, maxTextLength: 200);
+  }
+
+  final VerificationMeta _passwordMeta = const VerificationMeta('password');
+  GeneratedTextColumn _password;
+  @override
+  GeneratedTextColumn get password => _password ??= _constructPassword();
+  GeneratedTextColumn _constructPassword() {
+    return GeneratedTextColumn('password', $tableName, false,
+        minTextLength: 6, maxTextLength: 200);
   }
 
   final VerificationMeta _nickNameMeta = const VerificationMeta('nickName');
@@ -358,8 +400,16 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UserEntry> {
   }
 
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, name, nickName, portrait, mobile, introduction, created];
+  List<GeneratedColumn> get $columns => [
+        id,
+        userName,
+        password,
+        nickName,
+        portrait,
+        mobile,
+        introduction,
+        created
+      ];
   @override
   $UsersTable get asDslTable => this;
   @override
@@ -374,11 +424,17 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UserEntry> {
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
     }
-    if (data.containsKey('name')) {
-      context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name'], _nameMeta));
+    if (data.containsKey('userName')) {
+      context.handle(_userNameMeta,
+          userName.isAcceptableOrUnknown(data['userName'], _userNameMeta));
     } else if (isInserting) {
-      context.missing(_nameMeta);
+      context.missing(_userNameMeta);
+    }
+    if (data.containsKey('password')) {
+      context.handle(_passwordMeta,
+          password.isAcceptableOrUnknown(data['password'], _passwordMeta));
+    } else if (isInserting) {
+      context.missing(_passwordMeta);
     }
     if (data.containsKey('nickName')) {
       context.handle(_nickNameMeta,
@@ -895,7 +951,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
   final DateTime created;
   final DateTime updated;
   final DateTime nextReviewTime;
-  final int reviewProgress;
+  final int reviewProgressNo;
   final int reviewPlanId;
   final bool isDeleted;
   final int createdBy;
@@ -905,9 +961,9 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       @required this.title,
       this.content,
       @required this.created,
-      this.updated,
+      @required this.updated,
       this.nextReviewTime,
-      this.reviewProgress,
+      this.reviewProgressNo,
       this.reviewPlanId,
       @required this.isDeleted,
       @required this.createdBy});
@@ -916,7 +972,6 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
-    final dateTimeType = db.typeSystem.forDartType<DateTime>();
     final boolType = db.typeSystem.forDartType<bool>();
     return NoteEntry(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
@@ -926,14 +981,14 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
       content:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}content']),
-      created: dateTimeType
-          .mapFromDatabaseResponse(data['${effectivePrefix}created']),
-      updated: dateTimeType
-          .mapFromDatabaseResponse(data['${effectivePrefix}updated']),
-      nextReviewTime: dateTimeType
-          .mapFromDatabaseResponse(data['${effectivePrefix}nextReviewTime']),
-      reviewProgress: intType
-          .mapFromDatabaseResponse(data['${effectivePrefix}reviewProgress']),
+      created: $NotesTable.$converter0.mapToDart(stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}created'])),
+      updated: $NotesTable.$converter1.mapToDart(stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}updated'])),
+      nextReviewTime: $NotesTable.$converter2.mapToDart(stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}next_review_time'])),
+      reviewProgressNo: intType
+          .mapFromDatabaseResponse(data['${effectivePrefix}reviewProgressNo']),
       reviewPlanId: intType
           .mapFromDatabaseResponse(data['${effectivePrefix}reviewPlanId']),
       isDeleted:
@@ -958,16 +1013,20 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       map['content'] = Variable<String>(content);
     }
     if (!nullToAbsent || created != null) {
-      map['created'] = Variable<DateTime>(created);
+      final converter = $NotesTable.$converter0;
+      map['created'] = Variable<String>(converter.mapToSql(created));
     }
     if (!nullToAbsent || updated != null) {
-      map['updated'] = Variable<DateTime>(updated);
+      final converter = $NotesTable.$converter1;
+      map['updated'] = Variable<String>(converter.mapToSql(updated));
     }
     if (!nullToAbsent || nextReviewTime != null) {
-      map['nextReviewTime'] = Variable<DateTime>(nextReviewTime);
+      final converter = $NotesTable.$converter2;
+      map['next_review_time'] =
+          Variable<String>(converter.mapToSql(nextReviewTime));
     }
-    if (!nullToAbsent || reviewProgress != null) {
-      map['reviewProgress'] = Variable<int>(reviewProgress);
+    if (!nullToAbsent || reviewProgressNo != null) {
+      map['reviewProgressNo'] = Variable<int>(reviewProgressNo);
     }
     if (!nullToAbsent || reviewPlanId != null) {
       map['reviewPlanId'] = Variable<int>(reviewPlanId);
@@ -1001,9 +1060,9 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       nextReviewTime: nextReviewTime == null && nullToAbsent
           ? const Value.absent()
           : Value(nextReviewTime),
-      reviewProgress: reviewProgress == null && nullToAbsent
+      reviewProgressNo: reviewProgressNo == null && nullToAbsent
           ? const Value.absent()
-          : Value(reviewProgress),
+          : Value(reviewProgressNo),
       reviewPlanId: reviewPlanId == null && nullToAbsent
           ? const Value.absent()
           : Value(reviewPlanId),
@@ -1027,7 +1086,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       created: serializer.fromJson<DateTime>(json['created']),
       updated: serializer.fromJson<DateTime>(json['updated']),
       nextReviewTime: serializer.fromJson<DateTime>(json['nextReviewTime']),
-      reviewProgress: serializer.fromJson<int>(json['reviewProgress']),
+      reviewProgressNo: serializer.fromJson<int>(json['reviewProgressNo']),
       reviewPlanId: serializer.fromJson<int>(json['reviewPlanId']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<int>(json['createdBy']),
@@ -1044,7 +1103,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       'created': serializer.toJson<DateTime>(created),
       'updated': serializer.toJson<DateTime>(updated),
       'nextReviewTime': serializer.toJson<DateTime>(nextReviewTime),
-      'reviewProgress': serializer.toJson<int>(reviewProgress),
+      'reviewProgressNo': serializer.toJson<int>(reviewProgressNo),
       'reviewPlanId': serializer.toJson<int>(reviewPlanId),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<int>(createdBy),
@@ -1059,7 +1118,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           DateTime created,
           DateTime updated,
           DateTime nextReviewTime,
-          int reviewProgress,
+          int reviewProgressNo,
           int reviewPlanId,
           bool isDeleted,
           int createdBy}) =>
@@ -1071,7 +1130,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
         created: created ?? this.created,
         updated: updated ?? this.updated,
         nextReviewTime: nextReviewTime ?? this.nextReviewTime,
-        reviewProgress: reviewProgress ?? this.reviewProgress,
+        reviewProgressNo: reviewProgressNo ?? this.reviewProgressNo,
         reviewPlanId: reviewPlanId ?? this.reviewPlanId,
         isDeleted: isDeleted ?? this.isDeleted,
         createdBy: createdBy ?? this.createdBy,
@@ -1086,7 +1145,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           ..write('created: $created, ')
           ..write('updated: $updated, ')
           ..write('nextReviewTime: $nextReviewTime, ')
-          ..write('reviewProgress: $reviewProgress, ')
+          ..write('reviewProgressNo: $reviewProgressNo, ')
           ..write('reviewPlanId: $reviewPlanId, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy')
@@ -1110,7 +1169,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
                           $mrjc(
                               nextReviewTime.hashCode,
                               $mrjc(
-                                  reviewProgress.hashCode,
+                                  reviewProgressNo.hashCode,
                                   $mrjc(
                                       reviewPlanId.hashCode,
                                       $mrjc(isDeleted.hashCode,
@@ -1126,7 +1185,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           other.created == this.created &&
           other.updated == this.updated &&
           other.nextReviewTime == this.nextReviewTime &&
-          other.reviewProgress == this.reviewProgress &&
+          other.reviewProgressNo == this.reviewProgressNo &&
           other.reviewPlanId == this.reviewPlanId &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy);
@@ -1140,7 +1199,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
   final Value<DateTime> created;
   final Value<DateTime> updated;
   final Value<DateTime> nextReviewTime;
-  final Value<int> reviewProgress;
+  final Value<int> reviewProgressNo;
   final Value<int> reviewPlanId;
   final Value<bool> isDeleted;
   final Value<int> createdBy;
@@ -1152,7 +1211,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     this.created = const Value.absent(),
     this.updated = const Value.absent(),
     this.nextReviewTime = const Value.absent(),
-    this.reviewProgress = const Value.absent(),
+    this.reviewProgressNo = const Value.absent(),
     this.reviewPlanId = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
@@ -1165,7 +1224,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     this.created = const Value.absent(),
     this.updated = const Value.absent(),
     this.nextReviewTime = const Value.absent(),
-    this.reviewProgress = const Value.absent(),
+    this.reviewProgressNo = const Value.absent(),
     this.reviewPlanId = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
@@ -1175,10 +1234,10 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     Expression<int> folderId,
     Expression<String> title,
     Expression<String> content,
-    Expression<DateTime> created,
-    Expression<DateTime> updated,
-    Expression<DateTime> nextReviewTime,
-    Expression<int> reviewProgress,
+    Expression<String> created,
+    Expression<String> updated,
+    Expression<String> nextReviewTime,
+    Expression<int> reviewProgressNo,
     Expression<int> reviewPlanId,
     Expression<bool> isDeleted,
     Expression<int> createdBy,
@@ -1190,8 +1249,8 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
       if (content != null) 'content': content,
       if (created != null) 'created': created,
       if (updated != null) 'updated': updated,
-      if (nextReviewTime != null) 'nextReviewTime': nextReviewTime,
-      if (reviewProgress != null) 'reviewProgress': reviewProgress,
+      if (nextReviewTime != null) 'next_review_time': nextReviewTime,
+      if (reviewProgressNo != null) 'reviewProgressNo': reviewProgressNo,
       if (reviewPlanId != null) 'reviewPlanId': reviewPlanId,
       if (isDeleted != null) 'isDeleted': isDeleted,
       if (createdBy != null) 'createdBy': createdBy,
@@ -1206,7 +1265,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
       Value<DateTime> created,
       Value<DateTime> updated,
       Value<DateTime> nextReviewTime,
-      Value<int> reviewProgress,
+      Value<int> reviewProgressNo,
       Value<int> reviewPlanId,
       Value<bool> isDeleted,
       Value<int> createdBy}) {
@@ -1218,7 +1277,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
       created: created ?? this.created,
       updated: updated ?? this.updated,
       nextReviewTime: nextReviewTime ?? this.nextReviewTime,
-      reviewProgress: reviewProgress ?? this.reviewProgress,
+      reviewProgressNo: reviewProgressNo ?? this.reviewProgressNo,
       reviewPlanId: reviewPlanId ?? this.reviewPlanId,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
@@ -1241,16 +1300,20 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
       map['content'] = Variable<String>(content.value);
     }
     if (created.present) {
-      map['created'] = Variable<DateTime>(created.value);
+      final converter = $NotesTable.$converter0;
+      map['created'] = Variable<String>(converter.mapToSql(created.value));
     }
     if (updated.present) {
-      map['updated'] = Variable<DateTime>(updated.value);
+      final converter = $NotesTable.$converter1;
+      map['updated'] = Variable<String>(converter.mapToSql(updated.value));
     }
     if (nextReviewTime.present) {
-      map['nextReviewTime'] = Variable<DateTime>(nextReviewTime.value);
+      final converter = $NotesTable.$converter2;
+      map['next_review_time'] =
+          Variable<String>(converter.mapToSql(nextReviewTime.value));
     }
-    if (reviewProgress.present) {
-      map['reviewProgress'] = Variable<int>(reviewProgress.value);
+    if (reviewProgressNo.present) {
+      map['reviewProgressNo'] = Variable<int>(reviewProgressNo.value);
     }
     if (reviewPlanId.present) {
       map['reviewPlanId'] = Variable<int>(reviewPlanId.value);
@@ -1274,7 +1337,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
           ..write('created: $created, ')
           ..write('updated: $updated, ')
           ..write('nextReviewTime: $nextReviewTime, ')
-          ..write('reviewProgress: $reviewProgress, ')
+          ..write('reviewProgressNo: $reviewProgressNo, ')
           ..write('reviewPlanId: $reviewPlanId, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy')
@@ -1327,49 +1390,46 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
   }
 
   final VerificationMeta _createdMeta = const VerificationMeta('created');
-  GeneratedDateTimeColumn _created;
+  GeneratedTextColumn _created;
   @override
-  GeneratedDateTimeColumn get created => _created ??= _constructCreated();
-  GeneratedDateTimeColumn _constructCreated() {
-    return GeneratedDateTimeColumn('created', $tableName, false,
-        defaultValue: Constant(DateTime.now()));
+  GeneratedTextColumn get created => _created ??= _constructCreated();
+  GeneratedTextColumn _constructCreated() {
+    return GeneratedTextColumn('created', $tableName, false,
+        defaultValue: Constant(DateTime.now().toString()));
   }
 
   final VerificationMeta _updatedMeta = const VerificationMeta('updated');
-  GeneratedDateTimeColumn _updated;
+  GeneratedTextColumn _updated;
   @override
-  GeneratedDateTimeColumn get updated => _updated ??= _constructUpdated();
-  GeneratedDateTimeColumn _constructUpdated() {
-    return GeneratedDateTimeColumn(
-      'updated',
-      $tableName,
-      true,
-    );
+  GeneratedTextColumn get updated => _updated ??= _constructUpdated();
+  GeneratedTextColumn _constructUpdated() {
+    return GeneratedTextColumn('updated', $tableName, false,
+        defaultValue: Constant(DateTime.now().toString()));
   }
 
   final VerificationMeta _nextReviewTimeMeta =
       const VerificationMeta('nextReviewTime');
-  GeneratedDateTimeColumn _nextReviewTime;
+  GeneratedTextColumn _nextReviewTime;
   @override
-  GeneratedDateTimeColumn get nextReviewTime =>
+  GeneratedTextColumn get nextReviewTime =>
       _nextReviewTime ??= _constructNextReviewTime();
-  GeneratedDateTimeColumn _constructNextReviewTime() {
-    return GeneratedDateTimeColumn(
-      'nextReviewTime',
+  GeneratedTextColumn _constructNextReviewTime() {
+    return GeneratedTextColumn(
+      'next_review_time',
       $tableName,
       true,
     );
   }
 
-  final VerificationMeta _reviewProgressMeta =
-      const VerificationMeta('reviewProgress');
-  GeneratedIntColumn _reviewProgress;
+  final VerificationMeta _reviewProgressNoMeta =
+      const VerificationMeta('reviewProgressNo');
+  GeneratedIntColumn _reviewProgressNo;
   @override
-  GeneratedIntColumn get reviewProgress =>
-      _reviewProgress ??= _constructReviewProgress();
-  GeneratedIntColumn _constructReviewProgress() {
+  GeneratedIntColumn get reviewProgressNo =>
+      _reviewProgressNo ??= _constructReviewProgressNo();
+  GeneratedIntColumn _constructReviewProgressNo() {
     return GeneratedIntColumn(
-      'reviewProgress',
+      'reviewProgressNo',
       $tableName,
       true,
     );
@@ -1416,7 +1476,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
         created,
         updated,
         nextReviewTime,
-        reviewProgress,
+        reviewProgressNo,
         reviewPlanId,
         isDeleted,
         createdBy
@@ -1449,25 +1509,14 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
       context.handle(_contentMeta,
           content.isAcceptableOrUnknown(data['content'], _contentMeta));
     }
-    if (data.containsKey('created')) {
-      context.handle(_createdMeta,
-          created.isAcceptableOrUnknown(data['created'], _createdMeta));
-    }
-    if (data.containsKey('updated')) {
-      context.handle(_updatedMeta,
-          updated.isAcceptableOrUnknown(data['updated'], _updatedMeta));
-    }
-    if (data.containsKey('nextReviewTime')) {
+    context.handle(_createdMeta, const VerificationResult.success());
+    context.handle(_updatedMeta, const VerificationResult.success());
+    context.handle(_nextReviewTimeMeta, const VerificationResult.success());
+    if (data.containsKey('reviewProgressNo')) {
       context.handle(
-          _nextReviewTimeMeta,
-          nextReviewTime.isAcceptableOrUnknown(
-              data['nextReviewTime'], _nextReviewTimeMeta));
-    }
-    if (data.containsKey('reviewProgress')) {
-      context.handle(
-          _reviewProgressMeta,
-          reviewProgress.isAcceptableOrUnknown(
-              data['reviewProgress'], _reviewProgressMeta));
+          _reviewProgressNoMeta,
+          reviewProgressNo.isAcceptableOrUnknown(
+              data['reviewProgressNo'], _reviewProgressNoMeta));
     }
     if (data.containsKey('reviewPlanId')) {
       context.handle(
@@ -1498,6 +1547,13 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
   $NotesTable createAlias(String alias) {
     return $NotesTable(_db, alias);
   }
+
+  static TypeConverter<DateTime, String> $converter0 =
+      const IsoDateTimeConverter();
+  static TypeConverter<DateTime, String> $converter1 =
+      const IsoDateTimeConverter();
+  static TypeConverter<DateTime, String> $converter2 =
+      const IsoDateTimeConverter();
 }
 
 class ReviewPlanEntry extends DataClass implements Insertable<ReviewPlanEntry> {
@@ -1738,9 +1794,9 @@ class $ReviewPlansTable extends ReviewPlans
   @override
   $ReviewPlansTable get asDslTable => this;
   @override
-  String get $tableName => _alias ?? 'review_plans';
+  String get $tableName => _alias ?? 'reviewPlans';
   @override
-  final String actualTableName = 'review_plans';
+  final String actualTableName = 'reviewPlans';
   @override
   VerificationContext validateIntegrity(Insertable<ReviewPlanEntry> instance,
       {bool isInserting = false}) {
@@ -2099,9 +2155,9 @@ class $ReviewPlanConfigsTable extends ReviewPlanConfigs
   @override
   $ReviewPlanConfigsTable get asDslTable => this;
   @override
-  String get $tableName => _alias ?? 'review_plan_configs';
+  String get $tableName => _alias ?? 'reviewPlanConfigs';
   @override
-  final String actualTableName = 'review_plan_configs';
+  final String actualTableName = 'reviewPlanConfigs';
   @override
   VerificationContext validateIntegrity(
       Insertable<ReviewPlanConfigEntry> instance,
