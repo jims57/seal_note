@@ -359,7 +359,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
             .whenComplete(() {
           // TODO: To be deleted before releasing the app
           //  After insert, update notes' content
-          GlobalState.database.upsertAllNotesContentByTitles(fetchedPhotoList);
+          GlobalState.database.updateAllNotesContentByTitles(fetchedPhotoList);
 
           GlobalState.selectedNoteModel.noteListWidgetForTodayState.currentState
               .resetLoadingConfigsAfterUpdatingSqlite();

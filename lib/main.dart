@@ -1,8 +1,7 @@
 //Import packages
-// import 'package:intl/intl.dart';
-// import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:moor/moor.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 
@@ -56,9 +55,18 @@ class _MyAppState extends State<MyApp> {
     GlobalState.masterDetailPageState = GlobalKey<MasterDetailPageState>();
 
     // Check if the db is initialized or not
+    // init data // initialization data
+    // init tables // init app data
     GlobalState.database.isDbInitialized().then((isDbInitialized) {
       if (!isDbInitialized) {
         // If the db isn't initialized, we need to insert basic data
+
+        // Initialize users
+        var usersCompanion =
+            UsersCompanion(userName: Value('admin'), password: Value('123456'));
+        GlobalState.database.insertUser(usersCompanion);
+
+        // Initialize folders
         var folderEntryList = List<FolderEntry>();
         folderEntryList.add(FolderEntry(
             id: null,
@@ -68,7 +76,6 @@ class _MyAppState extends State<MyApp> {
             isDefaultFolder: true,
             created: null,
             createdBy: 1));
-
         folderEntryList.add(FolderEntry(
             id: null,
             name: '全部笔记',
@@ -77,7 +84,6 @@ class _MyAppState extends State<MyApp> {
             isDefaultFolder: true,
             created: null,
             createdBy: 1));
-
         folderEntryList.add(FolderEntry(
             id: null,
             name: '我的笔记',
@@ -86,7 +92,6 @@ class _MyAppState extends State<MyApp> {
             isDefaultFolder: false,
             created: null,
             createdBy: 1));
-
         folderEntryList.add(FolderEntry(
             id: null,
             name: '英语知识',
@@ -95,7 +100,6 @@ class _MyAppState extends State<MyApp> {
             isDefaultFolder: false,
             created: null,
             createdBy: 1));
-
         folderEntryList.add(FolderEntry(
             id: null,
             name: '编程知识',
@@ -104,7 +108,6 @@ class _MyAppState extends State<MyApp> {
             isDefaultFolder: false,
             created: null,
             createdBy: 1));
-
         folderEntryList.add(FolderEntry(
             id: null,
             name: '健身知识',
@@ -113,7 +116,6 @@ class _MyAppState extends State<MyApp> {
             isDefaultFolder: false,
             created: null,
             createdBy: 1));
-
         folderEntryList.add(FolderEntry(
             id: null,
             name: '删除笔记',
@@ -122,8 +124,40 @@ class _MyAppState extends State<MyApp> {
             isDefaultFolder: true,
             created: null,
             createdBy: 1));
-
         GlobalState.database.upsertFoldersInBatch(folderEntryList);
+
+        // Initialize review plans
+        var reviewPlanEntryList = List<ReviewPlanEntry>();
+        reviewPlanEntryList.add(ReviewPlanEntry(
+            id: null, name: '五段式', introduction: '五段式简介', createdBy: 1));
+        GlobalState.database.upsertReviewPlansInBatch(reviewPlanEntryList);
+
+        // Initialize review plan configs
+        var reviewPlanConfigEntryList = List<ReviewPlanConfigEntry>();
+        // Unit for the value. { 1 = minute, 2 = hour, 3 = day, 4 = week, 5 = month, 6 = year }
+        reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
+            id: null,
+            reviewPlanId: 1,
+            order: 1,
+            value: 30,
+            unit: 1,
+            createdBy: 1));
+        reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
+            id: null,
+            reviewPlanId: 1,
+            order: 2,
+            value: 12,
+            unit: 2,
+            createdBy: 1));
+        reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
+            id: null,
+            reviewPlanId: 1,
+            order: 3,
+            value: 3,
+            unit: 3,
+            createdBy: 1));
+        GlobalState.database
+            .upsertReviewPlanConfigsInBatch(reviewPlanConfigEntryList);
 
         // Trigger folder list page to refresh so that the initialized folder list can be shown properly
         if (GlobalState.isFolderListPageLoaded) {

@@ -7,6 +7,24 @@ import 'package:seal_note/data/appstate/GlobalState.dart';
 
 part 'database.g.dart';
 
+class IsoDateTimeConverter extends TypeConverter<DateTime, String> {
+  const IsoDateTimeConverter();
+
+  @override
+  DateTime mapToDart(String fromDb) {
+    if (fromDb == null) {
+      return null;
+    } else {
+      return DateTime.parse(fromDb);
+    }
+  }
+
+  @override
+  String mapToSql(DateTime value) {
+    return value?.toIso8601String();
+  }
+}
+
 @DataClassName('UserEntry')
 class Users extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -17,7 +35,7 @@ class Users extends Table {
   TextColumn get password => text().withLength(min: 6, max: 200)();
 
   TextColumn get nickName =>
-      text().withLength(min: 1, max: 200).named('nickName')();
+      text().nullable().withLength(min: 1, max: 200).named('nickName')();
 
   TextColumn get portrait => text().nullable()();
 
@@ -25,8 +43,9 @@ class Users extends Table {
 
   TextColumn get introduction => text().nullable()();
 
-  DateTimeColumn get created =>
-      dateTime().withDefault(Constant(DateTime.now()))();
+  TextColumn get created => text()
+      .withDefault(Constant(DateTime.now().toString()))
+      .map(const IsoDateTimeConverter())();
 }
 
 @DataClassName('FolderEntry')
@@ -37,16 +56,17 @@ class Folders extends Table {
 
   IntColumn get order => integer()();
 
-  IntColumn get planId => integer().nullable().named('planId')();
-
   IntColumn get numberToShow =>
       integer().withDefault(const Constant(0)).named('numberToShow')();
 
   BoolColumn get isDefaultFolder =>
       boolean().withDefault(const Constant(false)).named('isDefaultFolder')();
 
-  DateTimeColumn get created =>
-      dateTime().withDefault(Constant(DateTime.now()))();
+  IntColumn get reviewPlanId => integer().nullable().named('reviewPlanId')();
+
+  TextColumn get created => text()
+      .withDefault(Constant(DateTime.now().toString()))
+      .map(const IsoDateTimeConverter())();
 
   IntColumn get createdBy =>
       integer().withDefault(const Constant(1)).named('createdBy')();
@@ -71,13 +91,13 @@ class Notes extends Table {
       .withDefault(Constant(DateTime.now().toString()))
       .map(const IsoDateTimeConverter())();
 
-  TextColumn get nextReviewTime =>
-      text().nullable().map(const IsoDateTimeConverter())();
+  TextColumn get nextReviewTime => text()
+      .nullable()
+      .named('nextReviewTime')
+      .map(const IsoDateTimeConverter())();
 
   IntColumn get reviewProgressNo =>
       integer().nullable().named('reviewProgressNo')();
-
-  IntColumn get reviewPlanId => integer().nullable().named('reviewPlanId')();
 
   BoolColumn get isDeleted =>
       boolean().withDefault(const Constant(false)).named('isDeleted')();
@@ -108,7 +128,7 @@ class ReviewPlanConfigs extends Table {
 
   IntColumn get id => integer().autoIncrement()();
 
-  IntColumn get progressId => integer().named('progressId')();
+  IntColumn get reviewPlanId => integer().named('reviewPlanId')();
 
   IntColumn get order => integer()();
 
@@ -130,7 +150,7 @@ class Database extends _$Database {
   @override
   int get schemaVersion => 1;
 
-  // [Begin] Initializing db
+  // Initialization related
   Future<bool> isDbInitialized() async {
     // Whether the db has been initialized
 
@@ -145,7 +165,7 @@ class Database extends _$Database {
     return isDbInitialized;
   }
 
-  Future upsertAllNotesContentByTitles(List<NoteEntry> noteEntryList) async {
+  Future updateAllNotesContentByTitles(List<NoteEntry> noteEntryList) async {
     var result = await transaction(() async {
       for (var noteEntry in noteEntryList) {
         await (update(notes)..where((e) => e.id.equals(noteEntry.id)))
@@ -160,24 +180,25 @@ class Database extends _$Database {
     return result;
   }
 
-  // [End] Initializing db
+  // Users
+  Future<int> insertUser(UsersCompanion usersCompanion) {
+    return into(users).insert(usersCompanion);
+  }
 
-  // [Begin] folders
+  // Folders
   Future<List<FolderEntry>> getAllFolders() {
     return (select(folders)
           ..orderBy([(t) => OrderingTerm(expression: t.order)]))
         .get();
   }
 
+  // Notes
   Future<void> upsertFoldersInBatch(List<FolderEntry> folderEntryList) async {
     return await batch((batch) {
       batch.insertAllOnConflictUpdate(folders, folderEntryList);
     });
   }
 
-  // [End] folders
-
-  // [Begin] notes
   Future<int> insertNote(NotesCompanion entry) {
     return into(notes).insert(entry);
   }
@@ -262,23 +283,21 @@ class Database extends _$Database {
   Future<int> deleteAllNotes() {
     return (delete(notes)).go();
   }
-// [End] notes
-}
 
-class IsoDateTimeConverter extends TypeConverter<DateTime, String> {
-  const IsoDateTimeConverter();
-
-  @override
-  DateTime mapToDart(String fromDb) {
-    if (fromDb == null) {
-      return null;
-    } else {
-      return DateTime.parse(fromDb);
-    }
+  // Review plans
+  Future<void> upsertReviewPlansInBatch(
+      List<ReviewPlanEntry> reviewPlanEntryList) async {
+    return await batch((batch) {
+      batch.insertAllOnConflictUpdate(reviewPlans, reviewPlanEntryList);
+    });
   }
 
-  @override
-  String mapToSql(DateTime value) {
-    return value?.toIso8601String();
+  // Review plan configs
+  Future<void> upsertReviewPlanConfigsInBatch(
+      List<ReviewPlanConfigEntry> reviewPlanConfigEntryList) async {
+    return await batch((batch) {
+      batch.insertAllOnConflictUpdate(
+          reviewPlanConfigs, reviewPlanConfigEntryList);
+    });
   }
 }
