@@ -17,7 +17,8 @@ class NoteListWidgetForToday extends StatefulWidget {
 }
 
 class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
-  List<NotesCompanion> _notesCompanionList = List<NotesCompanion>();
+  // List<NotesCompanion> _notesCompanionList = List<NotesCompanion>();
+  List<NoteEntry> _noteEntryList = List<NoteEntry>();
   List<NoteEntry> _noteList = List<NoteEntry>();
 
   int _pageNo;
@@ -298,28 +299,36 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   Future<Null> _getRefresh() async {
+    // get refresh data // refresh method
+    // pull to get data method // note list refresh data
+    // refresh data // refresh note data
+
     await Future.delayed(Duration(seconds: 2));
 
-    _notesCompanionList.clear();
+    // _notesCompanionList.clear();
+    _noteEntryList.clear();
 
     for (var i = 0; i < _refreshCount; ++i) {
       var title = '[refresh] title${i + 1}';
       var content = '[refresh] content${i + 1}';
+      var now = DateTime.now().toLocal();
 
-      final now = DateTime.now();
-      NotesCompanion notesCompanion = NotesCompanion(
-          title: Value(title), content: Value(content), created: Value(now));
+      var noteEntry = NoteEntry(
+          id: null,
+          folderId: GlobalState.selectedFolderId,
+          title: title,
+          content: content,
+          created: now,
+          updated: now,
+          isDeleted: false,
+          createdBy: GlobalState.currentUserId);
 
-      _notesCompanionList.add(notesCompanion);
-      // TODO: Need to add _noteList data
-
-      // GlobalState.database.insertNote(notesCompanion);
+      _noteEntryList.add(noteEntry);
     }
 
     // Insert the refreshed data in batch
-    GlobalState.database.insertNotesInBatch(_notesCompanionList).then((value) {
-      // _noteList.insert(0, NoteEntry(id: null, folderId: 3, title: 'Refreshed1111', created: null));
-
+    // GlobalState.database.insertNotesInBatch(_notesCompanionList).then((value) {
+    GlobalState.database.insertNotesInBatch(_noteEntryList).then((value) {
       GlobalState.selectedNoteModel.noteListWidgetForTodayState.currentState
           .resetLoadingConfigsAfterUpdatingSqlite();
     });
@@ -354,6 +363,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       _isFirstLoad = false;
 
       fetchPhotos(client: http.Client()).then((fetchedPhotoList) {
+
+        // initialize notes // init notes
+        // note initialization // note init
         GlobalState.database
             .upsertNotesInBatch(fetchedPhotoList)
             .whenComplete(() {
@@ -375,8 +387,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   void resetLoadingConfigsAfterUpdatingSqlite() {
-
-
     initLoadingConfigs();
   }
 }

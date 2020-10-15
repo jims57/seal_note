@@ -61,12 +61,14 @@ class _MyAppState extends State<MyApp> {
       if (!isDbInitialized) {
         // If the db isn't initialized, we need to insert basic data
 
-        // Initialize users
+        var now = DateTime.now().toLocal();
+
+        // Initialize users // init users
         var usersCompanion =
-            UsersCompanion(userName: Value('admin'), password: Value('123456'));
+            UsersCompanion(userName: Value('admin'), password: Value('123456'), created: Value(now));
         GlobalState.database.insertUser(usersCompanion);
 
-        // Initialize folders
+        // Initialize folders // init folders
         var folderEntryList = List<FolderEntry>();
         folderEntryList.add(FolderEntry(
             id: null,
@@ -74,7 +76,7 @@ class _MyAppState extends State<MyApp> {
             order: 1,
             numberToShow: 28,
             isDefaultFolder: true,
-            created: null,
+            created: now,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
@@ -82,7 +84,7 @@ class _MyAppState extends State<MyApp> {
             order: 2,
             numberToShow: 99,
             isDefaultFolder: true,
-            created: null,
+            created: now,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
@@ -90,7 +92,7 @@ class _MyAppState extends State<MyApp> {
             order: 3,
             numberToShow: 23,
             isDefaultFolder: false,
-            created: null,
+            created: now,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
@@ -98,7 +100,7 @@ class _MyAppState extends State<MyApp> {
             order: 5,
             numberToShow: 18,
             isDefaultFolder: false,
-            created: null,
+            created: now,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
@@ -106,7 +108,7 @@ class _MyAppState extends State<MyApp> {
             order: 4,
             numberToShow: 8,
             isDefaultFolder: false,
-            created: null,
+            created: now,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
@@ -114,7 +116,7 @@ class _MyAppState extends State<MyApp> {
             order: 6,
             numberToShow: 28,
             isDefaultFolder: false,
-            created: null,
+            created: now,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
@@ -122,11 +124,11 @@ class _MyAppState extends State<MyApp> {
             order: 7,
             numberToShow: 2,
             isDefaultFolder: true,
-            created: null,
+            created: now,
             createdBy: GlobalState.adminUserId));
         GlobalState.database.upsertFoldersInBatch(folderEntryList);
 
-        // Initialize review plans
+        // Initialize review plans // init review plans
         var reviewPlanEntryList = List<ReviewPlanEntry>();
         reviewPlanEntryList.add(ReviewPlanEntry(
             id: null,
@@ -135,7 +137,7 @@ class _MyAppState extends State<MyApp> {
             createdBy: GlobalState.adminUserId));
         GlobalState.database.upsertReviewPlansInBatch(reviewPlanEntryList);
 
-        // Initialize review plan configs
+        // Initialize review plan configs // init review plan configs
         var reviewPlanConfigEntryList = List<ReviewPlanConfigEntry>();
         // Unit for the value. { 1 = minute, 2 = hour, 3 = day, 4 = week, 5 = month, 6 = year }
         reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
@@ -175,6 +177,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    // var dt = DateTime.parse('formattedString');
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: MasterDetailPage(

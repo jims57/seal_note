@@ -84,7 +84,10 @@ class Notes extends Table {
   TextColumn get content => text().nullable()();
 
   TextColumn get created => text()
-      .withDefault(Constant(DateTime.now().toString()))
+      // .withDefault(Constant(DateTime.now().toString()))
+      // .withDefault(Constant(DateTime.now().toString()))
+      // .withDefault(Constant(currentDateAndTime.toString()))
+      // .withDefault(currentDateAndTime)
       .map(const IsoDateTimeConverter())();
 
   TextColumn get updated => text()
@@ -166,13 +169,17 @@ class Database extends _$Database {
   }
 
   Future updateAllNotesContentByTitles(List<NoteEntry> noteEntryList) async {
+    // upsert notes // update notes content
     var result = await transaction(() async {
       for (var noteEntry in noteEntryList) {
+        var now = DateTime.now().toLocal();
+
         await (update(notes)..where((e) => e.id.equals(noteEntry.id)))
             .write(NotesCompanion(
-          // string.substring(1, 4);
           title: Value('标题${noteEntry.id}'),
           content: Value(noteEntry.title),
+          created: Value(now),
+          updated: Value(now),
         ));
       }
     });
@@ -204,10 +211,17 @@ class Database extends _$Database {
     return into(notes).insert(entry);
   }
 
+  // Future<void> insertNotesInBatch(
+  //     List<NotesCompanion> notesCompanionList) async {
+  //   batch((batch) {
+  //     batch.insertAll(notes, notesCompanionList);
+  //   });
+  // }
+
   Future<void> insertNotesInBatch(
-      List<NotesCompanion> notesCompanionList) async {
+      List<NoteEntry> noteEntryList) async {
     batch((batch) {
-      batch.insertAll(notes, notesCompanionList);
+      batch.insertAll(notes, noteEntryList);
     });
   }
 
