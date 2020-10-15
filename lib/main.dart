@@ -75,7 +75,7 @@ class _MyAppState extends State<MyApp> {
             numberToShow: 28,
             isDefaultFolder: true,
             created: null,
-            createdBy: 1));
+            createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
             name: '全部笔记',
@@ -83,7 +83,7 @@ class _MyAppState extends State<MyApp> {
             numberToShow: 99,
             isDefaultFolder: true,
             created: null,
-            createdBy: 1));
+            createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
             name: '我的笔记',
@@ -91,7 +91,7 @@ class _MyAppState extends State<MyApp> {
             numberToShow: 23,
             isDefaultFolder: false,
             created: null,
-            createdBy: 1));
+            createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
             name: '英语知识',
@@ -99,7 +99,7 @@ class _MyAppState extends State<MyApp> {
             numberToShow: 18,
             isDefaultFolder: false,
             created: null,
-            createdBy: 1));
+            createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
             name: '编程知识',
@@ -107,7 +107,7 @@ class _MyAppState extends State<MyApp> {
             numberToShow: 8,
             isDefaultFolder: false,
             created: null,
-            createdBy: 1));
+            createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
             name: '健身知识',
@@ -115,7 +115,7 @@ class _MyAppState extends State<MyApp> {
             numberToShow: 28,
             isDefaultFolder: false,
             created: null,
-            createdBy: 1));
+            createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
             name: '删除笔记',
@@ -123,13 +123,16 @@ class _MyAppState extends State<MyApp> {
             numberToShow: 2,
             isDefaultFolder: true,
             created: null,
-            createdBy: 1));
+            createdBy: GlobalState.adminUserId));
         GlobalState.database.upsertFoldersInBatch(folderEntryList);
 
         // Initialize review plans
         var reviewPlanEntryList = List<ReviewPlanEntry>();
         reviewPlanEntryList.add(ReviewPlanEntry(
-            id: null, name: '五段式', introduction: '五段式简介', createdBy: 1));
+            id: null,
+            name: '五段式',
+            introduction: '五段式简介',
+            createdBy: GlobalState.adminUserId));
         GlobalState.database.upsertReviewPlansInBatch(reviewPlanEntryList);
 
         // Initialize review plan configs
@@ -141,21 +144,21 @@ class _MyAppState extends State<MyApp> {
             order: 1,
             value: 30,
             unit: 1,
-            createdBy: 1));
+            createdBy: GlobalState.adminUserId));
         reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
             id: null,
             reviewPlanId: 1,
             order: 2,
             value: 12,
             unit: 2,
-            createdBy: 1));
+            createdBy: GlobalState.adminUserId));
         reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
             id: null,
             reviewPlanId: 1,
             order: 3,
             value: 3,
             unit: 3,
-            createdBy: 1));
+            createdBy: GlobalState.adminUserId));
         GlobalState.database
             .upsertReviewPlanConfigsInBatch(reviewPlanConfigEntryList);
 

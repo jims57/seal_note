@@ -188,7 +188,8 @@ class Database extends _$Database {
   // Folders
   Future<List<FolderEntry>> getAllFolders() {
     return (select(folders)
-          ..orderBy([(t) => OrderingTerm(expression: t.order)]))
+          ..where((f) => f.createdBy.equals(GlobalState.currentUserId))
+          ..orderBy([(f) => OrderingTerm(expression: f.order)]))
         .get();
   }
 
@@ -232,6 +233,7 @@ class Database extends _$Database {
         return (select(notes)
               ..where((n) => n.isDeleted.equals(false))
               ..where((n) => n.nextReviewTime.like('$todayDateString%'))
+              ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
               ..orderBy([
                 (n) => OrderingTerm(
                     expression: n.updated, mode: OrderingMode.desc),
@@ -246,6 +248,7 @@ class Database extends _$Database {
         // get all notes note list
         return (select(notes)
               ..where((n) => n.isDeleted.equals(false))
+              ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
               ..orderBy([
                 (n) => OrderingTerm(
                     expression: n.updated, mode: OrderingMode.desc),
@@ -257,6 +260,7 @@ class Database extends _$Database {
         // For Deleted Notes folder
         return (select(notes)
               ..where((n) => n.isDeleted.equals(true))
+              ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
               ..orderBy([
                 (n) => OrderingTerm(
                     expression: n.updated, mode: OrderingMode.desc),
@@ -270,6 +274,7 @@ class Database extends _$Database {
       return (select(notes)
             ..where((n) => n.folderId.equals(GlobalState.selectedFolderId))
             ..where((n) => n.isDeleted.equals(false))
+            ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
             ..orderBy([
               (n) =>
                   OrderingTerm(expression: n.updated, mode: OrderingMode.desc),

@@ -134,8 +134,8 @@ class GlobalState with ChangeNotifier {
   static bool isPointerMoving = false;
   static bool isAfterLongPress = false;
   static bool shouldMakeDefaultFoldersGrey = false;
-  static bool isFolderListPageLoaded = false; // Indicate if the folder list page is loaded
-
+  static bool isFolderListPageLoaded =
+      false; // Indicate if the folder list page is loaded
 
   // Folder total
   static int defaultFolderTotal = 0;
@@ -147,6 +147,10 @@ class GlobalState with ChangeNotifier {
 
   // Folder Options
   static double folderOptionItemHeight = 40.0;
+
+  // User info
+  static final int adminUserId = 1;
+  static int currentUserId = 1;
 
   // User folder available dy
   static double userFolderListItemMinAvailableDy = double.negativeInfinity;
