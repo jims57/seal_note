@@ -43,9 +43,10 @@ class Users extends Table {
 
   TextColumn get introduction => text().nullable()();
 
-  TextColumn get created => text()
-      .withDefault(Constant(DateTime.now().toString()))
-      .map(const IsoDateTimeConverter())();
+  TextColumn get created =>
+      text()
+      // .withDefault(Constant(DateTime.now().toString()))
+          .map(const IsoDateTimeConverter())();
 }
 
 @DataClassName('FolderEntry')
@@ -64,9 +65,10 @@ class Folders extends Table {
 
   IntColumn get reviewPlanId => integer().nullable().named('reviewPlanId')();
 
-  TextColumn get created => text()
-      .withDefault(Constant(DateTime.now().toString()))
-      .map(const IsoDateTimeConverter())();
+  TextColumn get created =>
+      text()
+      // .withDefault(Constant(DateTime.now().toString()))
+          .map(const IsoDateTimeConverter())();
 
   IntColumn get createdBy =>
       integer().withDefault(const Constant(1)).named('createdBy')();
@@ -83,21 +85,18 @@ class Notes extends Table {
 
   TextColumn get content => text().nullable()();
 
-  TextColumn get created => text()
-      // .withDefault(Constant(DateTime.now().toString()))
-      // .withDefault(Constant(DateTime.now().toString()))
-      // .withDefault(Constant(currentDateAndTime.toString()))
-      // .withDefault(currentDateAndTime)
-      .map(const IsoDateTimeConverter())();
+  TextColumn get created => text().map(const IsoDateTimeConverter())();
 
-  TextColumn get updated => text()
-      .withDefault(Constant(DateTime.now().toString()))
-      .map(const IsoDateTimeConverter())();
+  TextColumn get updated =>
+      text()
+      // .withDefault(Constant(DateTime.now().toString()))
+          .map(const IsoDateTimeConverter())();
 
-  TextColumn get nextReviewTime => text()
-      .nullable()
-      .named('nextReviewTime')
-      .map(const IsoDateTimeConverter())();
+  TextColumn get nextReviewTime =>
+      text()
+          .nullable()
+          .named('nextReviewTime')
+          .map(const IsoDateTimeConverter())();
 
   IntColumn get reviewProgressNo =>
       integer().nullable().named('reviewProgressNo')();
@@ -159,8 +158,9 @@ class Database extends _$Database {
 
     bool isDbInitialized = true;
     FolderEntry folderEntry = await (select(folders)
-          ..where((f) => f.name.equals(GlobalState.defaultFolderNameForToday))
-          ..where((f) => f.isDefaultFolder.equals(true)))
+      ..where((f) =>
+          f.name.equals(GlobalState.defaultFolderNameForToday))..where((f) =>
+          f.isDefaultFolder.equals(true)))
         .getSingle();
 
     if (folderEntry == null) isDbInitialized = false;
@@ -169,19 +169,29 @@ class Database extends _$Database {
   }
 
   Future updateAllNotesContentByTitles(List<NoteEntry> noteEntryList) async {
-    // upsert notes // update notes content
-    var result = await transaction(() async {
-      for (var noteEntry in noteEntryList) {
-        var now = DateTime.now().toLocal();
+    var newNoteEntryList = List<NoteEntry>();
 
-        await (update(notes)..where((e) => e.id.equals(noteEntry.id)))
-            .write(NotesCompanion(
-          title: Value('标题${noteEntry.id}'),
-          content: Value(noteEntry.title),
-          created: Value(now),
-          updated: Value(now),
-        ));
-      }
+    // upsert notes // update notes content
+    for (var noteEntry in noteEntryList) {
+      var now = DateTime.now().toLocal();
+
+      var note = NoteEntry(
+          id: null,
+          folderId: null,
+          title: '标题${noteEntry.id}',
+          content: 'Content:${noteEntry.title}',
+          created: now,
+          updated: now,
+          isDeleted: null,
+          createdBy: null);
+
+      newNoteEntryList.add(note);
+    }
+
+    var result = await transaction(() async {
+      batch((batch) {
+        batch.insertAll(notes, newNoteEntryList);
+      });
     });
 
     return result;
@@ -195,8 +205,8 @@ class Database extends _$Database {
   // Folders
   Future<List<FolderEntry>> getAllFolders() {
     return (select(folders)
-          ..where((f) => f.createdBy.equals(GlobalState.currentUserId))
-          ..orderBy([(f) => OrderingTerm(expression: f.order)]))
+      ..where((f) => f.createdBy.equals(GlobalState.currentUserId))
+      ..orderBy([(f) => OrderingTerm(expression: f.order)]))
         .get();
   }
 
@@ -211,15 +221,7 @@ class Database extends _$Database {
     return into(notes).insert(entry);
   }
 
-  // Future<void> insertNotesInBatch(
-  //     List<NotesCompanion> notesCompanionList) async {
-  //   batch((batch) {
-  //     batch.insertAll(notes, notesCompanionList);
-  //   });
-  // }
-
-  Future<void> insertNotesInBatch(
-      List<NoteEntry> noteEntryList) async {
+  Future<void> insertNotesInBatch(List<NoteEntry> noteEntryList) async {
     batch((batch) {
       batch.insertAll(notes, noteEntryList);
     });
@@ -242,18 +244,21 @@ class Database extends _$Database {
           GlobalState.defaultFolderNameForToday) {
         // For Today folder
         var now = DateTime.now();
-        String todayDateString = '${now.year}-${now.month}-${now.day}';
+        // var now = DateTime(2020,2,1);
+        String todayDateString = '${now.year}-${now.month.toString().padLeft(
+            2, '0')}-${now.day.toString().padLeft(2, '0')}';
 
         return (select(notes)
-              ..where((n) => n.isDeleted.equals(false))
-              ..where((n) => n.nextReviewTime.like('$todayDateString%'))
-              ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
-              ..orderBy([
-                (n) => OrderingTerm(
+          ..where((n) => n.isDeleted.equals(false))..where((n) =>
+              n.nextReviewTime.like('$todayDateString%'))..where((n) =>
+              n.createdBy.equals(GlobalState.currentUserId))
+          ..orderBy([
+                (n) =>
+                OrderingTerm(
                     expression: n.updated, mode: OrderingMode.desc),
                 (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
-              ])
-              ..limit(pageSize, offset: pageSize * (pageNo - 1)))
+          ])
+          ..limit(pageSize, offset: pageSize * (pageNo - 1)))
             .get();
       } else if (GlobalState.selectedFolderName ==
           GlobalState.defaultFolderNameForAllNotes) {
@@ -261,46 +266,61 @@ class Database extends _$Database {
 
         // get all notes note list
         return (select(notes)
-              ..where((n) => n.isDeleted.equals(false))
-              ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
-              ..orderBy([
-                (n) => OrderingTerm(
+          ..where((n) => n.isDeleted.equals(false))..where((n) =>
+              n.createdBy.equals(GlobalState.currentUserId))
+          ..orderBy([
+                (n) =>
+                OrderingTerm(
                     expression: n.updated, mode: OrderingMode.desc),
                 (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
-              ])
-              ..limit(pageSize, offset: pageSize * (pageNo - 1)))
+          ])
+          ..limit(pageSize, offset: pageSize * (pageNo - 1)))
             .get();
       } else {
         // For Deleted Notes folder
         return (select(notes)
-              ..where((n) => n.isDeleted.equals(true))
-              ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
-              ..orderBy([
-                (n) => OrderingTerm(
+          ..where((n) => n.isDeleted.equals(true))..where((n) =>
+              n.createdBy.equals(GlobalState.currentUserId))
+          ..orderBy([
+                (n) =>
+                OrderingTerm(
                     expression: n.updated, mode: OrderingMode.desc),
                 (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
-              ])
-              ..limit(pageSize, offset: pageSize * (pageNo - 1)))
+          ])
+          ..limit(pageSize, offset: pageSize * (pageNo - 1)))
             .get();
       }
     } else {
       // get user folder note list
       return (select(notes)
-            ..where((n) => n.folderId.equals(GlobalState.selectedFolderId))
-            ..where((n) => n.isDeleted.equals(false))
-            ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
-            ..orderBy([
+        ..where((n) => n.folderId.equals(GlobalState.selectedFolderId))..where((
+            n) => n.isDeleted.equals(false))..where((n) =>
+            n.createdBy.equals(GlobalState.currentUserId))
+        ..orderBy([
               (n) =>
-                  OrderingTerm(expression: n.updated, mode: OrderingMode.desc),
+              OrderingTerm(expression: n.updated, mode: OrderingMode.desc),
               (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
-            ])
-            ..limit(pageSize, offset: pageSize * (pageNo - 1)))
+        ])
+        ..limit(pageSize, offset: pageSize * (pageNo - 1)))
           .get();
     }
   }
 
   Future<int> deleteAllNotes() {
     return (delete(notes)).go();
+  }
+
+  Future<bool> hasNote() async {
+    // Whether the db has notes data
+
+    bool hasNote = true;
+    NoteEntry noteEntry =
+    await (select(notes)
+      ..where((n) => n.id.equals(1))).getSingle();
+
+    if (noteEntry == null) hasNote = false;
+
+    return hasNote;
   }
 
   // Review plans

@@ -64,8 +64,10 @@ class _MyAppState extends State<MyApp> {
         var now = DateTime.now().toLocal();
 
         // Initialize users // init users
-        var usersCompanion =
-            UsersCompanion(userName: Value('admin'), password: Value('123456'), created: Value(now));
+        var usersCompanion = UsersCompanion(
+            userName: Value('admin'),
+            password: Value('123456'),
+            created: Value(now));
         GlobalState.database.insertUser(usersCompanion);
 
         // Initialize folders // init folders
@@ -177,8 +179,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    // var dt = DateTime.parse('formattedString');
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: MasterDetailPage(

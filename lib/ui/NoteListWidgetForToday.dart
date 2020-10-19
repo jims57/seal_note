@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/database/database.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:seal_note/util/time/TimeHandler.dart';
 import 'httper/NoteHttper.dart';
 
 class NoteListWidgetForToday extends StatefulWidget {
@@ -348,8 +349,18 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
     GlobalState.database
         .getNotesByPageSize(pageNo: _pageNo, pageSize: _pageSize)
-        .then((value) {
-      _noteList.addAll(value);
+        .then((noteList) {
+      // load note list // note list first page data
+      // first page note list data
+      // DateTime nextReviewTime = noteList[0].nextReviewTime;
+      // var result = TimeHandler.showShouldReviewTimeFormat(nextReviewTime);
+
+      // DateTime created = noteList[0].created;
+      // var minutes = nextReviewTime.difference(created).inMinutes;
+      // var isAtSameMomentAs = nextReviewTime.isAtSameMomentAs(created);
+      // var isAfter = nextReviewTime.isAfter(created);
+
+      _noteList.addAll(noteList);
 
       if (!_isLoading) _loadMore();
 
@@ -362,26 +373,45 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     if (_isFirstLoad) {
       _isFirstLoad = false;
 
-      fetchPhotos(client: http.Client()).then((fetchedPhotoList) {
+      // Check if the notes table has data or not, if not, we insert dummy data
+      GlobalState.database.hasNote().then((hasNote) {
+        if (!hasNote) { // If the notes table hasn't data, insert the dummy data
+          fetchPhotos(client: http.Client()).then((fetchedPhotoList) {
+            // initialize notes // init notes
+            // note initialization // note init
+            // GlobalState.database
+            //     .upsertNotesInBatch(fetchedPhotoList)
+            GlobalState.database
+                .updateAllNotesContentByTitles(fetchedPhotoList)
+                .whenComplete(() {
+              // TODO: To be deleted before releasing the app
+              //  After insert, update notes' content
 
-        // initialize notes // init notes
-        // note initialization // note init
-        GlobalState.database
-            .upsertNotesInBatch(fetchedPhotoList)
-            .whenComplete(() {
-          // TODO: To be deleted before releasing the app
-          //  After insert, update notes' content
-          GlobalState.database.updateAllNotesContentByTitles(fetchedPhotoList);
+              // GlobalState.database
+              //     .updateAllNotesContentByTitles(fetchedPhotoList);
 
-          GlobalState.selectedNoteModel.noteListWidgetForTodayState.currentState
-              .resetLoadingConfigsAfterUpdatingSqlite();
+              GlobalState
+                  .selectedNoteModel.noteListWidgetForTodayState.currentState
+                  .resetLoadingConfigsAfterUpdatingSqlite();
 
-          Timer(Duration(seconds: 2), () {
-            GlobalState.appState.isExecutingSync = false;
+              Timer(Duration(seconds: 2), () {
+                GlobalState.appState.isExecutingSync = false;
+              });
+
+
+            });
+          }).catchError((e) {
+            // String errorMessage = e;
           });
+        }
+
+        GlobalState
+            .selectedNoteModel.noteListWidgetForTodayState.currentState
+            .resetLoadingConfigsAfterUpdatingSqlite();
+
+        Timer(Duration(seconds: 2), () {
+          GlobalState.appState.isExecutingSync = false;
         });
-      }).catchError((e) {
-        // String errorMessage = e;
       });
     }
   }

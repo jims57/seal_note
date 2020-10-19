@@ -222,9 +222,10 @@ class UsersCompanion extends UpdateCompanion<UserEntry> {
     this.portrait = const Value.absent(),
     this.mobile = const Value.absent(),
     this.introduction = const Value.absent(),
-    this.created = const Value.absent(),
+    @required DateTime created,
   })  : userName = Value(userName),
-        password = Value(password);
+        password = Value(password),
+        created = Value(created);
   static Insertable<UserEntry> custom({
     Expression<int> id,
     Expression<String> userName,
@@ -395,8 +396,11 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UserEntry> {
   @override
   GeneratedTextColumn get created => _created ??= _constructCreated();
   GeneratedTextColumn _constructCreated() {
-    return GeneratedTextColumn('created', $tableName, false,
-        defaultValue: Constant(DateTime.now().toString()));
+    return GeneratedTextColumn(
+      'created',
+      $tableName,
+      false,
+    );
   }
 
   @override
@@ -686,10 +690,11 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
     this.numberToShow = const Value.absent(),
     this.isDefaultFolder = const Value.absent(),
     this.reviewPlanId = const Value.absent(),
-    this.created = const Value.absent(),
+    @required DateTime created,
     this.createdBy = const Value.absent(),
   })  : name = Value(name),
-        order = Value(order);
+        order = Value(order),
+        created = Value(created);
   static Insertable<FolderEntry> custom({
     Expression<int> id,
     Expression<String> name,
@@ -855,8 +860,11 @@ class $FoldersTable extends Folders with TableInfo<$FoldersTable, FolderEntry> {
   @override
   GeneratedTextColumn get created => _created ??= _constructCreated();
   GeneratedTextColumn _constructCreated() {
-    return GeneratedTextColumn('created', $tableName, false,
-        defaultValue: Constant(DateTime.now().toString()));
+    return GeneratedTextColumn(
+      'created',
+      $tableName,
+      false,
+    );
   }
 
   final VerificationMeta _createdByMeta = const VerificationMeta('createdBy');
@@ -1206,13 +1214,15 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     this.folderId = const Value.absent(),
     @required String title,
     this.content = const Value.absent(),
-    this.created = const Value.absent(),
-    this.updated = const Value.absent(),
+    @required DateTime created,
+    @required DateTime updated,
     this.nextReviewTime = const Value.absent(),
     this.reviewProgressNo = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
-  }) : title = Value(title);
+  })  : title = Value(title),
+        created = Value(created),
+        updated = Value(updated);
   static Insertable<NoteEntry> custom({
     Expression<int> id,
     Expression<int> folderId,
@@ -1370,8 +1380,11 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
   @override
   GeneratedTextColumn get created => _created ??= _constructCreated();
   GeneratedTextColumn _constructCreated() {
-    return GeneratedTextColumn('created', $tableName, false,
-        defaultValue: Constant(DateTime.now().toString()));
+    return GeneratedTextColumn(
+      'created',
+      $tableName,
+      false,
+    );
   }
 
   final VerificationMeta _updatedMeta = const VerificationMeta('updated');
@@ -1379,8 +1392,11 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
   @override
   GeneratedTextColumn get updated => _updated ??= _constructUpdated();
   GeneratedTextColumn _constructUpdated() {
-    return GeneratedTextColumn('updated', $tableName, false,
-        defaultValue: Constant(DateTime.now().toString()));
+    return GeneratedTextColumn(
+      'updated',
+      $tableName,
+      false,
+    );
   }
 
   final VerificationMeta _nextReviewTimeMeta =
