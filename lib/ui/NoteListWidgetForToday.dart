@@ -146,10 +146,17 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                       Text(
                                         // note review time format // note list date time format
                                         // get note review time // get review time
-                                        // show note review time
+                                        // show note review time // review time
+                                        // show review time
                                         '${TimeHandler.getDateTimeFormatForAllKindOfNote(updated: theNote.updated, nextReviewTime: theNote.nextReviewTime)}',
                                         style: TextStyle(
-                                            color: Colors.red, fontSize: 10.0),
+                                            color: (isReviewNote(theNote
+                                                        .nextReviewTime) &&
+                                                    isReviewNoteOverdue(
+                                                        theNote.nextReviewTime))
+                                                ? Colors.red
+                                                : Colors.grey[400],
+                                            fontSize: 10.0),
                                       ),
                                       Text(
                                         /**/
@@ -422,5 +429,30 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
   void resetLoadingConfigsAfterUpdatingSqlite() {
     initLoadingConfigs();
+  }
+
+  // Private methods
+  bool isReviewNote(DateTime nextReviewTime) {
+    // Check if this note is a review note or note
+    var isReviewNote = false;
+
+    if (nextReviewTime != null) {
+      isReviewNote = true;
+    }
+
+    return isReviewNote;
+  }
+
+  bool isReviewNoteOverdue(DateTime nextReviewTime) {
+    // Check if this note is overdue or note
+    var isReviewNoteOverdue = false;
+    var smallHoursOfToday = TimeHandler.getSmallHoursOfToday();
+
+    // If the next review time is earlier than the small hours of today, meaning it is overdue
+    if (nextReviewTime.compareTo(smallHoursOfToday) < 0) {
+      isReviewNoteOverdue = true;
+    }
+
+    return isReviewNoteOverdue;
   }
 }

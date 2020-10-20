@@ -35,22 +35,26 @@ class TimeHandler {
 
       if (years > 0) {
         // For year
-        result = '应在$years年${getTimeSuffix(now, nextReviewTime)}复习';
+        result =
+            '${getTimePrefix(now, nextReviewTime)} $years年${getTimeSuffix(now, nextReviewTime)} 复习';
       } else if (months > 0) {
         // For month
-        result = '应在$months个月${getTimeSuffix(now, nextReviewTime)}复习';
+        result =
+            '${getTimePrefix(now, nextReviewTime)} $months个月${getTimeSuffix(now, nextReviewTime)} 复习';
       } else {
         // For day
-        result = '应在$days天${getTimeSuffix(now, nextReviewTime)}复习';
+        result =
+            '${getTimePrefix(now, nextReviewTime)} $days天${getTimeSuffix(now, nextReviewTime)} 复习';
       }
     } else if (hoursDifference > 0) {
-      result = '应在$hoursDifference小时${getTimeSuffix(now, nextReviewTime)}复习';
+      result =
+          '${getTimePrefix(now, nextReviewTime)} $hoursDifference小时${getTimeSuffix(now, nextReviewTime)} 复习';
     } else {
       if (minutesDifference <= 5) {
-        result = '应现在复习';
+        result = '现在复习';
       } else {
         result =
-            '应在$minutesDifference分钟${getTimeSuffix(now, nextReviewTime)}复习';
+            '${getTimePrefix(now, nextReviewTime)} $minutesDifference分钟${getTimeSuffix(now, nextReviewTime)} 复习';
       }
     }
 
@@ -84,6 +88,21 @@ class TimeHandler {
     }
 
     return result;
+  }
+
+  static DateTime getSmallHoursOfToday() {
+    var now = DateTime.now().toLocal();
+    var smallHoursOfToday = DateTime(now.year, now.month, now.day);
+
+    return smallHoursOfToday;
+  }
+
+  static String getTimePrefix(DateTime now, DateTime nextReviewTime) {
+    var timePrefix = '';
+
+    if (nextReviewTime.isBefore(now)) timePrefix = '应在';
+
+    return timePrefix;
   }
 
   static String getTimeSuffix(DateTime now, DateTime nextReviewTime) {
