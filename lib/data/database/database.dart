@@ -291,14 +291,15 @@ class Database extends _$Database {
             .get();
       }
     } else {
-      // get user folder note list
+      // get user folder note list // get user folder data
       return (select(notes)
         ..where((n) => n.folderId.equals(GlobalState.selectedFolderId))..where((
             n) => n.isDeleted.equals(false))..where((n) =>
             n.createdBy.equals(GlobalState.currentUserId))
         ..orderBy([
               (n) =>
-              OrderingTerm(expression: n.updated, mode: OrderingMode.desc),
+              // OrderingTerm(expression: n.updated, mode: OrderingMode.desc),
+              OrderingTerm(expression: n.updated, mode: OrderingMode.asc),
               (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
         ])
         ..limit(pageSize, offset: pageSize * (pageNo - 1)))

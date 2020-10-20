@@ -18,7 +18,6 @@ class NoteListWidgetForToday extends StatefulWidget {
 }
 
 class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
-  // List<NotesCompanion> _notesCompanionList = List<NotesCompanion>();
   List<NoteEntry> _noteEntryList = List<NoteEntry>();
   List<NoteEntry> _noteList = List<NoteEntry>();
 
@@ -106,6 +105,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                   );
                 }
 
+                // Get the current note item object
+                var theNote = _noteList[index];
+
                 return GestureDetector(
                   child: Container(
                     // color: Colors.red,
@@ -116,10 +118,11 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                         actionPane: SlidableDrawerActionPane(),
                         actionExtentRatio: 0.25,
                         child: Card(
+                          // get note list item // note list item data
                           child: ListTile(
                             contentPadding: EdgeInsets.only(
                                 top: 15.0, bottom: 15, left: 10.0, right: 10.0),
-                            title: Text('${_noteList[index].title}',
+                            title: Text('${theNote.title}',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -130,7 +133,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${_noteList[index].content}',
+                                  '${theNote.content}',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -141,7 +144,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        '应30分钟前复习',
+                                        // note review time format // note list date time format
+                                        // get note review time // get review time
+                                        // show note review time
+                                        '${TimeHandler.getDateTimeFormatForAllKindOfNote(updated: theNote.updated, nextReviewTime: theNote.nextReviewTime)}',
                                         style: TextStyle(
                                             color: Colors.red, fontSize: 10.0),
                                       ),
@@ -375,7 +381,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
       // Check if the notes table has data or not, if not, we insert dummy data
       GlobalState.database.hasNote().then((hasNote) {
-        if (!hasNote) { // If the notes table hasn't data, insert the dummy data
+        if (!hasNote) {
+          // If the notes table hasn't data, insert the dummy data
           fetchPhotos(client: http.Client()).then((fetchedPhotoList) {
             // initialize notes // init notes
             // note initialization // note init
@@ -397,16 +404,13 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
               Timer(Duration(seconds: 2), () {
                 GlobalState.appState.isExecutingSync = false;
               });
-
-
             });
           }).catchError((e) {
             // String errorMessage = e;
           });
         }
 
-        GlobalState
-            .selectedNoteModel.noteListWidgetForTodayState.currentState
+        GlobalState.selectedNoteModel.noteListWidgetForTodayState.currentState
             .resetLoadingConfigsAfterUpdatingSqlite();
 
         Timer(Duration(seconds: 2), () {

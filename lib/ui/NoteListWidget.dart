@@ -13,7 +13,6 @@ class NoteListWidget extends StatefulWidget {
 }
 
 class NoteListWidgetState extends State<NoteListWidget> {
-  // GlobalKey<NoteListWidgetForTodayState> noteListWidgetForTodayState;
   SelectedNoteModel _selectedNoteModel;
 
   @override
