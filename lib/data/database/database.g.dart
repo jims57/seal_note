@@ -965,6 +965,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
   final DateTime updated;
   final DateTime nextReviewTime;
   final int reviewProgressNo;
+  final bool isReviewFinished;
   final bool isDeleted;
   final int createdBy;
   NoteEntry(
@@ -976,6 +977,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       @required this.updated,
       this.nextReviewTime,
       this.reviewProgressNo,
+      @required this.isReviewFinished,
       @required this.isDeleted,
       @required this.createdBy});
   factory NoteEntry.fromData(Map<String, dynamic> data, GeneratedDatabase db,
@@ -1000,6 +1002,8 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           .mapFromDatabaseResponse(data['${effectivePrefix}nextReviewTime'])),
       reviewProgressNo: intType
           .mapFromDatabaseResponse(data['${effectivePrefix}reviewProgressNo']),
+      isReviewFinished: boolType
+          .mapFromDatabaseResponse(data['${effectivePrefix}isReviewFinished']),
       isDeleted:
           boolType.mapFromDatabaseResponse(data['${effectivePrefix}isDeleted']),
       createdBy:
@@ -1037,6 +1041,9 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
     if (!nullToAbsent || reviewProgressNo != null) {
       map['reviewProgressNo'] = Variable<int>(reviewProgressNo);
     }
+    if (!nullToAbsent || isReviewFinished != null) {
+      map['isReviewFinished'] = Variable<bool>(isReviewFinished);
+    }
     if (!nullToAbsent || isDeleted != null) {
       map['isDeleted'] = Variable<bool>(isDeleted);
     }
@@ -1069,6 +1076,9 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       reviewProgressNo: reviewProgressNo == null && nullToAbsent
           ? const Value.absent()
           : Value(reviewProgressNo),
+      isReviewFinished: isReviewFinished == null && nullToAbsent
+          ? const Value.absent()
+          : Value(isReviewFinished),
       isDeleted: isDeleted == null && nullToAbsent
           ? const Value.absent()
           : Value(isDeleted),
@@ -1090,6 +1100,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       updated: serializer.fromJson<DateTime>(json['updated']),
       nextReviewTime: serializer.fromJson<DateTime>(json['nextReviewTime']),
       reviewProgressNo: serializer.fromJson<int>(json['reviewProgressNo']),
+      isReviewFinished: serializer.fromJson<bool>(json['isReviewFinished']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<int>(json['createdBy']),
     );
@@ -1106,6 +1117,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       'updated': serializer.toJson<DateTime>(updated),
       'nextReviewTime': serializer.toJson<DateTime>(nextReviewTime),
       'reviewProgressNo': serializer.toJson<int>(reviewProgressNo),
+      'isReviewFinished': serializer.toJson<bool>(isReviewFinished),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<int>(createdBy),
     };
@@ -1120,6 +1132,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           DateTime updated,
           DateTime nextReviewTime,
           int reviewProgressNo,
+          bool isReviewFinished,
           bool isDeleted,
           int createdBy}) =>
       NoteEntry(
@@ -1131,6 +1144,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
         updated: updated ?? this.updated,
         nextReviewTime: nextReviewTime ?? this.nextReviewTime,
         reviewProgressNo: reviewProgressNo ?? this.reviewProgressNo,
+        isReviewFinished: isReviewFinished ?? this.isReviewFinished,
         isDeleted: isDeleted ?? this.isDeleted,
         createdBy: createdBy ?? this.createdBy,
       );
@@ -1145,6 +1159,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           ..write('updated: $updated, ')
           ..write('nextReviewTime: $nextReviewTime, ')
           ..write('reviewProgressNo: $reviewProgressNo, ')
+          ..write('isReviewFinished: $isReviewFinished, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy')
           ..write(')'))
@@ -1168,8 +1183,10 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
                               nextReviewTime.hashCode,
                               $mrjc(
                                   reviewProgressNo.hashCode,
-                                  $mrjc(isDeleted.hashCode,
-                                      createdBy.hashCode))))))))));
+                                  $mrjc(
+                                      isReviewFinished.hashCode,
+                                      $mrjc(isDeleted.hashCode,
+                                          createdBy.hashCode)))))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -1182,6 +1199,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           other.updated == this.updated &&
           other.nextReviewTime == this.nextReviewTime &&
           other.reviewProgressNo == this.reviewProgressNo &&
+          other.isReviewFinished == this.isReviewFinished &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy);
 }
@@ -1195,6 +1213,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
   final Value<DateTime> updated;
   final Value<DateTime> nextReviewTime;
   final Value<int> reviewProgressNo;
+  final Value<bool> isReviewFinished;
   final Value<bool> isDeleted;
   final Value<int> createdBy;
   const NotesCompanion({
@@ -1206,6 +1225,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     this.updated = const Value.absent(),
     this.nextReviewTime = const Value.absent(),
     this.reviewProgressNo = const Value.absent(),
+    this.isReviewFinished = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
   });
@@ -1218,6 +1238,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     @required DateTime updated,
     this.nextReviewTime = const Value.absent(),
     this.reviewProgressNo = const Value.absent(),
+    this.isReviewFinished = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
   })  : title = Value(title),
@@ -1232,6 +1253,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     Expression<String> updated,
     Expression<String> nextReviewTime,
     Expression<int> reviewProgressNo,
+    Expression<bool> isReviewFinished,
     Expression<bool> isDeleted,
     Expression<int> createdBy,
   }) {
@@ -1244,6 +1266,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
       if (updated != null) 'updated': updated,
       if (nextReviewTime != null) 'nextReviewTime': nextReviewTime,
       if (reviewProgressNo != null) 'reviewProgressNo': reviewProgressNo,
+      if (isReviewFinished != null) 'isReviewFinished': isReviewFinished,
       if (isDeleted != null) 'isDeleted': isDeleted,
       if (createdBy != null) 'createdBy': createdBy,
     });
@@ -1258,6 +1281,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
       Value<DateTime> updated,
       Value<DateTime> nextReviewTime,
       Value<int> reviewProgressNo,
+      Value<bool> isReviewFinished,
       Value<bool> isDeleted,
       Value<int> createdBy}) {
     return NotesCompanion(
@@ -1269,6 +1293,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
       updated: updated ?? this.updated,
       nextReviewTime: nextReviewTime ?? this.nextReviewTime,
       reviewProgressNo: reviewProgressNo ?? this.reviewProgressNo,
+      isReviewFinished: isReviewFinished ?? this.isReviewFinished,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
     );
@@ -1305,6 +1330,9 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     if (reviewProgressNo.present) {
       map['reviewProgressNo'] = Variable<int>(reviewProgressNo.value);
     }
+    if (isReviewFinished.present) {
+      map['isReviewFinished'] = Variable<bool>(isReviewFinished.value);
+    }
     if (isDeleted.present) {
       map['isDeleted'] = Variable<bool>(isDeleted.value);
     }
@@ -1325,6 +1353,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
           ..write('updated: $updated, ')
           ..write('nextReviewTime: $nextReviewTime, ')
           ..write('reviewProgressNo: $reviewProgressNo, ')
+          ..write('isReviewFinished: $isReviewFinished, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy')
           ..write(')'))
@@ -1427,6 +1456,17 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
     );
   }
 
+  final VerificationMeta _isReviewFinishedMeta =
+      const VerificationMeta('isReviewFinished');
+  GeneratedBoolColumn _isReviewFinished;
+  @override
+  GeneratedBoolColumn get isReviewFinished =>
+      _isReviewFinished ??= _constructIsReviewFinished();
+  GeneratedBoolColumn _constructIsReviewFinished() {
+    return GeneratedBoolColumn('isReviewFinished', $tableName, false,
+        defaultValue: const Constant(false));
+  }
+
   final VerificationMeta _isDeletedMeta = const VerificationMeta('isDeleted');
   GeneratedBoolColumn _isDeleted;
   @override
@@ -1455,6 +1495,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
         updated,
         nextReviewTime,
         reviewProgressNo,
+        isReviewFinished,
         isDeleted,
         createdBy
       ];
@@ -1494,6 +1535,12 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
           _reviewProgressNoMeta,
           reviewProgressNo.isAcceptableOrUnknown(
               data['reviewProgressNo'], _reviewProgressNoMeta));
+    }
+    if (data.containsKey('isReviewFinished')) {
+      context.handle(
+          _isReviewFinishedMeta,
+          isReviewFinished.isAcceptableOrUnknown(
+              data['isReviewFinished'], _isReviewFinishedMeta));
     }
     if (data.containsKey('isDeleted')) {
       context.handle(_isDeletedMeta,

@@ -83,6 +83,7 @@ class GlobalState with ChangeNotifier {
   static final String defaultFolderNameForAllNotes = '全部笔记';
   static final String defaultFolderNameForDeletion = '删除笔记';
   static final String defaultUserFolderNameForMyNotes = '我的笔记';
+  static final String titleForReviewFinished = '复习完成';
 
   // Pages' width
   // Note: The following default values for the width are as far as large screen(screenType = 3) is concerned

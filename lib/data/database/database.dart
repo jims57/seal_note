@@ -96,6 +96,9 @@ class Notes extends Table {
   IntColumn get reviewProgressNo =>
       integer().nullable().named('reviewProgressNo')();
 
+  BoolColumn get isReviewFinished =>
+      boolean().withDefault(const Constant(false)).named('isReviewFinished')();
+
   BoolColumn get isDeleted =>
       boolean().withDefault(const Constant(false)).named('isDeleted')();
 
@@ -268,7 +271,7 @@ class Database extends _$Database {
         return (select(notes)
               ..where((n) => n.isDeleted.equals(false))
               ..where((n) => n.nextReviewTime.like('$todayDateString%'))
-              // ..where((n) => n.nextReviewTime.isSmallerOrEqual(now))
+              ..where((n) => n.isReviewFinished.equals(false))
               ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
               ..orderBy([
                 (n) => OrderingTerm(

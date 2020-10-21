@@ -4,7 +4,14 @@ import 'package:seal_note/data/appstate/GlobalState.dart';
 
 class TimeHandler {
   static String getDateTimeFormatForAllKindOfNote(
-      {DateTime updated, DateTime nextReviewTime}) {
+      {DateTime updated,
+      DateTime nextReviewTime,
+      bool isReviewFinished = false}) {
+    // Check if this note finished its review
+    if (isReviewFinished) {
+      return GlobalState.titleForReviewFinished;
+    }
+
     if (GlobalState.isReviewFolderSelected ||
         GlobalState.isDefaultFolderSelected) {
       return _getAutoTimeFormatByDateTimeAvailability(nextReviewTime, updated);

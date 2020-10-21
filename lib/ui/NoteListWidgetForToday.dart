@@ -148,7 +148,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                         // get note review time // get review time
                                         // show note review time // review time
                                         // show review time
-                                        '${TimeHandler.getDateTimeFormatForAllKindOfNote(updated: theNote.updated, nextReviewTime: theNote.nextReviewTime)}',
+                                        '${TimeHandler.getDateTimeFormatForAllKindOfNote(updated: theNote.updated, nextReviewTime: theNote.nextReviewTime, isReviewFinished: theNote.isReviewFinished)}',
                                         style: TextStyle(
                                             color: (_isReviewNote(theNote
                                                         .nextReviewTime) &&
@@ -359,7 +359,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
     _isLoading = true;
     _hasMore = true;
-
 
     GlobalState.database
         .getNotesByPageSize(pageNo: _pageNo, pageSize: _pageSize)
