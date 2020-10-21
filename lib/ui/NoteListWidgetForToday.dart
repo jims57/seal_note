@@ -150,9 +150,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                         // show review time
                                         '${TimeHandler.getDateTimeFormatForAllKindOfNote(updated: theNote.updated, nextReviewTime: theNote.nextReviewTime)}',
                                         style: TextStyle(
-                                            color: (isReviewNote(theNote
+                                            color: (_isReviewNote(theNote
                                                         .nextReviewTime) &&
-                                                    isReviewNoteOverdue(theNote
+                                                    _isReviewNoteOverdue(theNote
                                                         .nextReviewTime) &&
                                                     GlobalState
                                                         .isSelectedReviewFolder)
@@ -434,7 +434,19 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   // Private methods
-  bool isReviewNote(DateTime nextReviewTime) {
+  bool _isTodayFolder() {
+    var isTodayFolder = false;
+
+    if (GlobalState.isDefaultFolderSelected &&
+        GlobalState.selectedFolderName ==
+            GlobalState.defaultFolderNameForToday) {
+      isTodayFolder = true;
+    }
+
+    return isTodayFolder;
+  }
+
+  bool _isReviewNote(DateTime nextReviewTime) {
     // Check if this note is a review note or note
     var isReviewNote = false;
 
@@ -445,7 +457,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     return isReviewNote;
   }
 
-  bool isReviewNoteOverdue(DateTime nextReviewTime) {
+  bool _isReviewNoteOverdue(DateTime nextReviewTime) {
     // Check if this note is overdue or note
     var isReviewNoteOverdue = false;
     var smallHoursOfToday = TimeHandler.getSmallHoursOfToday();

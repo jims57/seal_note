@@ -106,7 +106,7 @@ class GlobalState with ChangeNotifier {
   static BuildContext myWebViewPluginContext;
 
   // Selected note related
-  static bool isDefaultFolderSelected = false;
+  static bool isDefaultFolderSelected = true;
   static int selectedFolderId = 3;
   static String selectedFolderName = defaultUserFolderNameForMyNotes;
   static bool isSelectedReviewFolder =

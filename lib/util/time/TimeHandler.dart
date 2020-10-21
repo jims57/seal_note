@@ -7,98 +7,34 @@ class TimeHandler {
       {DateTime updated, DateTime nextReviewTime}) {
     var result = '';
 
-    if (GlobalState.isSelectedReviewFolder && nextReviewTime != null) {
-      // When it has the next review time, meaning that this is a note subject to be reviewed
-      result = getReviewTimeFormatForReviewNote(nextReviewTime);
-    } else {
-      // When it hasn't the next review time, meaning this is a normal note
-      result = getDateTimeForNormalNote(updated);
-    }
+    result = _getAutoTimeFormatByDateTimeAvailability(nextReviewTime, updated);
 
-    return result;
-  }
+    // return result;
 
-  static String getReviewTimeFormatForReviewNote(DateTime nextReviewTime) {
-    var result = '';
+    // if (GlobalState.isSelectedReviewFolder) {
+    //   // When it has the next review time, meaning that this is a note subject to be reviewed
+    //   result = _getReviewTimeFormatForReviewNote(nextReviewTime);
+    // } else {
+    //   // When it hasn't the next review time, meaning this is a normal note
+    //   if (GlobalState.isDefaultFolderSelected &&
+    //       GlobalState.selectedFolderName ==
+    //           GlobalState.defaultFolderNameForToday) {
+    //     // If this is Today folder, we need to show the review time, since only those notes to be reviewed will be shown in Today folder
+    //     result = _getReviewTimeFormatForReviewNote(nextReviewTime);
+    //   } else if (GlobalState.isDefaultFolderSelected &&
+    //       (GlobalState.selectedFolderName ==
+    //               GlobalState.defaultFolderNameForAllNotes ||
+    //           GlobalState.selectedFolderName ==
+    //               GlobalState.defaultFolderNameForDeletion)) {
+    //     // If this is All Notes or Deletion folder
+    //     result =
+    //         _getAutoTimeFormatByDateTimeAvailability(nextReviewTime, updated);
+    //   } else {
+    //     result = _getDateTimeForNormalNote(updated);
+    //   }
 
-    var now = DateTime.now().toLocal();
-    var yesterday = TimeHandler.getYesterdayDateTime();
-
-    // Unit for the value. { 1 = minute, 2 = hour, 3 = day, 4 = week, 5 = month, 6 = year }
-    int minutesDifference = nextReviewTime.difference(now).inMinutes.abs();
-    int hoursDifference = nextReviewTime.difference(now).inHours.abs();
-    int daysDifference = nextReviewTime.difference(now).inDays.abs();
-
-    if (daysDifference > 0) {
-      // Check if it is for year
-      int years = (daysDifference / 365).floor();
-      int months = (daysDifference / 30).floor();
-      int days = (daysDifference / 1).floor();
-
-      if (years > 0) {
-        // For year
-        result =
-            '${getTimePrefix(now, nextReviewTime)} $years年${getTimeSuffix(now, nextReviewTime)} 复习';
-      } else if (months > 0) {
-        // For month
-        result =
-            '${getTimePrefix(now, nextReviewTime)} $months个月${getTimeSuffix(now, nextReviewTime)} 复习';
-      } else {
-        // For day
-
-        if (isYesterdayDateTime(nextReviewTime)) {
-          // For yesterday
-          result = '应 昨天 复习';
-        } else {
-          // For other days less than a month
-          result =
-              '${getTimePrefix(now, nextReviewTime)} $days天${getTimeSuffix(now, nextReviewTime)} 复习';
-        }
-      }
-    } else if (hoursDifference > 0) {
-      if (isYesterdayDateTime(nextReviewTime)) {
-        result = '应 昨天 复习';
-      } else {
-        result =
-            '${getTimePrefix(now, nextReviewTime)} $hoursDifference小时${getTimeSuffix(now, nextReviewTime)} 复习';
-      }
-    } else {
-      if (minutesDifference <= 5) {
-        result = '现在 复习';
-      } else {
-        result =
-            '${getTimePrefix(now, nextReviewTime)} $minutesDifference分钟${getTimeSuffix(now, nextReviewTime)} 复习';
-      }
-    }
-
-    return result;
-  }
-
-  static String getDateTimeForNormalNote(DateTime updated) {
-    String result = '';
-
-    var now = DateTime.now().toLocal();
-    var yesterday = now.subtract(Duration(days: 1));
-    var smallHoursOfToday = DateTime(now.year, now.month, now.day);
-    var smallHoursOfSevenDaysAgo =
-        smallHoursOfToday.subtract(Duration(days: 7));
-
-    if (updated.year == now.year &&
-        updated.month == now.month &&
-        updated.day == now.day) {
-      // For today
-      result = '${updated.hour}:${updated.minute}';
-    } else if (updated.year == yesterday.year &&
-        updated.month == yesterday.month &&
-        updated.day == yesterday.day) {
-      // For yesterday
-      result = '昨天${updated.hour}:${updated.minute}';
-    } else if (updated.compareTo(smallHoursOfSevenDaysAgo) >= 0) {
-      // For these 6 days between seven days and the day before yesterday
-      result = getWeekdayName(updated.weekday);
-    } else {
-      result = '${updated.year}-${updated.month}-${updated.day}';
-    }
+    // result = _getDateTimeForNormalNote(updated);
+    // }
 
     return result;
   }
@@ -127,7 +63,111 @@ class TimeHandler {
     return isYesterdayDateTime;
   }
 
-  static String getTimePrefix(DateTime now, DateTime nextReviewTime) {
+  static DateTime getNowForLocal() {
+    return DateTime.now().toLocal();
+  }
+
+// Private methods
+  static String _getAutoTimeFormatByDateTimeAvailability(
+      DateTime nextReviewTime, DateTime updated) {
+    var result = '';
+
+    if (nextReviewTime != null) {
+// When the next review time isn't null, showing the review time format
+      result = _getReviewTimeFormatForReviewNote(nextReviewTime);
+    } else {
+      result = _getDateTimeForNormalNote(updated);
+    }
+
+    return result;
+  }
+
+  static String _getReviewTimeFormatForReviewNote(DateTime nextReviewTime) {
+    var result = '';
+
+    var now = DateTime.now().toLocal();
+    var yesterday = TimeHandler.getYesterdayDateTime();
+
+// Unit for the value. { 1 = minute, 2 = hour, 3 = day, 4 = week, 5 = month, 6 = year }
+    int minutesDifference = nextReviewTime.difference(now).inMinutes.abs();
+    int hoursDifference = nextReviewTime.difference(now).inHours.abs();
+    int daysDifference = nextReviewTime.difference(now).inDays.abs();
+
+    if (daysDifference > 0) {
+// Check if it is for year
+      int years = (daysDifference / 365).floor();
+      int months = (daysDifference / 30).floor();
+      int days = (daysDifference / 1).floor();
+
+      if (years > 0) {
+// For year
+        result =
+            '${_getTimePrefix(now, nextReviewTime)} $years年${_getTimeSuffix(now, nextReviewTime)} 复习';
+      } else if (months > 0) {
+// For month
+        result =
+            '${_getTimePrefix(now, nextReviewTime)} $months个月${_getTimeSuffix(now, nextReviewTime)} 复习';
+      } else {
+// For day
+
+        if (isYesterdayDateTime(nextReviewTime)) {
+// For yesterday
+          result = '应 昨天 复习';
+        } else {
+// For other days less than a month
+          result =
+              '${_getTimePrefix(now, nextReviewTime)} $days天${_getTimeSuffix(now, nextReviewTime)} 复习';
+        }
+      }
+    } else if (hoursDifference > 0) {
+      if (isYesterdayDateTime(nextReviewTime)) {
+        result = '应 昨天 复习';
+      } else {
+        result =
+            '${_getTimePrefix(now, nextReviewTime)} $hoursDifference小时${_getTimeSuffix(now, nextReviewTime)} 复习';
+      }
+    } else {
+      if (minutesDifference <= 5) {
+        result = '现在 复习';
+      } else {
+        result =
+            '${_getTimePrefix(now, nextReviewTime)} $minutesDifference分钟${_getTimeSuffix(now, nextReviewTime)} 复习';
+      }
+    }
+
+    return result;
+  }
+
+  static String _getDateTimeForNormalNote(DateTime updated) {
+    String result = '';
+
+    var now = DateTime.now().toLocal();
+    var yesterday = now.subtract(Duration(days: 1));
+    var smallHoursOfToday = DateTime(now.year, now.month, now.day);
+    var smallHoursOfSevenDaysAgo =
+        smallHoursOfToday.subtract(Duration(days: 7));
+
+    if (updated.year == now.year &&
+        updated.month == now.month &&
+        updated.day == now.day) {
+// For today
+      result = '${updated.hour}:${updated.minute}';
+    } else if (updated.year == yesterday.year &&
+        updated.month == yesterday.month &&
+        updated.day == yesterday.day) {
+// For yesterday
+      result = '昨天${updated.hour}:${updated.minute}';
+    } else if (updated.compareTo(smallHoursOfSevenDaysAgo) >= 0) {
+// For these 6 days between seven days and the day before yesterday
+      result = _getWeekdayName(updated.weekday);
+    } else {
+      result = '${updated.year}-${updated.month}-${updated.day}';
+    }
+
+    return result;
+  }
+
+  static String _getTimePrefix(DateTime now, DateTime nextReviewTime) {
     var timePrefix = '';
 
     if (nextReviewTime.isBefore(now)) timePrefix = '应';
@@ -135,7 +175,7 @@ class TimeHandler {
     return timePrefix;
   }
 
-  static String getTimeSuffix(DateTime now, DateTime nextReviewTime) {
+  static String _getTimeSuffix(DateTime now, DateTime nextReviewTime) {
     var timeSuffix = '后';
 
     if (nextReviewTime.isBefore(now)) timeSuffix = '前';
@@ -143,7 +183,7 @@ class TimeHandler {
     return timeSuffix;
   }
 
-  static String getWeekdayName(int weekday) {
+  static String _getWeekdayName(int weekday) {
     var weekdayName = '';
     switch (weekday) {
       case 1:

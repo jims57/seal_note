@@ -4,6 +4,7 @@ import 'package:moor/moor.dart';
 import 'dart:async';
 
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/util/time/TimeHandler.dart';
 
 part 'database.g.dart';
 
@@ -43,10 +44,9 @@ class Users extends Table {
 
   TextColumn get introduction => text().nullable()();
 
-  TextColumn get created =>
-      text()
+  TextColumn get created => text()
       // .withDefault(Constant(DateTime.now().toString()))
-          .map(const IsoDateTimeConverter())();
+      .map(const IsoDateTimeConverter())();
 }
 
 @DataClassName('FolderEntry')
@@ -65,10 +65,9 @@ class Folders extends Table {
 
   IntColumn get reviewPlanId => integer().nullable().named('reviewPlanId')();
 
-  TextColumn get created =>
-      text()
+  TextColumn get created => text()
       // .withDefault(Constant(DateTime.now().toString()))
-          .map(const IsoDateTimeConverter())();
+      .map(const IsoDateTimeConverter())();
 
   IntColumn get createdBy =>
       integer().withDefault(const Constant(1)).named('createdBy')();
@@ -87,16 +86,12 @@ class Notes extends Table {
 
   TextColumn get created => text().map(const IsoDateTimeConverter())();
 
-  TextColumn get updated =>
-      text()
-      // .withDefault(Constant(DateTime.now().toString()))
-          .map(const IsoDateTimeConverter())();
+  TextColumn get updated => text().map(const IsoDateTimeConverter())();
 
-  TextColumn get nextReviewTime =>
-      text()
-          .nullable()
-          .named('nextReviewTime')
-          .map(const IsoDateTimeConverter())();
+  TextColumn get nextReviewTime => text()
+      .nullable()
+      .named('nextReviewTime')
+      .map(const IsoDateTimeConverter())();
 
   IntColumn get reviewProgressNo =>
       integer().nullable().named('reviewProgressNo')();
@@ -158,9 +153,8 @@ class Database extends _$Database {
 
     bool isDbInitialized = true;
     FolderEntry folderEntry = await (select(folders)
-      ..where((f) =>
-          f.name.equals(GlobalState.defaultFolderNameForToday))..where((f) =>
-          f.isDefaultFolder.equals(true)))
+          ..where((f) => f.name.equals(GlobalState.defaultFolderNameForToday))
+          ..where((f) => f.isDefaultFolder.equals(true)))
         .getSingle();
 
     if (folderEntry == null) isDbInitialized = false;
@@ -205,15 +199,15 @@ class Database extends _$Database {
   // Folders
   Future<List<FolderEntry>> getAllFolders() {
     return (select(folders)
-      ..where((f) => f.createdBy.equals(GlobalState.currentUserId))
-      ..orderBy([(f) => OrderingTerm(expression: f.order)]))
+          ..where((f) => f.createdBy.equals(GlobalState.currentUserId))
+          ..orderBy([(f) => OrderingTerm(expression: f.order)]))
         .get();
   }
 
   Future<bool> isReviewFolder(int folderId) async {
     var isReviewFolder = false;
     FolderEntry folderEntry = await (select(folders)
-      ..where((f) => f.id.equals(folderId)))
+          ..where((f) => f.id.equals(folderId)))
         .getSingle();
 
     if (folderEntry != null && folderEntry.reviewPlanId != null) {
@@ -252,27 +246,27 @@ class Database extends _$Database {
     if (GlobalState.isDefaultFolderSelected) {
       // When it is for default
       // get today note list item // get today data from sqlite
-      // get today data
+      // get today data // show today note list
+      // show today note data
       if (GlobalState.selectedFolderName ==
           GlobalState.defaultFolderNameForToday) {
         // For Today folder
-        var now = DateTime.now();
-        // var now = DateTime(2020,2,1);
+        var now = TimeHandler.getNowForLocal();
+
         String todayDateString =
-            '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day
-            .toString().padLeft(2, '0')}';
+            '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
 
         return (select(notes)
-          ..where((n) => n.isDeleted.equals(false))..where((n) =>
-              n.nextReviewTime.like('$todayDateString%'))..where((n) =>
-              n.createdBy.equals(GlobalState.currentUserId))
-          ..orderBy([
-                (n) =>
-                OrderingTerm(
+              ..where((n) => n.isDeleted.equals(false))
+              ..where((n) => n.nextReviewTime.like('$todayDateString%'))
+              // ..where((n) => n.nextReviewTime.isSmallerOrEqual(now))
+              ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
+              ..orderBy([
+                (n) => OrderingTerm(
                     expression: n.updated, mode: OrderingMode.desc),
                 (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
-          ])
-          ..limit(pageSize, offset: pageSize * (pageNo - 1)))
+              ])
+              ..limit(pageSize, offset: pageSize * (pageNo - 1)))
             .get();
       } else if (GlobalState.selectedFolderName ==
           GlobalState.defaultFolderNameForAllNotes) {
@@ -280,53 +274,56 @@ class Database extends _$Database {
 
         // get all notes note list
         return (select(notes)
-          ..where((n) => n.isDeleted.equals(false))..where((n) =>
-              n.createdBy.equals(GlobalState.currentUserId))
-          ..orderBy([
-                (n) =>
-                OrderingTerm(
+              ..where((n) => n.isDeleted.equals(false))
+              ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
+              ..orderBy([
+                (n) => OrderingTerm(
                     expression: n.updated, mode: OrderingMode.desc),
                 (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
-          ])
-          ..limit(pageSize, offset: pageSize * (pageNo - 1)))
+              ])
+              ..limit(pageSize, offset: pageSize * (pageNo - 1)))
             .get();
       } else {
         // For Deleted Notes folder
         return (select(notes)
-          ..where((n) => n.isDeleted.equals(true))..where((n) =>
-              n.createdBy.equals(GlobalState.currentUserId))
-          ..orderBy([
-                (n) =>
-                OrderingTerm(
+              ..where((n) => n.isDeleted.equals(true))
+              ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
+              ..orderBy([
+                (n) => OrderingTerm(
                     expression: n.updated, mode: OrderingMode.desc),
                 (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
-          ])
-          ..limit(pageSize, offset: pageSize * (pageNo - 1)))
+              ])
+              ..limit(pageSize, offset: pageSize * (pageNo - 1)))
             .get();
       }
     } else {
       // get user folder note list // get user folder data
 
       return (select(notes)
-        ..where((n) => n.folderId.equals(GlobalState.selectedFolderId))..where((
-            n) => n.isDeleted.equals(false))..where((n) =>
-            n.createdBy.equals(GlobalState.currentUserId))
-        ..orderBy([
+            ..where((n) => n.folderId.equals(GlobalState.selectedFolderId))
+            ..where((n) => n.isDeleted.equals(false))
+            ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
+            ..where((n) {
+              if (GlobalState.isSelectedReviewFolder) {
+                return isNotNull(n.nextReviewTime);
+              } else {
+                return isNull(n.nextReviewTime);
+              }
+            })
+            ..orderBy([
               (n) {
-            if (GlobalState.isSelectedReviewFolder) {
-              return OrderingTerm(
-                  expression: n.nextReviewTime, mode: OrderingMode.asc);
-            } else {
-              return OrderingTerm(
-                  expression: n.updated, mode: OrderingMode.desc);
-            }
-          }
-          ,
+                if (GlobalState.isSelectedReviewFolder) {
+                  return OrderingTerm(
+                      expression: n.nextReviewTime, mode: OrderingMode.asc);
+                } else {
+                  return OrderingTerm(
+                      expression: n.updated, mode: OrderingMode.desc);
+                }
+              },
               (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
-        ])
-        ..limit(pageSize, offset: pageSize * (pageNo - 1)))
+            ])
+            ..limit(pageSize, offset: pageSize * (pageNo - 1)))
           .get();
-
 
       // return (select(notes)
       //       ..where((n) => n.folderId.equals(GlobalState.selectedFolderId))
@@ -350,9 +347,7 @@ class Database extends _$Database {
     // Whether the db has notes data
 
     bool hasNote = true;
-    NoteEntry noteEntry =
-    await (select(notes)
-      ..where((n) => n.id.equals(1))).getSingle();
+    NoteEntry noteEntry = await (select(notes)).getSingle();
 
     if (noteEntry == null) hasNote = false;
 
