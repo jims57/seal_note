@@ -5,7 +5,12 @@ import 'package:seal_note/data/appstate/GlobalState.dart';
 class TimeHandler {
   static String getDateTimeFormatForAllKindOfNote(
       {DateTime updated, DateTime nextReviewTime}) {
-    return _getAutoTimeFormatByDateTimeAvailability(nextReviewTime, updated);
+    if (GlobalState.isReviewFolderSelected ||
+        GlobalState.isDefaultFolderSelected) {
+      return _getAutoTimeFormatByDateTimeAvailability(nextReviewTime, updated);
+    } else {
+      return _getDateTimeForNormalNote(updated);
+    }
   }
 
   static DateTime getSmallHoursOfToday() {

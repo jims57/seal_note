@@ -106,11 +106,11 @@ class GlobalState with ChangeNotifier {
   static BuildContext myWebViewPluginContext;
 
   // Selected note related
-  static bool isDefaultFolderSelected = true;
+  static bool isDefaultFolderSelected = true; // For default folder
+  static bool isReviewFolderSelected = false; // For review folder
   static int selectedFolderId = 3;
   static String selectedFolderName = defaultUserFolderNameForMyNotes;
-  static bool isSelectedReviewFolder =
-      false; // Indicates if this selected folder is a review folder or not
+
   static SelectedNoteModel selectedNoteModel;
 
   // State objects

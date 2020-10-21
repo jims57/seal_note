@@ -243,6 +243,7 @@ class Database extends _$Database {
   Future<List<NoteEntry>> getNotesByPageSize(
       {@required int pageNo, @required int pageSize}) {
     // Check if it is for default folders, because we need to get specific data for default folders
+
     if (GlobalState.isDefaultFolderSelected) {
       // When it is for default
       // get today note list item // get today data from sqlite
@@ -263,7 +264,7 @@ class Database extends _$Database {
               ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
               ..orderBy([
                 (n) => OrderingTerm(
-                    expression: n.updated, mode: OrderingMode.desc),
+                    expression: n.nextReviewTime, mode: OrderingMode.asc),
                 (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
               ])
               ..limit(pageSize, offset: pageSize * (pageNo - 1)))
@@ -304,7 +305,7 @@ class Database extends _$Database {
             ..where((n) => n.isDeleted.equals(false))
             ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
             ..where((n) {
-              if (GlobalState.isSelectedReviewFolder) {
+              if (GlobalState.isReviewFolderSelected) {
                 return isNotNull(n.nextReviewTime);
               } else {
                 return isNull(n.nextReviewTime);
@@ -312,7 +313,7 @@ class Database extends _$Database {
             })
             ..orderBy([
               (n) {
-                if (GlobalState.isSelectedReviewFolder) {
+                if (GlobalState.isReviewFolderSelected) {
                   return OrderingTerm(
                       expression: n.nextReviewTime, mode: OrderingMode.asc);
                 } else {
@@ -324,18 +325,6 @@ class Database extends _$Database {
             ])
             ..limit(pageSize, offset: pageSize * (pageNo - 1)))
           .get();
-
-      // return (select(notes)
-      //       ..where((n) => n.folderId.equals(GlobalState.selectedFolderId))
-      //       ..where((n) => n.isDeleted.equals(false))
-      //       ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
-      //       ..orderBy([
-      //         (n) =>
-      //             OrderingTerm(expression: n.updated, mode: OrderingMode.desc),
-      //         (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
-      //       ])
-      //       ..limit(pageSize, offset: pageSize * (pageNo - 1)))
-      //     .get();
     }
   }
 

@@ -158,7 +158,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
         GlobalState.isDefaultFolderSelected = isDefaultFolder;
         GlobalState.selectedFolderId = folderId;
         GlobalState.selectedFolderName = folderName;
-        GlobalState.isSelectedReviewFolder = isReviewFolder;
+        GlobalState.isReviewFolderSelected = isReviewFolder;
         GlobalState.noteListWidgetForTodayState.currentState.triggerSetState();
 
         // Switch the page

@@ -155,7 +155,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                                     _isReviewNoteOverdue(theNote
                                                         .nextReviewTime) &&
                                                     GlobalState
-                                                        .isSelectedReviewFolder)
+                                                        .isReviewFolderSelected)
                                                 ? Colors.red
                                                 : Colors.grey[400],
                                             fontSize: 10.0),
@@ -367,13 +367,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
         .then((noteList) {
       // load note list // note list first page data
       // first page note list data
-      // DateTime nextReviewTime = noteList[0].nextReviewTime;
-      // var result = TimeHandler.showShouldReviewTimeFormat(nextReviewTime);
-
-      // DateTime created = noteList[0].created;
-      // var minutes = nextReviewTime.difference(created).inMinutes;
-      // var isAtSameMomentAs = nextReviewTime.isAtSameMomentAs(created);
-      // var isAfter = nextReviewTime.isAfter(created);
 
       _noteList.addAll(noteList);
 
@@ -434,17 +427,17 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   // Private methods
-  bool _isTodayFolder() {
-    var isTodayFolder = false;
-
-    if (GlobalState.isDefaultFolderSelected &&
-        GlobalState.selectedFolderName ==
-            GlobalState.defaultFolderNameForToday) {
-      isTodayFolder = true;
-    }
-
-    return isTodayFolder;
-  }
+  // bool _isTodayFolder() {
+  //   var isTodayFolder = false;
+  //
+  //   if (GlobalState.isDefaultFolderSelected &&
+  //       GlobalState.selectedFolderName ==
+  //           GlobalState.defaultFolderNameForToday) {
+  //     isTodayFolder = true;
+  //   }
+  //
+  //   return isTodayFolder;
+  // }
 
   bool _isReviewNote(DateTime nextReviewTime) {
     // Check if this note is a review note or note
