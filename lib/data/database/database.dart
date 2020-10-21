@@ -325,6 +325,7 @@ class Database extends _$Database {
               }
             })
             ..orderBy([
+              (n) => OrderingTerm(expression: n.isReviewFinished, mode: OrderingMode.asc),
               (n) {
                 if (GlobalState.isReviewFolderSelected) {
                   return OrderingTerm(
