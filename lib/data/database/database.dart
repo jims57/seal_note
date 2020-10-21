@@ -147,6 +147,14 @@ class Database extends _$Database {
   @override
   int get schemaVersion => 1;
 
+  // Testing
+  // Future<List<FolderEntry>> getAllFoldersWithFields() {
+  //   final folderName = folders.name;
+  //   final query = selectOnly(folders)..addColumns([folderName]);
+  //   var s = query.map((row) => FolderEntry(name:row.read(folderName))).get();
+  //
+  // }
+
   // Initialization related
   Future<bool> isDbInitialized() async {
     // Whether the db has been initialized
@@ -298,7 +306,9 @@ class Database extends _$Database {
             .get();
       }
     } else {
+      // Get user folder notes
       // get user folder note list // get user folder data
+      // get user folder note data
 
       return (select(notes)
             ..where((n) => n.folderId.equals(GlobalState.selectedFolderId))

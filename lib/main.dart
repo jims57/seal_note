@@ -174,12 +174,18 @@ class _MyAppState extends State<MyApp> {
       } else {
         // When db is initialized
 
-        // update review folder status
-        // Update isSelectedReviewFolder variable at GlobalState
-        // GlobalState.database.isReviewFolder(GlobalState.selectedFolderId).then(
-        //     // Make sure the default selected folder is up-to-date for isSelectedReviewFolder variable
-        //     (isReviewFolder) =>
-        //         GlobalState.isSelectedReviewFolder = isReviewFolder);
+        // Check if the selected folder is a review folder or not asynchronously
+        GlobalState.database
+            .isReviewFolder(GlobalState.selectedFolderId)
+            .then((isReviewFolderSelected) {
+          GlobalState.isReviewFolderSelected = isReviewFolderSelected;
+
+          // Won't trigger the note list widget to refresh until the default selected folder is a review folder
+          if (GlobalState.isReviewFolderSelected) {
+            GlobalState.noteListWidgetForTodayState.currentState
+                .triggerSetState();
+          }
+        });
       }
     });
 

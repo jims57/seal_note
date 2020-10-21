@@ -83,7 +83,9 @@ class _NoteListPageState extends State<NoteListPage> {
           // note list caption // note list page title
           // note list title
           '${GlobalState.selectedFolderName}',
-          style: TextStyle(color: GlobalState.themeBlackColor87ForFontForeColor,fontSize: 16.0),
+          style: TextStyle(
+              color: GlobalState.themeBlackColor87ForFontForeColor,
+              fontSize: 16.0),
           // style: TextStyle(color: Colors.red,),
         ),
         showSyncStatus: true,

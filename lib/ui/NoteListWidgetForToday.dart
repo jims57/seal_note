@@ -352,7 +352,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   void initLoadingConfigs() {
-    _noteList.clear();
+    // _noteList.clear();
 
     _pageNo = 1;
     _pageSize = 10;
@@ -360,13 +360,23 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     _isLoading = true;
     _hasMore = true;
 
+
     GlobalState.database
         .getNotesByPageSize(pageNo: _pageNo, pageSize: _pageSize)
         .then((noteList) {
       // load note list // note list first page data
       // first page note list data
 
+      // Need a lock here
+      // if(mutex) {
+      //   return;
+      // } else {
+      //   mutex = true;
+      // }
+      _noteList.clear();
       _noteList.addAll(noteList);
+
+      // mutex = false;
 
       if (!_isLoading) _loadMore();
 
