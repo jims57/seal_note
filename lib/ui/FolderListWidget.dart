@@ -112,6 +112,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
       @required int folderId,
       @required String folderName,
       @required int numberToShow,
+      bool isReviewFolder = false,
       bool canSwipe = true,
       bool showDivider = true,
       Color badgeBackgroundColor = GlobalState.themeBlueColor,
@@ -136,6 +137,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
         iconColor: iconColor,
         folderName: folderName,
         numberToShow: numberToShow,
+        isReviewFolder: isReviewFolder,
         isDefaultFolder: isDefaultFolder,
         badgeBackgroundColor: badgeBackgroundColor,
         showBadgeBackgroundColor: showBadgeBackgroundColor,
@@ -156,8 +158,8 @@ class FolderListWidgetState extends State<FolderListWidget> {
         GlobalState.isDefaultFolderSelected = isDefaultFolder;
         GlobalState.selectedFolderId = folderId;
         GlobalState.selectedFolderName = folderName;
-        GlobalState.noteListWidgetForTodayState.currentState
-            .triggerSetState();
+        GlobalState.isSelectedReviewFolder = isReviewFolder;
+        GlobalState.noteListWidgetForTodayState.currentState.triggerSetState();
 
         // Switch the page
         GlobalState.isHandlingFolderPage = true;
@@ -176,10 +178,12 @@ class FolderListWidgetState extends State<FolderListWidget> {
       GlobalState.allFolderTotal = GlobalState.userFolderTotal;
 
       for (var index = 0; index < folders.length; index++) {
-        var isDefaultFolder = folders[index].isDefaultFolder;
-        var folderId = folders[index].id;
-        var folderName = '${folders[index].name}';
-        var numberToShow = folders[index].numberToShow;
+        var theFolder = folders[index];
+        var isDefaultFolder = theFolder.isDefaultFolder;
+        var folderId = theFolder.id;
+        var folderName = '${theFolder.name}';
+        var numberToShow = theFolder.numberToShow;
+        var isReviewFolder = (theFolder.reviewPlanId != null) ? true : false;
         var isTodayFolder = (isDefaultFolder &&
             folderName == GlobalState.defaultFolderNameForToday);
         var isAllNotesFolder = (isDefaultFolder &&
@@ -208,6 +212,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
           folderId: folderId,
           folderName: folderName,
           numberToShow: numberToShow,
+          isReviewFolder: isReviewFolder,
           badgeBackgroundColor: (isTodayFolder)
               ? GlobalState.themeOrangeColorAtiOSTodo
               : GlobalState.themeOrangeColorAtiOSTodo,

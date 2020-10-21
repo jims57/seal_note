@@ -14,6 +14,7 @@ class UserFolderListListenerWidget extends StatefulWidget {
       this.iconColor = GlobalState.themeLightBlueColor07,
       @required this.folderName,
       @required this.numberToShow,
+      this.isReviewFolder = false,
       this.isDefaultFolder = false,
       this.badgeBackgroundColor = GlobalState.themeBlueColor,
       this.showBadgeBackgroundColor = false,
@@ -30,6 +31,7 @@ class UserFolderListListenerWidget extends StatefulWidget {
   final Color iconColor;
   final String folderName;
   final int numberToShow;
+  final bool isReviewFolder;
   final bool isDefaultFolder;
   final Color badgeBackgroundColor;
   final bool showBadgeBackgroundColor;

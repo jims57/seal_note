@@ -210,6 +210,19 @@ class Database extends _$Database {
         .get();
   }
 
+  Future<bool> isReviewFolder(int folderId) async {
+    var isReviewFolder = false;
+    FolderEntry folderEntry = await (select(folders)
+      ..where((f) => f.id.equals(folderId)))
+        .getSingle();
+
+    if (folderEntry != null && folderEntry.reviewPlanId != null) {
+      isReviewFolder = true;
+    }
+
+    return isReviewFolder;
+  }
+
   // Notes
   Future<void> upsertFoldersInBatch(List<FolderEntry> folderEntryList) async {
     return await batch((batch) {
@@ -245,8 +258,9 @@ class Database extends _$Database {
         // For Today folder
         var now = DateTime.now();
         // var now = DateTime(2020,2,1);
-        String todayDateString = '${now.year}-${now.month.toString().padLeft(
-            2, '0')}-${now.day.toString().padLeft(2, '0')}';
+        String todayDateString =
+            '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day
+            .toString().padLeft(2, '0')}';
 
         return (select(notes)
           ..where((n) => n.isDeleted.equals(false))..where((n) =>
@@ -292,18 +306,39 @@ class Database extends _$Database {
       }
     } else {
       // get user folder note list // get user folder data
+
       return (select(notes)
         ..where((n) => n.folderId.equals(GlobalState.selectedFolderId))..where((
             n) => n.isDeleted.equals(false))..where((n) =>
             n.createdBy.equals(GlobalState.currentUserId))
         ..orderBy([
-              (n) =>
-              // OrderingTerm(expression: n.updated, mode: OrderingMode.desc),
-              OrderingTerm(expression: n.updated, mode: OrderingMode.asc),
+              (n) {
+            if (GlobalState.isSelectedReviewFolder) {
+              return OrderingTerm(
+                  expression: n.nextReviewTime, mode: OrderingMode.asc);
+            } else {
+              return OrderingTerm(
+                  expression: n.updated, mode: OrderingMode.desc);
+            }
+          }
+          ,
               (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
         ])
         ..limit(pageSize, offset: pageSize * (pageNo - 1)))
           .get();
+
+
+      // return (select(notes)
+      //       ..where((n) => n.folderId.equals(GlobalState.selectedFolderId))
+      //       ..where((n) => n.isDeleted.equals(false))
+      //       ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
+      //       ..orderBy([
+      //         (n) =>
+      //             OrderingTerm(expression: n.updated, mode: OrderingMode.desc),
+      //         (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
+      //       ])
+      //       ..limit(pageSize, offset: pageSize * (pageNo - 1)))
+      //     .get();
     }
   }
 

@@ -109,6 +109,8 @@ class GlobalState with ChangeNotifier {
   static bool isDefaultFolderSelected = false;
   static int selectedFolderId = 3;
   static String selectedFolderName = defaultUserFolderNameForMyNotes;
+  static bool isSelectedReviewFolder =
+      false; // Indicates if this selected folder is a review folder or not
   static SelectedNoteModel selectedNoteModel;
 
   // State objects

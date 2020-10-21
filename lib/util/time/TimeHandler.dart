@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:seal_note/data/appstate/GlobalState.dart';
 
 class TimeHandler {
   static String getDateTimeFormatForAllKindOfNote(
       {DateTime updated, DateTime nextReviewTime}) {
     var result = '';
 
-    if (nextReviewTime != null) {
+    if (GlobalState.isSelectedReviewFolder && nextReviewTime != null) {
       // When it has the next review time, meaning that this is a note subject to be reviewed
       result = getReviewTimeFormatForReviewNote(nextReviewTime);
     } else {
@@ -20,7 +21,8 @@ class TimeHandler {
   static String getReviewTimeFormatForReviewNote(DateTime nextReviewTime) {
     var result = '';
 
-    DateTime now = DateTime.now().toLocal();
+    var now = DateTime.now().toLocal();
+    var yesterday = TimeHandler.getYesterdayDateTime();
 
     // Unit for the value. { 1 = minute, 2 = hour, 3 = day, 4 = week, 5 = month, 6 = year }
     int minutesDifference = nextReviewTime.difference(now).inMinutes.abs();
@@ -43,15 +45,26 @@ class TimeHandler {
             '${getTimePrefix(now, nextReviewTime)} $months个月${getTimeSuffix(now, nextReviewTime)} 复习';
       } else {
         // For day
-        result =
-            '${getTimePrefix(now, nextReviewTime)} $days天${getTimeSuffix(now, nextReviewTime)} 复习';
+
+        if (isYesterdayDateTime(nextReviewTime)) {
+          // For yesterday
+          result = '应 昨天 复习';
+        } else {
+          // For other days less than a month
+          result =
+              '${getTimePrefix(now, nextReviewTime)} $days天${getTimeSuffix(now, nextReviewTime)} 复习';
+        }
       }
     } else if (hoursDifference > 0) {
-      result =
-          '${getTimePrefix(now, nextReviewTime)} $hoursDifference小时${getTimeSuffix(now, nextReviewTime)} 复习';
+      if (isYesterdayDateTime(nextReviewTime)) {
+        result = '应 昨天 复习';
+      } else {
+        result =
+            '${getTimePrefix(now, nextReviewTime)} $hoursDifference小时${getTimeSuffix(now, nextReviewTime)} 复习';
+      }
     } else {
       if (minutesDifference <= 5) {
-        result = '现在复习';
+        result = '现在 复习';
       } else {
         result =
             '${getTimePrefix(now, nextReviewTime)} $minutesDifference分钟${getTimeSuffix(now, nextReviewTime)} 复习';
@@ -97,10 +110,27 @@ class TimeHandler {
     return smallHoursOfToday;
   }
 
+  static DateTime getYesterdayDateTime() {
+    return DateTime.now().subtract(Duration(days: 1));
+  }
+
+  static bool isYesterdayDateTime(DateTime dateTime) {
+    var isYesterdayDateTime = false;
+    var yesterday = TimeHandler.getYesterdayDateTime();
+
+    if (dateTime.year == yesterday.year &&
+        dateTime.month == yesterday.month &&
+        dateTime.day == yesterday.day) {
+      isYesterdayDateTime = true;
+    }
+
+    return isYesterdayDateTime;
+  }
+
   static String getTimePrefix(DateTime now, DateTime nextReviewTime) {
     var timePrefix = '';
 
-    if (nextReviewTime.isBefore(now)) timePrefix = '应在';
+    if (nextReviewTime.isBefore(now)) timePrefix = '应';
 
     return timePrefix;
   }

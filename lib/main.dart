@@ -171,6 +171,15 @@ class _MyAppState extends State<MyApp> {
           GlobalState.folderListWidgetState.currentState
               .triggerSetState(forceToFetchFoldersFromDB: true);
         }
+      } else {
+        // When db is initialized
+
+        // update review folder status
+        // Update isSelectedReviewFolder variable at GlobalState
+        GlobalState.database.isReviewFolder(GlobalState.selectedFolderId).then(
+            // Make sure the default selected folder is up-to-date for isSelectedReviewFolder variable
+            (isReviewFolder) =>
+                GlobalState.isSelectedReviewFolder = isReviewFolder);
       }
     });
 
