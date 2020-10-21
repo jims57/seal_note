@@ -174,6 +174,7 @@ class AppBarWidgetState extends State<AppBarWidget>
                                     ),
                                   ),
                                   Text(
+                                    // sync status // sync label
                                     '同步中...',
                                     style: TextStyle(
                                         fontSize: 8.0,

@@ -86,15 +86,6 @@ class _NoteListPageState extends State<NoteListPage> {
           style: TextStyle(color: GlobalState.themeBlackColor87ForFontForeColor,fontSize: 16.0),
           // style: TextStyle(color: Colors.red,),
         ),
-        // title: Consumer<SelectedNoteModel>(builder: (ctx,note, child){
-        //   return Text(
-        //     // note list caption // note list page title
-        //     // note list title
-        //     '${note.folderName}',
-        //     style: TextStyle(color: GlobalState.themeBlackColor87ForFontForeColor,fontSize: 16.0),
-        //     // style: TextStyle(color: Colors.red,),
-        //   );
-        // },),
         showSyncStatus: true,
         leadingWidth: 90,
         tailWidth: 40,

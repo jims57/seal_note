@@ -347,7 +347,7 @@ class Database extends _$Database {
     // Whether the db has notes data
 
     bool hasNote = true;
-    NoteEntry noteEntry = await (select(notes)).getSingle();
+    NoteEntry noteEntry = await (select(notes)..limit(1)).getSingle();
 
     if (noteEntry == null) hasNote = false;
 

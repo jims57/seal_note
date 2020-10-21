@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:moor/moor.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/util/time/TimeHandler.dart';
 
 // Import custom files
 import 'data/appstate/AppState.dart';
@@ -60,8 +61,7 @@ class _MyAppState extends State<MyApp> {
     GlobalState.database.isDbInitialized().then((isDbInitialized) {
       if (!isDbInitialized) {
         // If the db isn't initialized, we need to insert basic data
-
-        var now = DateTime.now().toLocal();
+        var now = TimeHandler.getNowForLocal();
 
         // Initialize users // init users
         var usersCompanion = UsersCompanion(
@@ -176,10 +176,10 @@ class _MyAppState extends State<MyApp> {
 
         // update review folder status
         // Update isSelectedReviewFolder variable at GlobalState
-        GlobalState.database.isReviewFolder(GlobalState.selectedFolderId).then(
-            // Make sure the default selected folder is up-to-date for isSelectedReviewFolder variable
-            (isReviewFolder) =>
-                GlobalState.isSelectedReviewFolder = isReviewFolder);
+        // GlobalState.database.isReviewFolder(GlobalState.selectedFolderId).then(
+        //     // Make sure the default selected folder is up-to-date for isSelectedReviewFolder variable
+        //     (isReviewFolder) =>
+        //         GlobalState.isSelectedReviewFolder = isReviewFolder);
       }
     });
 
