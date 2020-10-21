@@ -5,38 +5,7 @@ import 'package:seal_note/data/appstate/GlobalState.dart';
 class TimeHandler {
   static String getDateTimeFormatForAllKindOfNote(
       {DateTime updated, DateTime nextReviewTime}) {
-    var result = '';
-
-    result = _getAutoTimeFormatByDateTimeAvailability(nextReviewTime, updated);
-
-    // return result;
-
-    // if (GlobalState.isSelectedReviewFolder) {
-    //   // When it has the next review time, meaning that this is a note subject to be reviewed
-    //   result = _getReviewTimeFormatForReviewNote(nextReviewTime);
-    // } else {
-    //   // When it hasn't the next review time, meaning this is a normal note
-    //   if (GlobalState.isDefaultFolderSelected &&
-    //       GlobalState.selectedFolderName ==
-    //           GlobalState.defaultFolderNameForToday) {
-    //     // If this is Today folder, we need to show the review time, since only those notes to be reviewed will be shown in Today folder
-    //     result = _getReviewTimeFormatForReviewNote(nextReviewTime);
-    //   } else if (GlobalState.isDefaultFolderSelected &&
-    //       (GlobalState.selectedFolderName ==
-    //               GlobalState.defaultFolderNameForAllNotes ||
-    //           GlobalState.selectedFolderName ==
-    //               GlobalState.defaultFolderNameForDeletion)) {
-    //     // If this is All Notes or Deletion folder
-    //     result =
-    //         _getAutoTimeFormatByDateTimeAvailability(nextReviewTime, updated);
-    //   } else {
-    //     result = _getDateTimeForNormalNote(updated);
-    //   }
-
-    // result = _getDateTimeForNormalNote(updated);
-    // }
-
-    return result;
+    return _getAutoTimeFormatByDateTimeAvailability(nextReviewTime, updated);
   }
 
   static DateTime getSmallHoursOfToday() {
