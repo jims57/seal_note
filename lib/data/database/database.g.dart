@@ -2244,9 +2244,71 @@ abstract class _$Database extends GeneratedDatabase {
   $ReviewPlanConfigsTable _reviewPlanConfigs;
   $ReviewPlanConfigsTable get reviewPlanConfigs =>
       _reviewPlanConfigs ??= $ReviewPlanConfigsTable(this);
+  Selectable<FoldersWithProgressTotalResult> foldersWithProgressTotal() {
+    return customSelect(
+        'select *, (select count(*) from reviewPlanConfigs where reviewPlanId = f.reviewPlanId) as "progressTotal" from folders f order by f.[order] asc;',
+        variables: [],
+        readsFrom: {reviewPlanConfigs, folders}).map((QueryRow row) {
+      return FoldersWithProgressTotalResult(
+        id: row.readInt('id'),
+        name: row.readString('name'),
+        order: row.readInt('order'),
+        numberToShow: row.readInt('numberToShow'),
+        isDefaultFolder: row.readBool('isDefaultFolder'),
+        reviewPlanId: row.readInt('reviewPlanId'),
+        created: $FoldersTable.$converter0.mapToDart(row.readString('created')),
+        createdBy: row.readInt('createdBy'),
+        progressTotal: row.readInt('progressTotal'),
+      );
+    });
+  }
+
+  Selectable<NoteEntry> notesWithCases(int isReviewFinished) {
+    return customSelect(
+        'select * from notes where CASE WHEN 1=:isReviewFinished THEN id=1 WHEN 2=:isReviewFinished THEN id=2 ELSE id=3 END',
+        variables: [Variable.withInt(isReviewFinished)],
+        readsFrom: {notes}).map(notes.mapFromRow);
+  }
+
+  Selectable<NoteEntry> notesWithNullChecking2(
+      int selectedFolderId, int isReviewFolderSelected) {
+    return customSelect(
+        'SELECT * FROM notes n WHERE  n.folderId = :selectedFolderId AND (CASE WHEN 1 = :isReviewFolderSelected THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END);',
+        variables: [
+          Variable.withInt(selectedFolderId),
+          Variable.withInt(isReviewFolderSelected)
+        ],
+        readsFrom: {
+          notes
+        }).map(notes.mapFromRow);
+  }
+
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
       [users, folders, notes, reviewPlans, reviewPlanConfigs];
+}
+
+class FoldersWithProgressTotalResult {
+  final int id;
+  final String name;
+  final int order;
+  final int numberToShow;
+  final bool isDefaultFolder;
+  final int reviewPlanId;
+  final DateTime created;
+  final int createdBy;
+  final int progressTotal;
+  FoldersWithProgressTotalResult({
+    this.id,
+    this.name,
+    this.order,
+    this.numberToShow,
+    this.isDefaultFolder,
+    this.reviewPlanId,
+    this.created,
+    this.createdBy,
+    this.progressTotal,
+  });
 }

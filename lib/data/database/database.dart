@@ -26,6 +26,23 @@ class IsoDateTimeConverter extends TypeConverter<DateTime, String> {
   }
 }
 
+class _DateTimeToStartOfDay extends Expression<int> {
+  final Expression<String> _inner;
+
+  _DateTimeToStartOfDay(this._inner);
+
+  @override
+  void writeInto(GenerationContext context) {
+    context.buffer.write("CAST(strftime('%s', date(");
+    _inner.writeInto(context);
+    context.buffer.write(')) AS INT)');
+  }
+}
+
+extension ParseDateInSql on Expression<String> {
+  Expression<int> startOfDayUnix() => _DateTimeToStartOfDay(this);
+}
+
 @DataClassName('UserEntry')
 class Users extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -141,7 +158,23 @@ class ReviewPlanConfigs extends Table {
       integer().withDefault(const Constant(1)).named('createdBy')();
 }
 
-@UseMoor(tables: [Users, Folders, Notes, ReviewPlans, ReviewPlanConfigs])
+@UseMoor(tables: [
+  Users,
+  Folders,
+  Notes,
+  ReviewPlans,
+  ReviewPlanConfigs
+], queries: {
+  'foldersWithProgressTotal':
+      'select *, (select count(*) from reviewPlanConfigs where reviewPlanId = f.reviewPlanId) as "progressTotal" from folders f order by f.[order] asc;',
+  'notesWithCases': 'select * from notes where '
+      'CASE WHEN 1=:isReviewFinished THEN id=1 '
+      'WHEN 2=:isReviewFinished THEN id=2 '
+      'ELSE id=3 '
+      'END',
+  'notesWithNullChecking2':
+      'SELECT * FROM notes n WHERE  n.folderId = :selectedFolderId AND (CASE WHEN 1 = :isReviewFolderSelected THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END);'
+})
 class Database extends _$Database {
   Database(QueryExecutor e) : super(e);
 
@@ -149,6 +182,28 @@ class Database extends _$Database {
 
   @override
   int get schemaVersion => 1;
+
+  // Testing
+  Future<List<FoldersWithProgressTotalResult>> getCountByReviewPlanId() {
+    // var count = CountByReviewPlanId(1).getSingle();
+    var folders = foldersWithProgressTotal().get();
+
+    return folders;
+  }
+
+  Future<List<NoteEntry>> getNotesWithCases(int isReviewFinished) {
+    var _notesWithCases = notesWithCases(isReviewFinished).get();
+
+    return _notesWithCases;
+  }
+
+  Future<List<NoteEntry>> getNotesWithNullChecking(
+      int folderId, int isReviewFolder) {
+    var _notesWithCases =
+        notesWithNullChecking2(folderId, isReviewFolder).get();
+
+    return _notesWithCases;
+  }
 
   // Initialization related
   Future<bool> isDbInitialized() async {
@@ -210,6 +265,13 @@ class Database extends _$Database {
         .get();
   }
 
+  Future<List<FoldersWithProgressTotalResult>>
+      getAllFoldersWithProgressTotal() {
+    var folders = foldersWithProgressTotal().get();
+
+    return folders;
+  }
+
   Future<bool> isReviewFolder(int folderId) async {
     var isReviewFolder = false;
     FolderEntry folderEntry = await (select(folders)
@@ -249,6 +311,7 @@ class Database extends _$Database {
   Future<List<NoteEntry>> getNotesByPageSize(
       {@required int pageNo, @required int pageSize}) {
     // Check if it is for default folders, because we need to get specific data for default folders
+    // get note list data // note list data
 
     if (GlobalState.isDefaultFolderSelected) {
       // When it is for default
@@ -262,12 +325,15 @@ class Database extends _$Database {
         // today note list
         var now = TimeHandler.getNowForLocal();
 
+        final today = Constant<String>(const IsoDateTimeConverter().mapToSql(DateTime.now())).startOfDayUnix();
+
         String todayDateString =
             '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
 
         return (select(notes)
               ..where((n) => n.isDeleted.equals(false))
-              ..where((n) => n.nextReviewTime.like('$todayDateString%'))
+              // ..where((n) => n.nextReviewTime.like('$todayDateString%'))
+              ..where((n) => n.nextReviewTime.startOfDayUnix().isSmallerOrEqual(today))
               ..where((n) => n.isReviewFinished.equals(false))
               ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
               ..orderBy([

@@ -139,9 +139,10 @@ class GlobalState with ChangeNotifier {
   static bool shouldMakeDefaultFoldersGrey = false;
   static bool isFolderListPageLoaded =
       false; // Indicate if the folder list page is loaded
+  static int progressTotalOfSelectedFolder = 0;
 
   // Folder total
-  static int defaultFolderTotal = 0;
+  // static int defaultFolderTotal = 0;
   static int userFolderTotal = 0;
   static int allFolderTotal = 0; // All folder including default folders
 

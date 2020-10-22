@@ -194,6 +194,10 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    GlobalState.database.getNotesWithNullChecking(3,0).then((value) {
+      var s = value;
+    });
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: MasterDetailPage(

@@ -112,6 +112,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
       @required int folderId,
       @required String folderName,
       @required int numberToShow,
+      int progressTotal = 0,
       bool isReviewFolder = false,
       bool canSwipe = true,
       bool showDivider = true,
@@ -158,6 +159,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
         GlobalState.isDefaultFolderSelected = isDefaultFolder;
         GlobalState.selectedFolderId = folderId;
         GlobalState.selectedFolderName = folderName;
+        GlobalState.progressTotalOfSelectedFolder = progressTotal;
         GlobalState.isReviewFolderSelected = isReviewFolder;
         GlobalState.noteListWidgetForTodayState.currentState.triggerSetState();
 
@@ -173,16 +175,20 @@ class FolderListWidgetState extends State<FolderListWidget> {
   void getAllFolders() {
     childrenWidgetList.clear();
 
-    GlobalState.database.getAllFolders().then((folders) {
+    // get folder data // get all folder data
+    // GlobalState.database.getAllFolders().then((folders) {
+    GlobalState.database.getAllFoldersWithProgressTotal().then((folders) {
       GlobalState.userFolderTotal = folders.length;
       GlobalState.allFolderTotal = GlobalState.userFolderTotal;
 
       for (var index = 0; index < folders.length; index++) {
         var theFolder = folders[index];
+
         var isDefaultFolder = theFolder.isDefaultFolder;
         var folderId = theFolder.id;
         var folderName = '${theFolder.name}';
         var numberToShow = theFolder.numberToShow;
+        var progressTotal = theFolder.progressTotal;
         var isReviewFolder = (theFolder.reviewPlanId != null) ? true : false;
         var isTodayFolder = (isDefaultFolder &&
             folderName == GlobalState.defaultFolderNameForToday);
@@ -212,6 +218,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
           folderId: folderId,
           folderName: folderName,
           numberToShow: numberToShow,
+          progressTotal: progressTotal,
           isReviewFolder: isReviewFolder,
           badgeBackgroundColor: (isTodayFolder)
               ? GlobalState.themeOrangeColorAtiOSTodo
