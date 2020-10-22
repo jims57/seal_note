@@ -150,14 +150,6 @@ class Database extends _$Database {
   @override
   int get schemaVersion => 1;
 
-  // Testing
-  // Future<List<FolderEntry>> getAllFoldersWithFields() {
-  //   final folderName = folders.name;
-  //   final query = selectOnly(folders)..addColumns([folderName]);
-  //   var s = query.map((row) => FolderEntry(name:row.read(folderName))).get();
-  //
-  // }
-
   // Initialization related
   Future<bool> isDbInitialized() async {
     // Whether the db has been initialized
@@ -175,9 +167,11 @@ class Database extends _$Database {
 
   Future updateAllNotesContentByTitles(List<NoteEntry> noteEntryList) async {
     var newNoteEntryList = List<NoteEntry>();
+    var countToInsert = 10;
 
     // upsert notes // update notes content
-    for (var noteEntry in noteEntryList) {
+    for (var i = 0; i < countToInsert; i++) {
+      var noteEntry = noteEntryList[i];
       var now = DateTime.now().toLocal();
 
       var note = NoteEntry(
@@ -187,6 +181,7 @@ class Database extends _$Database {
           content: 'Content:${noteEntry.title}',
           created: now,
           updated: now,
+          isReviewFinished: false,
           isDeleted: null,
           createdBy: null);
 
@@ -257,12 +252,14 @@ class Database extends _$Database {
 
     if (GlobalState.isDefaultFolderSelected) {
       // When it is for default
-      // get today note list item // get today data from sqlite
-      // get today data // show today note list
-      // show today note data
       if (GlobalState.selectedFolderName ==
           GlobalState.defaultFolderNameForToday) {
         // For Today folder
+
+        // get today note list item // get today data from sqlite
+        // get today data // show today note list
+        // show today note data // today data
+        // today note list
         var now = TimeHandler.getNowForLocal();
 
         String todayDateString =
@@ -325,7 +322,8 @@ class Database extends _$Database {
               }
             })
             ..orderBy([
-              (n) => OrderingTerm(expression: n.isReviewFinished, mode: OrderingMode.asc),
+              (n) => OrderingTerm(
+                  expression: n.isReviewFinished, mode: OrderingMode.asc),
               (n) {
                 if (GlobalState.isReviewFolderSelected) {
                   return OrderingTerm(
@@ -335,7 +333,15 @@ class Database extends _$Database {
                       expression: n.updated, mode: OrderingMode.desc);
                 }
               },
-              (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
+              (n) {
+                if (GlobalState.isReviewFolderSelected) {
+                  return OrderingTerm(
+                      expression: n.updated, mode: OrderingMode.desc);
+                } else {
+                  return OrderingTerm(
+                      expression: n.id, mode: OrderingMode.desc);
+                }
+              },
             ])
             ..limit(pageSize, offset: pageSize * (pageNo - 1)))
           .get();

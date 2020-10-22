@@ -396,16 +396,11 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
           fetchPhotos(client: http.Client()).then((fetchedPhotoList) {
             // initialize notes // init notes
             // note initialization // note init
-            // GlobalState.database
-            //     .upsertNotesInBatch(fetchedPhotoList)
             GlobalState.database
                 .updateAllNotesContentByTitles(fetchedPhotoList)
                 .whenComplete(() {
               // TODO: To be deleted before releasing the app
               //  After insert, update notes' content
-
-              // GlobalState.database
-              //     .updateAllNotesContentByTitles(fetchedPhotoList);
 
               GlobalState
                   .selectedNoteModel.noteListWidgetForTodayState.currentState

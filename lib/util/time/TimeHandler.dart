@@ -48,6 +48,16 @@ class TimeHandler {
     return DateTime.now().toLocal();
   }
 
+  static DateTime getNextReviewTimeForReviewFinishingNote() {
+    // This date time is going to be stored to the nextReviewTime field for notes which finish review
+    // We make all these review finishing notes have to same nextReviewTime, so that updated field can be ordered by desc
+    // We make it to Jan. 1st, 3000
+
+    var dateTimeForReviewFinishing = DateTime(3000, 1, 1);
+
+    return dateTimeForReviewFinishing;
+  }
+
 // Private methods
   static String _getAutoTimeFormatByDateTimeAvailability(
       DateTime nextReviewTime, DateTime updated) {
