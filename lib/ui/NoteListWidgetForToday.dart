@@ -160,8 +160,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                             fontSize: 10.0),
                                       ),
                                       Text(
-                                        /**/
-                                        '进度：4/7',
+                                        // progress label // show progress label
+                                        '${_showProgressLabel(theNote)}',
                                         style: TextStyle(
                                             color: Colors.grey[400],
                                             fontSize: 10.0),
@@ -335,6 +335,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
           content: content,
           created: now,
           updated: now,
+          isReviewFinished: false,
           isDeleted: false,
           createdBy: GlobalState.currentUserId);
 
@@ -347,14 +348,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       GlobalState.selectedNoteModel.noteListWidgetForTodayState.currentState
           .resetLoadingConfigsAfterUpdatingSqlite();
     });
-
-    // GlobalState.selectedNoteModel.noteListWidgetForTodayState.currentState
-    //     .resetLoadingConfigsAfterUpdatingSqlite();
   }
 
   void initLoadingConfigs() {
-    // _noteList.clear();
-
     _pageNo = 1;
     _pageSize = 10;
 
@@ -367,16 +363,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       // load note list // note list first page data
       // first page note list data
 
-      // Need a lock here
-      // if(mutex) {
-      //   return;
-      // } else {
-      //   mutex = true;
-      // }
       _noteList.clear();
       _noteList.addAll(noteList);
-
-      // mutex = false;
 
       if (!_isLoading) _loadMore();
 
@@ -429,19 +417,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     initLoadingConfigs();
   }
 
-  // Private methods
-  // bool _isTodayFolder() {
-  //   var isTodayFolder = false;
-  //
-  //   if (GlobalState.isDefaultFolderSelected &&
-  //       GlobalState.selectedFolderName ==
-  //           GlobalState.defaultFolderNameForToday) {
-  //     isTodayFolder = true;
-  //   }
-  //
-  //   return isTodayFolder;
-  // }
-
   bool _isReviewNote(DateTime nextReviewTime) {
     // Check if this note is a review note or note
     var isReviewNote = false;
@@ -464,5 +439,16 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     }
 
     return isReviewNoteOverdue;
+  }
+
+  String _showProgressLabel(NoteEntry noteEntry) {
+    var progressLabel = '';
+
+    if (noteEntry.nextReviewTime != null) {
+      // Only it has the next review time, we need to show the label
+      progressLabel = '进度：4/8';
+    }
+
+    return progressLabel;
   }
 }
