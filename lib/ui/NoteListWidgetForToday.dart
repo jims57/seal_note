@@ -152,8 +152,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                         style: TextStyle(
                                             color: (_isReviewNote(theNote
                                                         .nextReviewTime) &&
-                                                    _isReviewNoteOverdue(
-                                                        theNote.nextReviewTime))
+                                                    _isReviewNoteOverdue(theNote
+                                                        .nextReviewTime) &&
+                                                    !theNote.isReviewFinished)
                                                 ? Colors.red
                                                 : Colors.grey[400],
                                             fontSize: 10.0),
