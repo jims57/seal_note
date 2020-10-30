@@ -167,8 +167,10 @@ class ReviewPlanConfigs extends Table {
   ReviewPlanConfigs
 ], queries: {
   // For folder list
-  'foldersWithProgressTotal':
-      'SELECT *,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = f.reviewPlanId ) AS progressTotal FROM folders f ORDER BY f.[order] ASC;',
+  // 'foldersWithProgressTotal':
+  //     'SELECT *,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = f.reviewPlanId ) AS progressTotal FROM folders f ORDER BY f.[order] ASC;',
+  'getFoldersWithUnreadTotal':
+      "SELECT f.id, f.name, f.[order], CASE WHEN f.isDefaultFolder = 1 AND f.name = '今天' THEN( SELECT count( *) FROM notes n WHERE n.isDeleted = 0 AND strftime('%Y-%m-%d %H:%M:%S', n.nextReviewTime) < strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime', 'start of day', '+1 day') AND n.isReviewFinished = 0 AND n.createdBy = :createdBy ) WHEN f.isDefaultFolder = 1 AND f.name = '全部笔记' THEN ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy ) WHEN f.isDefaultFolder = 1 AND f.name = '删除笔记' THEN ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 1 AND n.createdBy = :createdBy ) ELSE ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = f.id AND CASE WHEN f.reviewPlanId IS NOT NULL THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ) END numberToShow, f.isDefaultFolder, f.reviewPlanId, f.created, f.createdBy FROM folders f WHERE createdBy = :createdBy ORDER BY [order] ASC; ",
 
   // For note list
   'getNoteListForToday':
@@ -193,12 +195,12 @@ class Database extends _$Database {
   int get schemaVersion => 1;
 
   // Testing
-  Future<List<FoldersWithProgressTotalResult>> getCountByReviewPlanId() {
-    // var count = CountByReviewPlanId(1).getSingle();
-    var folders = foldersWithProgressTotal().get();
-
-    return folders;
-  }
+  // Future<List<FoldersWithProgressTotalResult>> getCountByReviewPlanId() {
+  //   // var count = CountByReviewPlanId(1).getSingle();
+  //   var folders = foldersWithProgressTotal().get();
+  //
+  //   return folders;
+  // }
 
   Future<List<NoteEntry>> getNotesWithNullChecking(
       int folderId, int isReviewFolder) {
@@ -278,9 +280,16 @@ class Database extends _$Database {
         .get();
   }
 
-  Future<List<FoldersWithProgressTotalResult>>
-      getAllFoldersWithProgressTotal() {
-    var folders = foldersWithProgressTotal().get();
+  // Future<List<FoldersWithProgressTotalResult>>
+  //     getAllFoldersWithProgressTotal() {
+  //   var folders = foldersWithProgressTotal().get();
+  //
+  //   return folders;
+  // }
+
+  Future<List<GetFoldersWithUnreadTotalResult>>
+      getListForFoldersWithUnreadTotal() {
+    var folders = getFoldersWithUnreadTotal(GlobalState.currentUserId).get();
 
     return folders;
   }

@@ -2244,12 +2244,13 @@ abstract class _$Database extends GeneratedDatabase {
   $ReviewPlanConfigsTable _reviewPlanConfigs;
   $ReviewPlanConfigsTable get reviewPlanConfigs =>
       _reviewPlanConfigs ??= $ReviewPlanConfigsTable(this);
-  Selectable<FoldersWithProgressTotalResult> foldersWithProgressTotal() {
+  Selectable<GetFoldersWithUnreadTotalResult> getFoldersWithUnreadTotal(
+      int createdBy) {
     return customSelect(
-        'SELECT *,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = f.reviewPlanId ) AS progressTotal FROM folders f ORDER BY f.[order] ASC;',
-        variables: [],
-        readsFrom: {reviewPlanConfigs, folders}).map((QueryRow row) {
-      return FoldersWithProgressTotalResult(
+        'SELECT f.id, f.name, f.[order], CASE WHEN f.isDefaultFolder = 1 AND f.name = \'今天\' THEN( SELECT count( *) FROM notes n WHERE n.isDeleted = 0 AND strftime(\'%Y-%m-%d %H:%M:%S\', n.nextReviewTime) < strftime(\'%Y-%m-%d %H:%M:%S\', \'now\', \'localtime\', \'start of day\', \'+1 day\') AND n.isReviewFinished = 0 AND n.createdBy = :createdBy ) WHEN f.isDefaultFolder = 1 AND f.name = \'全部笔记\' THEN ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy ) WHEN f.isDefaultFolder = 1 AND f.name = \'删除笔记\' THEN ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 1 AND n.createdBy = :createdBy ) ELSE ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = f.id AND CASE WHEN f.reviewPlanId IS NOT NULL THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ) END numberToShow, f.isDefaultFolder, f.reviewPlanId, f.created, f.createdBy FROM folders f WHERE createdBy = :createdBy ORDER BY [order] ASC;',
+        variables: [Variable.withInt(createdBy)],
+        readsFrom: {folders, notes}).map((QueryRow row) {
+      return GetFoldersWithUnreadTotalResult(
         id: row.readInt('id'),
         name: row.readString('name'),
         order: row.readInt('order'),
@@ -2258,7 +2259,6 @@ abstract class _$Database extends GeneratedDatabase {
         reviewPlanId: row.readInt('reviewPlanId'),
         created: $FoldersTable.$converter0.mapToDart(row.readString('created')),
         createdBy: row.readInt('createdBy'),
-        progressTotal: row.readInt('progressTotal'),
       );
     });
   }
@@ -2417,7 +2417,7 @@ abstract class _$Database extends GeneratedDatabase {
       [users, folders, notes, reviewPlans, reviewPlanConfigs];
 }
 
-class FoldersWithProgressTotalResult {
+class GetFoldersWithUnreadTotalResult {
   final int id;
   final String name;
   final int order;
@@ -2426,8 +2426,7 @@ class FoldersWithProgressTotalResult {
   final int reviewPlanId;
   final DateTime created;
   final int createdBy;
-  final int progressTotal;
-  FoldersWithProgressTotalResult({
+  GetFoldersWithUnreadTotalResult({
     this.id,
     this.name,
     this.order,
@@ -2436,7 +2435,6 @@ class FoldersWithProgressTotalResult {
     this.reviewPlanId,
     this.created,
     this.createdBy,
-    this.progressTotal,
   });
 }
 

@@ -112,7 +112,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
       @required int folderId,
       @required String folderName,
       @required int numberToShow,
-      int progressTotal = 0,
+      // int progressTotal = 0,
       bool isReviewFolder = false,
       bool canSwipe = true,
       bool showDivider = true,
@@ -159,7 +159,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
         GlobalState.isDefaultFolderSelected = isDefaultFolder;
         GlobalState.selectedFolderId = folderId;
         GlobalState.selectedFolderName = folderName;
-        GlobalState.progressTotalOfSelectedFolder = progressTotal;
+        // GlobalState.progressTotalOfSelectedFolder = progressTotal;
         GlobalState.isReviewFolderSelected = isReviewFolder;
         GlobalState.noteListWidgetForTodayState.currentState.triggerSetState();
 
@@ -176,8 +176,10 @@ class FolderListWidgetState extends State<FolderListWidget> {
     childrenWidgetList.clear();
 
     // get folder data // get all folder data
+    // get all folder // get folder list data
+
     // GlobalState.database.getAllFolders().then((folders) {
-    GlobalState.database.getAllFoldersWithProgressTotal().then((folders) {
+    GlobalState.database.getListForFoldersWithUnreadTotal().then((folders) {
       GlobalState.userFolderTotal = folders.length;
       GlobalState.allFolderTotal = GlobalState.userFolderTotal;
 
@@ -188,7 +190,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
         var folderId = theFolder.id;
         var folderName = '${theFolder.name}';
         var numberToShow = theFolder.numberToShow;
-        var progressTotal = theFolder.progressTotal;
+        // var progressTotal = theFolder.progressTotal;
         var isReviewFolder = (theFolder.reviewPlanId != null) ? true : false;
         var isTodayFolder = (isDefaultFolder &&
             folderName == GlobalState.defaultFolderNameForToday);
@@ -218,7 +220,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
           folderId: folderId,
           folderName: folderName,
           numberToShow: numberToShow,
-          progressTotal: progressTotal,
+          // progressTotal: progressTotal,
           isReviewFolder: isReviewFolder,
           badgeBackgroundColor: (isTodayFolder)
               ? GlobalState.themeOrangeColorAtiOSTodo
