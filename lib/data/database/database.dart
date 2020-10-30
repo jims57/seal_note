@@ -4,7 +4,8 @@ import 'package:moor/moor.dart';
 import 'dart:async';
 
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/util/time/TimeHandler.dart';
+import 'package:seal_note/model/NoteWithProgressTotal.dart';
+import 'package:seal_note/util/converter/BooleanConverter.dart';
 
 part 'database.g.dart';
 
@@ -167,11 +168,14 @@ class ReviewPlanConfigs extends Table {
 ], queries: {
   'foldersWithProgressTotal':
       'select *, (select count(*) from reviewPlanConfigs where reviewPlanId = f.reviewPlanId) as "progressTotal" from folders f order by f.[order] asc;',
-  'notesWithCases': 'select * from notes where '
-      'CASE WHEN 1=:isReviewFinished THEN id=1 '
-      'WHEN 2=:isReviewFinished THEN id=2 '
-      'ELSE id=3 '
-      'END',
+  'getNoteListForToday':
+      "SELECT *,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND strftime('%Y-%m-%d %H:%M:%S', n.nextReviewTime) < strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime', 'start of day', '+1 day') AND n.isReviewFinished = 0 AND n.createdBy = :createdBy ORDER BY n.nextReviewTime ASC, n.id ASC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1); ",
+  'getNoteListForAllNotes':
+      "SELECT *,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy ORDER BY n.updated DESC, n.id DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1); ",
+  'getNoteListForDeletedNotes':
+      "SELECT *,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 1 AND n.createdBy = :createdBy ORDER BY n.updated DESC, n.id DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1); ",
+  'getNoteListForUserFolders':
+      "SELECT *,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = :folderId AND CASE WHEN :isReviewFolder = 1 THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ORDER BY n.isReviewFinished ASC, CASE WHEN :isReviewFolder = 1 THEN n.nextReviewTime END ASC, CASE WHEN :isReviewFolder = 0 THEN n.updated END DESC, CASE WHEN :isReviewFolder = 1 THEN n.updated END DESC, CASE WHEN :isReviewFolder = 0 THEN n.id END DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1); ",
   'notesWithNullChecking2':
       'SELECT * FROM notes n WHERE  n.folderId = :selectedFolderId AND (CASE WHEN 1 = :isReviewFolderSelected THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END);'
 })
@@ -191,18 +195,22 @@ class Database extends _$Database {
     return folders;
   }
 
-  Future<List<NoteEntry>> getNotesWithCases(int isReviewFinished) {
-    var _notesWithCases = notesWithCases(isReviewFinished).get();
-
-    return _notesWithCases;
-  }
-
   Future<List<NoteEntry>> getNotesWithNullChecking(
       int folderId, int isReviewFolder) {
     var _notesWithCases =
         notesWithNullChecking2(folderId, isReviewFolder).get();
 
     return _notesWithCases;
+  }
+
+  Future<List<NoteWithProgressTotal>> getNoteListForTodayList(
+      int createdBy, int pageSize, int pageNo) {
+    var _noteWithProgressTotal =
+        getNoteListForToday(createdBy, pageSize, pageNo.toDouble())
+            .map((row) => convertModelToNoteWithProgressTotal(row))
+            .get();
+
+    return _noteWithProgressTotal;
   }
 
   // Initialization related
@@ -308,7 +316,7 @@ class Database extends _$Database {
     });
   }
 
-  Future<List<NoteEntry>> getNotesByPageSize(
+  Future<List<NoteWithProgressTotal>> getNotesByPageSize(
       {@required int pageNo, @required int pageSize}) {
     // Check if it is for default folders, because we need to get specific data for default folders
     // get note list data // note list data
@@ -323,52 +331,27 @@ class Database extends _$Database {
         // get today data // show today note list
         // show today note data // today data
         // today note list
-        var now = TimeHandler.getNowForLocal();
 
-        final today = Constant<String>(const IsoDateTimeConverter().mapToSql(DateTime.now())).startOfDayUnix();
-
-        String todayDateString =
-            '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-
-        return (select(notes)
-              ..where((n) => n.isDeleted.equals(false))
-              // ..where((n) => n.nextReviewTime.like('$todayDateString%'))
-              ..where((n) => n.nextReviewTime.startOfDayUnix().isSmallerOrEqual(today))
-              ..where((n) => n.isReviewFinished.equals(false))
-              ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
-              ..orderBy([
-                (n) => OrderingTerm(
-                    expression: n.nextReviewTime, mode: OrderingMode.asc),
-                (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
-              ])
-              ..limit(pageSize, offset: pageSize * (pageNo - 1)))
+        return getNoteListForToday(
+                GlobalState.currentUserId, pageSize, pageNo.toDouble())
+            .map((row) => convertModelToNoteWithProgressTotal(row))
             .get();
       } else if (GlobalState.selectedFolderName ==
           GlobalState.defaultFolderNameForAllNotes) {
         // For All Notes folder
 
         // get all notes note list
-        return (select(notes)
-              ..where((n) => n.isDeleted.equals(false))
-              ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
-              ..orderBy([
-                (n) => OrderingTerm(
-                    expression: n.updated, mode: OrderingMode.desc),
-                (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
-              ])
-              ..limit(pageSize, offset: pageSize * (pageNo - 1)))
+        return getNoteListForAllNotes(
+                GlobalState.currentUserId, pageSize, pageNo.toDouble())
+            .map((row) => convertModelToNoteWithProgressTotal(row))
             .get();
       } else {
+        // get deleted note // get deletion notes
+
         // For Deleted Notes folder
-        return (select(notes)
-              ..where((n) => n.isDeleted.equals(true))
-              ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
-              ..orderBy([
-                (n) => OrderingTerm(
-                    expression: n.updated, mode: OrderingMode.desc),
-                (n) => OrderingTerm(expression: n.id, mode: OrderingMode.desc),
-              ])
-              ..limit(pageSize, offset: pageSize * (pageNo - 1)))
+        return getNoteListForDeletedNotes(
+                GlobalState.currentUserId, pageSize, pageNo.toDouble())
+            .map((row) => convertModelToNoteWithProgressTotal(row))
             .get();
       }
     } else {
@@ -376,40 +359,14 @@ class Database extends _$Database {
       // get user folder note list // get user folder data
       // get user folder note data
 
-      return (select(notes)
-            ..where((n) => n.folderId.equals(GlobalState.selectedFolderId))
-            ..where((n) => n.isDeleted.equals(false))
-            ..where((n) => n.createdBy.equals(GlobalState.currentUserId))
-            ..where((n) {
-              if (GlobalState.isReviewFolderSelected) {
-                return isNotNull(n.nextReviewTime);
-              } else {
-                return isNull(n.nextReviewTime);
-              }
-            })
-            ..orderBy([
-              (n) => OrderingTerm(
-                  expression: n.isReviewFinished, mode: OrderingMode.asc),
-              (n) {
-                if (GlobalState.isReviewFolderSelected) {
-                  return OrderingTerm(
-                      expression: n.nextReviewTime, mode: OrderingMode.asc);
-                } else {
-                  return OrderingTerm(
-                      expression: n.updated, mode: OrderingMode.desc);
-                }
-              },
-              (n) {
-                if (GlobalState.isReviewFolderSelected) {
-                  return OrderingTerm(
-                      expression: n.updated, mode: OrderingMode.desc);
-                } else {
-                  return OrderingTerm(
-                      expression: n.id, mode: OrderingMode.desc);
-                }
-              },
-            ])
-            ..limit(pageSize, offset: pageSize * (pageNo - 1)))
+      return getNoteListForUserFolders(
+              GlobalState.currentUserId,
+              GlobalState.selectedFolderId,
+              BooleanConverter.convertBooleanToInt(
+                  GlobalState.isReviewFolderSelected),
+              pageSize,
+              pageNo.toDouble())
+          .map((row) => convertModelToNoteWithProgressTotal(row))
           .get();
     }
   }
@@ -444,5 +401,22 @@ class Database extends _$Database {
       batch.insertAllOnConflictUpdate(
           reviewPlanConfigs, reviewPlanConfigEntryList);
     });
+  }
+
+  // Model conversion
+  NoteWithProgressTotal convertModelToNoteWithProgressTotal(var row) {
+    return NoteWithProgressTotal(
+        id: row.id,
+        folderId: row.folderId,
+        title: row.title,
+        content: row.content,
+        created: row.created,
+        updated: row.updated,
+        nextReviewTime: row.nextReviewTime,
+        reviewProgressNo: row.reviewProgressNo,
+        isReviewFinished: row.isReviewFinished,
+        isDeleted: row.isDeleted,
+        createdBy: row.createdBy,
+        progressTotal: row.progressTotal);
   }
 }

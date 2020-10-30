@@ -26,7 +26,7 @@ dependencies:
   intl: ^0.16.1
   http: ^0.12.2
   retry: ^3.0.1
-  moor: ^3.3.0
+  moor: ^3.4.0
   moor_ffi: ^0.8.0
   provider: ^4.1.3
   path_provider: ^1.3.0

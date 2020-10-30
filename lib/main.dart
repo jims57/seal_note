@@ -137,11 +137,17 @@ class _MyAppState extends State<MyApp> {
             name: '五段式',
             introduction: '五段式简介',
             createdBy: GlobalState.adminUserId));
+        reviewPlanEntryList.add(ReviewPlanEntry(
+            id: null,
+            name: '艾宾浩斯',
+            introduction: '艾宾浩斯简介',
+            createdBy: GlobalState.adminUserId));
         GlobalState.database.upsertReviewPlansInBatch(reviewPlanEntryList);
 
         // Initialize review plan configs // init review plan configs
         var reviewPlanConfigEntryList = List<ReviewPlanConfigEntry>();
         // Unit for the value. { 1 = minute, 2 = hour, 3 = day, 4 = week, 5 = month, 6 = year }
+        // For Five-Part Form
         reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
             id: null,
             reviewPlanId: 1,
@@ -162,6 +168,22 @@ class _MyAppState extends State<MyApp> {
             order: 3,
             value: 3,
             unit: 3,
+            createdBy: GlobalState.adminUserId));
+
+        // For Ebbinghaus
+        reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
+            id: null,
+            reviewPlanId: 2,
+            order: 1,
+            value: 15,
+            unit: 1,
+            createdBy: GlobalState.adminUserId));
+        reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
+            id: null,
+            reviewPlanId: 2,
+            order: 1,
+            value: 3,
+            unit: 2,
             createdBy: GlobalState.adminUserId));
         GlobalState.database
             .upsertReviewPlanConfigsInBatch(reviewPlanConfigEntryList);
@@ -194,10 +216,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    GlobalState.database.getNotesWithNullChecking(3,0).then((value) {
-      var s = value;
-    });
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: MasterDetailPage(

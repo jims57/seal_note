@@ -6,6 +6,7 @@
       <w>reorderable</w>
       <w>sqlite</w>
       <w>strftime</w>
+      <w>uint</w>
       <w>upsert</w>
     </words>
   </dictionary>

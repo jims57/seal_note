@@ -2263,11 +2263,138 @@ abstract class _$Database extends GeneratedDatabase {
     });
   }
 
-  Selectable<NoteEntry> notesWithCases(int isReviewFinished) {
+  Selectable<GetNoteListForTodayResult> getNoteListForToday(
+      int createdBy, int pageSize, double pageNo) {
     return customSelect(
-        'select * from notes where CASE WHEN 1=:isReviewFinished THEN id=1 WHEN 2=:isReviewFinished THEN id=2 ELSE id=3 END',
-        variables: [Variable.withInt(isReviewFinished)],
-        readsFrom: {notes}).map(notes.mapFromRow);
+        'SELECT *,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND strftime(\'%Y-%m-%d %H:%M:%S\', n.nextReviewTime) < strftime(\'%Y-%m-%d %H:%M:%S\', \'now\', \'localtime\', \'start of day\', \'+1 day\') AND n.isReviewFinished = 0 AND n.createdBy = :createdBy ORDER BY n.nextReviewTime ASC, n.id ASC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
+        variables: [
+          Variable.withInt(createdBy),
+          Variable.withInt(pageSize),
+          Variable.withReal(pageNo)
+        ],
+        readsFrom: {
+          reviewPlanConfigs,
+          folders,
+          notes
+        }).map((QueryRow row) {
+      return GetNoteListForTodayResult(
+        id: row.readInt('id'),
+        folderId: row.readInt('folderId'),
+        title: row.readString('title'),
+        content: row.readString('content'),
+        created: $NotesTable.$converter0.mapToDart(row.readString('created')),
+        updated: $NotesTable.$converter1.mapToDart(row.readString('updated')),
+        nextReviewTime:
+            $NotesTable.$converter2.mapToDart(row.readString('nextReviewTime')),
+        reviewProgressNo: row.readInt('reviewProgressNo'),
+        isReviewFinished: row.readBool('isReviewFinished'),
+        isDeleted: row.readBool('isDeleted'),
+        createdBy: row.readInt('createdBy'),
+        progressTotal: row.readInt('progressTotal'),
+      );
+    });
+  }
+
+  Selectable<GetNoteListForAllNotesResult> getNoteListForAllNotes(
+      int createdBy, int pageSize, double pageNo) {
+    return customSelect(
+        'SELECT *,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy ORDER BY n.updated DESC, n.id DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
+        variables: [
+          Variable.withInt(createdBy),
+          Variable.withInt(pageSize),
+          Variable.withReal(pageNo)
+        ],
+        readsFrom: {
+          reviewPlanConfigs,
+          folders,
+          notes
+        }).map((QueryRow row) {
+      return GetNoteListForAllNotesResult(
+        id: row.readInt('id'),
+        folderId: row.readInt('folderId'),
+        title: row.readString('title'),
+        content: row.readString('content'),
+        created: $NotesTable.$converter0.mapToDart(row.readString('created')),
+        updated: $NotesTable.$converter1.mapToDart(row.readString('updated')),
+        nextReviewTime:
+            $NotesTable.$converter2.mapToDart(row.readString('nextReviewTime')),
+        reviewProgressNo: row.readInt('reviewProgressNo'),
+        isReviewFinished: row.readBool('isReviewFinished'),
+        isDeleted: row.readBool('isDeleted'),
+        createdBy: row.readInt('createdBy'),
+        progressTotal: row.readInt('progressTotal'),
+      );
+    });
+  }
+
+  Selectable<GetNoteListForDeletedNotesResult> getNoteListForDeletedNotes(
+      int createdBy, int pageSize, double pageNo) {
+    return customSelect(
+        'SELECT *,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 1 AND n.createdBy = :createdBy ORDER BY n.updated DESC, n.id DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
+        variables: [
+          Variable.withInt(createdBy),
+          Variable.withInt(pageSize),
+          Variable.withReal(pageNo)
+        ],
+        readsFrom: {
+          reviewPlanConfigs,
+          folders,
+          notes
+        }).map((QueryRow row) {
+      return GetNoteListForDeletedNotesResult(
+        id: row.readInt('id'),
+        folderId: row.readInt('folderId'),
+        title: row.readString('title'),
+        content: row.readString('content'),
+        created: $NotesTable.$converter0.mapToDart(row.readString('created')),
+        updated: $NotesTable.$converter1.mapToDart(row.readString('updated')),
+        nextReviewTime:
+            $NotesTable.$converter2.mapToDart(row.readString('nextReviewTime')),
+        reviewProgressNo: row.readInt('reviewProgressNo'),
+        isReviewFinished: row.readBool('isReviewFinished'),
+        isDeleted: row.readBool('isDeleted'),
+        createdBy: row.readInt('createdBy'),
+        progressTotal: row.readInt('progressTotal'),
+      );
+    });
+  }
+
+  Selectable<GetNoteListForUserFoldersResult> getNoteListForUserFolders(
+      int createdBy,
+      int folderId,
+      int isReviewFolder,
+      int pageSize,
+      double pageNo) {
+    return customSelect(
+        'SELECT *,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = :folderId AND CASE WHEN :isReviewFolder = 1 THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ORDER BY n.isReviewFinished ASC, CASE WHEN :isReviewFolder = 1 THEN n.nextReviewTime END ASC, CASE WHEN :isReviewFolder = 0 THEN n.updated END DESC, CASE WHEN :isReviewFolder = 1 THEN n.updated END DESC, CASE WHEN :isReviewFolder = 0 THEN n.id END DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
+        variables: [
+          Variable.withInt(createdBy),
+          Variable.withInt(folderId),
+          Variable.withInt(isReviewFolder),
+          Variable.withInt(pageSize),
+          Variable.withReal(pageNo)
+        ],
+        readsFrom: {
+          reviewPlanConfigs,
+          folders,
+          notes
+        }).map((QueryRow row) {
+      return GetNoteListForUserFoldersResult(
+        id: row.readInt('id'),
+        folderId: row.readInt('folderId'),
+        title: row.readString('title'),
+        content: row.readString('content'),
+        created: $NotesTable.$converter0.mapToDart(row.readString('created')),
+        updated: $NotesTable.$converter1.mapToDart(row.readString('updated')),
+        nextReviewTime:
+            $NotesTable.$converter2.mapToDart(row.readString('nextReviewTime')),
+        reviewProgressNo: row.readInt('reviewProgressNo'),
+        isReviewFinished: row.readBool('isReviewFinished'),
+        isDeleted: row.readBool('isDeleted'),
+        createdBy: row.readInt('createdBy'),
+        progressTotal: row.readInt('progressTotal'),
+      );
+    });
   }
 
   Selectable<NoteEntry> notesWithNullChecking2(
@@ -2308,6 +2435,122 @@ class FoldersWithProgressTotalResult {
     this.isDefaultFolder,
     this.reviewPlanId,
     this.created,
+    this.createdBy,
+    this.progressTotal,
+  });
+}
+
+class GetNoteListForTodayResult {
+  final int id;
+  final int folderId;
+  final String title;
+  final String content;
+  final DateTime created;
+  final DateTime updated;
+  final DateTime nextReviewTime;
+  final int reviewProgressNo;
+  final bool isReviewFinished;
+  final bool isDeleted;
+  final int createdBy;
+  final int progressTotal;
+  GetNoteListForTodayResult({
+    this.id,
+    this.folderId,
+    this.title,
+    this.content,
+    this.created,
+    this.updated,
+    this.nextReviewTime,
+    this.reviewProgressNo,
+    this.isReviewFinished,
+    this.isDeleted,
+    this.createdBy,
+    this.progressTotal,
+  });
+}
+
+class GetNoteListForAllNotesResult {
+  final int id;
+  final int folderId;
+  final String title;
+  final String content;
+  final DateTime created;
+  final DateTime updated;
+  final DateTime nextReviewTime;
+  final int reviewProgressNo;
+  final bool isReviewFinished;
+  final bool isDeleted;
+  final int createdBy;
+  final int progressTotal;
+  GetNoteListForAllNotesResult({
+    this.id,
+    this.folderId,
+    this.title,
+    this.content,
+    this.created,
+    this.updated,
+    this.nextReviewTime,
+    this.reviewProgressNo,
+    this.isReviewFinished,
+    this.isDeleted,
+    this.createdBy,
+    this.progressTotal,
+  });
+}
+
+class GetNoteListForDeletedNotesResult {
+  final int id;
+  final int folderId;
+  final String title;
+  final String content;
+  final DateTime created;
+  final DateTime updated;
+  final DateTime nextReviewTime;
+  final int reviewProgressNo;
+  final bool isReviewFinished;
+  final bool isDeleted;
+  final int createdBy;
+  final int progressTotal;
+  GetNoteListForDeletedNotesResult({
+    this.id,
+    this.folderId,
+    this.title,
+    this.content,
+    this.created,
+    this.updated,
+    this.nextReviewTime,
+    this.reviewProgressNo,
+    this.isReviewFinished,
+    this.isDeleted,
+    this.createdBy,
+    this.progressTotal,
+  });
+}
+
+class GetNoteListForUserFoldersResult {
+  final int id;
+  final int folderId;
+  final String title;
+  final String content;
+  final DateTime created;
+  final DateTime updated;
+  final DateTime nextReviewTime;
+  final int reviewProgressNo;
+  final bool isReviewFinished;
+  final bool isDeleted;
+  final int createdBy;
+  final int progressTotal;
+  GetNoteListForUserFoldersResult({
+    this.id,
+    this.folderId,
+    this.title,
+    this.content,
+    this.created,
+    this.updated,
+    this.nextReviewTime,
+    this.reviewProgressNo,
+    this.isReviewFinished,
+    this.isDeleted,
     this.createdBy,
     this.progressTotal,
   });
