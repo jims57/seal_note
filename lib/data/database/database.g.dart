@@ -2246,7 +2246,7 @@ abstract class _$Database extends GeneratedDatabase {
       _reviewPlanConfigs ??= $ReviewPlanConfigsTable(this);
   Selectable<FoldersWithProgressTotalResult> foldersWithProgressTotal() {
     return customSelect(
-        'select *, (select count(*) from reviewPlanConfigs where reviewPlanId = f.reviewPlanId) as "progressTotal" from folders f order by f.[order] asc;',
+        'SELECT *,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = f.reviewPlanId ) AS progressTotal FROM folders f ORDER BY f.[order] ASC;',
         variables: [],
         readsFrom: {reviewPlanConfigs, folders}).map((QueryRow row) {
       return FoldersWithProgressTotalResult(
@@ -2266,16 +2266,16 @@ abstract class _$Database extends GeneratedDatabase {
   Selectable<GetNoteListForTodayResult> getNoteListForToday(
       int createdBy, int pageSize, double pageNo) {
     return customSelect(
-        'SELECT *,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND strftime(\'%Y-%m-%d %H:%M:%S\', n.nextReviewTime) < strftime(\'%Y-%m-%d %H:%M:%S\', \'now\', \'localtime\', \'start of day\', \'+1 day\') AND n.isReviewFinished = 0 AND n.createdBy = :createdBy ORDER BY n.nextReviewTime ASC, n.id ASC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
+        'SELECT id, folderId, title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND strftime(\'%Y-%m-%d %H:%M:%S\', n.nextReviewTime) < strftime(\'%Y-%m-%d %H:%M:%S\', \'now\', \'localtime\', \'start of day\', \'+1 day\') AND n.isReviewFinished = 0 AND n.createdBy = :createdBy ORDER BY n.nextReviewTime ASC, n.id ASC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
         variables: [
           Variable.withInt(createdBy),
           Variable.withInt(pageSize),
           Variable.withReal(pageNo)
         ],
         readsFrom: {
+          notes,
           reviewPlanConfigs,
-          folders,
-          notes
+          folders
         }).map((QueryRow row) {
       return GetNoteListForTodayResult(
         id: row.readInt('id'),
@@ -2298,16 +2298,16 @@ abstract class _$Database extends GeneratedDatabase {
   Selectable<GetNoteListForAllNotesResult> getNoteListForAllNotes(
       int createdBy, int pageSize, double pageNo) {
     return customSelect(
-        'SELECT *,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy ORDER BY n.updated DESC, n.id DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
+        'SELECT id, folderId, title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy ORDER BY n.updated DESC, n.id DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
         variables: [
           Variable.withInt(createdBy),
           Variable.withInt(pageSize),
           Variable.withReal(pageNo)
         ],
         readsFrom: {
+          notes,
           reviewPlanConfigs,
-          folders,
-          notes
+          folders
         }).map((QueryRow row) {
       return GetNoteListForAllNotesResult(
         id: row.readInt('id'),
@@ -2330,16 +2330,16 @@ abstract class _$Database extends GeneratedDatabase {
   Selectable<GetNoteListForDeletedNotesResult> getNoteListForDeletedNotes(
       int createdBy, int pageSize, double pageNo) {
     return customSelect(
-        'SELECT *,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 1 AND n.createdBy = :createdBy ORDER BY n.updated DESC, n.id DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
+        'SELECT id, folderId, title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 1 AND n.createdBy = :createdBy ORDER BY n.updated DESC, n.id DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
         variables: [
           Variable.withInt(createdBy),
           Variable.withInt(pageSize),
           Variable.withReal(pageNo)
         ],
         readsFrom: {
+          notes,
           reviewPlanConfigs,
-          folders,
-          notes
+          folders
         }).map((QueryRow row) {
       return GetNoteListForDeletedNotesResult(
         id: row.readInt('id'),
@@ -2366,7 +2366,7 @@ abstract class _$Database extends GeneratedDatabase {
       int pageSize,
       double pageNo) {
     return customSelect(
-        'SELECT *,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = :folderId AND CASE WHEN :isReviewFolder = 1 THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ORDER BY n.isReviewFinished ASC, CASE WHEN :isReviewFolder = 1 THEN n.nextReviewTime END ASC, CASE WHEN :isReviewFolder = 0 THEN n.updated END DESC, CASE WHEN :isReviewFolder = 1 THEN n.updated END DESC, CASE WHEN :isReviewFolder = 0 THEN n.id END DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
+        'SELECT id, folderId, title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = :folderId AND CASE WHEN :isReviewFolder = 1 THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ORDER BY n.isReviewFinished ASC, CASE WHEN :isReviewFolder = 1 THEN n.nextReviewTime END ASC, CASE WHEN :isReviewFolder = 0 THEN n.updated END DESC, CASE WHEN :isReviewFolder = 1 THEN n.updated END DESC, CASE WHEN :isReviewFolder = 0 THEN n.id END DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
         variables: [
           Variable.withInt(createdBy),
           Variable.withInt(folderId),
@@ -2375,9 +2375,9 @@ abstract class _$Database extends GeneratedDatabase {
           Variable.withReal(pageNo)
         ],
         readsFrom: {
+          notes,
           reviewPlanConfigs,
-          folders,
-          notes
+          folders
         }).map((QueryRow row) {
       return GetNoteListForUserFoldersResult(
         id: row.readInt('id'),

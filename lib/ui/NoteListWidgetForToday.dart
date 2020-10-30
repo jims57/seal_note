@@ -167,6 +167,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                       ),
                                       Text(
                                         // progress label // show progress label
+                                        // review progress label
                                         '${_showProgressLabel(theNote)}',
                                         style: TextStyle(
                                             color: Colors.grey[400],
@@ -463,12 +464,13 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   // String _showProgressLabel(NoteEntry noteEntry) {
-  String _showProgressLabel(NoteWithProgressTotal noteEntry) {
+  String _showProgressLabel(NoteWithProgressTotal noteWithProgressTotal) {
     var progressLabel = '';
 
-    if (noteEntry.nextReviewTime != null) {
+    if (noteWithProgressTotal.nextReviewTime != null) {
       // Only it has the next review time, we need to show the label
-      progressLabel = '进度：4/8';
+      progressLabel =
+          '进度：${noteWithProgressTotal.reviewProgressNo}/${noteWithProgressTotal.progressTotal}';
     }
 
     return progressLabel;
