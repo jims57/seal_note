@@ -99,6 +99,9 @@ class _NoteListPageState extends State<NoteListPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
+          // click new note button // click new button
+          // new note event // click on new note button
+
           // Update action status
           GlobalState.isQuillReadOnly = false;
           GlobalState.isCreatingNote = true;
@@ -107,7 +110,7 @@ class _NoteListPageState extends State<NoteListPage> {
 
           // Set the Quill to the edit mode
           GlobalState.flutterWebviewPlugin
-              .evalJavascript("javascript:setQuillToReadOnly(false);");
+              .evalJavascript("javascript:setQuillToReadOnly(false, true);");
 
           // Refresh tree
           GlobalState.masterDetailPageState.currentState

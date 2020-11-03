@@ -1459,6 +1459,10 @@
     var imageSyncArray = []; // Used to sync with dart to keep the image status up-to-date
     var isUnderMultiImagePickerOperation = false; // Check if it is still under the operation of the multi image picker(inserting many images at a time)
 
+    // Note related variables
+    var noteId = 0; // Note id
+    var noteContent = ''; // Note's current content
+
     // 【debug】
     var interactWithDart = false;
     var useMultiImagePicker = false; // If false, using Quill's default image uploader
@@ -1956,22 +1960,35 @@
 
         // Convert jsonString to json object
         var responseJson = JSON.parse(responseJsonString);
+
+        // Set variable related the note
+        isCreatingNote = responseJson.isCreatingNote;
+        noteId = responseJson.noteId;
         
         if(responseJson.isCreatingNote) { // If it is createing a new note
             if(printLogToDartFromJs) Print.postMessage('inside if(responseJson.isCreatingNote) {}');
-            isCreatingNote = true;
-            // syncImageSyncArrayToDart(true);
         } else { // If it is an old note
             if(printLogToDartFromJs) Print.postMessage('inside if(responseJson.isCreatingNote) else {}');
 
-            isCreatingNote = false; // It is the old note
-
-            var oldNoteDecodedHtml = decodeHtml(responseJson.encodedHtml);
+            // var oldNoteDecodedHtml = decodeHtml(responseJson.encodedHtml);
+            noteContent = decodeHtml(responseJson.encodedHtml);
 
             // Make sure the quill is initialized successfully, robust enhanced
             var $editorChildren = $('div.ql-editor').children();
-            if($editorChildren.length > 0) {
-                $editorChildren.replaceWith(oldNoteDecodedHtml);
+            var childrenCount = $editorChildren.length;
+            if(childrenCount > 0) {
+                // Clear other children except the first one
+                if (childrenCount > 1) {
+                    for(index=1;index<childrenCount;index++){
+                        // $('div.ql-editor').children()[index].remove();
+                        $editorChildren[index].remove(); // remove each children, except the first one
+                    }
+
+                    // update the variable
+                    $editorChildren = $('div.ql-editor').children();
+                }
+
+                $editorChildren.replaceWith(noteContent);
 
                 getAllImagesBase64FromImageFiles();
 
@@ -2093,13 +2110,15 @@
         });
     }
 
-    function setQuillToReadOnly(isReadOnly) { //Set quill edit mode
+    function setQuillToReadOnly(isReadOnly, isNewNote = false) { //Set quill edit mode
         isEditingMode = !isReadOnly; // Record the mode for quill
 
         if (isEditingMode) { // In edit mode
-            if(printLogToDartFromJs) Print.postMessage('setQuillToReadOnly() in if(isEditingMode=true)');
+            if(printLogToDartFromJs) Print.postMessage('setQuillToReadOnly(isReadOnly ='+isReadOnly+', isNewNote = '+isNewNote+') in if(isEditingMode=true)');
             $('img').css('width', '70%');
             $('#toolbar').show();
+
+            isCreatingNote = isNewNote;
 
             setTimeout(function () {
                 quill.enable();
@@ -2115,7 +2134,7 @@
             $('img').css('width', '100%');
             $('#toolbar').hide();
 
-            if(printLogToDartFromJs) Print.postMessage('setQuillToReadOnly() in if(isEditingMode=false)');
+            if(printLogToDartFromJs) Print.postMessage('setQuillToReadOnly(isReadOnly ='+isReadOnly+', isNewNote = '+isNewNote+') in if(isEditingMode=false)');
 
             setTimeout(function () {
                 quill.enable(false);
@@ -2246,9 +2265,6 @@
             imageIndexClicked = $(this).attr('image-index');
 
             if(printLogToDartFromJs) Print.postMessage('Image index clicked: ' + imageIndexClicked);
-
-            // setQuillToReadOnly(true);
-            // quill.blur();
 
             if(interactWithDart) TriggerPhotoView.postMessage(imageIndexClicked);
 

@@ -136,16 +136,15 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
             // Check which dummy data should be used
             var isInMyPhone = requestJson['isInMyPhone'];
 
-            if (isInMyPhone) {
-              // For my phone to debug the old note
-              responseJsonString =
-                  // '{"isCreatingNote": false, "encodedHtml":"&lt;p&gt;这个是好东西2。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;f9cab6db822c98712beb4212099af82f-12c94-001&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;"}';
-                  '{"isCreatingNote": false, "encodedHtml":"&lt;p&gt;这个是好东西&lt;br&gt;2&lt;/br&gt;这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西224。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;f9cab6db822c98712beb4212099af82f-12c94-001&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;"}';
-            } else {
-              // For simulator to debug
-              responseJsonString =
-                  '{"isCreatingNote": false, "encodedHtml":"&lt;p&gt;这个是好东西&lt;br&gt;2。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-12c94-001&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;30e4bae2b5dc6bc7e922efab62543c42-12c94-002&quot;&gt;&lt;/p&gt;"}';
-            }
+            // if (isInMyPhone) {
+            //   // For my phone to debug the old note
+            //   responseJsonString =
+            //       '{"isCreatingNote": false, "encodedHtml":"&lt;p&gt;jim这个是好东西&lt;br&gt;2&lt;/br&gt;这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西224。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;f9cab6db822c98712beb4212099af82f-12c94-001&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;"}';
+            // } else {
+            //   // For simulator to debug
+            //   responseJsonString =
+            //       '{"isCreatingNote": false, "encodedHtml":"&lt;p&gt;这个是好东西&lt;br&gt;2。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-12c94-001&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;30e4bae2b5dc6bc7e922efab62543c42-12c94-002&quot;&gt;&lt;/p&gt;"}';
+            // }
 
             GlobalState.flutterWebviewPlugin.evalJavascript(
                 "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
@@ -371,9 +370,9 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                         encoding: Encoding.getByName('utf-8'))
                     .toString(),
                 appBar: AppBarWidget(
-                  // detail page app bar // detail app bar
+                    // detail page app bar // detail app bar
                     backgroundColor:
-                    GlobalState.themeGreyColorAtiOSTodoForBackground,
+                        GlobalState.themeGreyColorAtiOSTodoForBackground,
                     key: GlobalState.appBarWidgetState,
                     showSyncStatus: false,
                     leadingWidth: getAppBarLeadingWidth(),
@@ -381,24 +380,24 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                     leadingChildren: [
                       (GlobalState.screenType == 1)
                           ? AppBarBackButtonWidget(
-                        // note detail back button // detail back button
-                        // detail page back button // webView back button
-                          textWidth: 180.0,
-                          // title: '英语知识',
-                          title: '  ',
-                          onTap: () {
-                            GlobalState.isHandlingNoteDetailPage = true;
-                            GlobalState.isInNoteDetailPage = false;
+                              // note detail back button // detail back button
+                              // detail page back button // webView back button
+                              textWidth: 180.0,
+                              // title: '英语知识',
+                              title: '  ',
+                              onTap: () {
+                                GlobalState.isHandlingNoteDetailPage = true;
+                                GlobalState.isInNoteDetailPage = false;
 
-                            // If the Quill is in edit mode, we set it back to read only after clicking the back button
-                            if (!GlobalState.isQuillReadOnly)
-                              toggleQuillModeBetweenReadOnlyAndEdit(
-                                  keepNoteDetailPageOpen: false);
+                                // If the Quill is in edit mode, we set it back to read only after clicking the back button
+                                if (!GlobalState.isQuillReadOnly)
+                                  toggleQuillModeBetweenReadOnlyAndEdit(
+                                      keepNoteDetailPageOpen: false);
 
-                            GlobalState.masterDetailPageState.currentState
-                                .updatePageShowAndHide(
-                                shouldTriggerSetState: true);
-                          })
+                                GlobalState.masterDetailPageState.currentState
+                                    .updatePageShowAndHide(
+                                        shouldTriggerSetState: true);
+                              })
                           : Container()
                     ],
                     tailChildren: [
@@ -408,29 +407,29 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                       IconButton(
                           icon: (GlobalState.isQuillReadOnly
                               ? Icon(
-                            Icons.edit,
-                            color: GlobalState.themeBlueColor,
-                          )
+                                  Icons.edit,
+                                  color: GlobalState.themeBlueColor,
+                                )
                               : Icon(
-                            Icons.done,
-                            color: GlobalState.themeBlueColor,
-                          )),
+                                  Icons.done,
+                                  color: GlobalState.themeBlueColor,
+                                )),
                           onPressed: () {
                             toggleQuillModeBetweenReadOnlyAndEdit(
                                 keepNoteDetailPageOpen: true);
                           }),
                       IconButton(
-                        // web view test button // test button // run button // test run button
+                          // web view test button // test button // run button // test run button
                           icon: Icon(
                             Icons.directions_run,
                             color: GlobalState.themeBlueColor,
                           ),
                           onPressed: () {
-                            GlobalState.database
-                                .getAllFolders()
-                                .then((folders) {
-                              var v = folders;
-                            });
+                            var responseJsonString =
+                                '{"isCreatingNote": false, "noteId":4, "encodedHtml":"&lt;p&gt;2jim这个是好东西&lt;br&gt;2&lt;/br&gt;这是好东西224。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;"}';
+
+                            GlobalState.flutterWebviewPlugin.evalJavascript(
+                                "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
                           }),
                     ]),
                 javascriptChannels: jsChannels,
@@ -447,90 +446,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                 withZoom: false,
                 allowFileURLs: true,
               );
-
-              // return WebviewScaffold(
-              //   // return web view object
-              //   url: new Uri.dataFromString(GlobalState.htmlString,
-              //           mimeType: 'text/html',
-              //           encoding: Encoding.getByName('utf-8'))
-              //       .toString(),
-              //   appBar: AppBarWidget(
-              //       // detail page app bar // detail app bar
-              //       backgroundColor:
-              //           GlobalState.themeGreyColorAtiOSTodoForBackground,
-              //       key: GlobalState.appBarWidgetState,
-              //       showSyncStatus: false,
-              //       leadingWidth: getAppBarLeadingWidth(),
-              //       tailWidth: appBarTailWidth,
-              //       leadingChildren: [
-              //         (GlobalState.screenType == 1)
-              //             ? AppBarBackButtonWidget(
-              //                 // note detail back button // detail back button
-              //                 // detail page back button // webView back button
-              //                 textWidth: 180.0,
-              //                 // title: '英语知识',
-              //                 title: '  ',
-              //                 onTap: () {
-              //                   GlobalState.isHandlingNoteDetailPage = true;
-              //                   GlobalState.isInNoteDetailPage = false;
-              //
-              //                   // If the Quill is in edit mode, we set it back to read only after clicking the back button
-              //                   if (!GlobalState.isQuillReadOnly)
-              //                     toggleQuillModeBetweenReadOnlyAndEdit(
-              //                         keepNoteDetailPageOpen: false);
-              //
-              //                   GlobalState.masterDetailPageState.currentState
-              //                       .updatePageShowAndHide(
-              //                           shouldTriggerSetState: true);
-              //                 })
-              //             : Container()
-              //       ],
-              //       tailChildren: [
-              //         // edit web view button // edit note button
-              //         // web view action button // note detail edit button
-              //         // edit detail button // detail edit button
-              //         IconButton(
-              //             icon: (GlobalState.isQuillReadOnly
-              //                 ? Icon(
-              //                     Icons.edit,
-              //                     color: GlobalState.themeBlueColor,
-              //                   )
-              //                 : Icon(
-              //                     Icons.done,
-              //                     color: GlobalState.themeBlueColor,
-              //                   )),
-              //             onPressed: () {
-              //               toggleQuillModeBetweenReadOnlyAndEdit(
-              //                   keepNoteDetailPageOpen: true);
-              //             }),
-              //         IconButton(
-              //             // web view test button // test button // run button // test run button
-              //             icon: Icon(
-              //               Icons.directions_run,
-              //               color: GlobalState.themeBlueColor,
-              //             ),
-              //             onPressed: () {
-              //               GlobalState.database
-              //                   .getAllFolders()
-              //                   .then((folders) {
-              //                 var v = folders;
-              //               });
-              //             }),
-              //       ]),
-              //   javascriptChannels: jsChannels,
-              //   initialChild: Container(
-              //     color: GlobalState.themeGreyColorAtiOSTodoForBackground,
-              //     child: Center(
-              //       child: Container(),
-              //     ),
-              //   ),
-              //   hidden: true,
-              //   scrollBar: false,
-              //   withJavascript: true,
-              //   withLocalStorage: true,
-              //   withZoom: false,
-              //   allowFileURLs: true,
-              // );
             }
 
             break;
@@ -547,7 +462,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   @override
   void afterFirstLayout(BuildContext context) {}
 
-  // Private methods
+// Private methods
   void toggleQuillModeBetweenReadOnlyAndEdit(
       {bool keepNoteDetailPageOpen = true}) {
     // toggle edit mode // toggle read only mode
