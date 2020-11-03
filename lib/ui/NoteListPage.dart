@@ -103,6 +103,7 @@ class _NoteListPageState extends State<NoteListPage> {
         onPressed: () {
           // click new note button // click new button
           // new note event // click on new note button
+          // click add note button
 
           // Update action status
           GlobalState.isQuillReadOnly = false;
@@ -114,7 +115,10 @@ class _NoteListPageState extends State<NoteListPage> {
           // GlobalState.flutterWebviewPlugin
           //     .evalJavascript("javascript:setQuillToReadOnly(false, true);");
 
-          var responseJsonString =  '{"isCreatingNote": true, "folderId":3, "noteId":0, "encodedHtml":""}';
+          // Get note related variables
+          var folderId = GlobalState.selectedFolderId;
+
+          var responseJsonString =  '{"isCreatingNote": true, "folderId":$folderId, "noteId":0, "encodedHtml":""}';
           GlobalState.flutterWebviewPlugin.evalJavascript(
               "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
 

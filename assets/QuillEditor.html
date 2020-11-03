@@ -1876,7 +1876,9 @@
 <!-- Quill Editor related -->
 <script>
     function quillOnceHandler() {   
-        console.log('First selection-change!');
+        console.log('quillOnceHandler() in js');
+        if(printLogToDartFromJs) Print.postMessage('quillOnceHandler()');
+
         if (isCreatingNote || forWebDebug) quill.deleteText(0, 7);
         cursorIndex = 0;
     }
@@ -2025,17 +2027,18 @@
         noteId = responseJson.noteId; // If note id == 0, meaning it is a new note
         noteContent = decodeHtml(responseJson.encodedHtml);
         
-        if(responseJson.isCreatingNote) { // If it is createing a new note
-            if(printLogToDartFromJs) Print.postMessage('inside if(responseJson.isCreatingNote) {}');
+        if(isCreatingNote) { // If it is createing a new note
+            if(printLogToDartFromJs) Print.postMessage('inside if(isCreatingNote) {}');
 
             // Clear all children except the first one
             removeQuillEditorAllChildrenExceptFirstOne($editorChildren);
             $editorChildren.replaceWith(noteContent);
 
-            removeQuillOnceHandler();
-            initQuillEditorWatermark();
+            setQuillToReadOnly(false, isCreatingNote);
+            // removeQuillOnceHandler();
+            // initQuillEditorWatermark();
 
-            setQuillToReadOnly(false, true);
+            // setQuillToReadOnly(false, isCreatingNote);
 
         } else { // If it is an old note
             if(printLogToDartFromJs) Print.postMessage('inside if(responseJson.isCreatingNote) else {}');
@@ -2295,17 +2298,11 @@
         return result;
     }
 
-    // function printScreenHeight(screenHeighInDart) {
-    //     var screenHeightInJs = screenHeight;
-    //     var newScreenHeightInJs = $(window.top).height();
-    //     var result = 'screenHeighInDart = '+screenHeighInDart+'.\n(D-Value1 = '+(screenHeighInDart - screenHeightInJs)+')screenHeightInJs = ' + screenHeightInJs+'.\n(D-Value2 = '+(screenHeighInDart - newScreenHeightInJs)+')newScreenHeightInJs = '+newScreenHeightInJs;
 
-    //     console.log(result);
-
-    //     if(printLogToDartFromJs) {
-    //         Print.postMessage(result);
-    //     }
-    // }
+    function getIsCreatingNote(){
+        console.log('isCreatingNote = '+isCreatingNote);
+        if(printLogToDartFromJs) Print.postMessage('isCreatingNote = '+isCreatingNote);
+    }
 </script>
 
 <!-- jQuery init -->
@@ -2375,8 +2372,8 @@
         initQuillEditorWatermark();
 
         quill.on('text-change', function () {
-            // console.log('Text change!');
-            // if(printLogToDartFromJs) Print.postMessage('text change');
+            console.log('Text change!');
+            if(printLogToDartFromJs) Print.postMessage('text change');
 
             // [For images handling] Only not under multi image picker operation will check the image changes
             if (!isUnderMultiImagePickerOperation) {
