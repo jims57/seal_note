@@ -285,6 +285,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     ),
                   ),
                   onTap: () {
+                    // click note list item // click on note list item
+                    // click note item
+
                     // Click note list item
                     GlobalState.isClickingNoteListItem = true;
 
@@ -295,6 +298,17 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                     // Force to clear the water mark in the quill editor, if coming from the note list(viewing an old note)
                     GlobalState.flutterWebviewPlugin.evalJavascript("javascript:removeQuillEditorWatermark();");
+
+                    var folderId = theNote.folderId;
+                    var noteId = theNote.id;
+                    var noteContent = theNote.content;
+
+                    // Update the quill's content
+                    var responseJsonString =
+                        '{"isCreatingNote": false, "folderId":$folderId, "noteId":$noteId, "encodedHtml":"$noteContent"}';
+
+                    GlobalState.flutterWebviewPlugin.evalJavascript(
+                        "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
 
                     GlobalState.isInNoteDetailPage = true;
                     if (GlobalState.screenType == 1) {
