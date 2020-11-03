@@ -97,6 +97,8 @@ class _NoteListPageState extends State<NoteListPage> {
       ),
       // Note list floating button
       floatingActionButton: FloatingActionButton(
+        // floating button // add note floating button
+        // add note button // new note floating button
         child: Icon(Icons.add),
         onPressed: () {
           // click new note button // click new button
@@ -109,8 +111,12 @@ class _NoteListPageState extends State<NoteListPage> {
           GlobalState.isInNoteDetailPage = true;
 
           // Set the Quill to the edit mode
-          GlobalState.flutterWebviewPlugin
-              .evalJavascript("javascript:setQuillToReadOnly(false, true);");
+          // GlobalState.flutterWebviewPlugin
+          //     .evalJavascript("javascript:setQuillToReadOnly(false, true);");
+
+          var responseJsonString =  '{"isCreatingNote": true, "folderId":3, "noteId":0, "encodedHtml":""}';
+          GlobalState.flutterWebviewPlugin.evalJavascript(
+              "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
 
           // Refresh tree
           GlobalState.masterDetailPageState.currentState

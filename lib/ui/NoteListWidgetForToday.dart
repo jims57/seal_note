@@ -293,9 +293,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     GlobalState.isQuillReadOnly = true;
                     GlobalState.isCreatingNote = false;
 
-                    // GlobalState.rotationCounter += 1;
-                    // GlobalState.htmlString2 =
-                    //     GlobalState.rotationCounter.toString();
+                    // Force to clear the water mark in the quill editor, if coming from the note list(viewing an old note)
+                    GlobalState.flutterWebviewPlugin.evalJavascript("javascript:removeQuillEditorWatermark();");
 
                     GlobalState.isInNoteDetailPage = true;
                     if (GlobalState.screenType == 1) {

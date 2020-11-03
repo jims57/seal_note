@@ -362,7 +362,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           case 2:
             {
               // New webView scaffold
-
               return WebviewScaffold(
                 // return web view object
                 url: new Uri.dataFromString(GlobalState.htmlString,
@@ -426,7 +425,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                           ),
                           onPressed: () {
                             var responseJsonString =
-                                '{"isCreatingNote": false, "noteId":4, "encodedHtml":"&lt;p&gt;2jim这个是好东西&lt;br&gt;2&lt;/br&gt;这是好东西224。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;"}';
+                                '{"isCreatingNote": false, "folderId":3, "noteId":4, "encodedHtml":"&lt;p&gt;2jim这个是好东西&lt;br&gt;2&lt;/br&gt;这是好东西224。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;"}';
+                                // '{"isCreatingNote": false, "folderId":3, "noteId":4, "encodedHtml":""}';
 
                             GlobalState.flutterWebviewPlugin.evalJavascript(
                                 "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");

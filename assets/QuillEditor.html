@@ -1460,7 +1460,8 @@
     var isUnderMultiImagePickerOperation = false; // Check if it is still under the operation of the multi image picker(inserting many images at a time)
 
     // Note related variables
-    var noteId = 0; // Note id
+    var folderId = 0; // If folder id == 0, meaning it is a new note
+    var noteId = 0; // If note id == 0, meaning it is a new note
     var noteContent = ''; // Note's current content
 
     // 【debug】
@@ -1872,6 +1873,60 @@
     }
 </script>
 
+<!-- Quill Editor related -->
+<script>
+    function quillOnceHandler() {   
+        console.log('First selection-change!');
+        if (isCreatingNote || forWebDebug) quill.deleteText(0, 7);
+        cursorIndex = 0;
+    }
+
+    function initQuillEditorWatermark(){
+        quill.setText('添加笔记...');
+
+        quill.formatText(0, 7, {
+            'bold': false,
+            'italic': true,
+            'color': 'rgba(0,0,0,0.6)'
+        });
+
+        quill.once('selection-change', quillOnceHandler);
+    }
+
+    function removeQuillOnceHandler(){
+        quill.off('selection-change', quillOnceHandler);
+    }
+
+    function removeQuillEditorWatermark(forceToRemoveWatermark = true){
+        // Since the read only quill editor can't be updated directly, you have to set it to edit mode before change the quill content.
+        if(forceToRemoveWatermark){
+            setQuillToReadOnly(false, isCreatingNote);
+        }
+
+        var childrenCount = $('div.ql-editor').children().length;
+        if(childrenCount>0){
+            $('div.ql-editor').children()[0].replaceWith(' ');
+        }
+    }
+</script>
+
+<!-- Note related -->
+<script>
+    function removeQuillEditorAllChildrenExceptFirstOne($quillEditorChildren){
+        var childrenCount = $quillEditorChildren.length;
+
+        // Clear other children except the first one
+        if (childrenCount > 1) {
+            for(index = 1;index<childrenCount;index++){
+                $quillEditorChildren[index].remove(); // remove each children, except the first one
+            }
+
+            // update the variable
+            $quillEditorChildren = $('div.ql-editor').children();
+        }
+    }
+</script>
+
 <!-- 【For js to call dart】 -->
 <script>
     function checkIfOldNote(isInMyPhone) { // Get the initial html content which will replace the editor's content, this function is basically used for reading an old note
@@ -1961,32 +2016,39 @@
         // Convert jsonString to json object
         var responseJson = JSON.parse(responseJsonString);
 
+        // Get Quill editor's all children objects
+        var $editorChildren = $('div.ql-editor').children();
+
         // Set variable related the note
         isCreatingNote = responseJson.isCreatingNote;
-        noteId = responseJson.noteId;
+        folderId = responseJson.folderId;
+        noteId = responseJson.noteId; // If note id == 0, meaning it is a new note
+        noteContent = decodeHtml(responseJson.encodedHtml);
         
         if(responseJson.isCreatingNote) { // If it is createing a new note
             if(printLogToDartFromJs) Print.postMessage('inside if(responseJson.isCreatingNote) {}');
+
+            // Clear all children except the first one
+            removeQuillEditorAllChildrenExceptFirstOne($editorChildren);
+            $editorChildren.replaceWith(noteContent);
+
+            removeQuillOnceHandler();
+            initQuillEditorWatermark();
+
+            setQuillToReadOnly(false, true);
+
         } else { // If it is an old note
             if(printLogToDartFromJs) Print.postMessage('inside if(responseJson.isCreatingNote) else {}');
 
-            // var oldNoteDecodedHtml = decodeHtml(responseJson.encodedHtml);
-            noteContent = decodeHtml(responseJson.encodedHtml);
-
-            // Make sure the quill is initialized successfully, robust enhanced
-            var $editorChildren = $('div.ql-editor').children();
+            setQuillToReadOnly(true, isCreatingNote);
+            // removeQuillEditorWatermark();
+            
             var childrenCount = $editorChildren.length;
             if(childrenCount > 0) {
                 // Clear other children except the first one
-                if (childrenCount > 1) {
-                    for(index=1;index<childrenCount;index++){
-                        // $('div.ql-editor').children()[index].remove();
-                        $editorChildren[index].remove(); // remove each children, except the first one
-                    }
+                removeQuillEditorAllChildrenExceptFirstOne($editorChildren);
 
-                    // update the variable
-                    $editorChildren = $('div.ql-editor').children();
-                }
+                // removeQuillEditorWatermark();
 
                 $editorChildren.replaceWith(noteContent);
 
@@ -2310,13 +2372,7 @@
             }
         });
 
-        quill.setText('添加笔记...');
-
-        quill.formatText(0, 7, {
-            'bold': false,
-            'italic': true,
-            'color': 'rgba(0,0,0,0.6)'
-        });
+        initQuillEditorWatermark();
 
         quill.on('text-change', function () {
             // console.log('Text change!');
@@ -2415,12 +2471,6 @@
                 console.log('Cursor not in the editor');
                 // if(printLogToDartFromJs) Print.postMessage('Cursor is not in editor: ');
             }
-        });
-
-        quill.once('selection-change', function () {
-            console.log('First selection-change!');
-            if (isCreatingNote || forWebDebug) quill.deleteText(0, 7);
-            cursorIndex = 0;
         });
 
         // Set Quill readonly status or not
