@@ -154,6 +154,7 @@ class _UserFolderListListenerWidgetState
                             ),
                             Expanded(
                               // folder list item right part // folder list right part
+                              // folder item right part
                               flex: 1,
                               child: FolderListItemRightPartWidget(
                                 numberToShow: widget.numberToShow,
