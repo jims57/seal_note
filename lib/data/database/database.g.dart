@@ -483,7 +483,6 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
   final int id;
   final String name;
   final int order;
-  final int numberToShow;
   final bool isDefaultFolder;
   final int reviewPlanId;
   final DateTime created;
@@ -492,7 +491,6 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
       {@required this.id,
       @required this.name,
       @required this.order,
-      @required this.numberToShow,
       @required this.isDefaultFolder,
       this.reviewPlanId,
       @required this.created,
@@ -507,8 +505,6 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
       order: intType.mapFromDatabaseResponse(data['${effectivePrefix}order']),
-      numberToShow: intType
-          .mapFromDatabaseResponse(data['${effectivePrefix}numberToShow']),
       isDefaultFolder: boolType
           .mapFromDatabaseResponse(data['${effectivePrefix}isDefaultFolder']),
       reviewPlanId: intType
@@ -530,9 +526,6 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
     }
     if (!nullToAbsent || order != null) {
       map['order'] = Variable<int>(order);
-    }
-    if (!nullToAbsent || numberToShow != null) {
-      map['numberToShow'] = Variable<int>(numberToShow);
     }
     if (!nullToAbsent || isDefaultFolder != null) {
       map['isDefaultFolder'] = Variable<bool>(isDefaultFolder);
@@ -556,9 +549,6 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
       order:
           order == null && nullToAbsent ? const Value.absent() : Value(order),
-      numberToShow: numberToShow == null && nullToAbsent
-          ? const Value.absent()
-          : Value(numberToShow),
       isDefaultFolder: isDefaultFolder == null && nullToAbsent
           ? const Value.absent()
           : Value(isDefaultFolder),
@@ -581,7 +571,6 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       order: serializer.fromJson<int>(json['order']),
-      numberToShow: serializer.fromJson<int>(json['numberToShow']),
       isDefaultFolder: serializer.fromJson<bool>(json['isDefaultFolder']),
       reviewPlanId: serializer.fromJson<int>(json['reviewPlanId']),
       created: serializer.fromJson<DateTime>(json['created']),
@@ -595,7 +584,6 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'order': serializer.toJson<int>(order),
-      'numberToShow': serializer.toJson<int>(numberToShow),
       'isDefaultFolder': serializer.toJson<bool>(isDefaultFolder),
       'reviewPlanId': serializer.toJson<int>(reviewPlanId),
       'created': serializer.toJson<DateTime>(created),
@@ -607,7 +595,6 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
           {int id,
           String name,
           int order,
-          int numberToShow,
           bool isDefaultFolder,
           int reviewPlanId,
           DateTime created,
@@ -616,7 +603,6 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
         id: id ?? this.id,
         name: name ?? this.name,
         order: order ?? this.order,
-        numberToShow: numberToShow ?? this.numberToShow,
         isDefaultFolder: isDefaultFolder ?? this.isDefaultFolder,
         reviewPlanId: reviewPlanId ?? this.reviewPlanId,
         created: created ?? this.created,
@@ -628,7 +614,6 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('order: $order, ')
-          ..write('numberToShow: $numberToShow, ')
           ..write('isDefaultFolder: $isDefaultFolder, ')
           ..write('reviewPlanId: $reviewPlanId, ')
           ..write('created: $created, ')
@@ -645,11 +630,9 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
           $mrjc(
               order.hashCode,
               $mrjc(
-                  numberToShow.hashCode,
-                  $mrjc(
-                      isDefaultFolder.hashCode,
-                      $mrjc(reviewPlanId.hashCode,
-                          $mrjc(created.hashCode, createdBy.hashCode))))))));
+                  isDefaultFolder.hashCode,
+                  $mrjc(reviewPlanId.hashCode,
+                      $mrjc(created.hashCode, createdBy.hashCode)))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -657,7 +640,6 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
           other.id == this.id &&
           other.name == this.name &&
           other.order == this.order &&
-          other.numberToShow == this.numberToShow &&
           other.isDefaultFolder == this.isDefaultFolder &&
           other.reviewPlanId == this.reviewPlanId &&
           other.created == this.created &&
@@ -668,7 +650,6 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
   final Value<int> id;
   final Value<String> name;
   final Value<int> order;
-  final Value<int> numberToShow;
   final Value<bool> isDefaultFolder;
   final Value<int> reviewPlanId;
   final Value<DateTime> created;
@@ -677,7 +658,6 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.order = const Value.absent(),
-    this.numberToShow = const Value.absent(),
     this.isDefaultFolder = const Value.absent(),
     this.reviewPlanId = const Value.absent(),
     this.created = const Value.absent(),
@@ -687,7 +667,6 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
     this.id = const Value.absent(),
     @required String name,
     @required int order,
-    this.numberToShow = const Value.absent(),
     this.isDefaultFolder = const Value.absent(),
     this.reviewPlanId = const Value.absent(),
     @required DateTime created,
@@ -699,7 +678,6 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
     Expression<int> id,
     Expression<String> name,
     Expression<int> order,
-    Expression<int> numberToShow,
     Expression<bool> isDefaultFolder,
     Expression<int> reviewPlanId,
     Expression<String> created,
@@ -709,7 +687,6 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (order != null) 'order': order,
-      if (numberToShow != null) 'numberToShow': numberToShow,
       if (isDefaultFolder != null) 'isDefaultFolder': isDefaultFolder,
       if (reviewPlanId != null) 'reviewPlanId': reviewPlanId,
       if (created != null) 'created': created,
@@ -721,7 +698,6 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
       {Value<int> id,
       Value<String> name,
       Value<int> order,
-      Value<int> numberToShow,
       Value<bool> isDefaultFolder,
       Value<int> reviewPlanId,
       Value<DateTime> created,
@@ -730,7 +706,6 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
       id: id ?? this.id,
       name: name ?? this.name,
       order: order ?? this.order,
-      numberToShow: numberToShow ?? this.numberToShow,
       isDefaultFolder: isDefaultFolder ?? this.isDefaultFolder,
       reviewPlanId: reviewPlanId ?? this.reviewPlanId,
       created: created ?? this.created,
@@ -749,9 +724,6 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
     }
     if (order.present) {
       map['order'] = Variable<int>(order.value);
-    }
-    if (numberToShow.present) {
-      map['numberToShow'] = Variable<int>(numberToShow.value);
     }
     if (isDefaultFolder.present) {
       map['isDefaultFolder'] = Variable<bool>(isDefaultFolder.value);
@@ -775,7 +747,6 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('order: $order, ')
-          ..write('numberToShow: $numberToShow, ')
           ..write('isDefaultFolder: $isDefaultFolder, ')
           ..write('reviewPlanId: $reviewPlanId, ')
           ..write('created: $created, ')
@@ -817,17 +788,6 @@ class $FoldersTable extends Folders with TableInfo<$FoldersTable, FolderEntry> {
       $tableName,
       false,
     );
-  }
-
-  final VerificationMeta _numberToShowMeta =
-      const VerificationMeta('numberToShow');
-  GeneratedIntColumn _numberToShow;
-  @override
-  GeneratedIntColumn get numberToShow =>
-      _numberToShow ??= _constructNumberToShow();
-  GeneratedIntColumn _constructNumberToShow() {
-    return GeneratedIntColumn('numberToShow', $tableName, false,
-        defaultValue: const Constant(0));
   }
 
   final VerificationMeta _isDefaultFolderMeta =
@@ -877,16 +837,8 @@ class $FoldersTable extends Folders with TableInfo<$FoldersTable, FolderEntry> {
   }
 
   @override
-  List<GeneratedColumn> get $columns => [
-        id,
-        name,
-        order,
-        numberToShow,
-        isDefaultFolder,
-        reviewPlanId,
-        created,
-        createdBy
-      ];
+  List<GeneratedColumn> get $columns =>
+      [id, name, order, isDefaultFolder, reviewPlanId, created, createdBy];
   @override
   $FoldersTable get asDslTable => this;
   @override
@@ -912,12 +864,6 @@ class $FoldersTable extends Folders with TableInfo<$FoldersTable, FolderEntry> {
           _orderMeta, order.isAcceptableOrUnknown(data['order'], _orderMeta));
     } else if (isInserting) {
       context.missing(_orderMeta);
-    }
-    if (data.containsKey('numberToShow')) {
-      context.handle(
-          _numberToShowMeta,
-          numberToShow.isAcceptableOrUnknown(
-              data['numberToShow'], _numberToShowMeta));
     }
     if (data.containsKey('isDefaultFolder')) {
       context.handle(
@@ -2390,19 +2336,6 @@ abstract class _$Database extends GeneratedDatabase {
         progressTotal: row.readInt('progressTotal'),
       );
     });
-  }
-
-  Selectable<NoteEntry> notesWithNullChecking2(
-      int selectedFolderId, int isReviewFolderSelected) {
-    return customSelect(
-        'SELECT * FROM notes n WHERE  n.folderId = :selectedFolderId AND (CASE WHEN 1 = :isReviewFolderSelected THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END);',
-        variables: [
-          Variable.withInt(selectedFolderId),
-          Variable.withInt(isReviewFolderSelected)
-        ],
-        readsFrom: {
-          notes
-        }).map(notes.mapFromRow);
   }
 
   @override

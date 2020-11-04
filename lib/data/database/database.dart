@@ -62,9 +62,7 @@ class Users extends Table {
 
   TextColumn get introduction => text().nullable()();
 
-  TextColumn get created => text()
-      // .withDefault(Constant(DateTime.now().toString()))
-      .map(const IsoDateTimeConverter())();
+  TextColumn get created => text().map(const IsoDateTimeConverter())();
 }
 
 @DataClassName('FolderEntry')
@@ -75,17 +73,12 @@ class Folders extends Table {
 
   IntColumn get order => integer()();
 
-  IntColumn get numberToShow =>
-      integer().withDefault(const Constant(0)).named('numberToShow')();
-
   BoolColumn get isDefaultFolder =>
       boolean().withDefault(const Constant(false)).named('isDefaultFolder')();
 
   IntColumn get reviewPlanId => integer().nullable().named('reviewPlanId')();
 
-  TextColumn get created => text()
-      // .withDefault(Constant(DateTime.now().toString()))
-      .map(const IsoDateTimeConverter())();
+  TextColumn get created => text().map(const IsoDateTimeConverter())();
 
   IntColumn get createdBy =>
       integer().withDefault(const Constant(1)).named('createdBy')();
@@ -179,10 +172,6 @@ class ReviewPlanConfigs extends Table {
       "SELECT id, folderId, title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 1 AND n.createdBy = :createdBy ORDER BY n.updated DESC, n.id DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1); ",
   'getNoteListForUserFolders':
       "WITH isReviewFolderTable AS( SELECT CASE WHEN reviewPlanId IS NOT NULL THEN 1 ELSE 0 END AS isReviewFolder FROM folders WHERE id = :folderId) SELECT id, folderId, title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy, ( SELECT count( * ) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = :folderId AND CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ORDER BY n.isReviewFinished ASC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.nextReviewTime END ASC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 0 THEN n.updated END DESC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.updated END DESC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 0 THEN n.id END DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1); ",
-
-  // For testing
-  'notesWithNullChecking2':
-      'SELECT * FROM notes n WHERE  n.folderId = :selectedFolderId AND (CASE WHEN 1 = :isReviewFolderSelected THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END);'
 })
 class Database extends _$Database {
   Database(QueryExecutor e) : super(e);

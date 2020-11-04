@@ -76,7 +76,6 @@ class _MyAppState extends State<MyApp> {
             id: null,
             name: '今天',
             order: 1,
-            numberToShow: 28,
             isDefaultFolder: true,
             created: now,
             createdBy: GlobalState.adminUserId));
@@ -84,7 +83,6 @@ class _MyAppState extends State<MyApp> {
             id: null,
             name: '全部笔记',
             order: 2,
-            numberToShow: 99,
             isDefaultFolder: true,
             created: now,
             createdBy: GlobalState.adminUserId));
@@ -92,7 +90,6 @@ class _MyAppState extends State<MyApp> {
             id: null,
             name: '我的笔记',
             order: 3,
-            numberToShow: 23,
             isDefaultFolder: false,
             created: now,
             createdBy: GlobalState.adminUserId));
@@ -100,7 +97,6 @@ class _MyAppState extends State<MyApp> {
             id: null,
             name: '英语知识',
             order: 5,
-            numberToShow: 18,
             isDefaultFolder: false,
             created: now,
             createdBy: GlobalState.adminUserId));
@@ -108,7 +104,6 @@ class _MyAppState extends State<MyApp> {
             id: null,
             name: '编程知识',
             order: 4,
-            numberToShow: 8,
             isDefaultFolder: false,
             created: now,
             createdBy: GlobalState.adminUserId));
@@ -116,7 +111,6 @@ class _MyAppState extends State<MyApp> {
             id: null,
             name: '健身知识',
             order: 6,
-            numberToShow: 28,
             isDefaultFolder: false,
             created: now,
             createdBy: GlobalState.adminUserId));
@@ -124,7 +118,6 @@ class _MyAppState extends State<MyApp> {
             id: null,
             name: '删除笔记',
             order: 7,
-            numberToShow: 2,
             isDefaultFolder: true,
             created: now,
             createdBy: GlobalState.adminUserId));
