@@ -8,6 +8,7 @@ import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/database/database.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:seal_note/model/NoteWithProgressTotal.dart';
+import 'package:seal_note/util/html/HtmlHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 import 'httper/NoteHttper.dart';
 
@@ -20,10 +21,6 @@ class NoteListWidgetForToday extends StatefulWidget {
 
 class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   List<NoteEntry> _noteEntryList = List<NoteEntry>();
-
-  // List<NoteWithProgressTotal> _noteEntryList = List<NoteWithProgressTotal>();
-
-  // List<NoteEntry> _noteList = List<NoteEntry>();
   List<NoteWithProgressTotal> _noteList = List<NoteWithProgressTotal>();
 
   int _pageNo;
@@ -41,7 +38,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   double _slideFontSize = 16.0;
 
   // Data manipulation
-  // NoteEntry _noteEntryDeleted;
   NoteWithProgressTotal _noteEntryDeleted;
 
   @override
@@ -139,7 +135,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${theNote.content}',
+                                  '${HtmlHandler.decodeAndRemoveAllHtmlTags(theNote.content)}',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -297,7 +293,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     GlobalState.isCreatingNote = false;
 
                     // Force to clear the water mark in the quill editor, if coming from the note list(viewing an old note)
-                    GlobalState.flutterWebviewPlugin.evalJavascript("javascript:removeQuillEditorWatermark();");
+                    GlobalState.flutterWebviewPlugin.evalJavascript(
+                        "javascript:removeQuillEditorWatermark();");
 
                     var folderId = theNote.folderId;
                     var noteId = theNote.id;
@@ -340,7 +337,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
     await Future.delayed(Duration(seconds: 2));
 
-    // _notesCompanionList.clear();
     _noteEntryList.clear();
 
     for (var i = 0; i < _refreshCount; ++i) {
@@ -358,20 +354,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
           isReviewFinished: false,
           isDeleted: false,
           createdBy: GlobalState.currentUserId);
-
-      // var noteEntry = NoteWithProgressTotal(
-      //     id: null,
-      //     folderId: GlobalState.selectedFolderId,
-      //     title: title,
-      //     content: content,
-      //     created: now,
-      //     updated: now,
-      //     nextReviewTime: TimeHandler.getNowForLocal(),
-      //     reviewProgressNo: 1,
-      //     isReviewFinished: false,
-      //     isDeleted: false,
-      //     createdBy: GlobalState.currentUserId,
-      //     progressTotal: 2);
 
       _noteEntryList.add(noteEntry);
       // _noteEntryList.add(noteEntry);
@@ -476,7 +458,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     return isReviewNoteOverdue;
   }
 
-  // String _showProgressLabel(NoteEntry noteEntry) {
   String _showProgressLabel(NoteWithProgressTotal noteWithProgressTotal) {
     var progressLabel = '';
 
