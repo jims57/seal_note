@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:moor/moor.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'folderPageWidgets/UserFolderListListenerWidget.dart';
+import 'package:seal_note/data/database/database.dart';
+import 'package:seal_note/ui/FolderListItemWidget.dart';
 
 class FolderListWidget extends StatefulWidget {
   FolderListWidget({Key key, @required this.userFolderTotal}) : super(key: key);
@@ -19,7 +21,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
   int defaultFolderTotal = 3;
 
   double folderListPanelMarginForTopOrBottom = 5.0;
-  List<Widget> childrenWidgetList = List<Widget>();
+  List<FolderListItemWidget> childrenWidgetList = List<FolderListItemWidget>();
 
   ScrollController controller;
 
@@ -61,6 +63,9 @@ class FolderListWidgetState extends State<FolderListWidget> {
           child: ReorderableListView(
             children: childrenWidgetList,
             onReorder: (oldIndex, newIndex) {
+              // reorder folder event // order folder event
+              // order folder
+
               setState(() {
                 // These two lines are workarounds for ReorderableListView problems
                 if (newIndex > childrenWidgetList.length)
@@ -75,6 +80,22 @@ class FolderListWidgetState extends State<FolderListWidget> {
                   var oldWidget = childrenWidgetList.removeAt(oldIndex);
 
                   childrenWidgetList.insert(newIndex, oldWidget);
+
+                  // update folder order // change folder order
+                  // Update the folders' order
+                  var foldersCompanionList = List<FoldersCompanion>();
+                  var order = 1;
+
+                  // Get latest folders' order
+                  childrenWidgetList.forEach((item) {
+                    foldersCompanionList.add(FoldersCompanion(
+                        id: Value(item.folderId), order: Value(order)));
+
+                    order++;
+                  });
+
+                  // Save folders' orders into db
+                  GlobalState.database.reorderFolders(foldersCompanionList);
                 }
               });
             },
@@ -104,93 +125,21 @@ class FolderListWidgetState extends State<FolderListWidget> {
     return isDefaultFolder;
   }
 
-  Widget getFolderListItem(
-      {int index = 0,
-      bool isDefaultFolder = false,
-      IconData icon = Icons.folder_open_outlined,
-      Color iconColor = GlobalState.themeLightBlueColor07,
-      @required int folderId,
-      @required String folderName,
-      @required int numberToShow,
-      // int progressTotal = 0,
-      bool isReviewFolder = false,
-      bool canSwipe = true,
-      bool showDivider = true,
-      Color badgeBackgroundColor = GlobalState.themeBlueColor,
-      bool showBadgeBackgroundColor = false,
-      bool showZero = true,
-      bool isRoundTopCorner = false,
-      bool isRoundBottomCorner = false}) {
-    // Check if this is a default folder, if yes, we need to add the folder total
-    if (isDefaultFolder) {
-      GlobalState.allFolderTotal += 1;
-
-      // Record the default folder index to list
-      GlobalState.defaultFolderIndexList.add(index);
-    }
-
-    return GestureDetector(
-      key: (isDefaultFolder)
-          ? Key('defaultFolderListItem$index')
-          : Key('userFolderListItem$index'),
-      child: UserFolderListListenerWidget(
-        icon: icon,
-        iconColor: iconColor,
-        folderName: folderName,
-        numberToShow: numberToShow,
-        isReviewFolder: isReviewFolder,
-        isDefaultFolder: isDefaultFolder,
-        badgeBackgroundColor: badgeBackgroundColor,
-        showBadgeBackgroundColor: showBadgeBackgroundColor,
-        showZero: showZero,
-        showDivider: showDivider,
-        canSwipe: canSwipe,
-        folderListItemHeight: GlobalState.folderListItemHeight,
-        folderListPanelMarginForTopOrBottom:
-            folderListPanelMarginForTopOrBottom,
-        isRoundTopCorner: isRoundTopCorner,
-        isRoundBottomCorner: isRoundBottomCorner,
-      ),
-      onTap: () {
-        // click on folder item // click folder item // click folder list item event
-        // click folder item event
-
-        // Update the note list
-        GlobalState.isDefaultFolderSelected = isDefaultFolder;
-        GlobalState.selectedFolderId = folderId;
-        GlobalState.selectedFolderName = folderName;
-        // GlobalState.progressTotalOfSelectedFolder = progressTotal;
-        GlobalState.isReviewFolderSelected = isReviewFolder;
-        GlobalState.noteListWidgetForTodayState.currentState.triggerSetState();
-
-        // Switch the page
-        GlobalState.isHandlingFolderPage = true;
-        GlobalState.isInFolderPage = false;
-        GlobalState.masterDetailPageState.currentState
-            .updatePageShowAndHide(shouldTriggerSetState: true);
-      },
-    );
-  }
-
   void getAllFolders() {
     childrenWidgetList.clear();
-
     // get folder data // get all folder data
     // get all folder // get folder list data
 
-    // GlobalState.database.getAllFolders().then((folders) {
     GlobalState.database.getListForFoldersWithUnreadTotal().then((folders) {
       GlobalState.userFolderTotal = folders.length;
       GlobalState.allFolderTotal = GlobalState.userFolderTotal;
 
       for (var index = 0; index < folders.length; index++) {
         var theFolder = folders[index];
-
         var isDefaultFolder = theFolder.isDefaultFolder;
         var folderId = theFolder.id;
         var folderName = '${theFolder.name}';
         var numberToShow = theFolder.numberToShow;
-        // var progressTotal = theFolder.progressTotal;
         var isReviewFolder = (theFolder.reviewPlanId != null) ? true : false;
         var isTodayFolder = (isDefaultFolder &&
             folderName == GlobalState.defaultFolderNameForToday);
@@ -199,7 +148,9 @@ class FolderListWidgetState extends State<FolderListWidget> {
         var isDeletionFolder = (isDefaultFolder &&
             folderName == GlobalState.defaultFolderNameForDeletion);
 
-        childrenWidgetList.add(getFolderListItem(
+        // childrenWidgetList.add(getFolderListItem(
+        childrenWidgetList.add(FolderListItemWidget(
+          key: Key('FolderListItemWidget$index'),
           icon: (isTodayFolder)
               ? Icons.today_outlined
               : ((isAllNotesFolder)
@@ -220,7 +171,6 @@ class FolderListWidgetState extends State<FolderListWidget> {
           folderId: folderId,
           folderName: folderName,
           numberToShow: numberToShow,
-          // progressTotal: progressTotal,
           isReviewFolder: isReviewFolder,
           badgeBackgroundColor: (isTodayFolder)
               ? GlobalState.themeOrangeColorAtiOSTodo
@@ -231,6 +181,8 @@ class FolderListWidgetState extends State<FolderListWidget> {
           canSwipe: (isDefaultFolder) ? false : true,
           isRoundTopCorner: (isTodayFolder) ? true : false,
           isRoundBottomCorner: (isDeletionFolder) ? true : false,
+          folderListPanelMarginForTopOrBottom:
+              folderListPanelMarginForTopOrBottom,
         ));
       }
     });

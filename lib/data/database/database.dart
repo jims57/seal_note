@@ -194,32 +194,6 @@ class Database extends _$Database {
   @override
   int get schemaVersion => 1;
 
-  // Testing
-  // Future<List<FoldersWithProgressTotalResult>> getCountByReviewPlanId() {
-  //   // var count = CountByReviewPlanId(1).getSingle();
-  //   var folders = foldersWithProgressTotal().get();
-  //
-  //   return folders;
-  // }
-
-  Future<List<NoteEntry>> getNotesWithNullChecking(
-      int folderId, int isReviewFolder) {
-    var _notesWithCases =
-        notesWithNullChecking2(folderId, isReviewFolder).get();
-
-    return _notesWithCases;
-  }
-
-  Future<List<NoteWithProgressTotal>> getNoteListForTodayList(
-      int createdBy, int pageSize, int pageNo) {
-    var _noteWithProgressTotal =
-        getNoteListForToday(createdBy, pageSize, pageNo.toDouble())
-            .map((row) => convertModelToNoteWithProgressTotal(row))
-            .get();
-
-    return _noteWithProgressTotal;
-  }
-
   // Initialization related
   Future<bool> isDbInitialized() async {
     // Whether the db has been initialized
@@ -273,27 +247,6 @@ class Database extends _$Database {
   }
 
   // Folders
-  Future<List<FolderEntry>> getAllFolders() {
-    return (select(folders)
-          ..where((f) => f.createdBy.equals(GlobalState.currentUserId))
-          ..orderBy([(f) => OrderingTerm(expression: f.order)]))
-        .get();
-  }
-
-  // Future<List<FoldersWithProgressTotalResult>>
-  //     getAllFoldersWithProgressTotal() {
-  //   var folders = foldersWithProgressTotal().get();
-  //
-  //   return folders;
-  // }
-
-  Future<List<GetFoldersWithUnreadTotalResult>>
-      getListForFoldersWithUnreadTotal() {
-    var folders = getFoldersWithUnreadTotal(GlobalState.currentUserId).get();
-
-    return folders;
-  }
-
   Future<bool> isReviewFolder(int folderId) async {
     var isReviewFolder = false;
     FolderEntry folderEntry = await (select(folders)
@@ -305,6 +258,27 @@ class Database extends _$Database {
     }
 
     return isReviewFolder;
+  }
+
+  Future<List<GetFoldersWithUnreadTotalResult>>
+      getListForFoldersWithUnreadTotal() {
+    var folders = getFoldersWithUnreadTotal(GlobalState.currentUserId).get();
+
+    return folders;
+  }
+
+  Future reorderFolders(List<FoldersCompanion> foldersCompanionList) async {
+    var result = await transaction(() async {
+      for (var foldersCompanion in foldersCompanionList) {
+        await (update(folders)
+              ..where((f) => f.id.equals(foldersCompanion.id.value)))
+            .write(FoldersCompanion(
+          order: Value(foldersCompanion.order.value),
+        ));
+      }
+    });
+
+    return result;
   }
 
   // Notes
@@ -348,7 +322,7 @@ class Database extends _$Database {
 
         return getNoteListForToday(
                 GlobalState.currentUserId, pageSize, pageNo.toDouble())
-            .map((row) => convertModelToNoteWithProgressTotal(row))
+            .map((row) => _convertModelToNoteWithProgressTotal(row))
             .get();
       } else if (GlobalState.selectedFolderName ==
           GlobalState.defaultFolderNameForAllNotes) {
@@ -357,7 +331,7 @@ class Database extends _$Database {
         // get all notes note list
         return getNoteListForAllNotes(
                 GlobalState.currentUserId, pageSize, pageNo.toDouble())
-            .map((row) => convertModelToNoteWithProgressTotal(row))
+            .map((row) => _convertModelToNoteWithProgressTotal(row))
             .get();
       } else {
         // get deleted note // get deletion notes
@@ -365,7 +339,7 @@ class Database extends _$Database {
         // For Deleted Notes folder
         return getNoteListForDeletedNotes(
                 GlobalState.currentUserId, pageSize, pageNo.toDouble())
-            .map((row) => convertModelToNoteWithProgressTotal(row))
+            .map((row) => _convertModelToNoteWithProgressTotal(row))
             .get();
       }
     } else {
@@ -375,7 +349,7 @@ class Database extends _$Database {
 
       return getNoteListForUserFolders(GlobalState.selectedFolderId,
               GlobalState.currentUserId, pageSize, pageNo.toDouble())
-          .map((row) => convertModelToNoteWithProgressTotal(row))
+          .map((row) => _convertModelToNoteWithProgressTotal(row))
           .get();
     }
   }
@@ -413,7 +387,7 @@ class Database extends _$Database {
   }
 
   // Model conversion
-  NoteWithProgressTotal convertModelToNoteWithProgressTotal(var row) {
+  NoteWithProgressTotal _convertModelToNoteWithProgressTotal(var row) {
     return NoteWithProgressTotal(
         id: row.id,
         folderId: row.folderId,
