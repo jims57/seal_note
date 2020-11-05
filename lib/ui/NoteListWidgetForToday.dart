@@ -330,9 +330,11 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   // Public methods
-  void triggerSetState({bool triggerInitLoadingConfigs = true}) {
+  void triggerSetState({bool resetNoteList = true}) {
+    // If resetNoteList = true, it will fetch data from db again to get the latest note list
+
     setState(() {
-      if (triggerInitLoadingConfigs) initLoadingConfigs();
+      if (resetNoteList) initLoadingConfigs();
     });
   }
 

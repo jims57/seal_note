@@ -114,8 +114,8 @@ class GlobalState with ChangeNotifier {
   static String
       newNoteContentEncoded; // The new note content which is encoded, and is going to be saved to db
   static SelectedNoteModel noteModelForConsumer;
-  static bool isNewNoteBeingCreated =
-      false; // Indicate if creating a new note, avoiding duplicate notes being created
+  static bool isNewNoteBeingSaved =
+      false; // Indicate if a new note is being saved, avoiding duplicate notes being created
 
   // State objects
   static GlobalKey<MasterDetailPageState> masterDetailPageState;
