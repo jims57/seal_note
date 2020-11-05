@@ -15,17 +15,17 @@ class NoteWithProgressTotal {
   int progressTotal;
 
   NoteWithProgressTotal({
-    @required this.id,
-    @required this.folderId,
-    @required this.title,
-    @required this.content,
-    @required this.created,
-    @required this.updated,
-    @required this.nextReviewTime,
-    @required this.reviewProgressNo,
-    @required this.isReviewFinished,
-    @required this.isDeleted,
-    @required this.createdBy,
-    @required this.progressTotal,
+    this.id,
+    this.folderId,
+    this.title,
+    this.content,
+    this.created,
+    this.updated,
+    this.nextReviewTime,
+    this.reviewProgressNo,
+    this.isReviewFinished,
+    this.isDeleted,
+    this.createdBy,
+    this.progressTotal,
   });
 }

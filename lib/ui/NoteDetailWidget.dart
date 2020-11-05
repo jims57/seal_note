@@ -361,17 +361,55 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           // Update the note list by updating the related note model
           GlobalState.selectedNoteModel.content = noteContentEncoded;
 
-          // Save the changes into sqlite every time
-          var notesCompanion = NotesCompanion(
-              id: Value(GlobalState.selectedNoteModel.id),
-              title: Value(GlobalState.selectedNoteModel.title),
-              content: Value(noteContentEncoded),
-              created: Value(GlobalState.selectedNoteModel.created),
-              updated: Value(TimeHandler.getNowForLocal()));
-          GlobalState.database.updateNote(notesCompanion).then((isSuccess) {
-            GlobalState.flutterWebviewPlugin.evalJavascript(
-                "javascript:beginToCountElapsingMillisecond(500, true);");
-          });
+          // Check if this is a new note
+          if (GlobalState.selectedNoteModel.id > 0) {
+            // Old note
+
+            GlobalState.isNewNoteBeingCreated = false;
+
+            // Save the changes into sqlite every time
+            var notesCompanion = NotesCompanion(
+                id: Value(GlobalState.selectedNoteModel.id),
+                title: Value(GlobalState.selectedNoteModel.title),
+                content: Value(noteContentEncoded),
+                created: Value(GlobalState.selectedNoteModel.created),
+                updated: Value(TimeHandler.getNowForLocal()));
+
+            GlobalState.database.updateNote(notesCompanion).then((isSuccess) {
+              GlobalState.flutterWebviewPlugin.evalJavascript(
+                  "javascript:beginToCountElapsingMillisecond(500, true);");
+            });
+          } else {
+            // add new note to db // insert new note to db
+            if (!GlobalState.isNewNoteBeingCreated) {
+              GlobalState.isNewNoteBeingCreated = true;
+
+              // Get now for local
+              var nowForLocal = TimeHandler.getNowForLocal();
+
+              // New note
+              var noteEntry = NoteEntry(
+                  id: null,
+                  folderId: GlobalState.defaultFolderId,
+                  title: GlobalState.defaultTitleForNewNote,
+                  content: GlobalState.selectedNoteModel.content,
+                  created: nowForLocal,
+                  updated: nowForLocal,
+                  nextReviewTime: nowForLocal,
+                  reviewProgressNo: null,
+                  isReviewFinished: false,
+                  isDeleted: false,
+                  createdBy: GlobalState.currentUserId);
+
+              GlobalState.database.insertNote(noteEntry).then((newNoteId) {
+                GlobalState.isNewNoteBeingCreated = false;
+                GlobalState.selectedNoteModel.id = newNoteId;
+                GlobalState.selectedNoteModel.created = nowForLocal;
+                GlobalState.flutterWebviewPlugin.evalJavascript(
+                    "javascript:beginToCountElapsingMillisecond(500, true);");
+              });
+            }
+          }
         }), // SaveNoteEncodedHtmlToSqlite
   ].toSet();
 

@@ -101,25 +101,21 @@ class GlobalState with ChangeNotifier {
   static BuildContext myWebViewPluginContext;
 
   // Selected note related
-  static NoteWithProgressTotal
-      selectedNoteModel; // When the user clicks on the note list item, we store the note model to this variable for the sake of future usage to update these values shown on the note list
-  static bool isDefaultFolderSelected = false; // For default folder
-  static bool isReviewFolderSelected = false; // For review folder
+  static NoteWithProgressTotal selectedNoteModel =
+      NoteWithProgressTotal(); // When the user clicks on the note list item, we store the note model to this variable for the sake of future usage to update these values shown on the note list
+  static String defaultTitleForNewNote = '标题';
   static int defaultFolderId =
       3; // The default folder id to be used when user creates a note from default folders.
   static int selectedFolderId =
       defaultFolderId; // The current selected folder id the user clicks on folder list page
-  // static int folderIdNoteBelongsTo =
-  //     defaultFolderId; // This is the folder id the note belongs to, note that it isn't the same folder id as the selected folder id if the user is clicking a note from a default folder, i.e. Today folder
   static String selectedFolderName = defaultUserFolderNameForMyNotes;
-  // static int selectedNoteId =
-  //     0; // If the selected note id ==0 , meaning it is a new note
   static String
       oldNoteContentEncoded; // The old note content which is saved in db currently
   static String
       newNoteContentEncoded; // The new note content which is encoded, and is going to be saved to db
-
   static SelectedNoteModel noteModelForConsumer;
+  static bool isNewNoteBeingCreated =
+      false; // Indicate if creating a new note, avoiding duplicate notes being created
 
   // State objects
   static GlobalKey<MasterDetailPageState> masterDetailPageState;
@@ -134,6 +130,10 @@ class GlobalState with ChangeNotifier {
   // Change Notifier
   static AppState appState;
   static DetailPageChangeNotifier detailPageChangeNotifier;
+
+  // Folder related
+  static bool isDefaultFolderSelected = false; // For default folder
+  static bool isReviewFolderSelected = false; // For review folder
 
   // Folder page
   static double folderPageTopContainerHeight = 40.0;
