@@ -363,7 +363,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
           // Save the changes into sqlite every time
           var notesCompanion = NotesCompanion(
-              id: Value(GlobalState.selectedNoteId),
+              id: Value(GlobalState.selectedNoteModel.id),
               title: Value(GlobalState.selectedNoteModel.title),
               content: Value(noteContentEncoded),
               created: Value(GlobalState.selectedNoteModel.created),

@@ -293,8 +293,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     var noteContent = theNote.content;
 
                     // Save related global variable
-                    GlobalState.selectedNoteId = noteId;
-                    GlobalState.folderIdNoteBelongsTo = folderId;
+                    GlobalState.selectedNoteModel.id = noteId;
+                    GlobalState.selectedNoteModel.folderId = folderId;
 
                     // Click note list item
                     GlobalState.isClickingNoteListItem = true;

@@ -108,12 +108,12 @@ class GlobalState with ChangeNotifier {
   static int defaultFolderId =
       3; // The default folder id to be used when user creates a note from default folders.
   static int selectedFolderId =
-      3; // The current selected folder id the user clicks on folder list page
-  static int folderIdNoteBelongsTo =
-      3; // This is the folder id the note belongs to, note that it isn't the same folder id as the selected folder id if the user is clicking a note from a default folder, i.e. Today folder
+      defaultFolderId; // The current selected folder id the user clicks on folder list page
+  // static int folderIdNoteBelongsTo =
+  //     defaultFolderId; // This is the folder id the note belongs to, note that it isn't the same folder id as the selected folder id if the user is clicking a note from a default folder, i.e. Today folder
   static String selectedFolderName = defaultUserFolderNameForMyNotes;
-  static int selectedNoteId =
-      0; // If the selected note id ==0 , meaning it is a new note
+  // static int selectedNoteId =
+  //     0; // If the selected note id ==0 , meaning it is a new note
   static String
       oldNoteContentEncoded; // The old note content which is saved in db currently
   static String

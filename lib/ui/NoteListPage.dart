@@ -114,11 +114,12 @@ class _NoteListPageState extends State<NoteListPage> {
 
           // Get note related variables
           var folderId = GlobalState.selectedFolderId;
-          GlobalState.selectedNoteId =
-              0; // Every time when clicking on the Add button, making the note id equals zero
+          GlobalState.selectedNoteModel.id = 0;
+          // GlobalState.selectedNoteId =
+          //     0; // Every time when clicking on the Add button, making the note id equals zero
 
           var responseJsonString =
-              '{"isCreatingNote": true, "folderId":$folderId, "noteId":${GlobalState.selectedNoteId}, "encodedHtml":""}';
+              '{"isCreatingNote": true, "folderId":$folderId, "noteId":${GlobalState.selectedNoteModel.id}, "encodedHtml":""}';
           GlobalState.flutterWebviewPlugin.evalJavascript(
               "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
 
