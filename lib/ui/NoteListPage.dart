@@ -99,6 +99,7 @@ class _NoteListPageState extends State<NoteListPage> {
       floatingActionButton: FloatingActionButton(
         // floating button // add note floating button
         // add note button // new note floating button
+        // add button
         child: Icon(Icons.add),
         onPressed: () {
           // click new note button // click new button
@@ -111,14 +112,13 @@ class _NoteListPageState extends State<NoteListPage> {
           GlobalState.isHandlingNoteDetailPage = true;
           GlobalState.isInNoteDetailPage = true;
 
-          // Set the Quill to the edit mode
-          // GlobalState.flutterWebviewPlugin
-          //     .evalJavascript("javascript:setQuillToReadOnly(false, true);");
-
           // Get note related variables
           var folderId = GlobalState.selectedFolderId;
+          GlobalState.selectedNoteId =
+              0; // Every time when clicking on the Add button, making the note id equals zero
 
-          var responseJsonString =  '{"isCreatingNote": true, "folderId":$folderId, "noteId":0, "encodedHtml":""}';
+          var responseJsonString =
+              '{"isCreatingNote": true, "folderId":$folderId, "noteId":${GlobalState.selectedNoteId}, "encodedHtml":""}';
           GlobalState.flutterWebviewPlugin.evalJavascript(
               "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
 

@@ -2,6 +2,7 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:seal_note/data/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:seal_note/model/ImageSyncItem.dart';
+import 'package:seal_note/model/NoteWithProgressTotal.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/FolderListWidget.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
@@ -33,8 +34,7 @@ class GlobalState with ChangeNotifier {
   static const Color themeGreyColorAtiOSTodo = Color(0xffbbbbc0);
   static const Color themeGreyColorAtiOSTodoForFolderGroupBackground =
       Color(0xff898a8e);
-  static const Color themeGreyColorAtiOSTodoForBackground =
-      Color(0xfff1f2f6); //Color(0xfff2f2f6);
+  static const Color themeGreyColorAtiOSTodoForBackground = Color(0xfff1f2f6);
   static Color themeGrey350Color = Colors.grey[350];
   static const Color themeGreyColorAtiOSTodoForBlockIconBackground =
       Color(0xff8e8e93);
@@ -69,12 +69,10 @@ class GlobalState with ChangeNotifier {
   static final double folderPageDefaultToDx = -1.0;
   static bool isHandlingFolderPage = false;
   static bool isInFolderPage = false;
-
   static final double noteDetailPageDefaultFromDx = 1.0;
   static final double noteDetailPageDefaultToDx = 1.0;
   static bool isInNoteDetailPage = false;
   static bool isHandlingNoteDetailPage = false;
-
   static bool shouldTriggerPageTransitionAnimation = true;
   static const int pageTransitionAnimationDurationMilliseconds = 200;
 
@@ -89,10 +87,8 @@ class GlobalState with ChangeNotifier {
   // Note: The following default values for the width are as far as large screen(screenType = 3) is concerned
   static final double folderPageDefaultWidth = 250.0;
   static double currentFolderPageWidth = 250.0;
-
   static final double noteListPageDefaultWidth = 270.0;
   static double currentNoteListPageWidth = 270.0;
-
   static final double noteDetailPageDefaultWidth = 200.0;
   static double currentNoteDetailPageWidth = 200.0;
 
@@ -101,18 +97,29 @@ class GlobalState with ChangeNotifier {
   static BuildContext masterDetailPageContext;
   static BuildContext noteListPageContext;
   static BuildContext folderOptionItemListPanelContext;
-
-//  static BuildContext noteDetailPageContext;
   static BuildContext noteDetailWidgetContext;
   static BuildContext myWebViewPluginContext;
 
   // Selected note related
+  static NoteWithProgressTotal
+      selectedNoteModel; // When the user clicks on the note list item, we store the note model to this variable for the sake of future usage to update these values shown on the note list
   static bool isDefaultFolderSelected = false; // For default folder
   static bool isReviewFolderSelected = false; // For review folder
-  static int selectedFolderId = 3;
+  static int defaultFolderId =
+      3; // The default folder id to be used when user creates a note from default folders.
+  static int selectedFolderId =
+      3; // The current selected folder id the user clicks on folder list page
+  static int folderIdNoteBelongsTo =
+      3; // This is the folder id the note belongs to, note that it isn't the same folder id as the selected folder id if the user is clicking a note from a default folder, i.e. Today folder
   static String selectedFolderName = defaultUserFolderNameForMyNotes;
+  static int selectedNoteId =
+      0; // If the selected note id ==0 , meaning it is a new note
+  static String
+      oldNoteContentEncoded; // The old note content which is saved in db currently
+  static String
+      newNoteContentEncoded; // The new note content which is encoded, and is going to be saved to db
 
-  static SelectedNoteModel selectedNoteModel;
+  static SelectedNoteModel noteModelForConsumer;
 
   // State objects
   static GlobalKey<MasterDetailPageState> masterDetailPageState;
@@ -139,10 +146,8 @@ class GlobalState with ChangeNotifier {
   static bool shouldMakeDefaultFoldersGrey = false;
   static bool isFolderListPageLoaded =
       false; // Indicate if the folder list page is loaded
-  // static int progressTotalOfSelectedFolder = 0;
 
   // Folder total
-  // static int defaultFolderTotal = 0;
   static int userFolderTotal = 0;
   static int allFolderTotal = 0; // All folder including default folders
 
@@ -164,20 +169,9 @@ class GlobalState with ChangeNotifier {
   static String htmlString = '';
   static bool isClickingNoteListItem = false;
   static bool hasWebViewLoaded = false; // Check if the WebView is loaded or not
-
-  // static bool isInDetailPage = false;
-
-  // TODO: Testing
-  static String htmlString2 = '<div>jims57</div>';
-
-  // static int rotationCounter = 0;
   static bool isInNoteDetailPageInsideScreenType1 = false;
   static FlutterWebviewPlugin flutterWebviewPlugin;
-
-  // static FlutterWebviewPlugin flutterWebviewPlugin2;
   static WebviewScaffold webViewScaffold;
-
-  // static WebviewScaffold webViewScaffold2;
   static bool needRefreshWebView = false;
 
   // Quill editor

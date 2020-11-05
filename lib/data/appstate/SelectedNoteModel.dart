@@ -4,8 +4,7 @@ import 'package:seal_note/ui/NoteListWidgetForToday.dart';
 
 class SelectedNoteModel extends ChangeNotifier {
   int _folderId;
-  // String _folderName = GlobalState.defaultUserFolderNameForMyNotes;
-  int _id;
+  int _noteId;
   String _title;
   String _content;
   BuildContext _noteListPageContext;
@@ -37,19 +36,10 @@ class SelectedNoteModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ignore: unnecessary_getters_setters
-  // String get folderName => _folderName;
+  int get noteId => _noteId;
 
-  // ignore: unnecessary_getters_setters
-  // set folderName(String value) {
-  //   _folderName = value;
-  //   notifyListeners();
-  // }
-
-  int get id => _id;
-
-  set id(int value) {
-    _id = value;
+  set noteId(int value) {
+    _noteId = value;
     notifyListeners();
   }
 

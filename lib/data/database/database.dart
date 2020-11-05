@@ -254,6 +254,12 @@ class Database extends _$Database {
     return folders;
   }
 
+  Future<void> upsertFoldersInBatch(List<FolderEntry> folderEntryList) async {
+    return await batch((batch) {
+      batch.insertAllOnConflictUpdate(folders, folderEntryList);
+    });
+  }
+
   Future reorderFolders(List<FoldersCompanion> foldersCompanionList) async {
     var result = await transaction(() async {
       for (var foldersCompanion in foldersCompanionList) {
@@ -269,14 +275,10 @@ class Database extends _$Database {
   }
 
   // Notes
-  Future<void> upsertFoldersInBatch(List<FolderEntry> folderEntryList) async {
-    return await batch((batch) {
-      batch.insertAllOnConflictUpdate(folders, folderEntryList);
-    });
-  }
+  Future<int> insertNote(NoteEntry noteEntry) {
+    // Add a note to db
 
-  Future<int> insertNote(NotesCompanion entry) {
-    return into(notes).insert(entry);
+    return into(notes).insert(noteEntry);
   }
 
   Future<void> insertNotesInBatch(List<NoteEntry> noteEntryList) async {
@@ -289,6 +291,10 @@ class Database extends _$Database {
     return await batch((batch) {
       batch.insertAllOnConflictUpdate(notes, noteEntryList);
     });
+  }
+
+  Future<bool> updateNote(NotesCompanion notesCompanion) async {
+    return update(notes).replace(notesCompanion);
   }
 
   Future<List<NoteWithProgressTotal>> getNotesByPageSize(
@@ -341,8 +347,9 @@ class Database extends _$Database {
     }
   }
 
-  Future<int> deleteAllNotes() {
-    return (delete(notes)).go();
+  Future<int> deleteNote(int noteId) {
+    // Delete a note
+    return (delete(notes)..where((n) => n.id.equals(noteId))).go();
   }
 
   Future<bool> hasNote() async {

@@ -10,9 +10,14 @@ Database constructDb({bool logStatements = false}) {
   if (Platform.isIOS || Platform.isAndroid) {
     final executor = LazyDatabase(() async {
       final dataDir = await paths.getApplicationDocumentsDirectory();
+
+
       // db file // seal db file
       final dbFile =
-          File(p.join(dataDir.path, GlobalState.dbNameForMobilePlatform));
+      File(p.join(dataDir.path, GlobalState.dbNameForMobilePlatform));
+
+      print(dbFile);
+
       return VmDatabase(dbFile, logStatements: logStatements);
     });
     return Database(executor);

@@ -1982,12 +1982,14 @@
     function saveNoteEncodedHtmlToSqlite() { // Save the note to sqlite, by passing to dart first
         // if(printLogToDartFromJs) Print.postMessage('saveNoteEncodedHtmlToSqlite()');
 
-        var $theEditor = $('div.ql-editor');
-        var $theClonedEditor = $theEditor.clone(false,false);
-        $theClonedEditor.find('img').removeAttr('src');
-        $theClonedEditor.find('img').css('width','100%'); // Anyway, set the images' width back to 100% before saving to db
-        var newNoteHtml = $theClonedEditor.html();
-        var newNoteEncodedHtml = encodeHtml(newNoteHtml);
+        // var $theEditor = $('div.ql-editor');
+        // var $theClonedEditor = $theEditor.clone(false,false);
+        // $theClonedEditor.find('img').removeAttr('src');
+        // $theClonedEditor.find('img').css('width','100%'); // Anyway, set the images' width back to 100% before saving to db
+        // var newNoteHtml = $theClonedEditor.html();
+        // var newNoteEncodedHtml = encodeHtml(newNoteHtml);
+
+        var newNoteEncodedHtml = getNoteContentEncoded();
 
         if(oldNoteEncodedHtml != newNoteEncodedHtml) { // If there is any change
             if(printLogToDartFromJs) Print.postMessage('inside if(oldNoteEncodedHtml != newNoteEncodedHtml) {}');
@@ -2074,6 +2076,17 @@
         }
 
         syncImageSyncArrayToDart(true);
+    }
+
+    function getNoteContentEncoded() { // Get the current note's content with the html encoded
+        var $theEditor = $('div.ql-editor');
+        var $theClonedEditor = $theEditor.clone(false,false);
+        $theClonedEditor.find('img').removeAttr('src');
+        $theClonedEditor.find('img').css('width','100%'); // Anyway, set the images' width back to 100% before saving to db
+        var newNoteHtml = $theClonedEditor.html();
+        var newNoteEncodedHtml = encodeHtml(newNoteHtml);
+
+        return newNoteEncodedHtml;
     }
 
     function insertImagesByMultiImagePicker(imageUint8List, imageId, total) {

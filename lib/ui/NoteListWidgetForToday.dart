@@ -20,7 +20,7 @@ class NoteListWidgetForToday extends StatefulWidget {
 }
 
 class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
-  List<NoteEntry> _noteEntryList = List<NoteEntry>();
+  List<NoteEntry> _noteEntryListForRefresh = List<NoteEntry>();
   List<NoteWithProgressTotal> _noteList = List<NoteWithProgressTotal>();
 
   int _pageNo;
@@ -284,21 +284,27 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     // click note list item // click on note list item
                     // click note item
 
+                    // Save the current note model as global variable
+                    GlobalState.selectedNoteModel = theNote;
+
+                    // Get note related variables
+                    var folderId = theNote.folderId;
+                    var noteId = theNote.id;
+                    var noteContent = theNote.content;
+
+                    // Save related global variable
+                    GlobalState.selectedNoteId = noteId;
+                    GlobalState.folderIdNoteBelongsTo = folderId;
+
                     // Click note list item
                     GlobalState.isClickingNoteListItem = true;
-
-                    GlobalState.selectedNoteModel.id = index;
-                    // GlobalState.appState.detailPageStatus = 1;
+                    GlobalState.noteModelForConsumer.noteId = noteId;
                     GlobalState.isQuillReadOnly = true;
                     GlobalState.isCreatingNote = false;
 
                     // Force to clear the water mark in the quill editor, if coming from the note list(viewing an old note)
                     GlobalState.flutterWebviewPlugin.evalJavascript(
                         "javascript:removeQuillEditorWatermark();");
-
-                    var folderId = theNote.folderId;
-                    var noteId = theNote.id;
-                    var noteContent = theNote.content;
 
                     // Update the quill's content
                     var responseJsonString =
@@ -309,7 +315,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                     GlobalState.isInNoteDetailPage = true;
                     if (GlobalState.screenType == 1) {
-                      // GlobalState.isInNoteDetailPage = true;
                       GlobalState.isHandlingNoteDetailPage = true;
                       GlobalState.masterDetailPageState.currentState
                           .updatePageShowAndHide(shouldTriggerSetState: true);
@@ -324,46 +329,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     );
   }
 
-  void triggerSetState() {
+  // Public methods
+  void triggerSetState({bool triggerInitLoadingConfigs = true}) {
     setState(() {
-      initLoadingConfigs();
-    });
-  }
-
-  Future<Null> _getRefresh() async {
-    // get refresh data // refresh method
-    // pull to get data method // note list refresh data
-    // refresh data // refresh note data
-
-    await Future.delayed(Duration(seconds: 2));
-
-    _noteEntryList.clear();
-
-    for (var i = 0; i < _refreshCount; ++i) {
-      var title = '[refresh] title${i + 1}';
-      var content = '[refresh] content${i + 1}';
-      var now = DateTime.now().toLocal();
-
-      var noteEntry = NoteEntry(
-          id: null,
-          folderId: GlobalState.selectedFolderId,
-          title: title,
-          content: content,
-          created: now,
-          updated: now,
-          isReviewFinished: false,
-          isDeleted: false,
-          createdBy: GlobalState.currentUserId);
-
-      _noteEntryList.add(noteEntry);
-      // _noteEntryList.add(noteEntry);
-    }
-
-    // Insert the refreshed data in batch
-    // GlobalState.database.insertNotesInBatch(_notesCompanionList).then((value) {
-    GlobalState.database.insertNotesInBatch(_noteEntryList).then((value) {
-      GlobalState.selectedNoteModel.noteListWidgetForTodayState.currentState
-          .resetLoadingConfigsAfterUpdatingSqlite();
+      if (triggerInitLoadingConfigs) initLoadingConfigs();
     });
   }
 
@@ -408,7 +377,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
               //  After insert, update notes' content
 
               GlobalState
-                  .selectedNoteModel.noteListWidgetForTodayState.currentState
+                  .noteModelForConsumer.noteListWidgetForTodayState.currentState
                   .resetLoadingConfigsAfterUpdatingSqlite();
 
               Timer(Duration(seconds: 2), () {
@@ -420,7 +389,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
           });
         }
 
-        GlobalState.selectedNoteModel.noteListWidgetForTodayState.currentState
+        GlobalState
+            .noteModelForConsumer.noteListWidgetForTodayState.currentState
             .resetLoadingConfigsAfterUpdatingSqlite();
 
         Timer(Duration(seconds: 2), () {
@@ -432,6 +402,57 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
   void resetLoadingConfigsAfterUpdatingSqlite() {
     initLoadingConfigs();
+  }
+
+  List<NoteWithProgressTotal> getNoteWithProgressTotalList() {
+    // Expose the note list to public so that other widgets are able to access to it
+    return _noteList;
+  }
+
+  NoteWithProgressTotal getModelFromNoteWithProgressTotalList(
+      {@required int noteId}) {
+    // Get the specific model from the note list by a note id
+    return _noteList.firstWhere((n) => n.id == noteId);
+  }
+
+  // Private method
+  Future<Null> _getRefresh() async {
+    // get refresh data // refresh method
+    // pull to get data method // note list refresh data
+    // refresh data // refresh note data
+
+    await Future.delayed(Duration(seconds: 2));
+
+    _noteEntryListForRefresh.clear();
+
+    for (var i = 0; i < _refreshCount; ++i) {
+      var title = '[refresh] title${i + 1}';
+      var content = '[refresh] content${i + 1}';
+      var now = DateTime.now().toLocal();
+
+      var noteEntry = NoteEntry(
+          id: null,
+          folderId: GlobalState.selectedFolderId,
+          title: title,
+          content: content,
+          created: now,
+          updated: now,
+          isReviewFinished: false,
+          isDeleted: false,
+          createdBy: GlobalState.currentUserId);
+
+      _noteEntryListForRefresh.add(noteEntry);
+      // _noteEntryList.add(noteEntry);
+    }
+
+    // Insert the refreshed data in batch
+    // GlobalState.database.insertNotesInBatch(_notesCompanionList).then((value) {
+    GlobalState.database
+        .insertNotesInBatch(_noteEntryListForRefresh)
+        .then((value) {
+      GlobalState.noteModelForConsumer.noteListWidgetForTodayState.currentState
+          .resetLoadingConfigsAfterUpdatingSqlite();
+    });
   }
 
   bool _isReviewNote(DateTime nextReviewTime) {

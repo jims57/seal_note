@@ -45,7 +45,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
     GlobalState.masterDetailPageContext = context;
 
     // Models
-    GlobalState.selectedNoteModel =
+    GlobalState.noteModelForConsumer =
         Provider.of<SelectedNoteModel>(context, listen: false);
 
     // Change notifier

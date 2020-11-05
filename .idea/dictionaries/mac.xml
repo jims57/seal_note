@@ -9,6 +9,7 @@
       <w>strftime</w>
       <w>uint</w>
       <w>upsert</w>
+      <w>webview</w>
     </words>
   </dictionary>
 </component>

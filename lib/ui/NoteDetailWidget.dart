@@ -7,22 +7,30 @@ import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:keyboard_utils/keyboard_listener.dart';
 import 'package:keyboard_utils/keyboard_utils.dart';
+import 'package:moor/moor.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/DetailPageState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/data/database/database.dart';
 import 'package:seal_note/ui/common/AppBarBackButtonWidget.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
 import 'package:seal_note/util/converter/ImageConverter.dart';
 import 'package:seal_note/util/crypto/CryptoHandler.dart';
 import 'package:seal_note/util/file/FileHandler.dart';
 import 'package:seal_note/util/route/ScaleRoute.dart';
+import 'package:seal_note/util/time/TimeHandler.dart';
 
 import 'common/PhotoViewWidget.dart';
 import 'package:seal_note/model/ImageSyncItem.dart';
 import 'package:after_layout/after_layout.dart';
 
 class NoteDetailWidget extends StatefulWidget {
+  // NoteDetailWidget({Key key, @required this.noteId})
+  //     : super(key: key);
+
+  // final int noteId;
+
   @override
   State<StatefulWidget> createState() {
     return NoteDetailWidgetState();
@@ -344,9 +352,25 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           });
         }), // GetAllImagesBase64FromImageFiles
     JavascriptChannel(
+        // auto save // auto save to db
         name: 'SaveNoteEncodedHtmlToSqlite',
         onMessageReceived: (JavascriptMessage message) {
-          print(message.message);
+          var noteContentEncoded = message.message;
+          print(noteContentEncoded);
+
+          // Update the note list by updating the related note model
+          GlobalState.selectedNoteModel.content = noteContentEncoded;
+
+          // Save the changes into sqlite every time
+          var notesCompanion = NotesCompanion(
+              id: Value(GlobalState.selectedNoteId),
+              title: Value(GlobalState.selectedNoteModel.title),
+              content: Value(noteContentEncoded),
+              created: Value(GlobalState.selectedNoteModel.created),
+              updated: Value(TimeHandler.getNowForLocal()));
+          GlobalState.database.updateNote(notesCompanion).then((value) {
+            var v = value;
+          });
 
           GlobalState.flutterWebviewPlugin.evalJavascript(
               "javascript:beginToCountElapsingMillisecond(500, true);");
@@ -382,7 +406,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                               // note detail back button // detail back button
                               // detail page back button // webView back button
                               textWidth: 180.0,
-                              // title: '英语知识',
                               title: '  ',
                               onTap: () {
                                 GlobalState.isHandlingNoteDetailPage = true;
@@ -403,6 +426,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                       // edit web view button // edit note button
                       // web view action button // note detail edit button
                       // edit detail button // detail edit button
+                      // note edit button // edit note
                       IconButton(
                           icon: (GlobalState.isQuillReadOnly
                               ? Icon(
@@ -425,7 +449,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                             color: GlobalState.themeBlueColor,
                           ),
                           onPressed: () {
-                            GlobalState.flutterWebviewPlugin.evalJavascript("javascript:getIsCreatingNote();");
+                            GlobalState.flutterWebviewPlugin.evalJavascript(
+                                "javascript:getIsCreatingNote();");
 
                             // var responseJsonString =
                             //     '{"isCreatingNote": false, "folderId":3, "noteId":4, "encodedHtml":"&lt;p&gt;2jim这个是好东西&lt;br&gt;2&lt;/br&gt;这是好东西224。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;"}';
@@ -482,12 +507,17 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
       }
 
       if (GlobalState.isQuillReadOnly) {
+        // edit note // set note to edit mode
+
         // If it is currently in readonly mode
 
         // Set it to the edit mode
         GlobalState.flutterWebviewPlugin
             .evalJavascript("javascript:setQuillToReadOnly(false);");
       } else {
+        // save note // set note to read only mode
+        // save note event
+
         // If it is in edit mode
 
         // Set it to the read only mode

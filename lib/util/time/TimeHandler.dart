@@ -48,7 +48,7 @@ class TimeHandler {
     return DateTime.now().toLocal();
   }
 
-  static DateTime getNextReviewTimeForReviewFinishingNote() {
+  static DateTime getNextReviewTimeForNoteFinishingReview() {
     // This date time is going to be stored to the nextReviewTime field for notes which finish review
     // We make all these review finishing notes have to same nextReviewTime, so that updated field can be ordered by desc
     // We make it to Jan. 1st, 3000
