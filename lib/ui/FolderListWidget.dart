@@ -40,7 +40,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
     //Always clear the existing record
     GlobalState.defaultFolderIndexList.clear();
 
-    getAllFolders();
+    _getAllFolders();
 
     super.didChangeDependencies();
   }
@@ -72,7 +72,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
                   newIndex = childrenWidgetList.length;
                 if (oldIndex < newIndex) newIndex--;
 
-                var isDefaultFolder = checkIfDefaultFolder(index: oldIndex);
+                var isDefaultFolder = _checkIfDefaultFolder(index: oldIndex);
 
                 if (newIndex != oldIndex &&
                     !isDefaultFolder &&
@@ -109,13 +109,13 @@ class FolderListWidgetState extends State<FolderListWidget> {
   void triggerSetState({bool forceToFetchFoldersFromDB = false}) {
     setState(() {
       if (forceToFetchFoldersFromDB) {
-        getAllFolders();
+        _getAllFolders();
       }
     });
   }
 
   // Private method
-  bool checkIfDefaultFolder({@required index}) {
+  bool _checkIfDefaultFolder({@required index}) {
     bool isDefaultFolder = false;
 
     if (GlobalState.defaultFolderIndexList.contains(index)) {
@@ -125,7 +125,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
     return isDefaultFolder;
   }
 
-  void getAllFolders() {
+  void _getAllFolders() {
     childrenWidgetList.clear();
     // get folder data // get all folder data
     // get all folder // get folder list data

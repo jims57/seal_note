@@ -113,7 +113,7 @@ class _UserFolderListListenerWidgetState
                                   builder: (cxt, appState, child) {
                                 // Only the pointer is down, it will trigger update available dy
                                 if (GlobalState.isPointerDown) {
-                                  updateUserFolderListItemAvailableDy();
+                                  _updateUserFolderListItemAvailableDy();
                                 }
 
                                 var isDefaultFolder = widget.isDefaultFolder;
@@ -222,12 +222,12 @@ class _UserFolderListListenerWidgetState
       ),
       onPointerDown: (opd) {
         print('onPointerDown()');
-        startCountdown(resetTotalCount: true);
+        _startCountdown(resetTotalCount: true);
         GlobalState.isPointerDown = true;
 
         // When the pointer is down, we should clear the available dy in GlobalState to get the right dy
         // Avoiding the old values effect the right outcomes
-        resetUserFolderListItemAvailableDy();
+        _resetUserFolderListItemAvailableDy();
       },
       onPointerUp: (opp) {
         GlobalState.isPointerDown = false;
@@ -235,7 +235,7 @@ class _UserFolderListListenerWidgetState
         GlobalState.isAfterLongPress = false;
         GlobalState.appState.shouldMakeDefaultFoldersGrey = false;
 
-        stopCountdown();
+        _stopCountdown();
       },
       onPointerMove: (opm) {
         GlobalState.isPointerMoving = true;
@@ -243,7 +243,7 @@ class _UserFolderListListenerWidgetState
         print('onPointerMove()');
 
         if (_totalCountdownMilliseconds <= 0) {
-          stopCountdown();
+          _stopCountdown();
 
           GlobalState.isAfterLongPress = true;
           GlobalState.appState.shouldMakeDefaultFoldersGrey = true;
@@ -255,6 +255,7 @@ class _UserFolderListListenerWidgetState
     );
   }
 
+  // Private methods
   void _showOverlay() {
     if (GlobalState.overlayEntry != null) {
       GlobalState.overlayEntry.remove();
@@ -356,8 +357,7 @@ class _UserFolderListListenerWidgetState
     return color;
   }
 
-  // Private methods
-  void updateUserFolderListItemAvailableDy() {
+  void _updateUserFolderListItemAvailableDy() {
     Timer(const Duration(milliseconds: 500), () {
       var isDefaultFolder = widget.isDefaultFolder;
 
@@ -385,13 +385,13 @@ class _UserFolderListListenerWidgetState
     });
   }
 
-  void resetUserFolderListItemAvailableDy() {
+  void _resetUserFolderListItemAvailableDy() {
     GlobalState.userFolderListItemMaxAvailableDy = double.infinity;
     GlobalState.userFolderListItemMinAvailableDy = double.negativeInfinity;
     // print('resetUserFolderListItemAvailableDy()');
   }
 
-  void startCountdown({bool resetTotalCount = true}) {
+  void _startCountdown({bool resetTotalCount = true}) {
     if (resetTotalCount) {
       _totalCountdownMilliseconds = 500;
     }
@@ -402,7 +402,7 @@ class _UserFolderListListenerWidgetState
     });
   }
 
-  void stopCountdown() {
+  void _stopCountdown() {
     _timer.cancel();
   }
 }

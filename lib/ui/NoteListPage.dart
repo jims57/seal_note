@@ -40,6 +40,9 @@ class _NoteListPageState extends State<NoteListPage> {
               textWidth: 50.0,
               title: '文件夹', // Folder back button
               onTap: () {
+                // click on note list back button // click note list back button
+                // note list back button event
+
                 GlobalState.isHandlingFolderPage = true;
                 GlobalState.isInFolderPage = true;
                 GlobalState.masterDetailPageState.currentState
@@ -47,6 +50,10 @@ class _NoteListPageState extends State<NoteListPage> {
 
                 GlobalState.masterDetailPageState.currentState
                     .refreshFolderListPageAppBarHeight();
+
+                // Refresh folder list every time the user clicks on the note list back button
+                GlobalState.folderListWidgetState.currentState
+                    .triggerSetState(forceToFetchFoldersFromDB: true);
               }),
         ],
         tailChildren: [
@@ -117,7 +124,8 @@ class _NoteListPageState extends State<NoteListPage> {
           var folderId = GlobalState.selectedFolderId;
           GlobalState.selectedNoteModel.id =
               0; // Every time when clicking on the Add button, making the note id equals zero
-          GlobalState.selectedNoteModel.title = GlobalState.defaultTitleForNewNote;
+          GlobalState.selectedNoteModel.title =
+              GlobalState.defaultTitleForNewNote;
           // GlobalState.selectedNoteModel.content = null;
 
           var responseJsonString =

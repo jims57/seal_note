@@ -54,7 +54,6 @@ class FolderListPageState extends State<FolderListPage>
               padding: EdgeInsets.only(right: 15.0),
               child: Icon(
                 Icons.create_new_folder,
-                // color: Colors.white,
                 color: GlobalState.themeBlueColor,
                 size: 28.0,
               ),
@@ -84,9 +83,7 @@ class FolderListPageState extends State<FolderListPage>
                   Container(
                     height: GlobalState.folderPageBottomContainerHeight,
                     color: GlobalState.themeGreyColorAtiOSTodoForBackground,
-                    // padding: EdgeInsets.only(left: 0.0, right: 15.0),
                     child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         GestureDetector(
