@@ -1867,8 +1867,26 @@
     function executeAutoSave() {
         // Check if it needs to execute the auto-save
         if(elapsingMillisecondSinceLastChanges >= executeAutoSaveIntervalMillisecond) { // Every 3 second to check if there is any change, if yes, then save it
-            // TODO: Execute the auto-save here
-            saveNoteEncodedHtmlToSqlite();
+            saveNoteToDb();
+        }
+    }
+
+    function saveNoteToDb(forceToSave = false) { // Save the note to sqlite, by passing to dart first
+        if(printLogToDartFromJs&&keepPrintTimer) Print.postMessage('saveNoteToDb()');
+
+        var newNoteEncodedHtml = getNoteContentEncoded();
+
+        if((oldNoteEncodedHtml != newNoteEncodedHtml)||forceToSave) { // If there is any change
+            if(printLogToDartFromJs) Print.postMessage('inside if(oldNoteEncodedHtml != newNoteEncodedHtml) {}');
+
+            oldNoteEncodedHtml = newNoteEncodedHtml; // Save to variable to future check
+
+            if(interactWithDart) {
+                SaveNoteToDb.postMessage(newNoteEncodedHtml);
+            } else { // If it don't need to interact with Dart, meaning it is web app, we reset the interval in js
+                // Reset the timer
+                beginToCountElapsingMillisecond(500, true); // Only it actually execute the save, we will reset the interval
+            }
         }
     }
 </script>
@@ -1977,32 +1995,6 @@
         var imageArrayString = JSON.stringify(imageArray);
 
         if(interactWithDart) GetAllImagesBase64FromImageFiles.postMessage(imageArrayString);
-    }
-
-    function saveNoteEncodedHtmlToSqlite() { // Save the note to sqlite, by passing to dart first
-        // if(printLogToDartFromJs) Print.postMessage('saveNoteEncodedHtmlToSqlite()');
-
-        // var $theEditor = $('div.ql-editor');
-        // var $theClonedEditor = $theEditor.clone(false,false);
-        // $theClonedEditor.find('img').removeAttr('src');
-        // $theClonedEditor.find('img').css('width','100%'); // Anyway, set the images' width back to 100% before saving to db
-        // var newNoteHtml = $theClonedEditor.html();
-        // var newNoteEncodedHtml = encodeHtml(newNoteHtml);
-
-        var newNoteEncodedHtml = getNoteContentEncoded();
-
-        if(oldNoteEncodedHtml != newNoteEncodedHtml) { // If there is any change
-            if(printLogToDartFromJs) Print.postMessage('inside if(oldNoteEncodedHtml != newNoteEncodedHtml) {}');
-
-            oldNoteEncodedHtml = newNoteEncodedHtml; // Save to variable to future check
-
-            if(interactWithDart) {
-                SaveNoteEncodedHtmlToSqlite.postMessage(newNoteEncodedHtml);
-            } else { // If it don't need to interact with Dart, meaning it is web app, we reset the interval in js
-                // Reset the timer
-                beginToCountElapsingMillisecond(500, true); // Only it actually execute the save, we will reset the interval
-            }
-        }
     }
 
     function notifyDartWebViewHasLoaded() { // When the html is loaded, notify dart so that it can handle further if necessary

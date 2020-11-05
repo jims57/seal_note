@@ -353,7 +353,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         }), // GetAllImagesBase64FromImageFiles
     JavascriptChannel(
         // auto save // auto save to db
-        name: 'SaveNoteEncodedHtmlToSqlite',
+        name: 'SaveNoteToDb',
         onMessageReceived: (JavascriptMessage message) {
           var noteContentEncoded = message.message;
           print(noteContentEncoded);
@@ -368,12 +368,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
               content: Value(noteContentEncoded),
               created: Value(GlobalState.selectedNoteModel.created),
               updated: Value(TimeHandler.getNowForLocal()));
-          GlobalState.database.updateNote(notesCompanion).then((value) {
-            var v = value;
+          GlobalState.database.updateNote(notesCompanion).then((isSuccess) {
+            GlobalState.flutterWebviewPlugin.evalJavascript(
+                "javascript:beginToCountElapsingMillisecond(500, true);");
           });
-
-          GlobalState.flutterWebviewPlugin.evalJavascript(
-              "javascript:beginToCountElapsingMillisecond(500, true);");
         }), // SaveNoteEncodedHtmlToSqlite
   ].toSet();
 
@@ -423,11 +421,12 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                           : Container()
                     ],
                     tailChildren: [
-                      // edit web view button // edit note button
-                      // web view action button // note detail edit button
-                      // edit detail button // detail edit button
-                      // note edit button // edit note
                       IconButton(
+                          // edit web view button // edit note button
+                          // web view action button // note detail edit button
+                          // edit detail button // detail edit button
+                          // note edit button // edit note
+                          // save note button
                           icon: (GlobalState.isQuillReadOnly
                               ? Icon(
                                   Icons.edit,
@@ -516,11 +515,14 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
             .evalJavascript("javascript:setQuillToReadOnly(false);");
       } else {
         // save note // set note to read only mode
-        // save note event
-
-        // If it is in edit mode
+        // save note event // save button execute save note
 
         // Set it to the read only mode
+
+        // execute save note
+        // Trigger the auto-save function to save the note
+        GlobalState.flutterWebviewPlugin
+            .evalJavascript("javascript:saveNoteToDb(true);");
 
         GlobalState.flutterWebviewPlugin
             .evalJavascript("javascript:setQuillToReadOnly(true);");
