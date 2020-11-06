@@ -135,7 +135,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${HtmlHandler.decodeAndRemoveAllHtmlTags(theNote.content)}',
+                                  // note list content // note list item content
+                                  '${HtmlHandler.decodeAndRemoveAllHtmlTags(theNote.content).trim()}',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
