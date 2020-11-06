@@ -113,6 +113,7 @@ class _NoteListPageState extends State<NoteListPage> {
           // new note event // click on new note button
           // click add note button // new floating button
           // new note button // new note floating button
+          // click on new button
 
           // Update action status
           GlobalState.isQuillReadOnly = false;
@@ -126,7 +127,7 @@ class _NoteListPageState extends State<NoteListPage> {
               0; // Every time when clicking on the Add button, making the note id equals zero
           GlobalState.selectedNoteModel.title =
               GlobalState.defaultTitleForNewNote;
-          // GlobalState.selectedNoteModel.content = null;
+          GlobalState.noteContentEncodedInDb = null;
 
           var responseJsonString =
               '{"isCreatingNote": true, "folderId":$folderId, "noteId":${GlobalState.selectedNoteModel.id}, "encodedHtml":""}';

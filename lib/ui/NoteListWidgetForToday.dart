@@ -293,6 +293,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     var noteId = theNote.id;
                     var noteContent = theNote.content;
 
+                    // Record the encoded content saved in db for future comparsion
+                    GlobalState.noteContentEncodedInDb = noteContent;
+
                     // Save related global variable
                     GlobalState.selectedNoteModel.id = noteId;
                     GlobalState.selectedNoteModel.folderId = folderId;

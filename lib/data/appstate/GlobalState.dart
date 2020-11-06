@@ -110,7 +110,7 @@ class GlobalState with ChangeNotifier {
       defaultFolderId; // The current selected folder id the user clicks on folder list page
   static String selectedFolderName = defaultUserFolderNameForMyNotes;
   static String
-      oldNoteContentEncoded; // The old note content which is saved in db currently
+      noteContentEncodedInDb; // The note encoded content which is saved in db currently
   static String
       newNoteContentEncoded; // The new note content which is encoded, and is going to be saved to db
   static SelectedNoteModel noteModelForConsumer;

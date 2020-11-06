@@ -582,7 +582,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         // execute save note
         // Trigger the auto-save function to save the note
         GlobalState.flutterWebviewPlugin
-            .evalJavascript("javascript:saveNoteToDb(true);");
+            .evalJavascript("javascript:saveNoteToDb(false);");
 
         GlobalState.flutterWebviewPlugin
             .evalJavascript("javascript:setQuillToReadOnly(true);");
