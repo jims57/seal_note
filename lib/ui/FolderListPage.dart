@@ -129,5 +129,19 @@ class FolderListPageState extends State<FolderListPage>
     setState(() {});
   }
 
+  List<int> getDefaultFolderIds() {
+    // Get all default folder Ids
 
+    var defaultFolderIds = List<int>();
+    var folderListItemList =
+        GlobalState.folderListWidgetState.currentState.getFolderListItemList();
+
+    folderListItemList.forEach((folderListItem) {
+      if (folderListItem.isDefaultFolder) {
+        defaultFolderIds.add(folderListItem.folderId);
+      }
+    });
+
+    return defaultFolderIds;
+  }
 }

@@ -438,7 +438,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
       var noteEntry = NoteEntry(
           id: null,
-          folderId: GlobalState.selectedFolderId,
+          folderId: GlobalState.selectedFolderIdCurrently,
           title: title,
           content: content,
           created: now,

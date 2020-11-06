@@ -122,7 +122,7 @@ class _NoteListPageState extends State<NoteListPage> {
           GlobalState.isInNoteDetailPage = true;
 
           // Get note related variables
-          var folderId = GlobalState.selectedFolderId;
+          var folderId = GlobalState.selectedFolderIdCurrently;
           GlobalState.selectedNoteModel.id =
               0; // Every time when clicking on the Add button, making the note id equals zero
           GlobalState.selectedNoteModel.title =

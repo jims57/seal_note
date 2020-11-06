@@ -340,7 +340,7 @@ class Database extends _$Database {
       // get user folder note list // get user folder data
       // get user folder note data
 
-      return getNoteListForUserFolders(GlobalState.selectedFolderId,
+      return getNoteListForUserFolders(GlobalState.selectedFolderIdCurrently,
               GlobalState.currentUserId, pageSize, pageNo.toDouble())
           .map((row) => _convertModelToNoteWithProgressTotal(row))
           .get();

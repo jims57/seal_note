@@ -392,11 +392,12 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
               if (contentText.isNotEmpty) {
                 // Get now for local
                 var nowForLocal = TimeHandler.getNowForLocal();
+                var folderId = _getFolderIdNoteShouldSaveTo();
 
                 // New note
                 var noteEntry = NoteEntry(
                     id: null,
-                    folderId: GlobalState.defaultFolderId,
+                    folderId: folderId,
                     title: GlobalState.defaultTitleForNewNote,
                     content: GlobalState.selectedNoteModel.content,
                     created: nowForLocal,
@@ -611,9 +612,24 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     return leadingWidth;
   }
 
-  // int _getFolderIdNoteSaveTo() {
-  //   var selectedFolderId = GlobalState.selectedFolderId;
-  // }
+  static int _getFolderIdNoteShouldSaveTo() {
+    var folderId;
+    var defaultFolderIds =
+        GlobalState.folderListPageState.currentState.getDefaultFolderIds();
+
+    // Check if the selected folder id is a default one
+    if (defaultFolderIds.contains(GlobalState.selectedFolderIdCurrently)) {
+      // When the selected folder is a default one
+
+      // If it is a default folder, we need to save to the default folder id
+      folderId = GlobalState.selectedFolderIdByDefault;
+    } else {
+      // When the selected folder isn't a default one
+      folderId = GlobalState.selectedFolderIdCurrently;
+    }
+
+    return folderId;
+  }
 
   static void _setToCreatingNewNoteStatus({bool resetCounter = true}) {
     GlobalState.isNewNoteBeingSaved = true;

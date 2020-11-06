@@ -104,10 +104,10 @@ class GlobalState with ChangeNotifier {
   static NoteWithProgressTotal selectedNoteModel =
       NoteWithProgressTotal(); // When the user clicks on the note list item, we store the note model to this variable for the sake of future usage to update these values shown on the note list
   static String defaultTitleForNewNote = '标题';
-  static int defaultFolderId =
-      3; // The default folder id to be used when user creates a note from default folders.
-  static int selectedFolderId =
-      defaultFolderId; // The current selected folder id the user clicks on folder list page
+  static int selectedFolderIdByDefault =
+      3; // The user folder id by default, since default folders can save notes actually, we need a user folder to store notes when creating a new note from a default folder
+  static int selectedFolderIdCurrently =
+      selectedFolderIdByDefault; // The current selected folder id the user clicks on folder list page
   static String selectedFolderName = defaultUserFolderNameForMyNotes;
   static String
       noteContentEncodedInDb; // The note encoded content which is saved in db currently

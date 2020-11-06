@@ -83,7 +83,7 @@ class FolderListItemWidgetState extends State<FolderListItemWidget> {
 
         // Update the note list
         GlobalState.isDefaultFolderSelected = widget.isDefaultFolder;
-        GlobalState.selectedFolderId = widget.folderId;
+        GlobalState.selectedFolderIdCurrently = widget.folderId;
         GlobalState.selectedFolderName = widget.folderName;
         GlobalState.isReviewFolderSelected = widget.isReviewFolder;
         GlobalState.noteListWidgetForTodayState.currentState.triggerSetState();

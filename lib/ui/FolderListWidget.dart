@@ -114,6 +114,10 @@ class FolderListWidgetState extends State<FolderListWidget> {
     });
   }
 
+  List<FolderListItemWidget> getFolderListItemList() {
+    return childrenWidgetList;
+  }
+
   // Private method
   bool _checkIfDefaultFolder({@required index}) {
     bool isDefaultFolder = false;

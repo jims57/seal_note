@@ -191,7 +191,7 @@ class _MyAppState extends State<MyApp> {
 
         // Check if the selected folder is a review folder or not asynchronously
         GlobalState.database
-            .isReviewFolder(GlobalState.selectedFolderId)
+            .isReviewFolder(GlobalState.selectedFolderIdCurrently)
             .then((isReviewFolderSelected) {
           GlobalState.isReviewFolderSelected = isReviewFolderSelected;
 
