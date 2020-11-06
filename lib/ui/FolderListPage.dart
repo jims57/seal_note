@@ -119,12 +119,15 @@ class FolderListPageState extends State<FolderListPage>
     );
   }
 
-  void triggerSetState() {
-    setState(() {});
-  }
-
   @override
   void afterFirstLayout(BuildContext context) {
     GlobalState.isFolderListPageLoaded = true;
   }
+
+  // Public Methods
+  void triggerSetState() {
+    setState(() {});
+  }
+
+
 }

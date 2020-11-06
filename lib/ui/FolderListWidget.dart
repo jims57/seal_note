@@ -126,9 +126,11 @@ class FolderListWidgetState extends State<FolderListWidget> {
   }
 
   void _getAllFolders() {
-    childrenWidgetList.clear();
     // get folder data // get all folder data
     // get all folder // get folder list data
+
+    childrenWidgetList.clear();
+    GlobalState.defaultFolderIndexList.clear();
 
     GlobalState.database.getListForFoldersWithUnreadTotal().then((folders) {
       GlobalState.userFolderTotal = folders.length;

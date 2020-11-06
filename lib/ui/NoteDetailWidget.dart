@@ -611,6 +611,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     return leadingWidth;
   }
 
+  // int _getFolderIdNoteSaveTo() {
+  //   var selectedFolderId = GlobalState.selectedFolderId;
+  // }
+
   static void _setToCreatingNewNoteStatus({bool resetCounter = true}) {
     GlobalState.isNewNoteBeingSaved = true;
     if (resetCounter) _resetCounter();
