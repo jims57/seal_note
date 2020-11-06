@@ -224,7 +224,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                   imageIndex: expectedImageIndex,
                   syncId: 1,
                 );
-                // byteData: imageUint8List);
                 GlobalState.imageSyncItemList.add(imageSyncItem);
 
                 // Compressing the image before passing to the WebView for the sake of performance
@@ -366,7 +365,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           if (GlobalState.selectedNoteModel.id > 0) {
             // Old note
 
-            _setToCreatingNewNoteStatus();
+            _setToReadingOldNoteStatus(resetCounter: false);
 
             // Save the changes into sqlite every time
             var notesCompanion = NotesCompanion(
@@ -377,13 +376,12 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                 updated: Value(TimeHandler.getNowForLocal()));
 
             GlobalState.database.updateNote(notesCompanion).then((isSuccess) {
-              GlobalState.flutterWebviewPlugin.evalJavascript(
-                  "javascript:beginToCountElapsingMillisecond(500, true);");
+              _setToReadingOldNoteStatus(resetCounter: true);
             });
           } else {
             // add new note to db // insert new note to db
             if (!GlobalState.isNewNoteBeingSaved) {
-              GlobalState.isNewNoteBeingSaved = true;
+              _setToCreatingNewNoteStatus(resetCounter: false);
 
               // Check if the user inputs anything, if the content is empty, we don't save it to db
               var contentText = HtmlHandler.decodeAndRemoveAllHtmlTags(
@@ -412,10 +410,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                 GlobalState.database.insertNote(noteEntry).then((newNoteId) {
                   GlobalState.selectedNoteModel.id = newNoteId;
                   GlobalState.selectedNoteModel.created = nowForLocal;
-                  _setToReadingOldNoteStatus();
+                  _setToReadingOldNoteStatus(resetCounter: true);
                 });
               } else {
-                _setToReadingOldNoteStatus();
+                _setToReadingOldNoteStatus(resetCounter: true);
               }
             }
           }
@@ -613,12 +611,17 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     return leadingWidth;
   }
 
-  static void _setToCreatingNewNoteStatus() {
-    GlobalState.isNewNoteBeingSaved = false;
+  static void _setToCreatingNewNoteStatus({bool resetCounter = true}) {
+    GlobalState.isNewNoteBeingSaved = true;
+    if (resetCounter) _resetCounter();
   }
 
-  static void _setToReadingOldNoteStatus() {
+  static void _setToReadingOldNoteStatus({bool resetCounter = true}) {
     GlobalState.isNewNoteBeingSaved = false;
+    if (resetCounter) _resetCounter();
+  }
+
+  static void _resetCounter() {
     GlobalState.flutterWebviewPlugin.evalJavascript(
         "javascript:beginToCountElapsingMillisecond(500, true);");
   }
