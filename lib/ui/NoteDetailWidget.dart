@@ -18,6 +18,7 @@ import 'package:seal_note/ui/common/AppBarWidget.dart';
 import 'package:seal_note/util/converter/ImageConverter.dart';
 import 'package:seal_note/util/crypto/CryptoHandler.dart';
 import 'package:seal_note/util/file/FileHandler.dart';
+import 'package:seal_note/util/html/HtmlHandler.dart';
 import 'package:seal_note/util/route/ScaleRoute.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
@@ -365,7 +366,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           if (GlobalState.selectedNoteModel.id > 0) {
             // Old note
 
-            GlobalState.isNewNoteBeingSaved = false;
+            _setToCreatingNewNoteStatus();
 
             // Save the changes into sqlite every time
             var notesCompanion = NotesCompanion(
@@ -384,30 +385,38 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
             if (!GlobalState.isNewNoteBeingSaved) {
               GlobalState.isNewNoteBeingSaved = true;
 
-              // Get now for local
-              var nowForLocal = TimeHandler.getNowForLocal();
+              // Check if the user inputs anything, if the content is empty, we don't save it to db
+              var contentText = HtmlHandler.decodeAndRemoveAllHtmlTags(
+                      GlobalState.selectedNoteModel.content)
+                  .trim();
 
-              // New note
-              var noteEntry = NoteEntry(
-                  id: null,
-                  folderId: GlobalState.defaultFolderId,
-                  title: GlobalState.defaultTitleForNewNote,
-                  content: GlobalState.selectedNoteModel.content,
-                  created: nowForLocal,
-                  updated: nowForLocal,
-                  nextReviewTime: nowForLocal,
-                  reviewProgressNo: null,
-                  isReviewFinished: false,
-                  isDeleted: false,
-                  createdBy: GlobalState.currentUserId);
+              // It won't save the new note unless its content isn't empty
+              if (contentText.isNotEmpty) {
+                // Get now for local
+                var nowForLocal = TimeHandler.getNowForLocal();
 
-              GlobalState.database.insertNote(noteEntry).then((newNoteId) {
-                GlobalState.isNewNoteBeingSaved = false;
-                GlobalState.selectedNoteModel.id = newNoteId;
-                GlobalState.selectedNoteModel.created = nowForLocal;
-                GlobalState.flutterWebviewPlugin.evalJavascript(
-                    "javascript:beginToCountElapsingMillisecond(500, true);");
-              });
+                // New note
+                var noteEntry = NoteEntry(
+                    id: null,
+                    folderId: GlobalState.defaultFolderId,
+                    title: GlobalState.defaultTitleForNewNote,
+                    content: GlobalState.selectedNoteModel.content,
+                    created: nowForLocal,
+                    updated: nowForLocal,
+                    nextReviewTime: nowForLocal,
+                    reviewProgressNo: null,
+                    isReviewFinished: false,
+                    isDeleted: false,
+                    createdBy: GlobalState.currentUserId);
+
+                GlobalState.database.insertNote(noteEntry).then((newNoteId) {
+                  GlobalState.selectedNoteModel.id = newNoteId;
+                  GlobalState.selectedNoteModel.created = nowForLocal;
+                  _setToReadingOldNoteStatus();
+                });
+              } else {
+                _setToReadingOldNoteStatus();
+              }
             }
           }
         }), // SaveNoteEncodedHtmlToSqlite
@@ -434,7 +443,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                         GlobalState.themeGreyColorAtiOSTodoForBackground,
                     key: GlobalState.appBarWidgetState,
                     showSyncStatus: false,
-                    leadingWidth: getAppBarLeadingWidth(),
+                    leadingWidth: _getAppBarLeadingWidth(),
                     tailWidth: appBarTailWidth,
                     leadingChildren: [
                       (GlobalState.screenType == 1)
@@ -451,7 +460,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
                                 // If the Quill is in edit mode, we set it back to read only after clicking the back button
                                 if (!GlobalState.isQuillReadOnly)
-                                  toggleQuillModeBetweenReadOnlyAndEdit(
+                                  _toggleQuillModeBetweenReadOnlyAndEdit(
                                       keepNoteDetailPageOpen: false);
 
                                 GlobalState.masterDetailPageState.currentState
@@ -461,7 +470,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                 // Refresh the note list if a new note is noted
                                 if (GlobalState.isCreatingNote) {
                                   // If it is creating a new note, we need to refresh the note list to reflect its changes
-                                  Timer(const Duration(seconds: 1), () { // Delay to refresh, so that the db is ready
+                                  Timer(const Duration(milliseconds: 1000), () {
+                                    // Delay to refresh, so that the db is ready
                                     GlobalState.noteListWidgetForTodayState
                                         .currentState
                                         .triggerSetState(resetNoteList: true);
@@ -487,7 +497,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                   color: GlobalState.themeBlueColor,
                                 )),
                           onPressed: () {
-                            toggleQuillModeBetweenReadOnlyAndEdit(
+                            _toggleQuillModeBetweenReadOnlyAndEdit(
                                 keepNoteDetailPageOpen: true);
                           }),
                       IconButton(
@@ -539,8 +549,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   @override
   void afterFirstLayout(BuildContext context) {}
 
-// Private methods
-  void toggleQuillModeBetweenReadOnlyAndEdit(
+  // Private methods
+  void _toggleQuillModeBetweenReadOnlyAndEdit(
       {bool keepNoteDetailPageOpen = true}) {
     // toggle edit mode // toggle read only mode
 
@@ -583,7 +593,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     });
   }
 
-  double getAppBarLeadingWidth() {
+  double _getAppBarLeadingWidth() {
     double leadingWidth = 0.0;
     double appBarWidth = 0.0;
 
@@ -601,5 +611,15 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     leadingWidth = (appBarWidth - appBarTailWidth);
 
     return leadingWidth;
+  }
+
+  static void _setToCreatingNewNoteStatus() {
+    GlobalState.isNewNoteBeingSaved = false;
+  }
+
+  static void _setToReadingOldNoteStatus() {
+    GlobalState.isNewNoteBeingSaved = false;
+    GlobalState.flutterWebviewPlugin.evalJavascript(
+        "javascript:beginToCountElapsingMillisecond(500, true);");
   }
 }
