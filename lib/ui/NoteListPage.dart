@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 import 'package:seal_note/ui/common/AppBarBackButtonWidget.dart';
@@ -86,15 +87,32 @@ class _NoteListPageState extends State<NoteListPage> {
             },
           ),
         ],
-        title: Text(
-          // note list caption // note list page title
-          // note list title
-          '${GlobalState.selectedFolderName}',
-          style: TextStyle(
-              color: GlobalState.themeBlackColor87ForFontForeColor,
-              fontSize: 16.0),
-          // style: TextStyle(color: Colors.red,),
+        title: Consumer<AppState>(
+          builder: (ctx, appState, child) {
+            // Get folder name by the selected folder Id
+
+            return Text(
+              // note list caption // note list page title
+              // note list title // note list page caption
+
+              '${GlobalState.appState.noteListPageTitle}',
+              style: TextStyle(
+                  color: GlobalState.themeBlackColor87ForFontForeColor,
+                  fontSize: 16.0),
+            );
+          },
         ),
+        //   title: Text(
+        //     // note list caption // note list page title
+        //     // note list title // note list page caption
+        //
+        //     // '${GlobalState.selectedFolderName}',
+        //     '${GlobalState.selectedFolderName}',
+        //     style: TextStyle(
+        //         color: GlobalState.themeBlackColor87ForFontForeColor,
+        //         fontSize: 16.0),
+        //     // style: TextStyle(color: Colors.red,),
+        //   ),
         showSyncStatus: true,
         leadingWidth: 90,
         tailWidth: 40,

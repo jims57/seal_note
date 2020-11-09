@@ -90,6 +90,12 @@ class MasterDetailPageState extends State<MasterDetailPage>
     // Check if it is the first load, sometimes, the subsequent performance will be omitted
     if (isFirstLoad) {
       isFirstLoad = false;
+
+      // Get the note list page title
+      GlobalState.database
+          .getFolderNameById(GlobalState.selectedFolderIdCurrently).then((folderName) {
+            GlobalState.appState.noteListPageTitle = folderName;
+      });
     } else {
       // Get app bar height after rotation
       // after rotation

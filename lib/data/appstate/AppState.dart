@@ -54,4 +54,15 @@ class AppState extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  String _noteListPageTitle = '';
+
+  // ignore: unnecessary_getters_setters
+  String get noteListPageTitle => _noteListPageTitle;
+
+  // ignore: unnecessary_getters_setters
+  set noteListPageTitle(String value) {
+    _noteListPageTitle = value;
+    notifyListeners();
+  }
 }
