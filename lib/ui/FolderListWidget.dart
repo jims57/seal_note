@@ -153,8 +153,14 @@ class FolderListWidgetState extends State<FolderListWidget> {
             folderName == GlobalState.defaultFolderNameForAllNotes);
         var isDeletionFolder = (isDefaultFolder &&
             folderName == GlobalState.defaultFolderNameForDeletion);
+        var showZero = true;
 
-        // childrenWidgetList.add(getFolderListItem(
+        // If this is Today folder, it doesn't show zero by default
+        if (isDefaultFolder &&
+            folderName == GlobalState.defaultFolderNameForToday) {
+          showZero = false;
+        }
+
         childrenWidgetList.add(FolderListItemWidget(
           key: Key('FolderListItemWidget$index'),
           icon: (isTodayFolder)
@@ -183,7 +189,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
               : GlobalState.themeOrangeColorAtiOSTodo,
           showBadgeBackgroundColor: (isTodayFolder) ? true : false,
           showDivider: true,
-          showZero: true,
+          showZero: showZero,
           canSwipe: (isDefaultFolder) ? false : true,
           isRoundTopCorner: (isTodayFolder) ? true : false,
           isRoundBottomCorner: (isDeletionFolder) ? true : false,
