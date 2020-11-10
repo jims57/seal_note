@@ -261,42 +261,58 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                               var noteTitleDeleted = _noteEntryDeleted.title;
                               var noteIdDeleted = _noteEntryDeleted.id;
 
-                              // Delete the note from db
-                              GlobalState.database
-                                  .setNoteDeletedStatus(
-                                      noteId: noteIdDeleted, isDeleted: true)
-                                  .then((effectedRowsCount) {
-                                if (effectedRowsCount > 0) {
-                                  setState(() {
-                                    _noteList.removeAt(index);
+                              // Check if it is in Deleted folder
+                              if (GlobalState.isDefaultFolderSelected &&
+                                  GlobalState.appState.noteListPageTitle ==
+                                      GlobalState
+                                          .defaultFolderNameForDeletion) {
+                                GlobalState.database
+                                    .deleteNote(noteIdDeleted)
+                                    .then((effectedRowsCount) {
+                                  if (effectedRowsCount > 0) {
+                                    setState(() {
+                                      _noteList.removeAt(index);
+                                    });
+                                  }
+                                });
+                              } else {
+                                GlobalState.database
+                                    .setNoteDeletedStatus(
+                                        noteId: noteIdDeleted, isDeleted: true)
+                                    .then((effectedRowsCount) {
+                                  if (effectedRowsCount > 0) {
+                                    setState(() {
+                                      _noteList.removeAt(index);
 
-                                    Scaffold.of(context).showSnackBar(SnackBar(
-                                      content: Text('已删除：$noteTitleDeleted'),
-                                      backgroundColor:
-                                          GlobalState.themeBlueColor,
-                                      behavior: SnackBarBehavior.fixed,
-                                      action: SnackBarAction(
-                                        label: '撤消',
-                                        textColor: Colors.white,
-                                        onPressed: () {
-                                          GlobalState.database
-                                              .setNoteDeletedStatus(
-                                                  noteId: noteIdDeleted,
-                                                  isDeleted: false)
-                                              .then((effectedRowsCount) {
-                                            if (effectedRowsCount > 0) {
-                                              setState(() {
-                                                _noteList.insert(
-                                                    index, _noteEntryDeleted);
-                                              });
-                                            }
-                                          });
-                                        },
-                                      ),
-                                    ));
-                                  });
-                                }
-                              });
+                                      Scaffold.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content: Text('已删除：$noteTitleDeleted'),
+                                        backgroundColor:
+                                            GlobalState.themeBlueColor,
+                                        behavior: SnackBarBehavior.fixed,
+                                        action: SnackBarAction(
+                                          label: '撤消',
+                                          textColor: Colors.white,
+                                          onPressed: () {
+                                            GlobalState.database
+                                                .setNoteDeletedStatus(
+                                                    noteId: noteIdDeleted,
+                                                    isDeleted: false)
+                                                .then((effectedRowsCount) {
+                                              if (effectedRowsCount > 0) {
+                                                setState(() {
+                                                  _noteList.insert(
+                                                      index, _noteEntryDeleted);
+                                                });
+                                              }
+                                            });
+                                          },
+                                        ),
+                                      ));
+                                    });
+                                  }
+                                });
+                              }
                             },
                           ),
                         ],
