@@ -183,31 +183,37 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                 GlobalState.borderRadius15),
                           ),
                         ),
-                        actions: <Widget>[
-                          SlideAction(
-                            child: Container(
-                              constraints: BoxConstraints.expand(),
-                              color: GlobalState.themeBlueColor,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.schedule,
-                                    size: _slideIconSize,
-                                    color: Colors.white,
-                                  ),
-                                  Text(
-                                    '推迟',
-                                    style: TextStyle(
-                                      fontSize: _slideFontSize,
-                                      color: Colors.white,
+                        actions: (theNote.nextReviewTime == null)
+                            ? []
+                            : <Widget>[
+                                // note list item swipe item // note list swipe item
+                                // note list swipe actions
+
+                                SlideAction(
+                                  child: Container(
+                                    constraints: BoxConstraints.expand(),
+                                    color: GlobalState.themeBlueColor,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.schedule,
+                                          size: _slideIconSize,
+                                          color: Colors.white,
+                                        ),
+                                        Text(
+                                          '推迟',
+                                          style: TextStyle(
+                                            fontSize: _slideFontSize,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+                                  ),
+                                ),
+                              ],
                         secondaryActions: <Widget>[
                           SlideAction(
                             child: Container(
