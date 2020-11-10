@@ -414,10 +414,16 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                     createdBy: GlobalState.currentUserId);
 
                 GlobalState.database.insertNote(noteEntry).then((newNoteId) {
-                  _goToUserFolderListIfCreatingNoteFromDefaultFolder(folderIdNoteShouldSaveTo: folderIdNoteShouldSaveTo);
+                  _goToUserFolderListIfCreatingNoteFromDefaultFolder(
+                      folderIdNoteShouldSaveTo: folderIdNoteShouldSaveTo);
                   GlobalState.selectedNoteModel.id = newNoteId;
                   GlobalState.selectedNoteModel.created = nowForLocal;
                   _setToReadingOldNoteStatus(resetCounter: true);
+
+                  // Force the note list to fetch data from db after inserting a new note
+                  GlobalState.noteListWidgetForTodayState.currentState
+                      .triggerSetState(
+                          resetNoteList: true, updateNoteListPageTitle: false);
                 });
               } else {
                 _setToReadingOldNoteStatus(resetCounter: true);
@@ -473,15 +479,15 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                         shouldTriggerSetState: true);
 
                                 // Refresh the note list if a new note is noted
-                                if (GlobalState.isCreatingNote) {
-                                  // If it is creating a new note, we need to refresh the note list to reflect its changes
-                                  Timer(const Duration(milliseconds: 1000), () {
-                                    // Delay to refresh, so that the db is ready
-                                    GlobalState.noteListWidgetForTodayState
-                                        .currentState
-                                        .triggerSetState(resetNoteList: true);
-                                  });
-                                }
+                                // if (GlobalState.isCreatingNote) {
+                                //   // If it is creating a new note, we need to refresh the note list to reflect its changes
+                                //   Timer(const Duration(milliseconds: 1000), () {
+                                //     // Delay to refresh, so that the db is ready
+                                //     GlobalState.noteListWidgetForTodayState
+                                //         .currentState
+                                //         .triggerSetState(resetNoteList: true);
+                                //   });
+                                // }
                               })
                           : Container()
                     ],
@@ -674,7 +680,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
       GlobalState.selectedFolderIdCurrently = folderIdNoteShouldSaveTo;
 
       GlobalState.noteListWidgetForTodayState.currentState
-          .triggerSetState(resetNoteList: true,updateNoteListPageTitle: true);
+          .triggerSetState(resetNoteList: true, updateNoteListPageTitle: true);
     }
   }
 }
