@@ -331,7 +331,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     var noteId = theNote.id;
                     var noteContent = theNote.content;
 
-                    // Record the encoded content saved in db for future comparsion
+                    // Record the encoded content saved in db for future comparison
                     GlobalState.noteContentEncodedInDb = noteContent;
 
                     // Save related global variable
@@ -372,11 +372,18 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   // Public methods
-  void triggerSetState({bool resetNoteList = true}) {
+  void triggerSetState(
+      {bool resetNoteList = true, bool updateNoteListPageTitle = false}) {
     // If resetNoteList = true, it will fetch data from db again to get the latest note list
 
     setState(() {
       if (resetNoteList) initLoadingConfigs();
+      if (updateNoteListPageTitle) {
+        var noteListPageTitle = GlobalState.folderListPageState.currentState
+            .getFolderListItemWidgetById(
+                folderId: GlobalState.selectedFolderIdCurrently).folderName;
+        GlobalState.appState.noteListPageTitle = noteListPageTitle;
+      }
     });
   }
 

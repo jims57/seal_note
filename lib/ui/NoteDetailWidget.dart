@@ -379,6 +379,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
               _setToReadingOldNoteStatus(resetCounter: true);
             });
           } else {
+            // Add new note
+
             // add new note to db // insert new note to db
             // create new note to db
 
@@ -394,23 +396,25 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
               if (contentText.isNotEmpty) {
                 // Get now for local
                 var nowForLocal = TimeHandler.getNowForLocal();
-                var folderId = _getFolderIdNoteShouldSaveTo();
+                var folderIdNoteShouldSaveTo = _getFolderIdNoteShouldSaveTo();
 
                 // New note
                 var noteEntry = NoteEntry(
                     id: null,
-                    folderId: folderId,
+                    folderId: folderIdNoteShouldSaveTo,
                     title: GlobalState.defaultTitleForNewNote,
                     content: GlobalState.selectedNoteModel.content,
                     created: nowForLocal,
                     updated: nowForLocal,
-                    nextReviewTime: _getNextReviewTimeForNewNote(),
+                    nextReviewTime:
+                        _getNextReviewTimeForNewNote(nowForLocal: nowForLocal),
                     reviewProgressNo: null,
                     isReviewFinished: false,
                     isDeleted: false,
                     createdBy: GlobalState.currentUserId);
 
                 GlobalState.database.insertNote(noteEntry).then((newNoteId) {
+                  _goToUserFolderListIfCreatingNoteFromDefaultFolder(folderIdNoteShouldSaveTo: folderIdNoteShouldSaveTo);
                   GlobalState.selectedNoteModel.id = newNoteId;
                   GlobalState.selectedNoteModel.created = nowForLocal;
                   _setToReadingOldNoteStatus(resetCounter: true);
@@ -488,6 +492,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                           // edit detail button // detail edit button
                           // note edit button // edit note
                           // save note button
+
                           icon: (GlobalState.isQuillReadOnly
                               ? Icon(
                                   Icons.edit,
@@ -511,13 +516,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                           onPressed: () {
                             GlobalState.flutterWebviewPlugin.evalJavascript(
                                 "javascript:getIsCreatingNote();");
-
-                            // var responseJsonString =
-                            //     '{"isCreatingNote": false, "folderId":3, "noteId":4, "encodedHtml":"&lt;p&gt;2jim这个是好东西&lt;br&gt;2&lt;/br&gt;这是好东西224。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;"}';
-                            //     // '{"isCreatingNote": false, "folderId":3, "noteId":4, "encodedHtml":""}';
-                            //
-                            // GlobalState.flutterWebviewPlugin.evalJavascript(
-                            //     "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
                           }),
                     ]),
                 javascriptChannels: jsChannels,
@@ -633,9 +631,15 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     return folderId;
   }
 
-  static DateTime _getNextReviewTimeForNewNote() {
+  static DateTime _getNextReviewTimeForNewNote({DateTime nowForLocal}) {
     var folderIdNewNoteBelongsTo = _getFolderIdNoteShouldSaveTo();
-    var nextReviewTime = TimeHandler.getNowForLocal();
+    DateTime nextReviewTime;
+
+    if (nowForLocal == null) {
+      nextReviewTime = TimeHandler.getNowForLocal();
+    } else {
+      nextReviewTime = nowForLocal;
+    }
 
     var folderListItemWidget = GlobalState.folderListPageState.currentState
         .getFolderListItemWidgetById(folderId: folderIdNewNoteBelongsTo);
@@ -660,5 +664,17 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   static void _resetCounter() {
     GlobalState.flutterWebviewPlugin.evalJavascript(
         "javascript:beginToCountElapsingMillisecond(500, true);");
+  }
+
+  static void _goToUserFolderListIfCreatingNoteFromDefaultFolder(
+      {@required folderIdNoteShouldSaveTo}) {
+    // If the selected folder id doesn't equal to the one the new note should be saved to
+    if (GlobalState.selectedFolderIdCurrently != folderIdNoteShouldSaveTo) {
+      GlobalState.isDefaultFolderSelected = false;
+      GlobalState.selectedFolderIdCurrently = folderIdNoteShouldSaveTo;
+
+      GlobalState.noteListWidgetForTodayState.currentState
+          .triggerSetState(resetNoteList: true,updateNoteListPageTitle: true);
+    }
   }
 }
