@@ -373,17 +373,22 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
   // Public methods
   void triggerSetState(
-      {bool resetNoteList = true, bool updateNoteListPageTitle = false}) {
+      {bool resetNoteList = true,
+      bool updateNoteListPageTitle = false,
+      int millisecondToDelayExecution = 0}) {
     // If resetNoteList = true, it will fetch data from db again to get the latest note list
 
-    setState(() {
-      if (resetNoteList) initLoadingConfigs();
-      if (updateNoteListPageTitle) {
-        var noteListPageTitle = GlobalState.folderListPageState.currentState
-            .getFolderListItemWidgetById(
-                folderId: GlobalState.selectedFolderIdCurrently).folderName;
-        GlobalState.appState.noteListPageTitle = noteListPageTitle;
-      }
+    Timer(Duration(milliseconds: millisecondToDelayExecution), () {
+      setState(() {
+        if (resetNoteList) initLoadingConfigs();
+        if (updateNoteListPageTitle) {
+          var noteListPageTitle = GlobalState.folderListPageState.currentState
+              .getFolderListItemWidgetById(
+                  folderId: GlobalState.selectedFolderIdCurrently)
+              .folderName;
+          GlobalState.appState.noteListPageTitle = noteListPageTitle;
+        }
+      });
     });
   }
 

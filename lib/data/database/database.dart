@@ -311,13 +311,6 @@ class Database extends _$Database {
         .write(notesCompanion);
   }
 
-  // Future<int> setNoteDeletedStatus(
-  //     {@required int noteId, bool isDeleted = true}) {
-  //
-  //   return (update(notes)..where((e) => e.id.equals(15)))
-  //       .write(NotesCompanion(isDeleted: Value(isDeleted)));
-  // }
-
   Future<List<NoteWithProgressTotal>> getNotesByPageSize(
       {@required int pageNo, @required int pageSize}) {
     // Check if it is for default folders, because we need to get specific data for default folders

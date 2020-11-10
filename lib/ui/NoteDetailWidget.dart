@@ -127,37 +127,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         name: 'CheckIfOldNote',
         onMessageReceived: (JavascriptMessage message) {
           print(message.message);
-
-          // var requestJson = json.decode(message.message);
-
-          // var responseJsonString;
-          //
-          // if (GlobalState.isCreatingNote) {
-          //   // If it is create a new note
-          //   // Need to replace the Quill's content with the encoded html from the note
-          //   responseJsonString = '{"isCreatingNote": true, "encodedHtml":""}';
-          //
-          //   GlobalState.flutterWebviewPlugin.evalJavascript(
-          //       "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
-          // } else {
-          //   // If it is an old note
-          //
-          //   // Check which dummy data should be used
-          //   // var isInMyPhone = requestJson['isInMyPhone'];
-          //
-          //   // if (isInMyPhone) {
-          //   //   // For my phone to debug the old note
-          //   //   responseJsonString =
-          //   //       '{"isCreatingNote": false, "encodedHtml":"&lt;p&gt;jim这个是好东西&lt;br&gt;2&lt;/br&gt;这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西这个是好东西224。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;f9cab6db822c98712beb4212099af82f-12c94-001&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;"}';
-          //   // } else {
-          //   //   // For simulator to debug
-          //   //   responseJsonString =
-          //   //       '{"isCreatingNote": false, "encodedHtml":"&lt;p&gt;这个是好东西&lt;br&gt;2。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-12c94-001&quot;&gt;&lt;/p&gt;&lt;p&gt;一样的图片。&lt;/p&gt;&lt;p&gt;&lt;img id=&quot;30e4bae2b5dc6bc7e922efab62543c42-12c94-002&quot;&gt;&lt;/p&gt;"}';
-          //   // }
-          //
-          //   GlobalState.flutterWebviewPlugin.evalJavascript(
-          //       "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
-          // }
         }), // CheckIfOldNote
     JavascriptChannel(
         name: 'UpdateQuillStatus',
@@ -375,7 +344,9 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                 created: Value(GlobalState.selectedNoteModel.created),
                 updated: Value(TimeHandler.getNowForLocal()));
 
-            GlobalState.database.updateNote(notesCompanion).then((effectedRowsCount) {
+            GlobalState.database
+                .updateNote(notesCompanion)
+                .then((effectedRowsCount) {
               _setToReadingOldNoteStatus(resetCounter: true);
             });
           } else {
@@ -419,11 +390,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                   GlobalState.selectedNoteModel.id = newNoteId;
                   GlobalState.selectedNoteModel.created = nowForLocal;
                   _setToReadingOldNoteStatus(resetCounter: true);
-
-                  // Force the note list to fetch data from db after inserting a new note
-                  GlobalState.noteListWidgetForTodayState.currentState
-                      .triggerSetState(
-                          resetNoteList: true, updateNoteListPageTitle: false);
                 });
               } else {
                 _setToReadingOldNoteStatus(resetCounter: true);
@@ -464,7 +430,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                               textWidth: 180.0,
                               title: '  ',
                               onTap: () {
-                                // detail page back button event
+                                // detail page back button event // click on detail page back button
+                                // click detail page back button // click on detail back button
 
                                 GlobalState.isHandlingNoteDetailPage = true;
                                 GlobalState.isInNoteDetailPage = false;
@@ -478,16 +445,16 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                     .updatePageShowAndHide(
                                         shouldTriggerSetState: true);
 
-                                // Refresh the note list if a new note is noted
-                                // if (GlobalState.isCreatingNote) {
-                                //   // If it is creating a new note, we need to refresh the note list to reflect its changes
-                                //   Timer(const Duration(milliseconds: 1000), () {
-                                //     // Delay to refresh, so that the db is ready
-                                //     GlobalState.noteListWidgetForTodayState
-                                //         .currentState
-                                //         .triggerSetState(resetNoteList: true);
-                                //   });
-                                // }
+                                //Refresh the note list if a new note is noted
+                                if (GlobalState.isCreatingNote) {
+                                  // If it is creating a new note, we need to refresh the note list to reflect its changes
+                                  GlobalState
+                                      .noteListWidgetForTodayState.currentState
+                                      .triggerSetState(
+                                          resetNoteList: true,
+                                          updateNoteListPageTitle: false,
+                                          millisecondToDelayExecution: 1500);
+                                }
                               })
                           : Container()
                     ],

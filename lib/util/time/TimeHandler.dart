@@ -58,7 +58,7 @@ class TimeHandler {
     return dateTimeForReviewFinishing;
   }
 
-// Private methods
+  // Private methods
   static String _getAutoTimeFormatByDateTimeAvailability(
       DateTime nextReviewTime, DateTime updated) {
     var result = '';
@@ -142,12 +142,12 @@ class TimeHandler {
         updated.month == now.month &&
         updated.day == now.day) {
 // For today
-      result = '${updated.hour}:${updated.minute}';
+      result = '${updated.hour}:${_getLeftPadMinute(minutes: updated.minute)}';
     } else if (updated.year == yesterday.year &&
         updated.month == yesterday.month &&
         updated.day == yesterday.day) {
 // For yesterday
-      result = '昨天${updated.hour}:${updated.minute}';
+      result = '昨天${updated.hour}:${_getLeftPadMinute(minutes: updated.minute)}';
     } else if (updated.compareTo(smallHoursOfSevenDaysAgo) >= 0) {
 // For these 6 days between seven days and the day before yesterday
       result = _getWeekdayName(updated.weekday);
@@ -221,5 +221,9 @@ class TimeHandler {
     }
 
     return weekdayName;
+  }
+
+  static String _getLeftPadMinute({@required int minutes}){
+    return minutes.toString().padLeft(2,'0');
   }
 }
