@@ -255,25 +255,47 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                               ),
                             ),
                             onTap: () {
-                              setState(() {
-                                _noteEntryDeleted = _noteList[index];
-                                _noteList.removeAt(index);
+                              // delete note event // swipe to delete note event
 
-                                Scaffold.of(context).showSnackBar(SnackBar(
-                                  content: Text('SB'),
-                                  backgroundColor: GlobalState.themeBlueColor,
-                                  behavior: SnackBarBehavior.fixed,
-                                  action: SnackBarAction(
-                                    label: '撤消',
-                                    textColor: Colors.white,
-                                    onPressed: () {
-                                      setState(() {
-                                        _noteList.insert(
-                                            index, _noteEntryDeleted);
-                                      });
-                                    },
-                                  ),
-                                ));
+                              _noteEntryDeleted = _noteList[index];
+                              var noteTitleDeleted = _noteEntryDeleted.title;
+                              var noteIdDeleted = _noteEntryDeleted.id;
+
+                              // Delete the note from db
+                              GlobalState.database
+                                  .setNoteDeletedStatus(
+                                      noteId: noteIdDeleted, isDeleted: true)
+                                  .then((effectedRowsCount) {
+                                if (effectedRowsCount > 0) {
+                                  setState(() {
+                                    _noteList.removeAt(index);
+
+                                    Scaffold.of(context).showSnackBar(SnackBar(
+                                      content: Text('已删除：$noteTitleDeleted'),
+                                      backgroundColor:
+                                          GlobalState.themeBlueColor,
+                                      behavior: SnackBarBehavior.fixed,
+                                      action: SnackBarAction(
+                                        label: '撤消',
+                                        textColor: Colors.white,
+                                        onPressed: () {
+                                          GlobalState.database
+                                              .setNoteDeletedStatus(
+                                                  noteId: noteIdDeleted,
+                                                  isDeleted: false)
+                                              .then((effectedRowsCount) {
+                                            if (effectedRowsCount > 0) {
+                                              setState(() {
+                                                _noteList.insert(
+                                                    index, _noteEntryDeleted);
+                                              });
+                                            }
+                                          });
+                                        },
+                                      ),
+                                    ));
+                                  });
+                                }
                               });
                             },
                           ),

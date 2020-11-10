@@ -89,6 +89,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
     // Check if it is the first load, sometimes, the subsequent performance will be omitted
     if (isFirstLoad) {
+      // first load // it is first load
+
       isFirstLoad = false;
 
       // Get the note list page title
