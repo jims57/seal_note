@@ -375,7 +375,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                 created: Value(GlobalState.selectedNoteModel.created),
                 updated: Value(TimeHandler.getNowForLocal()));
 
-            GlobalState.database.updateNote(notesCompanion).then((isSuccess) {
+            GlobalState.database.updateNote(notesCompanion).then((effectedRowsCount) {
               _setToReadingOldNoteStatus(resetCounter: true);
             });
           } else {

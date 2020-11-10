@@ -306,9 +306,17 @@ class Database extends _$Database {
     });
   }
 
-  Future<bool> updateNote(NotesCompanion notesCompanion) async {
-    return update(notes).replace(notesCompanion);
+  Future<int> updateNote(NotesCompanion notesCompanion) async {
+    return (update(notes)..where((e) => e.id.equals(GlobalState.selectedNoteModel.id)))
+        .write(notesCompanion);
   }
+
+  // Future<int> setNoteDeletedStatus(
+  //     {@required int noteId, bool isDeleted = true}) {
+  //
+  //   return (update(notes)..where((e) => e.id.equals(15)))
+  //       .write(NotesCompanion(isDeleted: Value(isDeleted)));
+  // }
 
   Future<List<NoteWithProgressTotal>> getNotesByPageSize(
       {@required int pageNo, @required int pageSize}) {

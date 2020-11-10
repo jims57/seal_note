@@ -209,25 +209,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    var noteEntry = NoteEntry(
-        id: null,
-        folderId: 3,
-        title: 'New note 1',
-        content: 'New note 1 content',
-        created: TimeHandler.getNowForLocal(),
-        updated: TimeHandler.getNowForLocal(),
-        isReviewFinished: false,
-        isDeleted: false,
-        createdBy: GlobalState.currentUserId);
-    // var s = GlobalState.database.insertNote(noteEntry).then((value) {
-    // var s = GlobalState.database.deleteNote(78).then((value) {
-
-    NotesCompanion notesCompanion =
-        NotesCompanion(id: Value(10), title: Value('标题10-10'));
-    var s = GlobalState.database.updateNote(notesCompanion).then((value) {
-      var v = value;
-    });
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: MasterDetailPage(
