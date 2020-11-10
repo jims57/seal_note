@@ -12,6 +12,7 @@ class FolderListItemWidget extends StatefulWidget {
       @required this.folderId,
       @required this.folderName,
       @required this.numberToShow,
+      @required this.reviewPlanId,
       this.isReviewFolder: false,
       this.canSwipe: true,
       this.showDivider: true,
@@ -30,6 +31,7 @@ class FolderListItemWidget extends StatefulWidget {
   final int folderId;
   final String folderName;
   final int numberToShow;
+  final int reviewPlanId;
   final bool isReviewFolder;
   final bool canSwipe;
   final bool showDivider;
@@ -80,11 +82,12 @@ class FolderListItemWidgetState extends State<FolderListItemWidget> {
       onTap: () {
         // click on folder item // click folder item
         // click folder list item event // click folder item event
+        // click on folder list item
 
         // Update the note list
         GlobalState.isDefaultFolderSelected = widget.isDefaultFolder;
         GlobalState.selectedFolderIdCurrently = widget.folderId;
-        // GlobalState.selectedFolderName = widget.folderName;
+        GlobalState.selectedFolderReviewPlanId = widget.reviewPlanId;
         GlobalState.appState.noteListPageTitle = widget.folderName;
         GlobalState.isReviewFolderSelected = widget.isReviewFolder;
         GlobalState.noteListWidgetForTodayState.currentState.triggerSetState();

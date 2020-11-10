@@ -380,6 +380,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
             });
           } else {
             // add new note to db // insert new note to db
+            // create new note to db
+
             if (!GlobalState.isNewNoteBeingSaved) {
               _setToCreatingNewNoteStatus(resetCounter: false);
 
@@ -402,7 +404,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                     content: GlobalState.selectedNoteModel.content,
                     created: nowForLocal,
                     updated: nowForLocal,
-                    nextReviewTime: nowForLocal,
+                    nextReviewTime: _getNextReviewTimeForNewNote(),
                     reviewProgressNo: null,
                     isReviewFinished: false,
                     isDeleted: false,
@@ -629,6 +631,20 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     }
 
     return folderId;
+  }
+
+  static DateTime _getNextReviewTimeForNewNote() {
+    var folderIdNewNoteBelongsTo = _getFolderIdNoteShouldSaveTo();
+    var nextReviewTime = TimeHandler.getNowForLocal();
+
+    var folderListItemWidget = GlobalState.folderListPageState.currentState
+        .getFolderListItemWidgetById(folderId: folderIdNewNoteBelongsTo);
+
+    if (folderListItemWidget.reviewPlanId == null) {
+      nextReviewTime = null;
+    }
+
+    return nextReviewTime;
   }
 
   static void _setToCreatingNewNoteStatus({bool resetCounter = true}) {

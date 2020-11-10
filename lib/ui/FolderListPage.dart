@@ -3,6 +3,7 @@ import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
 import 'package:after_layout/after_layout.dart';
 
+import 'FolderListItemWidget.dart';
 import 'FolderListWidget.dart';
 
 class FolderListPage extends StatefulWidget {
@@ -143,5 +144,29 @@ class FolderListPageState extends State<FolderListPage>
     });
 
     return defaultFolderIds;
+  }
+
+  FolderListItemWidget getFolderListItemWidgetById({@required folderId}) {
+    // Get folder list item widget from by a folder id
+
+    var folderListItemList =
+        GlobalState.folderListWidgetState.currentState.getFolderListItemList();
+
+    var theFolderListItemWidget = folderListItemList
+        .where((folderListItem) => folderListItem.folderId == folderId)
+        .first;
+
+    return theFolderListItemWidget;
+  }
+
+  bool isDefaultFolder({@required folderId}) {
+    // Check if the folder is a default folder or not
+    var isDefault = false;
+
+    if (getDefaultFolderIds().contains(folderId)) {
+      isDefault = true;
+    }
+
+    return isDefault;
   }
 }

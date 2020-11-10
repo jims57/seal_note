@@ -108,7 +108,10 @@ class GlobalState with ChangeNotifier {
       3; // The user folder id by default, since default folders can save notes actually, we need a user folder to store notes when creating a new note from a default folder
   static int selectedFolderIdCurrently =
       selectedFolderIdByDefault; // The current selected folder id the user clicks on folder list page
-  // static String selectedFolderName = defaultUserFolderNameForMyNotes;
+  static int
+      selectedFolderReviewPlanId; // null means the folder hasn't a review plan
+  static int
+      reviewPlanIdOfDefaultSelectedFolder; // The review plan id of the default selected folder, that is the review plan id for selectedFolderIdByDefault
   static String
       noteContentEncodedInDb; // The note encoded content which is saved in db currently
   static String

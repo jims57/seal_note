@@ -145,6 +145,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
         var isDefaultFolder = theFolder.isDefaultFolder;
         var folderId = theFolder.id;
         var folderName = '${theFolder.name}';
+        var reviewPlanId = theFolder.reviewPlanId;
         var numberToShow = theFolder.numberToShow;
         var isReviewFolder = (theFolder.reviewPlanId != null) ? true : false;
         var isTodayFolder = (isDefaultFolder &&
@@ -154,6 +155,11 @@ class FolderListWidgetState extends State<FolderListWidget> {
         var isDeletionFolder = (isDefaultFolder &&
             folderName == GlobalState.defaultFolderNameForDeletion);
         var showZero = true;
+
+        // Record the review plan id for the default selected folder
+        if(folderId == GlobalState.selectedFolderIdByDefault){
+          GlobalState.selectedFolderReviewPlanId = reviewPlanId;
+        }
 
         // If this is Today folder, it doesn't show zero by default
         if (isDefaultFolder &&
@@ -183,6 +189,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
           folderId: folderId,
           folderName: folderName,
           numberToShow: numberToShow,
+          reviewPlanId: reviewPlanId,
           isReviewFolder: isReviewFolder,
           badgeBackgroundColor: (isTodayFolder)
               ? GlobalState.themeOrangeColorAtiOSTodo
