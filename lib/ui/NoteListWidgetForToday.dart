@@ -216,20 +216,26 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                 ),
                               ],
                         secondaryActions: <Widget>[
+                          // note list swipe item right part // note list right swipe items
+
                           SlideAction(
                             child: Container(
                               constraints: BoxConstraints.expand(),
-                              color: Colors.orangeAccent,
+                              color: !_isInDeletedFolder()
+                                  ? Colors.orangeAccent
+                                  : GlobalState.themeLightBlueColorAtiOSTodo,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
-                                    Icons.playlist_play,
+                                    !_isInDeletedFolder()
+                                        ? Icons.playlist_play
+                                        : Icons.undo,
                                     size: _slideIconSize,
                                     color: Colors.white,
                                   ),
                                   Text(
-                                    '移动',
+                                    !_isInDeletedFolder() ? '移动' : '还原',
                                     style: TextStyle(
                                       fontSize: _slideFontSize,
                                       color: Colors.white,
@@ -561,12 +567,22 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     if (nextTimeTime == null) shouldShow = false;
 
     // If it is in Deleted folder, don't show Delay item as well
-    if (GlobalState.isDefaultFolderSelected &&
-        GlobalState.appState.noteListPageTitle ==
-            GlobalState.defaultFolderNameForDeletion) {
+    if (_isInDeletedFolder()) {
       shouldShow = false;
     }
 
     return shouldShow;
+  }
+
+  bool _isInDeletedFolder() {
+    var isInDeletedFolder = false;
+
+    if (GlobalState.isDefaultFolderSelected &&
+        GlobalState.appState.noteListPageTitle ==
+            GlobalState.defaultFolderNameForDeletion) {
+      isInDeletedFolder = true;
+    }
+
+    return isInDeletedFolder;
   }
 }
