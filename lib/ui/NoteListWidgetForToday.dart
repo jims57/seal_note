@@ -183,7 +183,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                 GlobalState.borderRadius15),
                           ),
                         ),
-                        actions: (theNote.nextReviewTime == null)
+                        actions: !_shouldShowDelaySwipeItem(
+                                nextTimeTime: theNote.nextReviewTime)
                             ? []
                             : <Widget>[
                                 // note list item swipe item // note list swipe item
@@ -551,5 +552,21 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     }
 
     return progressLabel;
+  }
+
+  bool _shouldShowDelaySwipeItem({@required nextTimeTime}) {
+    // Whether it should show the delay swipe item on the note list item
+    var shouldShow = true;
+
+    if (nextTimeTime == null) shouldShow = false;
+
+    // If it is in Deleted folder, don't show Delay item as well
+    if (GlobalState.isDefaultFolderSelected &&
+        GlobalState.appState.noteListPageTitle ==
+            GlobalState.defaultFolderNameForDeletion) {
+      shouldShow = false;
+    }
+
+    return shouldShow;
   }
 }
