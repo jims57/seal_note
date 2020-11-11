@@ -135,7 +135,7 @@ class _NoteListPageState extends State<NoteListPage> {
 
           // Update action status
           GlobalState.isQuillReadOnly = false;
-          GlobalState.isCreatingNote = true;
+          GlobalState.isEditingOrCreatingNote = true;
           GlobalState.isHandlingNoteDetailPage = true;
           GlobalState.isInNoteDetailPage = true;
 

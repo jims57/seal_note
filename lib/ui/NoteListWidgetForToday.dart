@@ -332,7 +332,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                       ),
                     ),
                   ),
-                  onTap: () {
+                  onTap: () async {
                     // click note list item // click on note list item
                     // click note item
 
@@ -345,28 +345,41 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     var noteContent = theNote.content;
 
                     // Record the encoded content saved in db for future comparison
-                    GlobalState.noteContentEncodedInDb = noteContent;
-
-                    // Save related global variable
-                    GlobalState.selectedNoteModel.id = noteId;
-                    GlobalState.selectedNoteModel.folderId = folderId;
+                    GlobalState.noteContentEncodedInDb =
+                        GlobalState.selectedNoteModel.content;
 
                     // Click note list item
                     GlobalState.isClickingNoteListItem = true;
                     GlobalState.noteModelForConsumer.noteId = noteId;
                     GlobalState.isQuillReadOnly = true;
-                    GlobalState.isCreatingNote = false;
+                    GlobalState.isEditingOrCreatingNote = false;
 
                     // Force to clear the water mark in the quill editor, if coming from the note list(viewing an old note)
-                    GlobalState.flutterWebviewPlugin.evalJavascript(
+                    await GlobalState.flutterWebviewPlugin.evalJavascript(
                         "javascript:removeQuillEditorWatermark();");
 
                     // Update the quill's content
                     var responseJsonString =
                         '{"isCreatingNote": false, "folderId":$folderId, "noteId":$noteId, "encodedHtml":"$noteContent"}';
 
-                    GlobalState.flutterWebviewPlugin.evalJavascript(
-                        "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
+                    while (true) {
+                      await GlobalState.flutterWebviewPlugin.evalJavascript(
+                          "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
+
+                      // await GlobalState.flutterWebviewPlugin
+                      //     .evalJavascript("javascript:initAutoSave();");
+
+                      var noteContentEncodedFromWebView =
+                          await GlobalState.flutterWebviewPlugin.evalJavascript(
+                              "javascript:getNoteContentEncoded();");
+
+                      // It won't exit the while-loop except the note content from the WebView equals to the one in global variable
+                      if (_shouldBreakWhileLoop(
+                          noteContentEncodedFromWebView:
+                              noteContentEncodedFromWebView)) {
+                        break;
+                      }
+                    }
 
                     GlobalState.isInNoteDetailPage = true;
                     if (GlobalState.screenType == 1) {
@@ -584,5 +597,20 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     }
 
     return isInDeletedFolder;
+  }
+
+  bool _shouldBreakWhileLoop({@required String noteContentEncodedFromWebView}) {
+    var shouldBreak = false;
+
+    if (!GlobalState.noteContentEncodedInDb.contains('&lt;')) {
+      GlobalState.noteContentEncodedInDb =
+          '&lt;p&gt;${GlobalState.noteContentEncodedInDb}&lt;/p&gt;';
+    }
+
+    if (noteContentEncodedFromWebView == GlobalState.noteContentEncodedInDb) {
+      shouldBreak = true;
+    }
+
+    return shouldBreak;
   }
 }

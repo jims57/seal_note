@@ -1838,12 +1838,21 @@
     var elapsingMillisecondSinceLastChanges = 0; // Record how long has elapsed since the user last change the content of the editor
     var elapsingTimerInterval;
     var executeAutoSaveIntervalMillisecond = 3000; // How often (millisecond) will execute the auto-save
+    var intervalMillisecondToUpdateElapsingMillisecond = 500;
 
     var oldNoteEncodedHtml = ''; // Record the old html to check if we should save to sqlite, if it doesn't change, we won't save to sqlite
 
-    function beginToCountElapsingMillisecond(intervalMillisecond = 1000, resetInterval = true) {
+    function initAutoSave(){
+        oldNoteEncodedHtml = getNoteContentEncoded();
+        beginToCountElapsingMillisecond(intervalMillisecondToUpdateElapsingMillisecond, true);
+        
+    }
+
+    function beginToCountElapsingMillisecond(intervalMillisecond = 500, resetInterval = true) {
         // *intervalMillisecond* is deciding how long the update the elapsing time
         // *resetInterval* to decide if you need to reset the interval when calling this function, if true, elapsingMillisecondSinceLastChanges will be set to zero
+
+        intervalMillisecondToUpdateElapsingMillisecond = intervalMillisecond;
 
         if (printLogToDartFromJs) {
             Print.postMessage('beginToCountElapsingMillisecond(intervalMillisecond = ' + intervalMillisecond + ', resetInterval = ' + resetInterval + ') ');
@@ -1863,9 +1872,9 @@
                 if (keepPrintTimer) Print.postMessage('elapsingMillisecondSinceLastChanges = ' + elapsingMillisecondSinceLastChanges + 'ms');
             }
 
-            elapsingMillisecondSinceLastChanges += intervalMillisecond;
+            elapsingMillisecondSinceLastChanges += intervalMillisecondToUpdateElapsingMillisecond;
             executeAutoSave(); // Always execute the auto-save to make it will auto automatically when the user is idle
-        }, intervalMillisecond);
+        }, intervalMillisecondToUpdateElapsingMillisecond);
     }
 
     function clearElapsingTimerInterval() { // Clear the elapsing timer interval, it won't count any more after this call
@@ -1895,7 +1904,7 @@
                 if (forceToSave || isEditingMode || (!isEditingMode && canSaveInReadOnly)) SaveNoteToDb.postMessage(newNoteEncodedHtml);
             } else { // If it don't need to interact with Dart, meaning it is web app, we reset the interval in js
                 // Reset the timer
-                beginToCountElapsingMillisecond(500, true); // Only it actually execute the save, we will reset the interval
+                beginToCountElapsingMillisecond(intervalMillisecondToUpdateElapsingMillisecond, true); // Only it actually execute the save, we will reset the interval
             }
         }
     }

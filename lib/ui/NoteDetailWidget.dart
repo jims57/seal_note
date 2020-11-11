@@ -324,75 +324,92 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         // auto save // auto save to db
         name: 'SaveNoteToDb',
         onMessageReceived: (JavascriptMessage message) {
-          var noteContentEncoded = message.message;
-          print(noteContentEncoded);
+          // Only in edit mode, we will update the note content
+          if(!GlobalState.isQuillReadOnly){
+            // Update the note list by updating the related note model
+            GlobalState.selectedNoteModel.content = message.message;
+          }
 
-          // Update the note list by updating the related note model
-          GlobalState.selectedNoteModel.content = noteContentEncoded;
+          // It won't execute the save operation to db until something is changed in the note content
+          if (_shouldSaveNoteToDb()) {
 
-          // Check if this is a new note
-          if (GlobalState.selectedNoteModel.id > 0) {
-            // Old note
 
-            _setToReadingOldNoteStatus(resetCounter: false);
+            // Check if this is a new note
+            if (GlobalState.selectedNoteModel.id > 0) {
+              // Old note
 
-            // Save the changes into sqlite every time
-            var notesCompanion = NotesCompanion(
-                id: Value(GlobalState.selectedNoteModel.id),
-                title: Value(GlobalState.selectedNoteModel.title),
-                content: Value(noteContentEncoded),
-                created: Value(GlobalState.selectedNoteModel.created),
-                updated: Value(TimeHandler.getNowForLocal()));
+              _setToReadingOldNoteStatus(resetCounter: false);
 
-            GlobalState.database
-                .updateNote(notesCompanion)
-                .then((effectedRowsCount) {
-              _setToReadingOldNoteStatus(resetCounter: true);
-            });
-          } else {
-            // Add new note
+              // Save the changes into sqlite every time
+              var notesCompanion = NotesCompanion(
+                  id: Value(GlobalState.selectedNoteModel.id),
+                  title: Value(GlobalState.selectedNoteModel.title),
+                  content: Value(GlobalState.selectedNoteModel.content),
+                  created: Value(GlobalState.selectedNoteModel.created),
+                  updated: Value(TimeHandler.getNowForLocal()));
 
-            // add new note to db // insert new note to db
-            // create new note to db
+              GlobalState.database
+                  .updateNote(notesCompanion)
+                  .then((effectedRowsCount) {
+                if (effectedRowsCount > 0) {
+                  // Make sure the note is updated successfully
 
-            if (!GlobalState.isNewNoteBeingSaved) {
-              _setToCreatingNewNoteStatus(resetCounter: false);
-
-              // Check if the user inputs anything, if the content is empty, we don't save it to db
-              var contentText = HtmlHandler.decodeAndRemoveAllHtmlTags(
-                      GlobalState.selectedNoteModel.content)
-                  .trim();
-
-              // It won't save the new note unless its content isn't empty
-              if (contentText.isNotEmpty) {
-                // Get now for local
-                var nowForLocal = TimeHandler.getNowForLocal();
-                var folderIdNoteShouldSaveTo = _getFolderIdNoteShouldSaveTo();
-
-                // New note
-                var noteEntry = NoteEntry(
-                    id: null,
-                    folderId: folderIdNoteShouldSaveTo,
-                    title: GlobalState.defaultTitleForNewNote,
-                    content: GlobalState.selectedNoteModel.content,
-                    created: nowForLocal,
-                    updated: nowForLocal,
-                    nextReviewTime:
-                        _getNextReviewTimeForNewNote(nowForLocal: nowForLocal),
-                    reviewProgressNo: null,
-                    isReviewFinished: false,
-                    isDeleted: false,
-                    createdBy: GlobalState.currentUserId);
-
-                GlobalState.database.insertNote(noteEntry).then((newNoteId) {
-                  _goToUserFolderListIfCreatingNoteFromDefaultFolder(
-                      folderIdNoteShouldSaveTo: folderIdNoteShouldSaveTo);
-                  GlobalState.selectedNoteModel.id = newNoteId;
-                  GlobalState.selectedNoteModel.created = nowForLocal;
-                  _setToReadingOldNoteStatus(resetCounter: true);
-                });
-              } else {
+                  // Update the variable related to db, avoid the duplicate operation when clicking on the back button to save note again
+                  GlobalState.noteContentEncodedInDb =
+                      GlobalState.selectedNoteModel.content;
+                }
                 _setToReadingOldNoteStatus(resetCounter: true);
+              });
+            } else {
+              // Add new note
+
+              // add new note to db // insert new note to db
+              // create new note to db
+
+              if (!GlobalState.isNewNoteBeingSaved) {
+                _setToCreatingNewNoteStatus(resetCounter: false);
+
+                // Check if the user inputs anything, if the content is empty, we don't save it to db
+                var contentText = HtmlHandler.decodeAndRemoveAllHtmlTags(
+                        GlobalState.selectedNoteModel.content)
+                    .trim();
+
+                // It won't save the new note unless its content isn't empty
+                if (contentText.isNotEmpty) {
+                  // Get now for local
+                  var nowForLocal = TimeHandler.getNowForLocal();
+                  var folderIdNoteShouldSaveTo = _getFolderIdNoteShouldSaveTo();
+
+                  // New note
+                  var noteEntry = NoteEntry(
+                      id: null,
+                      folderId: folderIdNoteShouldSaveTo,
+                      title: GlobalState.defaultTitleForNewNote,
+                      content: GlobalState.selectedNoteModel.content,
+                      created: nowForLocal,
+                      updated: nowForLocal,
+                      nextReviewTime: _getNextReviewTimeForNewNote(
+                          nowForLocal: nowForLocal),
+                      reviewProgressNo: null,
+                      isReviewFinished: false,
+                      isDeleted: false,
+                      createdBy: GlobalState.currentUserId);
+
+                  GlobalState.database.insertNote(noteEntry).then((newNoteId) {
+                    // Make sure the new note is inserted successfully
+                    if (newNoteId > 0) {
+                      GlobalState.noteContentEncodedInDb =
+                          GlobalState.selectedNoteModel.content;
+                      _goToUserFolderListIfCreatingNoteFromDefaultFolder(
+                          folderIdNoteShouldSaveTo: folderIdNoteShouldSaveTo);
+                      GlobalState.selectedNoteModel.id = newNoteId;
+                      GlobalState.selectedNoteModel.created = nowForLocal;
+                      _setToReadingOldNoteStatus(resetCounter: true);
+                    }
+                  });
+                } else {
+                  _setToReadingOldNoteStatus(resetCounter: true);
+                }
               }
             }
           }
@@ -429,24 +446,45 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                               // detail page back button // webView back button
                               textWidth: 180.0,
                               title: '  ',
-                              onTap: () {
+                              onTap: () async {
                                 // detail page back button event // click on detail page back button
                                 // click detail page back button // click on detail back button
+                                // click detail back button
 
                                 GlobalState.isHandlingNoteDetailPage = true;
                                 GlobalState.isInNoteDetailPage = false;
 
                                 // If the Quill is in edit mode, we set it back to read only after clicking the back button
-                                if (!GlobalState.isQuillReadOnly)
+                                if (!GlobalState.isQuillReadOnly) {
+                                  // When the note is in edit mode
+
+                                  // Force to fetch the note content encoded from the WebView anyway
+                                  var noteContentEncodedFromWebView =
+                                      await GlobalState.flutterWebviewPlugin
+                                          .evalJavascript(
+                                              "javascript:getNoteContentEncoded();");
+
+                                  // Update the note content encoded stored at global variable
+                                  GlobalState.selectedNoteModel.content =
+                                      noteContentEncodedFromWebView;
+
+                                  // Save the changes again if the user edited the note content
+                                  if (_shouldSaveNoteToDb()) {
+                                    await GlobalState.flutterWebviewPlugin
+                                        .evalJavascript(
+                                            "javascript:saveNoteToDb(true);");
+                                  }
+
                                   _toggleQuillModeBetweenReadOnlyAndEdit(
                                       keepNoteDetailPageOpen: false);
+                                }
 
                                 GlobalState.masterDetailPageState.currentState
                                     .updatePageShowAndHide(
                                         shouldTriggerSetState: true);
 
                                 //Refresh the note list if a new note is noted
-                                if (GlobalState.isCreatingNote) {
+                                if (GlobalState.isEditingOrCreatingNote) {
                                   // If it is creating a new note, we need to refresh the note list to reflect its changes
                                   GlobalState
                                       .noteListWidgetForTodayState.currentState
@@ -542,6 +580,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
         // If it is currently in readonly mode
 
+        GlobalState.isEditingOrCreatingNote = true;
+
         // Set it to the edit mode
         GlobalState.flutterWebviewPlugin
             .evalJavascript("javascript:setQuillToReadOnly(false);");
@@ -550,6 +590,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         // save note event // save button execute save note
 
         // Set it to the read only mode
+
+        // GlobalState.isEditingOrCreatingNote = false;
 
         // execute save note
         // Trigger the auto-save function to save the note
@@ -636,7 +678,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
   static void _resetCounter() {
     GlobalState.flutterWebviewPlugin.evalJavascript(
-        "javascript:beginToCountElapsingMillisecond(500, true);");
+        "javascript:beginToCountElapsingMillisecond(8000, true);");
   }
 
   static void _goToUserFolderListIfCreatingNoteFromDefaultFolder(
@@ -649,5 +691,17 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
       GlobalState.noteListWidgetForTodayState.currentState
           .triggerSetState(resetNoteList: true, updateNoteListPageTitle: true);
     }
+  }
+
+  static bool _shouldSaveNoteToDb() {
+    var shouldSave = false;
+
+    if (GlobalState.selectedNoteModel.content !=
+            GlobalState.noteContentEncodedInDb &&
+        !GlobalState.isQuillReadOnly) {
+      shouldSave = true;
+    }
+
+    return shouldSave;
   }
 }

@@ -114,8 +114,8 @@ class GlobalState with ChangeNotifier {
       reviewPlanIdOfDefaultSelectedFolder; // The review plan id of the default selected folder, that is the review plan id for selectedFolderIdByDefault
   static String
       noteContentEncodedInDb; // The note encoded content which is saved in db currently
-  static String
-      newNoteContentEncoded; // The new note content which is encoded, and is going to be saved to db
+  // static String newNoteContentEncoded = GlobalState.selectedNoteModel
+  //     .content; // The new note content which is encoded, and is going to be saved to db
   static SelectedNoteModel noteModelForConsumer;
   static bool isNewNoteBeingSaved =
       false; // Indicate if a new note is being saved, avoiding duplicate notes being created
@@ -179,7 +179,7 @@ class GlobalState with ChangeNotifier {
 
   // Quill editor
   static bool isQuillReadOnly = true;
-  static bool isCreatingNote =
+  static bool isEditingOrCreatingNote =
       false; // Indicating if the user is creating a new note
 
   // Photo Views
