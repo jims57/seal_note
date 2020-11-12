@@ -19,6 +19,7 @@ import 'package:seal_note/util/converter/ImageConverter.dart';
 import 'package:seal_note/util/crypto/CryptoHandler.dart';
 import 'package:seal_note/util/file/FileHandler.dart';
 import 'package:seal_note/util/html/HtmlHandler.dart';
+import 'package:seal_note/util/robustness/RetryHandler.dart';
 import 'package:seal_note/util/route/ScaleRoute.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
@@ -323,7 +324,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     JavascriptChannel(
         // auto save // auto save to db
         name: 'SaveNoteToDb',
-        onMessageReceived: (JavascriptMessage message) {
+        onMessageReceived: (JavascriptMessage message) async {
           // Only in edit mode, we will update the note content
           if (!GlobalState.isQuillReadOnly) {
             // Update the note list by updating the related note model
@@ -346,18 +347,23 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                   created: Value(GlobalState.selectedNoteModel.created),
                   updated: Value(TimeHandler.getNowForLocal()));
 
-              GlobalState.database
-                  .updateNote(notesCompanion)
-                  .then((effectedRowsCount) {
+              // Retry to enhance the robustness
+              for (var i = 0; i <= GlobalState.retryTimesToSaveDb; i++) {
+                var effectedRowsCount =
+                    await GlobalState.database.updateNote(notesCompanion);
+
                 if (effectedRowsCount > 0) {
                   // Make sure the note is updated successfully
 
                   // Update the variable related to db, avoid the duplicate operation when clicking on the back button to save note again
                   GlobalState.noteContentEncodedInDb =
                       GlobalState.selectedNoteModel.content;
+
+                  _setToReadingOldNoteStatus(resetCounter: true);
+
+                  break;
                 }
-                _setToReadingOldNoteStatus(resetCounter: true);
-              });
+              }
             } else {
               // Add new note
 
@@ -393,7 +399,11 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                       isDeleted: false,
                       createdBy: GlobalState.currentUserId);
 
-                  GlobalState.database.insertNote(noteEntry).then((newNoteId) {
+                  // Retry to enhance the robustness
+                  for (var i = 0; i <= GlobalState.retryTimesToSaveDb; i++) {
+                    var newNoteId =
+                        await GlobalState.database.insertNote(noteEntry);
+
                     // Make sure the new note is inserted successfully
                     if (newNoteId > 0) {
                       GlobalState.noteContentEncodedInDb =
@@ -403,8 +413,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                       GlobalState.selectedNoteModel.id = newNoteId;
                       GlobalState.selectedNoteModel.created = nowForLocal;
                       _setToReadingOldNoteStatus(resetCounter: true);
+
+                      break;
                     }
-                  });
+                  }
                 } else {
                   _setToReadingOldNoteStatus(resetCounter: true);
                 }

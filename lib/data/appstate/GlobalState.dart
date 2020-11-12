@@ -22,6 +22,8 @@ class GlobalState with ChangeNotifier {
 
   // db // database
   static String dbNameForMobilePlatform = 'sealMobile.sqlite';
+  static final int retryTimesToSaveDb =
+      7; // How many times it will retry if it fails to save data to db
 
   // Colors
   static const Color themeBlackColor = Color(0xff000000);
