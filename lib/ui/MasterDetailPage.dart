@@ -95,8 +95,9 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
       // Get the note list page title
       GlobalState.database
-          .getFolderNameById(GlobalState.selectedFolderIdCurrently).then((folderName) {
-            GlobalState.appState.noteListPageTitle = folderName;
+          .getFolderNameById(GlobalState.selectedFolderIdCurrently)
+          .then((folderName) {
+        GlobalState.appState.noteListPageTitle = folderName;
       });
     } else {
       // Get app bar height after rotation
@@ -375,7 +376,6 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
   @override
   void afterFirstLayout(BuildContext context) {
-    var s = 's';
     print('Screen height:${GlobalState.screenHeight}');
     print('Screen width:${GlobalState.screenWidth}');
   }

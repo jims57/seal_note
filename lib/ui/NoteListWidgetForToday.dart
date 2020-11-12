@@ -244,6 +244,33 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                 ],
                               ),
                             ),
+                            onTap: () async {
+                              // swipe to restore note // restore note
+
+                              // Check which folder is
+                              if (!_isInDeletedFolder()) {
+                                // Not in Deleted folder
+                                // move note event // note note
+                                // swipe to move note
+
+                              } else {
+                                // In Deleted folder
+                                // restore deleted note // swipe to restore note
+
+                                var effectedRowCount = await GlobalState
+                                    .database
+                                    .setNoteDeletedStatus(
+                                        noteId: theNote.id, isDeleted: false);
+
+                                if (effectedRowCount > 0) {
+                                  GlobalState
+                                      .noteListWidgetForTodayState.currentState
+                                      .triggerSetState(
+                                          resetNoteList: true,
+                                          updateNoteListPageTitle: false);
+                                }
+                              }
+                            },
                           ),
                           SlideAction(
                             child: Container(
