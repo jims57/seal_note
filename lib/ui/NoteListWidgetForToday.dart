@@ -363,6 +363,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                         '{"isCreatingNote": false, "folderId":$folderId, "noteId":$noteId, "encodedHtml":"$noteContent"}';
 
                     while (true) {
+                      // while loop
+
                       await GlobalState.flutterWebviewPlugin.evalJavascript(
                           "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
 
@@ -372,6 +374,18 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                       var noteContentEncodedFromWebView =
                           await GlobalState.flutterWebviewPlugin.evalJavascript(
                               "javascript:getNoteContentEncoded();");
+
+                      // test html encode
+                      // var decodedHtml = HtmlHandler.decodeHtmlString(
+                      //     noteContentEncodedFromWebView);
+                      // var decodedHtmlDB = HtmlHandler.decodeHtmlString(
+                      //     GlobalState.noteContentEncodedInDb);
+                      // var b1 = (decodedHtml == decodedHtmlDB);
+                      //
+                      // var encodedHtml2 =
+                      //     HtmlHandler.encodeHtmlString(decodedHtml);
+                      // var decodedHtml2 =
+                      //     HtmlHandler.decodeHtmlString(encodedHtml2);
 
                       // It won't exit the while-loop except the note content from the WebView equals to the one in global variable
                       if (_shouldBreakWhileLoop(
@@ -613,7 +627,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       }
     }
 
-    if (noteContentEncodedFromWebView == GlobalState.noteContentEncodedInDb) {
+    if (HtmlHandler.decodeHtmlString(noteContentEncodedFromWebView) ==
+        HtmlHandler.decodeHtmlString(GlobalState.noteContentEncodedInDb)) {
       shouldBreak = true;
     }
 
