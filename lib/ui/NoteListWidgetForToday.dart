@@ -112,250 +112,263 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                 return GestureDetector(
                   child: Container(
-                    // color: Colors.red,
-                    margin:
-                        const EdgeInsets.only(top: 5.0, left: 8.0, right: 8.0),
+                    margin: const EdgeInsets.only(
+                        top: 5.0, bottom: 5.0, left: 8.0, right: 8.0),
                     child: Container(
-                      child: Slidable(
-                        actionPane: SlidableDrawerActionPane(),
-                        actionExtentRatio: 0.25,
-                        child: Card(
-                          // get note list item // note list item data
-                          child: ListTile(
-                            contentPadding: EdgeInsets.only(
-                                top: 15.0, bottom: 15, left: 10.0, right: 10.0),
-                            title: Text('${theNote.title}',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.w400,
-                                )),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  // note list content // note list item content
-                                  '${HtmlHandler.decodeAndRemoveAllHtmlTags(theNote.content).trim()}',
+                      child: ClipRRect(
+                        // note list item round corner // round corner note list item
+                        // round note list item
+
+                        borderRadius:
+                            const BorderRadius.all(const Radius.circular(10)),
+                        child: Slidable(
+                          actionPane: SlidableDrawerActionPane(),
+                          actionExtentRatio: 0.25,
+                          child: Container(
+                            // get note list item // note list item data
+                            color: Colors.white,
+                            child: ListTile(
+                              contentPadding: EdgeInsets.only(
+                                  top: 15.0,
+                                  bottom: 15.0,
+                                  left: 10.0,
+                                  right: 10.0),
+                              title: Text('${theNote.title}',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(top: 5.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        // note review time format // note list date time format
-                                        // get note review time // get review time
-                                        // show note review time // review time
-                                        // show review time
-                                        '${TimeHandler.getDateTimeFormatForAllKindOfNote(updated: theNote.updated, nextReviewTime: theNote.nextReviewTime, isReviewFinished: theNote.isReviewFinished)}',
-                                        style: TextStyle(
-                                            color: (_isReviewNote(theNote
-                                                        .nextReviewTime) &&
-                                                    _isReviewNoteOverdue(theNote
-                                                        .nextReviewTime) &&
-                                                    !theNote.isReviewFinished)
-                                                ? Colors.red
-                                                : Colors.grey[400],
-                                            fontSize: 10.0),
-                                      ),
-                                      Text(
-                                        // progress label // show progress label
-                                        // review progress label
-                                        '${_showProgressLabel(theNote)}',
-                                        style: TextStyle(
-                                            color: Colors.grey[400],
-                                            fontSize: 10.0),
-                                      ),
-                                    ],
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w400,
+                                  )),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    // note list content // note list item content
+                                    '${HtmlHandler.decodeAndRemoveAllHtmlTags(theNote.content).trim()}',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          elevation: 1.1,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide.none,
-                            borderRadius: BorderRadius.circular(
-                                GlobalState.borderRadius15),
-                          ),
-                        ),
-                        actions: !_shouldShowDelaySwipeItem(
-                                nextTimeTime: theNote.nextReviewTime)
-                            ? []
-                            : <Widget>[
-                                // note list item swipe item // note list swipe item
-                                // note list swipe actions
-
-                                SlideAction(
-                                  child: Container(
-                                    constraints: BoxConstraints.expand(),
-                                    color: GlobalState.themeBlueColor,
-                                    child: Column(
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 5.0),
+                                    child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Icon(
-                                          Icons.schedule,
-                                          size: _slideIconSize,
-                                          color: Colors.white,
+                                        Text(
+                                          // note review time format // note list date time format
+                                          // get note review time // get review time
+                                          // show note review time // review time
+                                          // show review time
+                                          '${TimeHandler.getDateTimeFormatForAllKindOfNote(updated: theNote.updated, nextReviewTime: theNote.nextReviewTime, isReviewFinished: theNote.isReviewFinished)}',
+                                          style: TextStyle(
+                                              color: (_isReviewNote(theNote
+                                                          .nextReviewTime) &&
+                                                      _isReviewNoteOverdue(
+                                                          theNote
+                                                              .nextReviewTime) &&
+                                                      !theNote.isReviewFinished)
+                                                  ? Colors.red
+                                                  : Colors.grey[400],
+                                              fontSize: 10.0),
                                         ),
                                         Text(
-                                          '推迟',
+                                          // progress label // show progress label
+                                          // review progress label
+                                          '${_showProgressLabel(theNote)}',
                                           style: TextStyle(
-                                            fontSize: _slideFontSize,
-                                            color: Colors.white,
-                                          ),
-                                        )
+                                              color: Colors.grey[400],
+                                              fontSize: 10.0),
+                                        ),
                                       ],
                                     ),
                                   ),
+                                ],
+                              ),
+                            ),
+                            // elevation: 1.1,
+                            // shape: RoundedRectangleBorder(
+                            //   side: BorderSide.none,
+                            //   // borderRadius: BorderRadius.circular(
+                            //   //     GlobalState.borderRadius15),
+                            // ),
+                          ),
+                          actions: !_shouldShowDelaySwipeItem(
+                                  nextTimeTime: theNote.nextReviewTime)
+                              ? []
+                              : <Widget>[
+                                  // note list item swipe item // note list swipe item
+                                  // note list swipe actions
+
+                                  SlideAction(
+                                    child: Container(
+                                      constraints: BoxConstraints.expand(),
+                                      color: GlobalState.themeBlueColor,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.schedule,
+                                            size: _slideIconSize,
+                                            color: Colors.white,
+                                          ),
+                                          Text(
+                                            '推迟',
+                                            style: TextStyle(
+                                              fontSize: _slideFontSize,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                          secondaryActions: <Widget>[
+                            // note list swipe item right part // note list right swipe items
+
+                            SlideAction(
+                              child: Container(
+                                constraints: BoxConstraints.expand(),
+                                color: !_isInDeletedFolder()
+                                    ? Colors.orangeAccent
+                                    : GlobalState.themeLightBlueColorAtiOSTodo,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      !_isInDeletedFolder()
+                                          ? Icons.playlist_play
+                                          : Icons.undo,
+                                      size: _slideIconSize,
+                                      color: Colors.white,
+                                    ),
+                                    Text(
+                                      !_isInDeletedFolder() ? '移动' : '还原',
+                                      style: TextStyle(
+                                        fontSize: _slideFontSize,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              ],
-                        secondaryActions: <Widget>[
-                          // note list swipe item right part // note list right swipe items
-
-                          SlideAction(
-                            child: Container(
-                              constraints: BoxConstraints.expand(),
-                              color: !_isInDeletedFolder()
-                                  ? Colors.orangeAccent
-                                  : GlobalState.themeLightBlueColorAtiOSTodo,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    !_isInDeletedFolder()
-                                        ? Icons.playlist_play
-                                        : Icons.undo,
-                                    size: _slideIconSize,
-                                    color: Colors.white,
-                                  ),
-                                  Text(
-                                    !_isInDeletedFolder() ? '移动' : '还原',
-                                    style: TextStyle(
-                                      fontSize: _slideFontSize,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                ],
                               ),
-                            ),
-                            onTap: () async {
-                              // swipe to restore note // restore note
+                              onTap: () async {
+                                // swipe to restore note // restore note
 
-                              // Check which folder is
-                              if (!_isInDeletedFolder()) {
-                                // Not in Deleted folder
-                                // move note event // note note
-                                // swipe to move note
+                                // Check which folder is
+                                if (!_isInDeletedFolder()) {
+                                  // Not in Deleted folder
+                                  // move note event // note note
+                                  // swipe to move note
 
-                              } else {
-                                // In Deleted folder
-                                // restore deleted note // swipe to restore note
+                                } else {
+                                  // In Deleted folder
+                                  // restore deleted note // swipe to restore note
 
-                                var effectedRowCount = await GlobalState
-                                    .database
-                                    .setNoteDeletedStatus(
-                                        noteId: theNote.id, isDeleted: false);
+                                  var effectedRowCount = await GlobalState
+                                      .database
+                                      .setNoteDeletedStatus(
+                                          noteId: theNote.id, isDeleted: false);
 
-                                if (effectedRowCount > 0) {
-                                  GlobalState
-                                      .noteListWidgetForTodayState.currentState
-                                      .triggerSetState(
-                                          resetNoteList: true,
-                                          updateNoteListPageTitle: false);
+                                  if (effectedRowCount > 0) {
+                                    GlobalState.noteListWidgetForTodayState
+                                        .currentState
+                                        .triggerSetState(
+                                            resetNoteList: true,
+                                            updateNoteListPageTitle: false);
+                                  }
                                 }
-                              }
-                            },
-                          ),
-                          SlideAction(
-                            child: Container(
-                              constraints: BoxConstraints.expand(),
-                              color: Colors.red,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.delete_outline,
-                                    size: _slideIconSize,
-                                    color: Colors.white,
-                                  ),
-                                  Text(
-                                    '删除',
-                                    style: TextStyle(
-                                      fontSize: _slideFontSize,
+                              },
+                            ),
+                            SlideAction(
+                              child: Container(
+                                constraints: BoxConstraints.expand(),
+                                color: Colors.red,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.delete_outline,
+                                      size: _slideIconSize,
                                       color: Colors.white,
                                     ),
-                                  )
-                                ],
+                                    Text(
+                                      '删除',
+                                      style: TextStyle(
+                                        fontSize: _slideFontSize,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
+                              onTap: () {
+                                // delete note event // swipe to delete note event
+
+                                _noteEntryDeleted = _noteList[index];
+                                var noteTitleDeleted = _noteEntryDeleted.title;
+                                var noteIdDeleted = _noteEntryDeleted.id;
+
+                                // Check if it is in Deleted folder
+                                if (GlobalState.isDefaultFolderSelected &&
+                                    GlobalState.appState.noteListPageTitle ==
+                                        GlobalState
+                                            .defaultFolderNameForDeletion) {
+                                  GlobalState.database
+                                      .deleteNote(noteIdDeleted)
+                                      .then((effectedRowsCount) {
+                                    if (effectedRowsCount > 0) {
+                                      setState(() {
+                                        _noteList.removeAt(index);
+                                      });
+                                    }
+                                  });
+                                } else {
+                                  GlobalState.database
+                                      .setNoteDeletedStatus(
+                                          noteId: noteIdDeleted,
+                                          isDeleted: true)
+                                      .then((effectedRowsCount) {
+                                    if (effectedRowsCount > 0) {
+                                      setState(() {
+                                        _noteList.removeAt(index);
+
+                                        Scaffold.of(context)
+                                            .showSnackBar(SnackBar(
+                                          content:
+                                              Text('已删除：$noteTitleDeleted'),
+                                          backgroundColor:
+                                              GlobalState.themeBlueColor,
+                                          behavior: SnackBarBehavior.fixed,
+                                          action: SnackBarAction(
+                                            label: '撤消',
+                                            textColor: Colors.white,
+                                            onPressed: () {
+                                              GlobalState.database
+                                                  .setNoteDeletedStatus(
+                                                      noteId: noteIdDeleted,
+                                                      isDeleted: false)
+                                                  .then((effectedRowsCount) {
+                                                if (effectedRowsCount > 0) {
+                                                  setState(() {
+                                                    _noteList.insert(index,
+                                                        _noteEntryDeleted);
+                                                  });
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ));
+                                      });
+                                    }
+                                  });
+                                }
+                              },
                             ),
-                            onTap: () {
-                              // delete note event // swipe to delete note event
-
-                              _noteEntryDeleted = _noteList[index];
-                              var noteTitleDeleted = _noteEntryDeleted.title;
-                              var noteIdDeleted = _noteEntryDeleted.id;
-
-                              // Check if it is in Deleted folder
-                              if (GlobalState.isDefaultFolderSelected &&
-                                  GlobalState.appState.noteListPageTitle ==
-                                      GlobalState
-                                          .defaultFolderNameForDeletion) {
-                                GlobalState.database
-                                    .deleteNote(noteIdDeleted)
-                                    .then((effectedRowsCount) {
-                                  if (effectedRowsCount > 0) {
-                                    setState(() {
-                                      _noteList.removeAt(index);
-                                    });
-                                  }
-                                });
-                              } else {
-                                GlobalState.database
-                                    .setNoteDeletedStatus(
-                                        noteId: noteIdDeleted, isDeleted: true)
-                                    .then((effectedRowsCount) {
-                                  if (effectedRowsCount > 0) {
-                                    setState(() {
-                                      _noteList.removeAt(index);
-
-                                      Scaffold.of(context)
-                                          .showSnackBar(SnackBar(
-                                        content: Text('已删除：$noteTitleDeleted'),
-                                        backgroundColor:
-                                            GlobalState.themeBlueColor,
-                                        behavior: SnackBarBehavior.fixed,
-                                        action: SnackBarAction(
-                                          label: '撤消',
-                                          textColor: Colors.white,
-                                          onPressed: () {
-                                            GlobalState.database
-                                                .setNoteDeletedStatus(
-                                                    noteId: noteIdDeleted,
-                                                    isDeleted: false)
-                                                .then((effectedRowsCount) {
-                                              if (effectedRowsCount > 0) {
-                                                setState(() {
-                                                  _noteList.insert(
-                                                      index, _noteEntryDeleted);
-                                                });
-                                              }
-                                            });
-                                          },
-                                        ),
-                                      ));
-                                    });
-                                  }
-                                });
-                              }
-                            },
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -395,24 +408,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                       await GlobalState.flutterWebviewPlugin.evalJavascript(
                           "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
 
-                      // await GlobalState.flutterWebviewPlugin
-                      //     .evalJavascript("javascript:initAutoSave();");
-
                       var noteContentEncodedFromWebView =
                           await GlobalState.flutterWebviewPlugin.evalJavascript(
                               "javascript:getNoteContentEncoded();");
-
-                      // test html encode
-                      // var decodedHtml = HtmlHandler.decodeHtmlString(
-                      //     noteContentEncodedFromWebView);
-                      // var decodedHtmlDB = HtmlHandler.decodeHtmlString(
-                      //     GlobalState.noteContentEncodedInDb);
-                      // var b1 = (decodedHtml == decodedHtmlDB);
-                      //
-                      // var encodedHtml2 =
-                      //     HtmlHandler.encodeHtmlString(decodedHtml);
-                      // var decodedHtml2 =
-                      //     HtmlHandler.decodeHtmlString(encodedHtml2);
 
                       // It won't exit the while-loop except the note content from the WebView equals to the one in global variable
                       if (_shouldBreakWhileLoop(
