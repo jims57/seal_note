@@ -1434,11 +1434,18 @@
     }
 
     function encodeHtml(value) {
-        return $('<div>').text(value).html();
+        var encodedHtml =  $('<div>').text(value).html();
+
+        // Replace all quotation mark
+        encodedHtml = $.replaceAll(encodedHtml, '"', '&quot;'); // Escape double quotation mark
+        encodedHtml = $.replaceAll(encodedHtml, "'","&#39;"); // Escape single quotation mark
+
+        return encodedHtml;
     }
 
     function decodeHtml(value) {
-        return $('<div>').html(value).text();
+        var decodedHtml =  $('<div>').html(value).text();
+        return decodedHtml;
     }
 </script>
 
@@ -2333,6 +2340,11 @@
 <!-- jQuery init -->
 <script>
     $(function () {
+        $.replaceAll = function (string, match, replaceBy) {
+			match = match.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+			return string.replace(new RegExp(match, 'g'), replaceBy);
+		}
+
         //initQuillEditor();
 
         toolbarHeight = $('#toolbar').outerHeight();
