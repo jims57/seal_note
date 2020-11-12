@@ -55,7 +55,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  String _noteListPageTitle = '';
+  String _noteListPageTitle = '海豹笔记';
 
   // ignore: unnecessary_getters_setters
   String get noteListPageTitle => _noteListPageTitle;

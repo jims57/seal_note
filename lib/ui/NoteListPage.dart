@@ -102,17 +102,6 @@ class _NoteListPageState extends State<NoteListPage> {
             );
           },
         ),
-        //   title: Text(
-        //     // note list caption // note list page title
-        //     // note list title // note list page caption
-        //
-        //     // '${GlobalState.selectedFolderName}',
-        //     '${GlobalState.selectedFolderName}',
-        //     style: TextStyle(
-        //         color: GlobalState.themeBlackColor87ForFontForeColor,
-        //         fontSize: 16.0),
-        //     // style: TextStyle(color: Colors.red,),
-        //   ),
         showSyncStatus: true,
         leadingWidth: 90,
         tailWidth: 40,
