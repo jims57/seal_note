@@ -641,7 +641,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   bool _shouldBreakWhileLoop({@required String noteContentEncodedFromWebView}) {
     var shouldBreak = false;
 
-    if (!GlobalState.noteContentEncodedInDb.contains('&lt;')) {
+    if (GlobalState.noteContentEncodedInDb.isEmpty) {
+      // When the content of a note is empty
+      GlobalState.noteContentEncodedInDb = noteContentEncodedFromWebView;
+    } else if (!GlobalState.noteContentEncodedInDb.contains('&lt;')) {
       GlobalState.noteContentEncodedInDb =
           '&lt;p&gt;${GlobalState.noteContentEncodedInDb}&lt;/p&gt;';
     } else {
