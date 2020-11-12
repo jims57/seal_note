@@ -605,6 +605,12 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     if (!GlobalState.noteContentEncodedInDb.contains('&lt;')) {
       GlobalState.noteContentEncodedInDb =
           '&lt;p&gt;${GlobalState.noteContentEncodedInDb}&lt;/p&gt;';
+    } else {
+      // When it has '&lt;', but it is a empty note, that is: &lt;p&gt;&lt;em style=\"color: rgba(0, 0, 0, 0.6);\"&gt;添加笔记...&lt;/em&gt;&lt;/p&gt;
+      if (GlobalState.noteContentEncodedInDb
+          .contains('color: rgba(0, 0, 0, 0.6)')) {
+        GlobalState.noteContentEncodedInDb = noteContentEncodedFromWebView;
+      }
     }
 
     if (noteContentEncodedFromWebView == GlobalState.noteContentEncodedInDb) {

@@ -325,15 +325,13 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         name: 'SaveNoteToDb',
         onMessageReceived: (JavascriptMessage message) {
           // Only in edit mode, we will update the note content
-          if(!GlobalState.isQuillReadOnly){
+          if (!GlobalState.isQuillReadOnly) {
             // Update the note list by updating the related note model
             GlobalState.selectedNoteModel.content = message.message;
           }
 
           // It won't execute the save operation to db until something is changed in the note content
           if (_shouldSaveNoteToDb()) {
-
-
             // Check if this is a new note
             if (GlobalState.selectedNoteModel.id > 0) {
               // Old note
@@ -514,6 +512,9 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                   color: GlobalState.themeBlueColor,
                                 )),
                           onPressed: () {
+                            // click on save button // click save button
+                            // save button // edit button
+
                             _toggleQuillModeBetweenReadOnlyAndEdit(
                                 keepNoteDetailPageOpen: true);
                           }),
@@ -561,50 +562,50 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
   // Private methods
   void _toggleQuillModeBetweenReadOnlyAndEdit(
-      {bool keepNoteDetailPageOpen = true}) {
+      {bool keepNoteDetailPageOpen = true}) async {
     // toggle edit mode // toggle read only mode
 
-    setState(() {
-      // Both edit and read only mode will view it as handling the detail page
-      GlobalState.isHandlingNoteDetailPage = true;
+    // Both edit and read only mode will view it as handling the detail page
+    GlobalState.isHandlingNoteDetailPage = true;
 
-      // Check if it keeps stay at the detail page or note after executing this
-      if (keepNoteDetailPageOpen) {
-        GlobalState.isInNoteDetailPage = true;
-      } else {
-        GlobalState.isInNoteDetailPage = false;
-      }
+    // Check if it keeps stay at the detail page or note after executing this
+    if (keepNoteDetailPageOpen) {
+      GlobalState.isInNoteDetailPage = true;
+    } else {
+      GlobalState.isInNoteDetailPage = false;
+    }
 
-      if (GlobalState.isQuillReadOnly) {
-        // edit note // set note to edit mode
+    if (GlobalState.isQuillReadOnly) {
+      // edit note // set note to edit mode
 
-        // If it is currently in readonly mode
+      // If it is currently in readonly mode
 
-        GlobalState.isEditingOrCreatingNote = true;
+      GlobalState.isEditingOrCreatingNote = true;
 
-        // Set it to the edit mode
-        GlobalState.flutterWebviewPlugin
-            .evalJavascript("javascript:setQuillToReadOnly(false);");
-      } else {
-        // save note // set note to read only mode
-        // save note event // save button execute save note
+      // Set it to the edit mode
+      await GlobalState.flutterWebviewPlugin
+          .evalJavascript("javascript:setQuillToReadOnly(false);");
+    } else {
+      // save note // set note to read only mode
+      // save note event // save button execute save note
 
-        // Set it to the read only mode
+      // Set it to the read only mode
 
-        // GlobalState.isEditingOrCreatingNote = false;
+      // GlobalState.isEditingOrCreatingNote = false;
 
-        // execute save note
-        // Trigger the auto-save function to save the note
-        GlobalState.flutterWebviewPlugin
-            .evalJavascript("javascript:saveNoteToDb(false);");
+      // execute save note
+      // Trigger the auto-save function to save the note
+      await GlobalState.flutterWebviewPlugin
+          .evalJavascript("javascript:saveNoteToDb(false, true);");
 
-        GlobalState.flutterWebviewPlugin
-            .evalJavascript("javascript:setQuillToReadOnly(true);");
-      }
+      await GlobalState.flutterWebviewPlugin
+          .evalJavascript("javascript:setQuillToReadOnly(true);");
+    }
 
-      // Switch the readonly status
-      GlobalState.isQuillReadOnly = !GlobalState.isQuillReadOnly;
-    });
+    // Switch the readonly status
+    GlobalState.isQuillReadOnly = !GlobalState.isQuillReadOnly;
+
+    setState(() {});
   }
 
   double _getAppBarLeadingWidth() {

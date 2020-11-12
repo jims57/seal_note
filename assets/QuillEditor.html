@@ -1473,7 +1473,7 @@
     var noteContent = ''; // Note's current content
 
     // 【debug】
-    var interactWithDart = false;
+    var interactWithDart = true;
     var useMultiImagePicker = false; // If false, using Quill's default image uploader
     var shouldAddDummyImagesOnLoad = false;
     var base64HasData = false;
@@ -1897,6 +1897,7 @@
 
         if ((oldNoteEncodedHtml != newNoteEncodedHtml) || forceToSave) { // If there is any change
             if (printLogToDartFromJs) Print.postMessage('inside if(oldNoteEncodedHtml != newNoteEncodedHtml) {}');
+            if (printLogToDartFromJs) Print.postMessage('forceToSave='+forceToSave+', isEditingMode='+isEditingMode+', canSaveInReadOnly= '+canSaveInReadOnly);
 
             oldNoteEncodedHtml = newNoteEncodedHtml; // Save to variable to future check
 
