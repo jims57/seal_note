@@ -1471,7 +1471,6 @@
 
     var countOfImagesInsertedNow = 0; // Record how many images in the html have already been inserted by multi image picker this time
     var totalOfImagesInPage = 0; // The total number of images existing in the html page
-    var imageSyncArray = []; // Used to sync with dart to keep the image status up-to-date
     var isUnderMultiImagePickerOperation = false; // Check if it is still under the operation of the multi image picker(inserting many images at a time)
 
     // Note related variables
@@ -1619,14 +1618,6 @@
         $('img[data-insertorder]').removeAttr('data-insertorder');
     }
 
-    function removeImageSyncItemFromArrayVar(imageId) { // Delete items from imageSyncArray variable
-        var newImageSyncArray = $.grep(imageSyncArray, function (item) {
-            return item.imageId != imageId;
-        });
-
-        imageSyncArray = newImageSyncArray;
-    }
-
     function getImageIdByImageJqueryObject($theImage) {
         return $theImage.attr('id');
     }
@@ -1728,60 +1719,6 @@
         });
     }
 
-    // 【Image sync】 syncId = { 0 = synced, 1 = to be added, 2 = to be deleted, 3 = to be updated}
-    function saveImageSyncToArray(imageId, syncId) { // Save image sync data to arrary for the synchronization with the imageSyncItemList in dart
-        if (printLogToDartFromJs) Print.postMessage('saveImageSyncToArray(' + imageId + ',' + syncId + ')');
-
-        var imageSyncJsonArray = getImageSyncJsonArrayFromImageSyncArray(imageId);
-
-        if (imageSyncJsonArray.length > 0) { // When it already exist in the array, we carry out update operation
-            var theImageSyncJson = imageSyncJsonArray[0];
-            var imageId = theImageSyncJson.imageId;
-
-            theImageSyncJson.imageIndex = getImageIndexByImageId(imageId);
-            theImageSyncJson.syncId = 3;
-        } else { // When it doesn't exist, we add it to the array
-            var imageSyncJson = {};
-
-            imageSyncJson['imageId'] = imageId;
-            imageSyncJson['imageIndex'] = getImageIndexByImageId(imageId);
-            // imageSyncJson['base64'] = getBase64ByImageIdFromWebView(imageId, false);
-            imageSyncJson['syncId'] = syncId;
-
-            imageSyncArray.push(imageSyncJson);
-        }
-    }
-
-    function getImageSyncJsonArrayFromImageSyncArray(imageId) { // This will only return one json, no duplicate
-        var filteredImageSyncJsonArray = $.grep(imageSyncArray, function (imageSync) {
-            return imageSync.imageId === imageId;
-        });
-
-        return filteredImageSyncJsonArray;
-    }
-
-    function checkIfImageExistsInSyncArray(imageId) {
-        var result = false;
-
-        var filteredImages = getImageSyncJsonArrayFromImageSyncArray(imageId);
-
-        if (filteredImages.length > 0) result = true;
-
-        return result;
-    }
-
-    function addAllOldImagesToSyncArray() { // This is used when the page is initializing
-        // Get all images without *data-insertorder* attribute, these are old images(Already existing in the page before user pick images to insert)
-        var $toBeAddedImages = $('img:not([data-insertorder])');
-
-        if (printLogToDartFromJs) Print.postMessage('$toBeAddedImages.length = ' + $toBeAddedImages.length);
-
-        $.each($toBeAddedImages, function (index, item) {
-            var imageId = $(item).attr('id');
-            saveImageSyncToArray(imageId, 1);
-        });
-    }
-
     // 【Bottom panel】
     function showBottomPanel(bottomPanelHeight) {
         document.getElementById('bottom-panel').style.display = 'block';
@@ -1837,6 +1774,105 @@
             quill.focus();
         }, 400);
     }
+</script>
+
+<!-- Image sync related -->
+<script>
+    var imageSyncArray = []; // Used to sync with dart to keep the image status up-to-date
+
+    function removeImageSyncItemFromArrayVar(imageId) { // Delete items from imageSyncArray variable
+        var newImageSyncArray = $.grep(imageSyncArray, function (item) {
+            return item.imageId != imageId;
+        });
+
+        imageSyncArray = newImageSyncArray;
+    }
+
+    function removeAllImageSyncItemsFromArrayVar(){
+        imageSyncArray = [];
+    }
+
+    function checkIfImageExistsInSyncArray(imageId) {
+        var result = false;
+
+        var filteredImages = getImageSyncJsonArrayFromImageSyncArray(imageId);
+
+        if (filteredImages.length > 0) result = true;
+
+        return result;
+    }
+
+    function addAllOldImagesToSyncArray() { // This is used when the page is initializing
+        // Get all images without *data-insertorder* attribute, these are old images(Already existing in the page before user pick images to insert)
+        var $toBeAddedImages = $('img:not([data-insertorder])');
+
+        if (printLogToDartFromJs) Print.postMessage('$toBeAddedImages.length = ' + $toBeAddedImages.length);
+
+        $.each($toBeAddedImages, function (index, item) {
+            var imageId = $(item).attr('id');
+            saveImageSyncToArray(imageId, 1);
+        });
+    }
+
+    // 【Image sync】 syncId = { 0 = synced, 1 = to be added, 2 = to be deleted, 3 = to be updated}
+    function saveImageSyncToArray(imageId, syncId) { // Save image sync data to arrary for the synchronization with the imageSyncItemList in dart
+        if (printLogToDartFromJs) Print.postMessage('saveImageSyncToArray(' + imageId + ',' + syncId + ')');
+
+        var imageSyncJsonArray = getImageSyncJsonArrayFromImageSyncArray(imageId);
+
+        if (imageSyncJsonArray.length > 0) { // When it already exist in the array, we carry out update operation
+            var theImageSyncJson = imageSyncJsonArray[0];
+            var imageId = theImageSyncJson.imageId;
+
+            theImageSyncJson.imageIndex = getImageIndexByImageId(imageId);
+            theImageSyncJson.syncId = 3;
+        } else { // When it doesn't exist, we add it to the array
+            var imageSyncJson = {};
+
+            imageSyncJson['imageId'] = imageId;
+            imageSyncJson['imageIndex'] = getImageIndexByImageId(imageId);
+            imageSyncJson['syncId'] = syncId;
+
+            imageSyncArray.push(imageSyncJson);
+        }
+    }
+
+    function getImageSyncJsonArrayFromImageSyncArray(imageId) { // This will only return one json, no duplicate
+        var filteredImageSyncJsonArray = $.grep(imageSyncArray, function (imageSync) {
+            return imageSync.imageId === imageId;
+        });
+
+        return filteredImageSyncJsonArray;
+    }
+
+    function syncImageSyncArrayToDart(shouldClearArrayInDart = false) { // Sync imageSyncArray to dart, *shouldClearArrayInDart* means we should clear all the item in imageSyncItemList in dart, it should be used when initializing this page, avoiding different notes' images mix up
+        if (printLogToDartFromJs) Print.postMessage('syncImageSyncArrayToDart(' + shouldClearArrayInDart + ')');
+
+        var jsonString = JSON.stringify(imageSyncArray); // Convert array to string
+        jsonString = '{"imageSyncArray": ' + jsonString + ', "shouldClearArrayInDart" : ' + shouldClearArrayInDart + ' }';
+
+        if (interactWithDart) SyncImageSyncArrayToDart.postMessage(jsonString);
+    }
+
+    function setSomeImageSyncsToSyncedStatus(imageIdArray) { // Set some of imageSyncs passed in imageIdArray parameter to be synced status, that is syncId = 0
+        if (printLogToDartFromJs) Print.postMessage('setSomeImageSyncsToSyncedStatus()');
+
+        $.each(imageIdArray, function (index, imageId) {
+
+            var theImageSync = $.grep(imageSyncArray, function (imageSync) { return imageSync.imageId == imageId });
+
+            // If the syncId = 3(to be deleted), we need to remove the item from the imageSyncArray
+            var theSyncId = theImageSync[0].syncId;
+            if (theSyncId == 2) {
+                var newImageSyncArray = $.grep(imageSyncArray, function (imageSync) { return imageSync.syncId != 2 });
+
+                imageSyncArray = newImageSyncArray;
+            } else { // Other cases, that is *to be added* and *to be updated* status
+                theImageSync[0].syncId = 0; // You have to use object.property way to set new value, since it is value-type
+            }
+        });
+    }
+
 </script>
 
 <!-- Auto-save related -->
@@ -1988,15 +2024,6 @@
         if (useMultiImagePicker) TriggerMultiImagePickerFromJs.postMessage('');
     }
 
-    function syncImageSyncArrayToDart(shouldClearArrayInDart = false) { // Sync imageSyncArray to dart, *shouldClearArrayInDart* means we should clear all the item in imageSyncItemList in dart, it should be used when initializing this page, avoiding different notes' images mix up
-        if (printLogToDartFromJs) Print.postMessage('syncImageSyncArrayToDart(' + shouldClearArrayInDart + ')');
-
-        var jsonString = JSON.stringify(imageSyncArray); // Convert array to string
-        jsonString = '{"imageSyncArray": ' + jsonString + ', "shouldClearArrayInDart" : ' + shouldClearArrayInDart + ' }';
-
-        if (interactWithDart) SyncImageSyncArrayToDart.postMessage(jsonString);
-    }
-
     function getAllImagesBase64FromImageFiles() { // Get all base64 data of the images in this html page from image file at the Document Directory of the app
         if (printLogToDartFromJs) Print.postMessage('getAllImagesBase64FromImageFiles()');
 
@@ -2056,10 +2083,6 @@
             $editorChildren.replaceWith(noteContent);
 
             setQuillToReadOnly(false, isCreatingNote);
-            // removeQuillOnceHandler();
-            // initQuillEditorWatermark();
-
-            // setQuillToReadOnly(false, isCreatingNote);
 
         } else { // If it is an old note
             if (printLogToDartFromJs) Print.postMessage('inside if(responseJson.isCreatingNote) else {}');
@@ -2072,8 +2095,6 @@
                 // Clear other children except the first one
                 removeQuillEditorAllChildrenExceptFirstOne($editorChildren);
 
-                // removeQuillEditorWatermark();
-
                 $editorChildren.replaceWith(noteContent);
 
                 getAllImagesBase64FromImageFiles();
@@ -2081,6 +2102,9 @@
                 upsertAllImagesIndex();
 
                 updateTotalOfImagesInPageVar();
+
+                // remove old image sync items first
+                removeAllImageSyncItemsFromArrayVar();
 
                 addAllOldImagesToSyncArray();
 
@@ -2186,25 +2210,6 @@
         setTimeout(function () {
             $theImage.attr('src', srcString);
         }, 200);
-    }
-
-    function setSomeImageSyncsToSyncedStatus(imageIdArray) { // Set some of imageSyncs passed in imageIdArray parameter to be synced status, that is syncId = 0
-        if (printLogToDartFromJs) Print.postMessage('setSomeImageSyncsToSyncedStatus()');
-
-        $.each(imageIdArray, function (index, imageId) {
-
-            var theImageSync = $.grep(imageSyncArray, function (imageSync) { return imageSync.imageId == imageId });
-
-            // If the syncId = 3(to be deleted), we need to remove the item from the imageSyncArray
-            var theSyncId = theImageSync[0].syncId;
-            if (theSyncId == 2) {
-                var newImageSyncArray = $.grep(imageSyncArray, function (imageSync) { return imageSync.syncId != 2 });
-
-                imageSyncArray = newImageSyncArray;
-            } else { // Other cases, that is *to be added* and *to be updated* status
-                theImageSync[0].syncId = 0; // You have to use object.property way to set new value, since it is value-type
-            }
-        });
     }
 
     function setQuillToReadOnly(isReadOnly, isNewNote = false) { //Set quill edit mode
@@ -2467,14 +2472,6 @@
 
                 executeAutoSave();
             }
-
-            // [For text handling]
-            // Check if the last line is <br> or not. We want to always add a <br> tag at the bottom of the page
-            // var $theEditor = $('div.ql-editor');
-            // var isBrAtBottom = $theEditor.children().last().children().last().is('br');
-            // if(!isBrAtBottom) { // If the last tag isn't <p><br><p>, we add it back to the page arbitrarily
-            //     $theEditor.append('<p><br></p>');
-            // }
         });
 
         quill.on('selection-change', function (range, oldRange, source) {

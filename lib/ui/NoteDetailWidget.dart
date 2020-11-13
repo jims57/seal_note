@@ -216,6 +216,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     JavascriptChannel(
         name: 'TriggerPhotoView',
         onMessageReceived: (JavascriptMessage message) {
+          // view photo // click on photo event
+          // click on photo event // click photo view event
+          // click on photo view event // click photo event
+
           print(message.message);
 
           // Convert image index to int
@@ -238,13 +242,36 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
               jsonResponse['shouldClearArrayInDart'] as bool;
           var imageIdList = List<String>();
 
-          // If the page is being initialized, we should clear all old data from imageSyncItemList to avoid duplicate data
-          if (shouldClearArrayInDart) GlobalState.imageSyncItemList.clear();
-
           var latestImageSyncItemList = imageSyncArray.map((imageSync) {
             var _imageSyncItem = ImageSyncItem.fromJson(imageSync);
             return _imageSyncItem;
           }).toList();
+
+          // If the page is being initialized, we should clear all old data from imageSyncItemList to avoid duplicate data
+          if (shouldClearArrayInDart) {
+            // List<ImageSyncItem> clonedImageSyncItemList = []
+            //   ..addAll(GlobalState.imageSyncItemList);
+
+            GlobalState.imageSyncItemList.clear();
+
+            // GlobalState.imageSyncItemList.addAll(latestImageSyncItemList);
+
+
+            // for (var i = 0; i < clonedImageSyncItemList.length; i++) {
+            //   var theCloneImageSyncItem = clonedImageSyncItemList[i];
+            //
+            //   ImageSyncItem d = latestImageSyncItemList.firstWhere(
+            //       (latestImageSyncItem) =>
+            //           latestImageSyncItem.imageId==
+            //           theCloneImageSyncItem.imageId);
+            //
+            //   if (d == null) {
+            //     GlobalState.imageSyncItemList.removeAt(i);
+            //   } else {
+            //     GlobalState.imageSyncItemList[i].syncId = 3;
+            //   }
+            // }
+          }
 
           for (var i = 0; i < latestImageSyncItemList.length; i++) {
             var _imageId = latestImageSyncItemList[i].imageId;
@@ -263,6 +290,9 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
               GlobalState.imageSyncItemList.removeWhere(
                   (imageSyncItem) => imageSyncItem.imageId == _imageId);
             } else if (_syncId == 3) {
+              // Add back the image sync item that belongs to this request
+              // GlobalState.imageSyncItemList.add(latestImageSyncItemList[i]);
+
               // For update operation
               var theImageSyncItem = GlobalState.imageSyncItemList.firstWhere(
                   (imageSyncItem) => imageSyncItem.imageId == _imageId);
@@ -300,25 +330,27 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         }), // GetBase64ByImageIdFromWebView
     JavascriptChannel(
         name: 'GetAllImagesBase64FromImageFiles',
-        onMessageReceived: (JavascriptMessage message) {
+        onMessageReceived: (JavascriptMessage message) async {
           var jsonString = message.message;
           var jsonResponse = jsonDecode(jsonString);
           var imageIdMapList = jsonResponse as List;
 
           // Get the file name of the image
-          imageIdMapList.forEach((imageIdMap) {
+          imageIdMapList.forEach((imageIdMap) async {
             var imageId = imageIdMap['imageId'].toString();
             var imageMd5 = imageId.substring(0, 32);
             var fileName = '$imageMd5.jpg';
-            FileHandler.readFileAsUint8List(fileName).then((imageUint8List) {
-              // Anyway to compress the image before passing to the WebView
-              FileHandler.compressUint8List(imageUint8List,
-                      minWidth: 250, minHeight: 250)
-                  .then((compressedImageUint8List) {
-                GlobalState.flutterWebviewPlugin.evalJavascript(
-                    "javascript:updateImageBase64($compressedImageUint8List,'$imageId');");
-              });
-            });
+            var imageUint8List =
+                await FileHandler.readFileAsUint8List(fileName);
+
+            // Anyway to compress the image before passing to the WebView
+            var compressedImageUint8List = await FileHandler.compressUint8List(
+                imageUint8List,
+                minWidth: 250,
+                minHeight: 250);
+
+            await GlobalState.flutterWebviewPlugin.evalJavascript(
+                "javascript:updateImageBase64($compressedImageUint8List,'$imageId');");
           });
         }), // GetAllImagesBase64FromImageFiles
     JavascriptChannel(
