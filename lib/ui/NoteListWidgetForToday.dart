@@ -9,6 +9,7 @@ import 'package:seal_note/data/database/database.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:seal_note/model/NoteWithProgressTotal.dart';
 import 'package:seal_note/util/html/HtmlHandler.dart';
+import 'package:seal_note/util/string/StringHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 import 'httper/NoteHttper.dart';
 
@@ -641,22 +642,30 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   bool _shouldBreakWhileLoop({@required String noteContentEncodedFromWebView}) {
     var shouldBreak = false;
 
+    // Remove the special character
+    noteContentEncodedFromWebView =
+        StringHandler.removeSpecialChars(noteContentEncodedFromWebView);
+    GlobalState.noteContentEncodedInDb =
+        StringHandler.removeSpecialChars(GlobalState.noteContentEncodedInDb);
+
     if (GlobalState.noteContentEncodedInDb.isEmpty) {
       // When the content of a note is empty
       GlobalState.noteContentEncodedInDb = noteContentEncodedFromWebView;
     } else if (!GlobalState.noteContentEncodedInDb.contains('&lt;')) {
       GlobalState.noteContentEncodedInDb =
           '&lt;p&gt;${GlobalState.noteContentEncodedInDb}&lt;/p&gt;';
-    } else {
+    } else if (GlobalState.noteContentEncodedInDb
+        .contains('color: rgba(0, 0, 0, 0.6)')) {
       // When it has '&lt;', but it is a empty note, that is: &lt;p&gt;&lt;em style=\"color: rgba(0, 0, 0, 0.6);\"&gt;添加笔记...&lt;/em&gt;&lt;/p&gt;
-      if (GlobalState.noteContentEncodedInDb
-          .contains('color: rgba(0, 0, 0, 0.6)')) {
-        GlobalState.noteContentEncodedInDb = noteContentEncodedFromWebView;
-      }
+      GlobalState.noteContentEncodedInDb = noteContentEncodedFromWebView;
     }
 
-    if (HtmlHandler.decodeHtmlString(noteContentEncodedFromWebView) ==
-        HtmlHandler.decodeHtmlString(GlobalState.noteContentEncodedInDb)) {
+    var noteContentDecodedFromWebView =
+        HtmlHandler.decodeHtmlString(noteContentEncodedFromWebView);
+    var noteContentDecodedInDb =
+        HtmlHandler.decodeHtmlString(GlobalState.noteContentEncodedInDb);
+
+    if (noteContentDecodedFromWebView == noteContentDecodedInDb) {
       shouldBreak = true;
     }
 
