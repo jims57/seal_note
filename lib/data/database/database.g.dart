@@ -905,7 +905,6 @@ class $FoldersTable extends Folders with TableInfo<$FoldersTable, FolderEntry> {
 class NoteEntry extends DataClass implements Insertable<NoteEntry> {
   final int id;
   final int folderId;
-  final String title;
   final String content;
   final DateTime created;
   final DateTime updated;
@@ -917,7 +916,6 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
   NoteEntry(
       {@required this.id,
       @required this.folderId,
-      @required this.title,
       this.content,
       @required this.created,
       @required this.updated,
@@ -936,8 +934,6 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       folderId:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}folderId']),
-      title:
-          stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
       content:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}content']),
       created: $NotesTable.$converter0.mapToDart(stringType
@@ -964,9 +960,6 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
     }
     if (!nullToAbsent || folderId != null) {
       map['folderId'] = Variable<int>(folderId);
-    }
-    if (!nullToAbsent || title != null) {
-      map['title'] = Variable<String>(title);
     }
     if (!nullToAbsent || content != null) {
       map['content'] = Variable<String>(content);
@@ -1005,8 +998,6 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       folderId: folderId == null && nullToAbsent
           ? const Value.absent()
           : Value(folderId),
-      title:
-          title == null && nullToAbsent ? const Value.absent() : Value(title),
       content: content == null && nullToAbsent
           ? const Value.absent()
           : Value(content),
@@ -1040,7 +1031,6 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
     return NoteEntry(
       id: serializer.fromJson<int>(json['id']),
       folderId: serializer.fromJson<int>(json['folderId']),
-      title: serializer.fromJson<String>(json['title']),
       content: serializer.fromJson<String>(json['content']),
       created: serializer.fromJson<DateTime>(json['created']),
       updated: serializer.fromJson<DateTime>(json['updated']),
@@ -1057,7 +1047,6 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'folderId': serializer.toJson<int>(folderId),
-      'title': serializer.toJson<String>(title),
       'content': serializer.toJson<String>(content),
       'created': serializer.toJson<DateTime>(created),
       'updated': serializer.toJson<DateTime>(updated),
@@ -1072,7 +1061,6 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
   NoteEntry copyWith(
           {int id,
           int folderId,
-          String title,
           String content,
           DateTime created,
           DateTime updated,
@@ -1084,7 +1072,6 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       NoteEntry(
         id: id ?? this.id,
         folderId: folderId ?? this.folderId,
-        title: title ?? this.title,
         content: content ?? this.content,
         created: created ?? this.created,
         updated: updated ?? this.updated,
@@ -1099,7 +1086,6 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
     return (StringBuffer('NoteEntry(')
           ..write('id: $id, ')
           ..write('folderId: $folderId, ')
-          ..write('title: $title, ')
           ..write('content: $content, ')
           ..write('created: $created, ')
           ..write('updated: $updated, ')
@@ -1118,28 +1104,25 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       $mrjc(
           folderId.hashCode,
           $mrjc(
-              title.hashCode,
+              content.hashCode,
               $mrjc(
-                  content.hashCode,
+                  created.hashCode,
                   $mrjc(
-                      created.hashCode,
+                      updated.hashCode,
                       $mrjc(
-                          updated.hashCode,
+                          nextReviewTime.hashCode,
                           $mrjc(
-                              nextReviewTime.hashCode,
+                              reviewProgressNo.hashCode,
                               $mrjc(
-                                  reviewProgressNo.hashCode,
-                                  $mrjc(
-                                      isReviewFinished.hashCode,
-                                      $mrjc(isDeleted.hashCode,
-                                          createdBy.hashCode)))))))))));
+                                  isReviewFinished.hashCode,
+                                  $mrjc(isDeleted.hashCode,
+                                      createdBy.hashCode))))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is NoteEntry &&
           other.id == this.id &&
           other.folderId == this.folderId &&
-          other.title == this.title &&
           other.content == this.content &&
           other.created == this.created &&
           other.updated == this.updated &&
@@ -1153,7 +1136,6 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
 class NotesCompanion extends UpdateCompanion<NoteEntry> {
   final Value<int> id;
   final Value<int> folderId;
-  final Value<String> title;
   final Value<String> content;
   final Value<DateTime> created;
   final Value<DateTime> updated;
@@ -1165,7 +1147,6 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
   const NotesCompanion({
     this.id = const Value.absent(),
     this.folderId = const Value.absent(),
-    this.title = const Value.absent(),
     this.content = const Value.absent(),
     this.created = const Value.absent(),
     this.updated = const Value.absent(),
@@ -1178,7 +1159,6 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
   NotesCompanion.insert({
     this.id = const Value.absent(),
     this.folderId = const Value.absent(),
-    @required String title,
     this.content = const Value.absent(),
     @required DateTime created,
     @required DateTime updated,
@@ -1187,13 +1167,11 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     this.isReviewFinished = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
-  })  : title = Value(title),
-        created = Value(created),
+  })  : created = Value(created),
         updated = Value(updated);
   static Insertable<NoteEntry> custom({
     Expression<int> id,
     Expression<int> folderId,
-    Expression<String> title,
     Expression<String> content,
     Expression<String> created,
     Expression<String> updated,
@@ -1206,7 +1184,6 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (folderId != null) 'folderId': folderId,
-      if (title != null) 'title': title,
       if (content != null) 'content': content,
       if (created != null) 'created': created,
       if (updated != null) 'updated': updated,
@@ -1221,7 +1198,6 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
   NotesCompanion copyWith(
       {Value<int> id,
       Value<int> folderId,
-      Value<String> title,
       Value<String> content,
       Value<DateTime> created,
       Value<DateTime> updated,
@@ -1233,7 +1209,6 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     return NotesCompanion(
       id: id ?? this.id,
       folderId: folderId ?? this.folderId,
-      title: title ?? this.title,
       content: content ?? this.content,
       created: created ?? this.created,
       updated: updated ?? this.updated,
@@ -1253,9 +1228,6 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     }
     if (folderId.present) {
       map['folderId'] = Variable<int>(folderId.value);
-    }
-    if (title.present) {
-      map['title'] = Variable<String>(title.value);
     }
     if (content.present) {
       map['content'] = Variable<String>(content.value);
@@ -1293,7 +1265,6 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     return (StringBuffer('NotesCompanion(')
           ..write('id: $id, ')
           ..write('folderId: $folderId, ')
-          ..write('title: $title, ')
           ..write('content: $content, ')
           ..write('created: $created, ')
           ..write('updated: $updated, ')
@@ -1327,15 +1298,6 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
   GeneratedIntColumn _constructFolderId() {
     return GeneratedIntColumn('folderId', $tableName, false,
         defaultValue: const Constant(3));
-  }
-
-  final VerificationMeta _titleMeta = const VerificationMeta('title');
-  GeneratedTextColumn _title;
-  @override
-  GeneratedTextColumn get title => _title ??= _constructTitle();
-  GeneratedTextColumn _constructTitle() {
-    return GeneratedTextColumn('title', $tableName, false,
-        minTextLength: 2, maxTextLength: 200);
   }
 
   final VerificationMeta _contentMeta = const VerificationMeta('content');
@@ -1435,7 +1397,6 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
   List<GeneratedColumn> get $columns => [
         id,
         folderId,
-        title,
         content,
         created,
         updated,
@@ -1462,12 +1423,6 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
     if (data.containsKey('folderId')) {
       context.handle(_folderIdMeta,
           folderId.isAcceptableOrUnknown(data['folderId'], _folderIdMeta));
-    }
-    if (data.containsKey('title')) {
-      context.handle(
-          _titleMeta, title.isAcceptableOrUnknown(data['title'], _titleMeta));
-    } else if (isInserting) {
-      context.missing(_titleMeta);
     }
     if (data.containsKey('content')) {
       context.handle(_contentMeta,
@@ -2212,7 +2167,7 @@ abstract class _$Database extends GeneratedDatabase {
   Selectable<GetNoteListForTodayResult> getNoteListForToday(
       int createdBy, int pageSize, double pageNo) {
     return customSelect(
-        'SELECT n.id, n.folderId, n.title, n.content, n.created, n.updated, n.nextReviewTime, CASE WHEN n.reviewProgressNo IS NULL THEN 0 ELSE n.reviewProgressNo END AS reviewProgressNo, n.isReviewFinished, n.isDeleted, n.createdBy,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n, folders f WHERE n.folderId = f.id AND f.reviewPlanId IS NOT NULL AND n.isDeleted = 0 AND strftime(\'%Y-%m-%d %H:%M:%S\', n.nextReviewTime) < strftime(\'%Y-%m-%d %H:%M:%S\', \'now\', \'localtime\', \'start of day\', \'+1 day\') AND n.isReviewFinished = 0 AND n.createdBy = :createdBy ORDER BY n.nextReviewTime ASC, n.id ASC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
+        'SELECT n.id, n.folderId, CASE WHEN INSTR(content, \'&lt;/p&gt;\') > 0 THEN substr(content, 1, INSTR(content, \'&lt;/p&gt;\') + 9) ELSE content END AS title, n.content, n.created, n.updated, n.nextReviewTime, CASE WHEN n.reviewProgressNo IS NULL THEN 0 ELSE n.reviewProgressNo END AS reviewProgressNo, n.isReviewFinished, n.isDeleted, n.createdBy,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n, folders f WHERE n.folderId = f.id AND f.reviewPlanId IS NOT NULL AND n.isDeleted = 0 AND strftime(\'%Y-%m-%d %H:%M:%S\', n.nextReviewTime) < strftime(\'%Y-%m-%d %H:%M:%S\', \'now\', \'localtime\', \'start of day\', \'+1 day\') AND n.isReviewFinished = 0 AND n.createdBy = :createdBy ORDER BY n.nextReviewTime ASC, n.id ASC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
         variables: [
           Variable.withInt(createdBy),
           Variable.withInt(pageSize),
@@ -2244,7 +2199,7 @@ abstract class _$Database extends GeneratedDatabase {
   Selectable<GetNoteListForAllNotesResult> getNoteListForAllNotes(
       int createdBy, int pageSize, double pageNo) {
     return customSelect(
-        'SELECT id, folderId, title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy ORDER BY n.updated DESC, n.id DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
+        'SELECT id, folderId, CASE WHEN INSTR(content, \'&lt;/p&gt;\') > 0 THEN substr(content, 1, INSTR(content, \'&lt;/p&gt;\') + 9) ELSE content END AS title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy ORDER BY n.updated DESC, n.id DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
         variables: [
           Variable.withInt(createdBy),
           Variable.withInt(pageSize),
@@ -2276,7 +2231,7 @@ abstract class _$Database extends GeneratedDatabase {
   Selectable<GetNoteListForDeletedNotesResult> getNoteListForDeletedNotes(
       int createdBy, int pageSize, double pageNo) {
     return customSelect(
-        'SELECT id, folderId, title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 1 AND n.createdBy = :createdBy ORDER BY n.updated DESC, n.id DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
+        'SELECT id, folderId, CASE WHEN INSTR(content, \'&lt;/p&gt;\') > 0 THEN substr(content, 1, INSTR(content, \'&lt;/p&gt;\') + 9) ELSE content END AS title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 1 AND n.createdBy = :createdBy ORDER BY n.updated DESC, n.id DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
         variables: [
           Variable.withInt(createdBy),
           Variable.withInt(pageSize),
@@ -2308,7 +2263,7 @@ abstract class _$Database extends GeneratedDatabase {
   Selectable<GetNoteListForUserFoldersResult> getNoteListForUserFolders(
       int folderId, int createdBy, int pageSize, double pageNo) {
     return customSelect(
-        'WITH isReviewFolderTable AS( SELECT CASE WHEN reviewPlanId IS NOT NULL THEN 1 ELSE 0 END AS isReviewFolder FROM folders WHERE id = :folderId) SELECT id, folderId, title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy, ( SELECT count( * ) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = :folderId AND CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ORDER BY n.isReviewFinished ASC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.nextReviewTime END ASC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 0 THEN n.updated END DESC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.updated END DESC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 0 THEN n.id END DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
+        'WITH isReviewFolderTable AS( SELECT CASE WHEN reviewPlanId IS NOT NULL THEN 1 ELSE 0 END AS isReviewFolder FROM folders WHERE id = :folderId) SELECT id, folderId, CASE WHEN INSTR(content, \'&lt;/p&gt;\') > 0 THEN substr(content, 1, INSTR(content, \'&lt;/p&gt;\') + 9) ELSE content END AS title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy, ( SELECT count( * ) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = :folderId AND CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ORDER BY n.isReviewFinished ASC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.nextReviewTime END ASC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 0 THEN n.updated END DESC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.updated END DESC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 0 THEN n.id END DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1);',
         variables: [
           Variable.withInt(folderId),
           Variable.withInt(createdBy),

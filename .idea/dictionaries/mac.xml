@@ -7,6 +7,7 @@
       <w>reorderable</w>
       <w>sqlite</w>
       <w>strftime</w>
+      <w>substr</w>
       <w>uint</w>
       <w>upsert</w>
       <w>webview</w>

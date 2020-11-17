@@ -373,7 +373,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
               // Save the changes into sqlite every time
               var notesCompanion = NotesCompanion(
                   id: Value(GlobalState.selectedNoteModel.id),
-                  title: Value(GlobalState.selectedNoteModel.title),
+                  // title: Value(GlobalState.selectedNoteModel.title),
                   content: Value(GlobalState.selectedNoteModel.content),
                   created: Value(GlobalState.selectedNoteModel.created),
                   updated: Value(TimeHandler.getNowForLocal()));
@@ -422,7 +422,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                   var noteEntry = NoteEntry(
                       id: null,
                       folderId: folderIdNoteShouldSaveTo,
-                      title: GlobalState.defaultTitleForNewNote,
+                      // title: GlobalState.defaultTitleForNewNote,
                       content: GlobalState.selectedNoteModel.content,
                       created: nowForLocal,
                       updated: nowForLocal,

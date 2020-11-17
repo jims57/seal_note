@@ -137,19 +137,23 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                   bottom: 15.0,
                                   left: 10.0,
                                   right: 10.0),
-                              title: Text('${theNote.title}',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.w400,
-                                  )),
+                              title:
+                                  Text('${_getNoteTitleFormat(theNote.title)}',
+                                      // note list item title // note item title
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.w400,
+                                      )),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     // note list content // note list item content
-                                    '${HtmlHandler.decodeAndRemoveAllHtmlTags(theNote.content).trim()}',
+                                    // note list item content // note item content
+                                    // get note list item cotent
+                                    '${_getNoteContentFormat(encodedTitle: theNote.title, encodedContent: theNote.content)}',
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -565,7 +569,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       var noteEntry = NoteEntry(
           id: null,
           folderId: GlobalState.selectedFolderIdCurrently,
-          title: title,
+          // title: title,
           content: content,
           created: now,
           updated: now,
@@ -680,5 +684,17 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     }
 
     return shouldBreak;
+  }
+
+  String _getNoteTitleFormat(String encodedTitle) {
+    var title = HtmlHandler.decodeAndRemoveAllHtmlTags(encodedTitle);
+    return title;
+  }
+
+  String _getNoteContentFormat({String encodedTitle, String encodedContent}) {
+    encodedContent = encodedContent.replaceFirst(encodedTitle, '');
+    var content = HtmlHandler.decodeAndRemoveAllHtmlTags(encodedContent);
+
+    return content.trim();
   }
 }
