@@ -256,7 +256,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
             // GlobalState.imageSyncItemList.addAll(latestImageSyncItemList);
 
-
             // for (var i = 0; i < clonedImageSyncItemList.length; i++) {
             //   var theCloneImageSyncItem = clonedImageSyncItemList[i];
             //
@@ -393,6 +392,9 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
                   _setToReadingOldNoteStatus(resetCounter: true);
 
+                  GlobalState.noteListWidgetForTodayState.currentState
+                      .triggerSetState(resetNoteList: true);
+
                   break;
                 }
               }
@@ -445,6 +447,11 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                       GlobalState.selectedNoteModel.id = newNoteId;
                       GlobalState.selectedNoteModel.created = nowForLocal;
                       _setToReadingOldNoteStatus(resetCounter: true);
+
+                      GlobalState.noteListWidgetForTodayState.currentState
+                          .triggerSetState(
+                              resetNoteList: true,
+                              updateNoteListPageTitle: true);
 
                       break;
                     }

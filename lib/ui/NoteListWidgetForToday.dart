@@ -41,6 +41,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   // Data manipulation
   NoteWithProgressTotal _noteEntryDeleted;
 
+  // Global key
+  SnackBar snackBar;
+
   @override
   void initState() {
     _isFirstLoad = true;
@@ -336,8 +339,12 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                       setState(() {
                                         _noteList.removeAt(index);
 
-                                        Scaffold.of(context)
-                                            .showSnackBar(SnackBar(
+                                        if (snackBar != null) {
+                                          Scaffold.of(context)
+                                              .hideCurrentSnackBar();
+                                        }
+
+                                        snackBar = SnackBar(
                                           content:
                                               Text('已删除：$noteTitleDeleted'),
                                           backgroundColor:
@@ -361,7 +368,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                               });
                                             },
                                           ),
-                                        ));
+                                        );
+
+                                        Scaffold.of(context)
+                                            .showSnackBar(snackBar);
                                       });
                                     }
                                   });
