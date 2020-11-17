@@ -421,7 +421,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                       // while loop
 
                       await GlobalState.flutterWebviewPlugin.evalJavascript(
-                          "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
+                          "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString', true);");
 
                       var noteContentEncodedFromWebView =
                           await GlobalState.flutterWebviewPlugin.evalJavascript(

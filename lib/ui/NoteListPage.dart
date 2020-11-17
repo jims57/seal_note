@@ -139,7 +139,7 @@ class _NoteListPageState extends State<NoteListPage> {
           var responseJsonString =
               '{"isCreatingNote": true, "folderId":$folderId, "noteId":${GlobalState.selectedNoteModel.id}, "encodedHtml":""}';
           GlobalState.flutterWebviewPlugin.evalJavascript(
-              "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString');");
+              "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString', true);");
 
           // Refresh tree
           GlobalState.masterDetailPageState.currentState

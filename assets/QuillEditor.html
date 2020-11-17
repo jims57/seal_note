@@ -1485,7 +1485,7 @@
     var base64HasData = false;
 
     // For debug configurations
-    var forWebDebug = false;
+    var forWebDebug = true;
     var printLogToDartFromJs = true;
     var isInMyPhone = true;
     var keepPrintTimer = false;
@@ -1764,6 +1764,14 @@
         document.getElementById('editor-container').style.height = editorHeight;
 
         if (goToCursorPosition) goToQuillCursorPostion();
+    }
+
+    function goToQuillTopPosition(){
+        setTimeout(function () {
+            $('html, body').animate({ scrollTop: 0 }, 'slow'); 
+            quill.setSelection(0, 0); 
+            quill.focus(); 
+        }, 400);
     }
 
     function goToQuillCursorPostion() {
@@ -2060,7 +2068,7 @@
 
 <!-- 【For dart to eval js】 -->
 <script>
-    function replaceQuillContentWithOldNoteContent(responseJsonString) { // *responseJsonString* is the encoded html of a note
+    function replaceQuillContentWithOldNoteContent(responseJsonString, goToTopAfterLoading = false) { // *responseJsonString* is the encoded html of a note
         if (printLogToDartFromJs) Print.postMessage('replaceQuillContentWithOldNoteContent(' + responseJsonString + ')');
 
         // Convert jsonString to json object
@@ -2117,6 +2125,8 @@
                 }, 300);
             }
         }
+
+        if(goToTopAfterLoading) goToQuillTopPosition();
 
         syncImageSyncArrayToDart(true);
     }
