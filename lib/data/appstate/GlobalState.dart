@@ -121,7 +121,6 @@ class GlobalState with ChangeNotifier {
   static SelectedNoteModel noteModelForConsumer;
   static bool isNewNoteBeingSaved =
       false; // Indicate if a new note is being saved, avoiding duplicate notes being created
-  static bool isNoteSaved = false; // Indicates if the selected note is saved successfully
 
   // State objects
   static GlobalKey<MasterDetailPageState> masterDetailPageState;

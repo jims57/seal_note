@@ -256,6 +256,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
             // GlobalState.imageSyncItemList.addAll(latestImageSyncItemList);
 
+
             // for (var i = 0; i < clonedImageSyncItemList.length; i++) {
             //   var theCloneImageSyncItem = clonedImageSyncItemList[i];
             //
@@ -392,8 +393,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
                   _setToReadingOldNoteStatus(resetCounter: true);
 
-                  GlobalState.isNoteSaved = true;
-
                   break;
                 }
               }
@@ -446,7 +445,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                       GlobalState.selectedNoteModel.id = newNoteId;
                       GlobalState.selectedNoteModel.created = nowForLocal;
                       _setToReadingOldNoteStatus(resetCounter: true);
-                      GlobalState.isNoteSaved = true;
 
                       break;
                     }
@@ -495,9 +493,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                 // click detail page back button // click on detail back button
                                 // click detail back button
 
-                                // Mark the note as unsaved every time the operation is triggered
-                                GlobalState.isNoteSaved = false;
-
                                 GlobalState.isHandlingNoteDetailPage = true;
                                 GlobalState.isInNoteDetailPage = false;
 
@@ -517,19 +512,9 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
                                   // Save the changes again if the user edited the note content
                                   if (_shouldSaveNoteToDb()) {
-                                    var shouldBreakWhile = false;
-
-                                    while (!shouldBreakWhile) {
-                                      await Future.delayed(
-                                          Duration(milliseconds: 50), () async {
-                                        await GlobalState.flutterWebviewPlugin
-                                            .evalJavascript(
-                                                "javascript:saveNoteToDb(true);");
-
-                                        if (GlobalState.isNoteSaved)
-                                          shouldBreakWhile = true;
-                                      });
-                                    }
+                                    await GlobalState.flutterWebviewPlugin
+                                        .evalJavascript(
+                                            "javascript:saveNoteToDb(true);");
                                   }
 
                                   _toggleQuillModeBetweenReadOnlyAndEdit(
@@ -570,7 +555,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                   Icons.done,
                                   color: GlobalState.themeBlueColor,
                                 )),
-                          onPressed: () async {
+                          onPressed: () {
                             // click on save button // click save button
                             // save button // edit button
 
@@ -650,18 +635,12 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
       // Set it to the read only mode
 
+      // GlobalState.isEditingOrCreatingNote = false;
+
       // execute save note
       // Trigger the auto-save function to save the note
-      var shouldBreakWhile = false;
-      GlobalState.isNoteSaved = false;
-      while (!shouldBreakWhile) {
-        await Future.delayed(Duration(milliseconds: 50), () async {
-          await GlobalState.flutterWebviewPlugin
-              .evalJavascript("javascript:saveNoteToDb(false, true);");
-
-          if (GlobalState.isNoteSaved) shouldBreakWhile = true;
-        });
-      }
+      await GlobalState.flutterWebviewPlugin
+          .evalJavascript("javascript:saveNoteToDb(false, true);");
 
       await GlobalState.flutterWebviewPlugin
           .evalJavascript("javascript:setQuillToReadOnly(true);");
