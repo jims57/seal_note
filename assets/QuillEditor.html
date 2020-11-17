@@ -1945,7 +1945,9 @@
             oldNoteEncodedHtml = newNoteEncodedHtml; // Save to variable to future check
 
             if (interactWithDart) {
-                if (forceToSave || isEditingMode || (!isEditingMode && canSaveInReadOnly)) SaveNoteToDb.postMessage(newNoteEncodedHtml);
+                if (forceToSave || isEditingMode || (!isEditingMode && canSaveInReadOnly)) {
+                    SaveNoteToDb.postMessage(newNoteEncodedHtml);
+                }
             } else { // If it don't need to interact with Dart, meaning it is web app, we reset the interval in js
                 // Reset the timer
                 beginToCountElapsingMillisecond(intervalMillisecondToUpdateElapsingMillisecond, true); // Only it actually execute the save, we will reset the interval
