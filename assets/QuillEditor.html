@@ -1485,7 +1485,7 @@
     var base64HasData = false;
 
     // For debug configurations
-    var forWebDebug = true;
+    var forWebDebug = false;
     var printLogToDartFromJs = true;
     var isInMyPhone = true;
     var keepPrintTimer = false;
@@ -1498,11 +1498,6 @@
     } else { // For app
         interactWithDart = true;
         useMultiImagePicker = true;
-    }
-
-    function getPageHtml() {
-        var htmlString = $('html').html();
-        if (printLogToDartFromJs) Print.postMessage(htmlString);
     }
 
     // function loadDummyHtmlPage() {
@@ -1731,14 +1726,14 @@
 
 
     // 【For quill editor】
-    quill = new Quill('#editor-container', {
-        modules: {
-            toolbar: '#toolbar'
-        },
-        placeholder: '添加笔记...',
-        readOnly: false,
-        theme: 'snow'
-    });
+    // quill = new Quill('#editor-container', {
+    //     modules: {
+    //         toolbar: '#toolbar'
+    //     },
+    //     placeholder: '添加笔记...',
+    //     readOnly: false,
+    //     theme: 'snow'
+    // });
 
     if (useMultiImagePicker) {
         quill.getModule('toolbar').addHandler('image', () => {
@@ -1854,12 +1849,16 @@
     }
 
     function syncImageSyncArrayToDart(shouldClearArrayInDart = false) { // Sync imageSyncArray to dart, *shouldClearArrayInDart* means we should clear all the item in imageSyncItemList in dart, it should be used when initializing this page, avoiding different notes' images mix up
-        if (printLogToDartFromJs) Print.postMessage('syncImageSyncArrayToDart(' + shouldClearArrayInDart + ')');
-
+        if (printLogToDartFromJs) Print.postMessage('JSON.stringify(imageSyncArray);');
         var jsonString = JSON.stringify(imageSyncArray); // Convert array to string
+
+        if (printLogToDartFromJs) Print.postMessage('jsonString = {imageSyncArray:   jsonString , shouldClearArrayInDart:  shouldClearArrayInDart }');
         jsonString = '{"imageSyncArray": ' + jsonString + ', "shouldClearArrayInDart" : ' + shouldClearArrayInDart + ' }';
 
+        if (printLogToDartFromJs) Print.postMessage('if (interactWithDart) SyncImageSyncArrayToDart.postMessage(jsonString)');
         if (interactWithDart) SyncImageSyncArrayToDart.postMessage(jsonString);
+
+        if (printLogToDartFromJs) Print.postMessage('end: syncImageSyncArrayToDart();');
     }
 
     function setSomeImageSyncsToSyncedStatus(imageIdArray) { // Set some of imageSyncs passed in imageIdArray parameter to be synced status, that is syncId = 0
@@ -1964,6 +1963,17 @@
 
 <!-- Quill Editor related -->
 <script>
+    function initQuillEditor(){
+        quill = new Quill('#editor-container', {
+        modules: {
+            toolbar: '#toolbar'
+        },
+        placeholder: '添加笔记...',
+        readOnly: false,
+        theme: 'snow'
+    });
+    }
+
     function quillOnceHandler() {
         console.log('quillOnceHandler() in js');
         if (printLogToDartFromJs) Print.postMessage('quillOnceHandler()');
@@ -2068,52 +2078,105 @@
 
 <!-- 【For dart to eval js】 -->
 <script>
+    function clearQuillContent(replacedByContent = '<p><br></p>'){
+        // initQuillEditor();
+
+        $theEditor = $('div.ql-editor');
+
+        if (printLogToDartFromJs) Print.postMessage('$theEditor.children().remove();');
+
+        // Get the old children for future deleltion
+        // var $oldChildren = $('div.ql-editor').children();
+
+        // $theEditor.children().remove();
+        quill.deleteText(0, 10000000);
+
+        // $('div.ql-editor').children().text('');
+        if (printLogToDartFromJs) Print.postMessage('$theEditor.prepend(replacedByContent)');
+        $theEditor.prepend(replacedByContent)
+
+        
+
+        //clear the old children object in another thread
+        // setTimeout(function () { 
+        //     $oldChildren.remove();
+        //  }, 500);
+
+        // $theEditor.append(replacedByContent);
+        // if($theEditor.children().length > 1 && $theEditor.children()[0].outerHTML =='<p><br></p>'){
+        //     $($theEditor.children()[0]).remove();
+        // }
+    }
+
     function replaceQuillContentWithOldNoteContent(responseJsonString, goToTopAfterLoading = false) { // *responseJsonString* is the encoded html of a note
         if (printLogToDartFromJs) Print.postMessage('replaceQuillContentWithOldNoteContent(' + responseJsonString + ')');
 
         // Convert jsonString to json object
+        if (printLogToDartFromJs) Print.postMessage('JSON.parse()');
         var responseJson = JSON.parse(responseJsonString);
 
         // Get Quill editor's all children objects
+        if (printLogToDartFromJs) Print.postMessage('$(div.ql-editor).children()');
         var $editorChildren = $('div.ql-editor').children();
 
         // Set variable related the note
         isCreatingNote = responseJson.isCreatingNote;
         folderId = responseJson.folderId;
         noteId = responseJson.noteId; // If note id == 0, meaning it is a new note
+        if (printLogToDartFromJs) Print.postMessage('decodeHtml(responseJson.encodedHtml);');
         noteContent = decodeHtml(responseJson.encodedHtml);
 
         if (isCreatingNote) { // If it is createing a new note
             if (printLogToDartFromJs) Print.postMessage('inside if(isCreatingNote) {}');
 
             // Clear all children except the first one
-            removeQuillEditorAllChildrenExceptFirstOne($editorChildren);
-            $editorChildren.replaceWith(noteContent);
+            // removeQuillEditorAllChildrenExceptFirstOne($editorChildren);
+            // $editorChildren.replaceWith(noteContent);
+
+            clearQuillContent(noteContent);
 
             setQuillToReadOnly(false, isCreatingNote);
 
         } else { // If it is an old note
             if (printLogToDartFromJs) Print.postMessage('inside if(responseJson.isCreatingNote) else {}');
 
+            if (printLogToDartFromJs) Print.postMessage('setQuillToReadOnly(true, isCreatingNote);');
             setQuillToReadOnly(true, isCreatingNote);
             // removeQuillEditorWatermark();
 
             var childrenCount = $editorChildren.length;
             if (childrenCount > 0) {
                 // Clear other children except the first one
-                removeQuillEditorAllChildrenExceptFirstOne($editorChildren);
+                //removeQuillEditorAllChildrenExceptFirstOne($editorChildren);
 
-                $editorChildren.replaceWith(noteContent);
+                // $editorChildren.replaceWith(noteContent);
 
+                // $('div.ql-editor').append(noteContent);
+                // $($('div.ql-editor').children()[0]).remove();
+
+                // $('div.ql-editor').children().remove();
+                // $('div.ql-editor').append(noteContent);
+                // if($('div.ql-editor').children()[0].outerHTML =='<p><br></p>'){
+                //     $($('div.ql-editor').children()[0]).remove();
+                // }
+
+                if (printLogToDartFromJs) Print.postMessage('clearQuillContent(noteContent);');
+                clearQuillContent(noteContent);
+
+                if (printLogToDartFromJs) Print.postMessage('getAllImagesBase64FromImageFiles();');
                 getAllImagesBase64FromImageFiles();
 
+                if (printLogToDartFromJs) Print.postMessage('upsertAllImagesIndex();');
                 upsertAllImagesIndex();
 
+                if (printLogToDartFromJs) Print.postMessage('updateTotalOfImagesInPageVar();');
                 updateTotalOfImagesInPageVar();
 
                 // remove old image sync items first
+                if (printLogToDartFromJs) Print.postMessage('removeAllImageSyncItemsFromArrayVar();');
                 removeAllImageSyncItemsFromArrayVar();
 
+                if (printLogToDartFromJs) Print.postMessage('addAllOldImagesToSyncArray();');
                 addAllOldImagesToSyncArray();
 
                 // syncImageSyncArrayToDart(true);
@@ -2126,8 +2189,12 @@
             }
         }
 
-        if(goToTopAfterLoading) goToQuillTopPosition();
+        if(goToTopAfterLoading) {
+            if (printLogToDartFromJs) Print.postMessage('goToQuillTopPosition();');
+            goToQuillTopPosition();
+        }
 
+        if (printLogToDartFromJs) Print.postMessage('syncImageSyncArrayToDart(true);');
         syncImageSyncArrayToDart(true);
     }
 
@@ -2184,6 +2251,7 @@
                 saveImageSyncToArray(imageId, 3);
             });
 
+            if (printLogToDartFromJs) Print.postMessage('syncImageSyncArrayToDart(false);');
             syncImageSyncArrayToDart(false); // Always sync with imageSyncItemList in dart
 
             // removeAllImagesInsertOrderAttributes(); // Remove all the insertorder attribute for these images
@@ -2337,6 +2405,13 @@
 
 <!-- For Debug -->
 <script>
+    function getPageHtml() {
+        var htmlString = $('html').html();
+        if (printLogToDartFromJs) Print.postMessage(htmlString);
+
+        return htmlString;
+    }
+
     function getEcho(message) {
         var result = 'Hello,' + message;
 
@@ -2360,7 +2435,7 @@
 			return string.replace(new RegExp(match, 'g'), replaceBy);
 		}
 
-        //initQuillEditor();
+        initQuillEditor();
 
         toolbarHeight = $('#toolbar').outerHeight();
 
@@ -2437,6 +2512,8 @@
                 var newTotalOfImagesInPage = getImageTotalInPage();
                 var oldTotalOfImagesInPage = totalOfImagesInPage;
                 if (newTotalOfImagesInPage != oldTotalOfImagesInPage) { // When the total of images in the page has changed
+                    if (printLogToDartFromJs) Print.postMessage('inside if(newTotalOfImagesInPage != oldTotalOfImagesInPage) {}');
+
                     var deletedImageIds = []; // Record which image Ids is deleleted in this operation
 
                     // Update all image index first
@@ -2467,7 +2544,7 @@
                         }
                     });
 
-                    if (printLogToDartFromJs) Print.postMessage('inside if(newTotalOfImagesInPage != oldTotalOfImagesInPage) {}');
+                    if (printLogToDartFromJs) Print.postMessage('syncImageSyncArrayToDart(false); ');
                     syncImageSyncArrayToDart(false); // Sync the update to dart
 
                     // Remove item from imageSyncArray, sicne it isn't in the page now

@@ -391,6 +391,16 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     // click note list item // click on note list item
                     // click note item
 
+                    GlobalState.isInNoteDetailPage = true;
+                    if (GlobalState.screenType == 1) {
+                      GlobalState.isHandlingNoteDetailPage = true;
+                      GlobalState.masterDetailPageState.currentState
+                          .updatePageShowAndHide(shouldTriggerSetState: true);
+                    } else {
+                      // Screen Type = 2 or 3
+                      // GlobalState.isInNoteDetailPage = true;
+                    }
+
                     // Save the current note model as global variable
                     GlobalState.selectedNoteModel = theNote;
 
@@ -420,6 +430,13 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     while (true) {
                       // while loop
 
+                      // Clear the old content from the WebView first to avoid the long content replacement operation spends too much time
+                      // await GlobalState.flutterWebviewPlugin.evalJavascript("javascript:clearQuillContent();");
+
+                      // Init Quill every time to clear old data
+                      // await GlobalState.flutterWebviewPlugin
+                      //     .evalJavascript("javascript:initQuillEditor()");
+
                       await GlobalState.flutterWebviewPlugin.evalJavascript(
                           "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString', true);");
 
@@ -433,16 +450,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                               noteContentEncodedFromWebView)) {
                         break;
                       }
-                    }
-
-                    GlobalState.isInNoteDetailPage = true;
-                    if (GlobalState.screenType == 1) {
-                      GlobalState.isHandlingNoteDetailPage = true;
-                      GlobalState.masterDetailPageState.currentState
-                          .updatePageShowAndHide(shouldTriggerSetState: true);
-                    } else {
-                      // Screen Type = 2 or 3
-                      // GlobalState.isInNoteDetailPage = true;
                     }
                   },
                 );
@@ -657,10 +664,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     var shouldBreak = false;
 
     // Remove the special character
-    noteContentEncodedFromWebView =
-        StringHandler.removeSpecialChars(noteContentEncodedFromWebView);
-    GlobalState.noteContentEncodedInDb =
-        StringHandler.removeSpecialChars(GlobalState.noteContentEncodedInDb);
+    // noteContentEncodedFromWebView =
+    //     StringHandler.removeSpecialChars(noteContentEncodedFromWebView);
+    // GlobalState.noteContentEncodedInDb =
+    //     StringHandler.removeSpecialChars(GlobalState.noteContentEncodedInDb);
 
     if (GlobalState.noteContentEncodedInDb.isEmpty) {
       // When the content of a note is empty
@@ -672,14 +679,17 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
         .contains('color: rgba(0, 0, 0, 0.6)')) {
       // When it has '&lt;', but it is a empty note, that is: &lt;p&gt;&lt;em style=\"color: rgba(0, 0, 0, 0.6);\"&gt;添加笔记...&lt;/em&gt;&lt;/p&gt;
       GlobalState.noteContentEncodedInDb = noteContentEncodedFromWebView;
+    } else if (noteContentEncodedFromWebView != '') {
+      GlobalState.noteContentEncodedInDb = noteContentEncodedFromWebView;
     }
 
-    var noteContentDecodedFromWebView =
-        HtmlHandler.decodeHtmlString(noteContentEncodedFromWebView);
-    var noteContentDecodedInDb =
-        HtmlHandler.decodeHtmlString(GlobalState.noteContentEncodedInDb);
+    // var noteContentDecodedFromWebView =
+    //     HtmlHandler.decodeHtmlString(noteContentEncodedFromWebView);
+    // var noteContentDecodedInDb =
+    //     HtmlHandler.decodeHtmlString(GlobalState.noteContentEncodedInDb);
 
-    if (noteContentDecodedFromWebView == noteContentDecodedInDb) {
+    // if (noteContentDecodedFromWebView == noteContentDecodedInDb) {
+    if (noteContentEncodedFromWebView == GlobalState.noteContentEncodedInDb) {
       shouldBreak = true;
     }
 

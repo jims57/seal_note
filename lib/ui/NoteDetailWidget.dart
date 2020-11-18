@@ -395,6 +395,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                   GlobalState.noteListWidgetForTodayState.currentState
                       .triggerSetState(resetNoteList: true);
 
+                  // Force the WebView to clear its old content to speed up the next loading
+                  // await GlobalState.flutterWebviewPlugin
+                  //     .evalJavascript("javascript:clearQuillContent();");
+
                   break;
                 }
               }
@@ -453,6 +457,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                               resetNoteList: true,
                               updateNoteListPageTitle: true);
 
+                      // Force the WebView to clear its old content to speed up the next loading
+                      // await GlobalState.flutterWebviewPlugin
+                      //     .evalJavascript("javascript:clearQuillContent();");
+
                       break;
                     }
                   }
@@ -498,7 +506,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                               onTap: () async {
                                 // detail page back button event // click on detail page back button
                                 // click detail page back button // click on detail back button
-                                // click detail back button
+                                // click detail back button // click detail back button event
 
                                 GlobalState.isHandlingNoteDetailPage = true;
                                 GlobalState.isInNoteDetailPage = false;
@@ -531,6 +539,13 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                 GlobalState.masterDetailPageState.currentState
                                     .updatePageShowAndHide(
                                         shouldTriggerSetState: true);
+
+                                // Timer(const Duration(milliseconds: 1000), () {
+                                //   // Force the WebView to clear its old content to speed up the next loading
+                                //   GlobalState.flutterWebviewPlugin
+                                //       .evalJavascript(
+                                //           "javascript:clearQuillContent();");
+                                // });
 
                                 //Refresh the note list if a new note is noted
                                 if (GlobalState.isEditingOrCreatingNote) {
@@ -576,9 +591,11 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                             Icons.directions_run,
                             color: GlobalState.themeBlueColor,
                           ),
-                          onPressed: () {
-                            GlobalState.flutterWebviewPlugin.evalJavascript(
-                                "javascript:getIsCreatingNote();");
+                          onPressed: () async {
+                            var pageHtml = await GlobalState
+                                .flutterWebviewPlugin
+                                .evalJavascript("javascript:getPageHtml();");
+                            var s = 's';
                           }),
                     ]),
                 javascriptChannels: jsChannels,

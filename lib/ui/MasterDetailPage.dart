@@ -56,7 +56,13 @@ class MasterDetailPageState extends State<MasterDetailPage>
     // States
     GlobalState.folderListPageState = GlobalKey<FolderListPageState>();
 
-    rootBundle.loadString('assets/QuillEditor.html').then((htmlString) {
+    // Load file for Quill according to the release or debug mode
+    var quillEditorHtmlFile = 'assets/QuillEditor.html';
+    if (GlobalState.forRelease) {
+      quillEditorHtmlFile = 'assets/QuillEditor(Release)2.html';
+    }
+
+    rootBundle.loadString(quillEditorHtmlFile).then((htmlString) {
       GlobalState.htmlString = htmlString;
       GlobalState.appState.widgetNo = 2;
       GlobalState.detailPageChangeNotifier.refreshDetailPage();

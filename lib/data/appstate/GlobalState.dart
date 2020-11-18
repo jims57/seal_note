@@ -20,6 +20,9 @@ class GlobalState with ChangeNotifier {
 
   GlobalState._internal();
 
+  // For configuration
+  static bool forRelease = false;
+
   // db // database
   static String dbNameForMobilePlatform = 'sealMobile.sqlite';
   static final int retryTimesToSaveDb =
