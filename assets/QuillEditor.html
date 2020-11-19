@@ -1480,7 +1480,7 @@
 
     // 【debug】
     var interactWithDart = true;
-    var useMultiImagePicker = false; // If false, using Quill's default image uploader
+    var useMultiImagePicker = true; // If false, using Quill's default image uploader
     var shouldAddDummyImagesOnLoad = false;
     var base64HasData = false;
 
@@ -1735,12 +1735,12 @@
     //     theme: 'snow'
     // });
 
-    if (useMultiImagePicker) {
-        quill.getModule('toolbar').addHandler('image', () => {
-            if (printLogToDartFromJs) Print.postMessage('image()');
-            triggerMultiImagePickerFromJs();
-        });
-    }
+    // if (useMultiImagePicker) {
+    //     quill.getModule('toolbar').addHandler('image', () => {
+    //         if (printLogToDartFromJs) Print.postMessage('image()');
+    //         triggerMultiImagePickerFromJs();
+    //     });
+    // }
 
     function setEditorHeight(bottomPanelHeight, showToolbar = true, goToCursorPosition = false) {
         // bottomPanelHeight is the grey panel with the equal height to the keyboard height
@@ -1965,13 +1965,21 @@
 <script>
     function initQuillEditor(){
         quill = new Quill('#editor-container', {
-        modules: {
-            toolbar: '#toolbar'
-        },
-        placeholder: '添加笔记...',
-        readOnly: false,
-        theme: 'snow'
-    });
+            modules: {
+                toolbar: '#toolbar'
+            },
+            placeholder: '添加笔记...',
+            readOnly: false,
+            theme: 'snow'
+        });
+
+
+        if (useMultiImagePicker) {
+            quill.getModule('toolbar').addHandler('image', () => {
+                if (printLogToDartFromJs) Print.postMessage('image()');
+                triggerMultiImagePickerFromJs();
+            });
+        }
     }
 
     function quillOnceHandler() {
