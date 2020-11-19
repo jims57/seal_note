@@ -16,7 +16,7 @@ class HtmlHandler {
     return htmlString.replaceAll(exp, '');
   }
 
-  static String decodeAndRemoveAllHtmlTags(String encodedHtmlString){
+  static String decodeAndRemoveAllHtmlTags(String encodedHtmlString) {
     var decodedHtmlString = decodeHtmlString(encodedHtmlString);
 
     return removeAllHtmlTags(decodedHtmlString);

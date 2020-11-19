@@ -137,22 +137,23 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                   bottom: 15.0,
                                   left: 10.0,
                                   right: 10.0),
-                              title:
-                                  Text('${_getNoteTitleFormat(theNote.title)}',
-                                      // note list item title // note item title
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 18.0,
-                                        fontWeight: FontWeight.w400,
-                                      )),
+                              title: Text(
+                                  '${_getNoteTitleFormat(theNote.title)}',
+                                  // note list item title // note item title
+                                  // get note item title // note list item title
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w400,
+                                  )),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     // note list content // note list item content
                                     // note list item content // note item content
-                                    // get note list item cotent
+                                    // get note list item content // get note item content
                                     '${_getNoteContentFormat(encodedTitle: theNote.title, encodedContent: theNote.content)}',
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
@@ -699,6 +700,12 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
   String _getNoteTitleFormat(String encodedTitle) {
     var title = HtmlHandler.decodeAndRemoveAllHtmlTags(encodedTitle);
+
+    title = title.trim();
+
+    if (title.length > GlobalState.noteListTitleMaxLength)
+      title = title.substring(0, GlobalState.noteListTitleMaxLength);
+
     return title;
   }
 
@@ -706,6 +713,12 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     encodedContent = encodedContent.replaceFirst(encodedTitle, '');
     var content = HtmlHandler.decodeAndRemoveAllHtmlTags(encodedContent);
 
-    return content.trim();
+    content = content.trim();
+
+    if (content.length > GlobalState.noteListAbstractMaxLength)
+      content =
+          content.trim().substring(0, GlobalState.noteListAbstractMaxLength);
+
+    return content;
   }
 }

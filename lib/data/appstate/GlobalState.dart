@@ -22,6 +22,8 @@ class GlobalState with ChangeNotifier {
 
   // For configuration
   static bool forRelease = false;
+  static int noteListTitleMaxLength = 50;
+  static int noteListAbstractMaxLength = 50;
 
   // db // database
   static String dbNameForMobilePlatform = 'sealMobile.sqlite';
