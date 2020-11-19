@@ -348,9 +348,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                               .hideCurrentSnackBar();
                                         }
 
+                                        // show delete message // show note delete message
                                         snackBar = SnackBar(
-                                          content:
-                                              Text('已删除：$noteTitleDeleted'),
+                                          content: Text(
+                                              '已删除：${HtmlHandler.decodeAndRemoveAllHtmlTags(noteTitleDeleted)}'),
                                           backgroundColor:
                                               GlobalState.themeBlueColor,
                                           behavior: SnackBarBehavior.fixed,
