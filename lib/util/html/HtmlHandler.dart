@@ -32,7 +32,7 @@ class HtmlHandler {
         '<p><br></p>',
         '<img(.+?)>'
       ]}) {
-    var regexTagName = '<$tagNameToMatch>(.+?)</$tagNameToMatch>';
+    var regexTagName = '<$tagNameToMatch(.*?)>(.+?)</$tagNameToMatch>';
     var htmlTagStringList = List<String>();
     var indexListToDelete = List<int>();
     var breakRecursionForExcludedList = false;
