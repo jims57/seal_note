@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:moor/moor.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/util/html/HtmlHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
 // Import custom files
@@ -209,6 +210,17 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    var encodedHtml =
+
+    '&lt;p&gt;&lt;img id=&quot;8cfdc198b692be3685771c0eb3ad5beb-ffcf8-001&quot; image-index=&quot;0&quot; style=&quot;width: 100%;&quot;&gt;&lt;/p&gt;&lt;p&gt;Content:6好样的&lt;/p&gt;&lt;p&gt;I m abc&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-b2022-001&quot; image-index=&quot;1&quot; style=&quot;width: 100%;&quot;&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;';
+    //'&lt;p&gt;&lt;img id=&quot;8cfdc198b692be3685771c0eb3ad5beb-ffcf8-001&quot; image-index=&quot;0&quot; style=&quot;width: 100%;&quot;&gt;&lt;/p&gt;&lt;p&gt;Content:6好样的&lt;/p&gt;&lt;p&gt;I m abc&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-b2022-002&quot; image-index=&quot;1&quot; style=&quot;width: 100%;&quot;&gt;&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-b2022-003&quot; image-index=&quot;1&quot; style=&quot;width: 100%;&quot;&gt;kk&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-b2022-004&quot; image-index=&quot;1&quot; style=&quot;width: 100%;&quot;&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;';
+
+    var ls = HtmlHandler.getHtmlTagList(
+        // encodedHtmlString: encodedHtml,regexTagName: '<img(.+?)>');
+        encodedHtmlString: encodedHtml,
+        tagNameToMatch: 'p',
+        forceToAddTagWhenNotExistent: true);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: MasterDetailPage(

@@ -138,9 +138,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                   left: 10.0,
                                   right: 10.0),
                               title: Text(
-                                  '${_getNoteTitleFormat(theNote.title)}',
+                                  '${_getNoteTitleFormatForNoteList(encodedContent: theNote.content)}',
                                   // note list item title // note item title
                                   // get note item title // note list item title
+                                  // get note list item title // note list title
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
@@ -154,7 +155,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                     // note list content // note list item content
                                     // note list item content // note item content
                                     // get note list item content // get note item content
-                                    '${_getNoteContentFormat(encodedTitle: theNote.title, encodedContent: theNote.content)}',
+                                    '${_getNoteContentFormatForNoteList(encodedContent: theNote.content)}',
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -698,27 +699,41 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     return shouldBreak;
   }
 
-  String _getNoteTitleFormat(String encodedTitle) {
-    var title = HtmlHandler.decodeAndRemoveAllHtmlTags(encodedTitle);
+  // String _getNoteTitleFormat(String encodedTitle, String encodedContent) {
+  String _getNoteTitleFormatForNoteList({@required String encodedContent}) {
+    var noteTitle = GlobalState.defaultTitleWhenNoteHasNoTitle;
 
-    title = title.trim();
+    var htmlTagList = HtmlHandler.getHtmlTagList(
+        encodedHtmlString: encodedContent,
+        tagNameToMatch: 'p',
+        forceToAddTagWhenNotExistent: true);
 
-    if (title.length > GlobalState.noteListTitleMaxLength)
-      title = title.substring(0, GlobalState.noteListTitleMaxLength);
+    if (htmlTagList.length > 0) {
+      var theHtmlTag = htmlTagList[0];
+      noteTitle = HtmlHandler.removeAllHtmlTags(theHtmlTag);
+    }
 
-    return title;
+    return noteTitle;
   }
 
-  String _getNoteContentFormat({String encodedTitle, String encodedContent}) {
-    encodedContent = encodedContent.replaceFirst(encodedTitle, '');
-    var content = HtmlHandler.decodeAndRemoveAllHtmlTags(encodedContent);
+  String _getNoteContentFormatForNoteList({@required String encodedContent}) {
+    var noteContent = '';
 
-    content = content.trim();
+    var htmlTagList = HtmlHandler.getHtmlTagList(
+        encodedHtmlString: encodedContent,
+        tagNameToMatch: 'p',
+        forceToAddTagWhenNotExistent: true);
 
-    if (content.length > GlobalState.noteListAbstractMaxLength)
-      content =
-          content.trim().substring(0, GlobalState.noteListAbstractMaxLength);
+    // We don't use index = 0, since zero index is for the title of a note
+    for (var i = 1; i < htmlTagList.length; i++) {
+      // So index = 1 isn't a mistake here
+      var theHtmlTag = htmlTagList[i];
+      noteContent = HtmlHandler.removeAllHtmlTags(theHtmlTag);
 
-    return content;
+      // Check if the appended note content is long enough as an abstract shown on the note list
+      if (noteContent.length > GlobalState.noteListAbstractMaxLength) break;
+    }
+
+    return noteContent;
   }
 }
