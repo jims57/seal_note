@@ -731,7 +731,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     for (var i = 1; i < htmlTagList.length; i++) {
       // So index = 1 isn't a mistake here
       var theHtmlTag = htmlTagList[i];
-      noteContent = HtmlHandler.removeAllHtmlTags(theHtmlTag);
+      noteContent += HtmlHandler.removeAllHtmlTags(theHtmlTag);
 
       // Check if the appended note content is long enough as an abstract shown on the note list
       if (noteContent.length > GlobalState.noteListAbstractMaxLength) break;
