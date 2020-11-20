@@ -713,6 +713,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       noteTitle = HtmlHandler.removeAllHtmlTags(theHtmlTag);
     }
 
+    // Decode the html again, for sometimes some encoded characters, such as &amp; don't decode properly
+    noteTitle = HtmlHandler.decodeHtmlString(noteTitle);
+
     return noteTitle;
   }
 
@@ -733,6 +736,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       // Check if the appended note content is long enough as an abstract shown on the note list
       if (noteContent.length > GlobalState.noteListAbstractMaxLength) break;
     }
+
+    // Decode the html again, for sometimes some encoded characters, such as &amp; don't decode properly
+    noteContent = HtmlHandler.decodeHtmlString(noteContent);
 
     return noteContent;
   }
