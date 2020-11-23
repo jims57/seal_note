@@ -4,8 +4,16 @@ import 'package:html_unescape/html_unescape.dart';
 import 'package:seal_note/util/regex/RegexHandler.dart';
 
 class HtmlHandler {
-  static String encodeHtmlString(String htmlString) {
-    return HtmlEscape().convert(htmlString);
+  static String encodeHtmlString(String htmlString,
+      {bool encodeSlash = false}) {
+    htmlString = HtmlEscape().convert(htmlString);
+
+    // Check if we should encode slash to &#47;
+    if (!encodeSlash) {
+      htmlString = htmlString.replaceAll('&#47;', '/');
+    }
+
+    return htmlString;
   }
 
   static String decodeHtmlString(String encodedHtmlString) {
@@ -32,23 +40,26 @@ class HtmlHandler {
         '<p><br></p>',
         '<img(.+?)>'
       ]}) {
+    // var regexTagName = HtmlHandler.encodeHtmlString('<$tagNameToMatch(.*?)>(.+?)</$tagNameToMatch>');
     var regexTagName = '<$tagNameToMatch(.*?)>(.+?)</$tagNameToMatch>';
     var htmlTagStringList = List<String>();
     var indexListToDelete = List<int>();
     var breakRecursionForExcludedList = false;
 
-    var decodedHtmlString = HtmlHandler.decodeHtmlString(encodedHtmlString);
+    // var decodedHtmlString = HtmlHandler.decodeHtmlString(encodedHtmlString);
 
     // Check if the string contains the target tag or not
-    if (!decodedHtmlString.contains('<$tagNameToMatch>') &&
-        !decodedHtmlString.contains('</$tagNameToMatch>') &&
+    if (!encodedHtmlString
+            .contains(HtmlHandler.encodeHtmlString('<$tagNameToMatch>')) &&
+        !encodedHtmlString
+            .contains(HtmlHandler.encodeHtmlString('</$tagNameToMatch>')) &&
         forceToAddTagWhenNotExistent) {
-      decodedHtmlString =
-          '<$tagNameToMatch>$decodedHtmlString</$tagNameToMatch>';
+      encodedHtmlString = HtmlHandler.encodeHtmlString(
+          '<$tagNameToMatch>$encodedHtmlString</$tagNameToMatch>');
     }
 
-    htmlTagStringList.addAll(RegexHandler.getMatchedStringList(
-        sourceString: decodedHtmlString, regexString: regexTagName));
+    htmlTagStringList.addAll(RegexHandler.getMatchedEncodedStringList(
+        encodedSourceString: encodedHtmlString, regexString: regexTagName));
 
     for (var i = 0; i < htmlTagStringList.length; i++) {
       breakRecursionForExcludedList = false;
@@ -58,8 +69,8 @@ class HtmlHandler {
         if (breakRecursionForExcludedList) break;
 
         var theRegexTagNameToExclude = regexTagNameListToExclude[j];
-        var tagNameToExcludeList = RegexHandler.getMatchedStringList(
-            sourceString: theHtmlTagString,
+        var tagNameToExcludeList = RegexHandler.getMatchedEncodedStringList(
+            encodedSourceString: theHtmlTagString,
             regexString: theRegexTagNameToExclude);
 
         for (var k = 0; k < tagNameToExcludeList.length; k++) {

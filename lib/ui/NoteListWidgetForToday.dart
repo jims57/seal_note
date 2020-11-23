@@ -710,7 +710,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
     if (htmlTagList.length > 0) {
       var theHtmlTag = htmlTagList[0];
-      noteTitle = HtmlHandler.removeAllHtmlTags(theHtmlTag);
+      noteTitle = HtmlHandler.decodeAndRemoveAllHtmlTags(theHtmlTag);
     }
 
     // Decode the html again, for sometimes some encoded characters, such as &amp; don't decode properly
@@ -731,7 +731,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     for (var i = 1; i < htmlTagList.length; i++) {
       // So index = 1 isn't a mistake here
       var theHtmlTag = htmlTagList[i];
-      noteContent += HtmlHandler.removeAllHtmlTags(theHtmlTag);
+      noteContent += HtmlHandler.decodeAndRemoveAllHtmlTags(theHtmlTag);
 
       // Check if the appended note content is long enough as an abstract shown on the note list
       if (noteContent.length > GlobalState.noteListAbstractMaxLength) break;
