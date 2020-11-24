@@ -2086,34 +2086,25 @@
 
 <!-- 【For dart to eval js】 -->
 <script>
-    function clearQuillContent(replacedByContent = '<p><br></p>'){
-        // initQuillEditor();
-
+    function clearQuillContent(replacedByContent = '<p><br></p>', showWatermark = true){
         $theEditor = $('div.ql-editor');
+        var startIndexToDelete = 0;
+        if(!showWatermark) startIndexToDelete = 1;
 
         if (printLogToDartFromJs) Print.postMessage('$theEditor.children().remove();');
 
-        // Get the old children for future deleltion
-        // var $oldChildren = $('div.ql-editor').children();
 
-        // $theEditor.children().remove();
-        quill.deleteText(0, 10000000);
+        quill.deleteText(startIndexToDelete, 10000000);
 
-        // $('div.ql-editor').children().text('');
+        // Check if the watermark should be shown or not
+        // if(!showWatermark) $theEditor.prepend(' a');
+        // $theEditor.prepend(' -------');
+
         if (printLogToDartFromJs) Print.postMessage('$theEditor.prepend(replacedByContent)');
-        $theEditor.prepend(replacedByContent)
+        $theEditor.append(replacedByContent);
 
-        
-
-        //clear the old children object in another thread
-        // setTimeout(function () { 
-        //     $oldChildren.remove();
-        //  }, 500);
-
-        // $theEditor.append(replacedByContent);
-        // if($theEditor.children().length > 1 && $theEditor.children()[0].outerHTML =='<p><br></p>'){
-        //     $($theEditor.children()[0]).remove();
-        // }
+        if(!showWatermark) quill.deleteText(0, startIndexToDelete);
+        // $theEditor.prepend(' a');
     }
 
     function replaceQuillContentWithOldNoteContent(responseJsonString, goToTopAfterLoading = false) { // *responseJsonString* is the encoded html of a note
@@ -2141,7 +2132,7 @@
             // removeQuillEditorAllChildrenExceptFirstOne($editorChildren);
             // $editorChildren.replaceWith(noteContent);
 
-            clearQuillContent(noteContent);
+            clearQuillContent(noteContent, true);
 
             setQuillToReadOnly(false, isCreatingNote);
 
@@ -2154,22 +2145,8 @@
 
             var childrenCount = $editorChildren.length;
             if (childrenCount > 0) {
-                // Clear other children except the first one
-                //removeQuillEditorAllChildrenExceptFirstOne($editorChildren);
-
-                // $editorChildren.replaceWith(noteContent);
-
-                // $('div.ql-editor').append(noteContent);
-                // $($('div.ql-editor').children()[0]).remove();
-
-                // $('div.ql-editor').children().remove();
-                // $('div.ql-editor').append(noteContent);
-                // if($('div.ql-editor').children()[0].outerHTML =='<p><br></p>'){
-                //     $($('div.ql-editor').children()[0]).remove();
-                // }
-
                 if (printLogToDartFromJs) Print.postMessage('clearQuillContent(noteContent);');
-                clearQuillContent(noteContent);
+                clearQuillContent(noteContent, false);
 
                 if (printLogToDartFromJs) Print.postMessage('getAllImagesBase64FromImageFiles();');
                 getAllImagesBase64FromImageFiles();
@@ -2186,8 +2163,6 @@
 
                 if (printLogToDartFromJs) Print.postMessage('addAllOldImagesToSyncArray();');
                 addAllOldImagesToSyncArray();
-
-                // syncImageSyncArrayToDart(true);
             } else { // When there is no such children, meaning maybe the quill isn't initialized completely
                 // Call recursive function(this function), until it go the children of the editor
                 setTimeout(function () {

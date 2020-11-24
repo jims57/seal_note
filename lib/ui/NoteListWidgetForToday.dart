@@ -394,6 +394,12 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     // click note list item // click on note list item
                     // click note item
 
+                    // Force to clear watermark first
+                    // await GlobalState.flutterWebviewPlugin.evalJavascript("javascript:clearQuillContent('<p>abc</p>');");
+
+                    // await GlobalState.flutterWebviewPlugin.evalJavascript(
+                    //     "javascript:removeQuillEditorWatermark();");
+
                     GlobalState.isInNoteDetailPage = true;
                     if (GlobalState.screenType == 1) {
                       GlobalState.isHandlingNoteDetailPage = true;
