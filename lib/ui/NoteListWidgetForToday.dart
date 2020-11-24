@@ -113,6 +113,12 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                 // Get the current note item object
                 var theNote = _noteList[index];
+                var theNoteTitle = _getNoteTitleFormatForNoteList(encodedContent: theNote.content).trim();
+
+                // Handle title if it is empty
+                if(theNoteTitle.isEmpty){
+                  theNoteTitle = GlobalState.defaultTitleWhenNoteHasNoTitle;
+                }
 
                 return GestureDetector(
                   child: Container(
@@ -138,7 +144,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                   left: 10.0,
                                   right: 10.0),
                               title: Text(
-                                  '${_getNoteTitleFormatForNoteList(encodedContent: theNote.content)}',
+                                  // get note list item title
+                                  '$theNoteTitle',
                                   // note list item title // note item title
                                   // get note item title // note list item title
                                   // get note list item title // note list title
@@ -155,6 +162,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                     // note list content // note list item content
                                     // note list item content // note item content
                                     // get note list item content // get note item content
+                                    // get note list abstract // get note list item abstract
                                     '${_getNoteContentFormatForNoteList(encodedContent: theNote.content)}',
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
@@ -672,12 +680,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   bool _shouldBreakWhileLoop({@required String noteContentEncodedFromWebView}) {
     var shouldBreak = false;
 
-    // Remove the special character
-    // noteContentEncodedFromWebView =
-    //     StringHandler.removeSpecialChars(noteContentEncodedFromWebView);
-    // GlobalState.noteContentEncodedInDb =
-    //     StringHandler.removeSpecialChars(GlobalState.noteContentEncodedInDb);
-
     if (GlobalState.noteContentEncodedInDb.isEmpty) {
       // When the content of a note is empty
       GlobalState.noteContentEncodedInDb = noteContentEncodedFromWebView;
@@ -692,12 +694,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       GlobalState.noteContentEncodedInDb = noteContentEncodedFromWebView;
     }
 
-    // var noteContentDecodedFromWebView =
-    //     HtmlHandler.decodeHtmlString(noteContentEncodedFromWebView);
-    // var noteContentDecodedInDb =
-    //     HtmlHandler.decodeHtmlString(GlobalState.noteContentEncodedInDb);
-
-    // if (noteContentDecodedFromWebView == noteContentDecodedInDb) {
     if (noteContentEncodedFromWebView == GlobalState.noteContentEncodedInDb) {
       shouldBreak = true;
     }
@@ -705,7 +701,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     return shouldBreak;
   }
 
-  // String _getNoteTitleFormat(String encodedTitle, String encodedContent) {
+
   String _getNoteTitleFormatForNoteList(
       {@required String encodedContent, int pageIndex = 0}) {
     // var noteTitle = GlobalState.defaultTitleWhenNoteHasNoTitle;
@@ -732,11 +728,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       // Make sure title isn't empty
       if (noteTitle.isNotEmpty) break;
     }
-
-    // if (htmlTagList.length > 0) {
-    //   var theHtmlTag = htmlTagList[0];
-    //   noteTitle = HtmlHandler.decodeAndRemoveAllHtmlTags(theHtmlTag).trim();
-    // }
 
     // Check if it has at least a p tag as a title
     if (noteTitle.isEmpty) {
@@ -810,9 +801,12 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
         }
 
         //
-        if(i == htmlTagList.length -1&&noteContent.length<GlobalState.noteListAbstractMaxLength&&oldEncodedContent.length>endLengthToTruncate){
+        if (i == htmlTagList.length - 1 &&
+            noteContent.length < GlobalState.noteListAbstractMaxLength &&
+            oldEncodedContent.length > endLengthToTruncate) {
           noteContent += _getNoteContentFormatForNoteList(
-              encodedContent: oldEncodedContent, pageIndex: pageIndex + 1).replaceAll(noteContent, '');
+                  encodedContent: oldEncodedContent, pageIndex: pageIndex + 1)
+              .replaceAll(noteContent, '');
         }
       }
     }
@@ -822,14 +816,4 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
     return noteContent;
   }
-
-// bool _shouldRecurseToGetNoteTitleFormatForNoteList(
-//     {String oldEncodedContent, String currentNoteContent, int endLengthToTruncate}) {
-//   var shouldRecurse = true;
-//   if (oldEncodedContent.length <= endLengthToTruncate) shouldRecurse = false;
-//
-//   if(currentNoteContent.length >= GlobalState.noteListAbstractMaxLength) shouldRecurse = false;
-//
-//   return shouldRecurse;
-// }
 }

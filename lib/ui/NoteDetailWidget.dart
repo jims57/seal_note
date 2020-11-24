@@ -412,12 +412,14 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                 _setToCreatingNewNoteStatus(resetCounter: false);
 
                 // Check if the user inputs anything, if the content is empty, we don't save it to db
-                var contentText = HtmlHandler.decodeAndRemoveAllHtmlTags(
-                        GlobalState.selectedNoteModel.content)
-                    .trim();
+                // var contentText = HtmlHandler.decodeAndRemoveAllHtmlTags(
+                //         GlobalState.selectedNoteModel.content)
+                //     .trim();
 
                 // It won't save the new note unless its content isn't empty
-                if (contentText.isNotEmpty) {
+                // if (contentText.isNotEmpty) {
+                if (GlobalState.selectedNoteModel.content !=
+                    GlobalState.emptyNoteEncodedContent) {
                   // Get now for local
                   var nowForLocal = TimeHandler.getNowForLocal();
                   var folderIdNoteShouldSaveTo = _getFolderIdNoteShouldSaveTo();
