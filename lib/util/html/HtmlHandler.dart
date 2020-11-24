@@ -49,10 +49,12 @@ class HtmlHandler {
     // var decodedHtmlString = HtmlHandler.decodeHtmlString(encodedHtmlString);
 
     // Check if the string contains the target tag or not
+    // if (!encodedHtmlString
+    //         .contains(HtmlHandler.encodeHtmlString('<$tagNameToMatch')) &&
+    //     !encodedHtmlString
+    //         .contains(HtmlHandler.encodeHtmlString('</$tagNameToMatch>')) &&
     if (!encodedHtmlString
-            .contains(HtmlHandler.encodeHtmlString('<$tagNameToMatch>')) &&
-        !encodedHtmlString
-            .contains(HtmlHandler.encodeHtmlString('</$tagNameToMatch>')) &&
+        .contains(HtmlHandler.encodeHtmlString('<$tagNameToMatch')) &&
         forceToAddTagWhenNotExistent) {
       encodedHtmlString = HtmlHandler.encodeHtmlString(
           '<$tagNameToMatch>$encodedHtmlString</$tagNameToMatch>');

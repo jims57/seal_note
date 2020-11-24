@@ -700,17 +700,44 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   // String _getNoteTitleFormat(String encodedTitle, String encodedContent) {
-  String _getNoteTitleFormatForNoteList({@required String encodedContent}) {
-    var noteTitle = GlobalState.defaultTitleWhenNoteHasNoTitle;
+  String _getNoteTitleFormatForNoteList(
+      {@required String encodedContent, int pageIndex = 0}) {
+    // var noteTitle = GlobalState.defaultTitleWhenNoteHasNoTitle;
+    var noteTitle = '';
+    var oldEncodedContent = encodedContent;
+    var pageSize = GlobalState.incrementalStepToUseRegex;
+    var endLengthToTruncate = (pageIndex + 1) * pageSize;
+
+    if (encodedContent.length >= endLengthToTruncate) {
+      encodedContent = encodedContent.substring(0, endLengthToTruncate);
+    } else {
+      encodedContent = encodedContent.substring(0, encodedContent.length);
+    }
 
     var htmlTagList = HtmlHandler.getHtmlTagList(
         encodedHtmlString: encodedContent,
         tagNameToMatch: 'p',
         forceToAddTagWhenNotExistent: true);
 
-    if (htmlTagList.length > 0) {
-      var theHtmlTag = htmlTagList[0];
-      noteTitle = HtmlHandler.decodeAndRemoveAllHtmlTags(theHtmlTag);
+    for (var i = 0; i < htmlTagList.length; i++) {
+      var theHtmlTag = htmlTagList[i];
+      noteTitle += HtmlHandler.decodeAndRemoveAllHtmlTags(theHtmlTag).trim();
+
+      // Make sure title isn't empty
+      if (noteTitle.isNotEmpty) break;
+    }
+
+    // if (htmlTagList.length > 0) {
+    //   var theHtmlTag = htmlTagList[0];
+    //   noteTitle = HtmlHandler.decodeAndRemoveAllHtmlTags(theHtmlTag).trim();
+    // }
+
+    // Check if it has at least a p tag as a title
+    if (noteTitle.isEmpty) {
+      if (oldEncodedContent.length > endLengthToTruncate) {
+        noteTitle = _getNoteTitleFormatForNoteList(
+            encodedContent: oldEncodedContent, pageIndex: pageIndex + 1);
+      }
     }
 
     // Decode the html again, for sometimes some encoded characters, such as &amp; don't decode properly
@@ -719,22 +746,69 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     return noteTitle;
   }
 
-  String _getNoteContentFormatForNoteList({@required String encodedContent}) {
+  String _getNoteContentFormatForNoteList(
+      {@required String encodedContent, int pageIndex = 0}) {
     var noteContent = '';
+    var oldEncodedContent = encodedContent;
+    var pageSize = GlobalState.incrementalStepToUseRegex;
+    var endLengthToTruncate = (pageIndex + 1) * pageSize;
+    var title = '';
+    var titleIndexAtHtmlTagList = -1;
+
+    if (encodedContent.length >= endLengthToTruncate) {
+      encodedContent = encodedContent.substring(0, endLengthToTruncate);
+    } else {
+      encodedContent = encodedContent.substring(0, encodedContent.length);
+    }
 
     var htmlTagList = HtmlHandler.getHtmlTagList(
         encodedHtmlString: encodedContent,
         tagNameToMatch: 'p',
         forceToAddTagWhenNotExistent: true);
 
+    // When there is no result, and it still has content which is not handled yet
+    if (htmlTagList.length == 0 &&
+        oldEncodedContent.length > endLengthToTruncate) {
+      noteContent = _getNoteContentFormatForNoteList(
+          encodedContent: oldEncodedContent, pageIndex: pageIndex + 1);
+    }
+
     // We don't use index = 0, since zero index is for the title of a note
-    for (var i = 1; i < htmlTagList.length; i++) {
+    for (var i = 0; i < htmlTagList.length; i++) {
       // So index = 1 isn't a mistake here
       var theHtmlTag = htmlTagList[i];
-      noteContent += HtmlHandler.decodeAndRemoveAllHtmlTags(theHtmlTag);
 
-      // Check if the appended note content is long enough as an abstract shown on the note list
-      if (noteContent.length > GlobalState.noteListAbstractMaxLength) break;
+      // Get title index at the list
+      if (titleIndexAtHtmlTagList == -1) {
+        // For title part
+        title += HtmlHandler.decodeAndRemoveAllHtmlTags(theHtmlTag).trim();
+        if (title.isNotEmpty) {
+          titleIndexAtHtmlTagList = i;
+        }
+
+        // When is still for title but reaching the last index, we need to recurse this method
+        if (oldEncodedContent.length > endLengthToTruncate &&
+            i == htmlTagList.length - 1) {
+          noteContent = _getNoteContentFormatForNoteList(
+              encodedContent: oldEncodedContent, pageIndex: pageIndex + 1);
+        }
+      } else {
+        // For content part
+        noteContent +=
+            HtmlHandler.decodeAndRemoveAllHtmlTags(theHtmlTag).trim();
+
+        // Check if the appended note content is long enough as an abstract shown on the note list
+        if (noteContent.length > GlobalState.noteListAbstractMaxLength ||
+            oldEncodedContent.length <= endLengthToTruncate) {
+          break;
+        }
+
+        //
+        if(i == htmlTagList.length -1&&noteContent.length<GlobalState.noteListAbstractMaxLength&&oldEncodedContent.length>endLengthToTruncate){
+          noteContent += _getNoteContentFormatForNoteList(
+              encodedContent: oldEncodedContent, pageIndex: pageIndex + 1).replaceAll(noteContent, '');
+        }
+      }
     }
 
     // Decode the html again, for sometimes some encoded characters, such as &amp; don't decode properly
@@ -742,4 +816,14 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
     return noteContent;
   }
+
+// bool _shouldRecurseToGetNoteTitleFormatForNoteList(
+//     {String oldEncodedContent, String currentNoteContent, int endLengthToTruncate}) {
+//   var shouldRecurse = true;
+//   if (oldEncodedContent.length <= endLengthToTruncate) shouldRecurse = false;
+//
+//   if(currentNoteContent.length >= GlobalState.noteListAbstractMaxLength) shouldRecurse = false;
+//
+//   return shouldRecurse;
+// }
 }
