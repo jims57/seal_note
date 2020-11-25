@@ -94,6 +94,7 @@ class _NoteListPageState extends State<NoteListPage> {
             return Text(
               // note list caption // note list page title
               // note list title // note list page caption
+              // note list item page caption
 
               '${GlobalState.appState.noteListPageTitle}',
               style: TextStyle(

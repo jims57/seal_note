@@ -113,10 +113,12 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                 // Get the current note item object
                 var theNote = _noteList[index];
-                var theNoteTitle = _getNoteTitleFormatForNoteList(encodedContent: theNote.content).trim();
+                var theNoteTitle = _getNoteTitleFormatForNoteList(
+                        encodedContent: theNote.content)
+                    .trim();
 
                 // Handle title if it is empty
-                if(theNoteTitle.isEmpty){
+                if (theNoteTitle.isEmpty) {
                   theNoteTitle = GlobalState.defaultTitleWhenNoteHasNoTitle;
                 }
 
@@ -540,9 +542,11 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                   .noteModelForConsumer.noteListWidgetForTodayState.currentState
                   .resetLoadingConfigsAfterUpdatingSqlite();
 
-              Timer(Duration(seconds: 2), () {
-                GlobalState.appState.isExecutingSync = false;
-              });
+              _refreshNoteListPageCaption();
+
+              // Timer(Duration(seconds: 2), () {
+              //   GlobalState.appState.isExecutingSync = false;
+              // });
             });
           }).catchError((e) {
             // String errorMessage = e;
@@ -553,9 +557,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
             .noteModelForConsumer.noteListWidgetForTodayState.currentState
             .resetLoadingConfigsAfterUpdatingSqlite();
 
-        Timer(Duration(seconds: 2), () {
-          GlobalState.appState.isExecutingSync = false;
-        });
+        // Timer(Duration(seconds: 2), () {
+        //   GlobalState.appState.isExecutingSync = false;
+        // });
       });
     }
   }
@@ -701,6 +705,14 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     return shouldBreak;
   }
 
+  void _refreshNoteListPageCaption() async {
+    // Get the note list page title
+    GlobalState.appState.noteListPageTitle = await GlobalState.database
+        .getFolderNameById(GlobalState.selectedFolderIdCurrently);
+
+    // Hide the sync status on the app bar
+    GlobalState.appState.isExecutingSync = false;
+  }
 
   String _getNoteTitleFormatForNoteList(
       {@required String encodedContent, int pageIndex = 0}) {

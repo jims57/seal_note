@@ -100,11 +100,11 @@ class MasterDetailPageState extends State<MasterDetailPage>
       isFirstLoad = false;
 
       // Get the note list page title
-      GlobalState.database
-          .getFolderNameById(GlobalState.selectedFolderIdCurrently)
-          .then((folderName) {
-        GlobalState.appState.noteListPageTitle = folderName;
-      });
+      // GlobalState.database
+      //     .getFolderNameById(GlobalState.selectedFolderIdCurrently)
+      //     .then((folderName) {
+      //   GlobalState.appState.noteListPageTitle = folderName;
+      // });
     } else {
       // Get app bar height after rotation
       // after rotation

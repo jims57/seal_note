@@ -395,10 +395,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                   GlobalState.noteListWidgetForTodayState.currentState
                       .triggerSetState(resetNoteList: true);
 
-                  // Force the WebView to clear its old content to speed up the next loading
-                  // await GlobalState.flutterWebviewPlugin
-                  //     .evalJavascript("javascript:clearQuillContent();");
-
                   break;
                 }
               }
