@@ -787,6 +787,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
           noteContent += _getNoteContentFormatForNoteList(
                   encodedContent: oldEncodedContent, pageIndex: pageIndex + 1)
               .replaceAll(noteContent, '');
+          break;
         }
       }
 
@@ -807,7 +808,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       } else {
         // For content part
         noteContent +=
-            HtmlHandler.decodeAndRemoveAllHtmlTags(theHtmlTag).trim().replaceAll(noteContent, '');
+            HtmlHandler.decodeAndRemoveAllHtmlTags(theHtmlTag).trim();
 
         // Check if the appended note content is long enough as an abstract shown on the note list
         if (noteContent.length > GlobalState.noteListAbstractMaxLength) {
