@@ -165,6 +165,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                     // note list item content // note item content
                                     // get note list item content // get note item content
                                     // get note list abstract // get note list item abstract
+                                    // show note list abstract // format note list content
                                     '${_getNoteContentFormatForNoteList(encodedContent: theNote.content)}',
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
@@ -543,23 +544,13 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                   .resetLoadingConfigsAfterUpdatingSqlite();
 
               _refreshNoteListPageCaption();
-
-              // Timer(Duration(seconds: 2), () {
-              //   GlobalState.appState.isExecutingSync = false;
-              // });
             });
-          }).catchError((e) {
-            // String errorMessage = e;
-          });
+          }).catchError((e) {});
         }
 
         GlobalState
             .noteModelForConsumer.noteListWidgetForTodayState.currentState
             .resetLoadingConfigsAfterUpdatingSqlite();
-
-        // Timer(Duration(seconds: 2), () {
-        //   GlobalState.appState.isExecutingSync = false;
-        // });
       });
     }
   }
@@ -787,6 +778,18 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       // So index = 1 isn't a mistake here
       var theHtmlTag = htmlTagList[i];
 
+      // If invalid tag, just try the next one
+      if ((theHtmlTag == GlobalState.emptyNoteEncodedContentWithBr ||
+          theHtmlTag == GlobalState.emptyNoteEncodedContentWithoutChild)) {
+        if (encodedContent.length == oldEncodedContent.length) {
+          continue;
+        } else {
+          noteContent += _getNoteContentFormatForNoteList(
+                  encodedContent: oldEncodedContent, pageIndex: pageIndex + 1)
+              .replaceAll(noteContent, '');
+        }
+      }
+
       // Get title index at the list
       if (titleIndexAtHtmlTagList == -1) {
         // For title part
@@ -804,11 +807,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       } else {
         // For content part
         noteContent +=
-            HtmlHandler.decodeAndRemoveAllHtmlTags(theHtmlTag).trim();
+            HtmlHandler.decodeAndRemoveAllHtmlTags(theHtmlTag).trim().replaceAll(noteContent, '');
 
         // Check if the appended note content is long enough as an abstract shown on the note list
-        if (noteContent.length > GlobalState.noteListAbstractMaxLength ||
-            oldEncodedContent.length <= endLengthToTruncate) {
+        if (noteContent.length > GlobalState.noteListAbstractMaxLength) {
           break;
         }
 

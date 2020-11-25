@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show ByteData, rootBundle;
+import 'package:flutter/services.dart' show ByteData;
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:keyboard_utils/keyboard_listener.dart';
 import 'package:keyboard_utils/keyboard_utils.dart';
@@ -18,8 +18,6 @@ import 'package:seal_note/ui/common/AppBarWidget.dart';
 import 'package:seal_note/util/converter/ImageConverter.dart';
 import 'package:seal_note/util/crypto/CryptoHandler.dart';
 import 'package:seal_note/util/file/FileHandler.dart';
-import 'package:seal_note/util/html/HtmlHandler.dart';
-import 'package:seal_note/util/robustness/RetryHandler.dart';
 import 'package:seal_note/util/route/ScaleRoute.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
@@ -28,11 +26,6 @@ import 'package:seal_note/model/ImageSyncItem.dart';
 import 'package:after_layout/after_layout.dart';
 
 class NoteDetailWidget extends StatefulWidget {
-  // NoteDetailWidget({Key key, @required this.noteId})
-  //     : super(key: key);
-
-  // final int noteId;
-
   @override
   State<StatefulWidget> createState() {
     return NoteDetailWidgetState();
@@ -407,15 +400,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
               if (!GlobalState.isNewNoteBeingSaved) {
                 _setToCreatingNewNoteStatus(resetCounter: false);
 
-                // Check if the user inputs anything, if the content is empty, we don't save it to db
-                // var contentText = HtmlHandler.decodeAndRemoveAllHtmlTags(
-                //         GlobalState.selectedNoteModel.content)
-                //     .trim();
-
                 // It won't save the new note unless its content isn't empty
                 // if (contentText.isNotEmpty) {
                 if (GlobalState.selectedNoteModel.content !=
-                    GlobalState.emptyNoteEncodedContent) {
+                    GlobalState.emptyNoteEncodedContentWithBr) {
                   // Get now for local
                   var nowForLocal = TimeHandler.getNowForLocal();
                   var folderIdNoteShouldSaveTo = _getFolderIdNoteShouldSaveTo();
@@ -454,10 +442,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                           .triggerSetState(
                               resetNoteList: true,
                               updateNoteListPageTitle: true);
-
-                      // Force the WebView to clear its old content to speed up the next loading
-                      // await GlobalState.flutterWebviewPlugin
-                      //     .evalJavascript("javascript:clearQuillContent();");
 
                       break;
                     }
@@ -656,8 +640,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
       // save note event // save button execute save note
 
       // Set it to the read only mode
-
-      // GlobalState.isEditingOrCreatingNote = false;
 
       // execute save note
       // Trigger the auto-save function to save the note
