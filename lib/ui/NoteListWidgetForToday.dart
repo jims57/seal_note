@@ -32,7 +32,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   bool _isLoading;
   bool _hasMore;
 
-  bool _isFirstLoad;
+  bool _isFirstLoad = true;
+  bool _isAppFirstTimeToLaunch = false;
 
   // Slide options
   double _slideIconSize = 30.0;
@@ -46,7 +47,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
   @override
   void initState() {
-    _isFirstLoad = true;
+    // _isFirstLoad = true;
 
     initLoadingConfigs();
     super.initState();
@@ -499,60 +500,71 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     });
   }
 
-  void initLoadingConfigs() {
+  void initLoadingConfigs() async {
     _pageNo = 1;
     _pageSize = 10;
 
     _isLoading = true;
     _hasMore = true;
 
-    GlobalState.database
-        .getNotesByPageSize(pageNo: _pageNo, pageSize: _pageSize)
-        .then((noteList) {
-      // load note list // note list first page data
-      // first page note list data
-
-      _noteList.clear();
-      _noteList.addAll(noteList);
-
-      if (!_isLoading) _loadMore();
-
-      setState(() {
-        _isLoading = false;
-      });
-    });
-
     // If it is the first load, by the way to fetch data from the server
     if (_isFirstLoad) {
       _isFirstLoad = false;
 
       // Check if the notes table has data or not, if not, we insert dummy data
-      GlobalState.database.hasNote().then((hasNote) {
-        if (!hasNote) {
-          // If the notes table hasn't data, insert the dummy data
-          fetchPhotos(client: http.Client()).then((fetchedPhotoList) {
-            // initialize notes // init notes
-            // note initialization // note init
-            GlobalState.database
-                .updateAllNotesContentByTitles(fetchedPhotoList)
-                .whenComplete(() {
-              // TODO: To be deleted before releasing the app
-              //  After insert, update notes' content
+      bool hasNote = await GlobalState.database.hasNote();
 
-              GlobalState
-                  .noteModelForConsumer.noteListWidgetForTodayState.currentState
-                  .resetLoadingConfigsAfterUpdatingSqlite();
+      if (!hasNote) {
+        // Mark the app is the first time to launch
+        _isAppFirstTimeToLaunch = true;
 
-              _refreshNoteListPageCaption();
-            });
-          }).catchError((e) {});
-        }
+        // If the notes table hasn't data, insert the dummy data
+        fetchPhotos(client: http.Client()).then((fetchedPhotoList) {
+          _isAppFirstTimeToLaunch = false;
 
-        GlobalState
-            .noteModelForConsumer.noteListWidgetForTodayState.currentState
-            .resetLoadingConfigsAfterUpdatingSqlite();
-      });
+          // initialize notes // init notes
+          // note initialization // note init
+          GlobalState.database
+              .updateAllNotesContentByTitles(fetchedPhotoList)
+              .whenComplete(() {
+            // TODO: To be deleted before releasing the app
+            //  After insert, update notes' content
+
+            GlobalState
+                .noteModelForConsumer.noteListWidgetForTodayState.currentState
+                .resetLoadingConfigsAfterUpdatingSqlite();
+
+            _refreshNoteListPageCaptionAndHideSyncStatus(
+                shouldHideSyncStatus: false);
+          });
+        }).catchError((e) {});
+      }
+
+      GlobalState.noteModelForConsumer.noteListWidgetForTodayState.currentState
+          .resetLoadingConfigsAfterUpdatingSqlite();
     }
+
+    var noteList = await GlobalState.database
+        .getNotesByPageSize(pageNo: _pageNo, pageSize: _pageSize);
+
+    // load note list // note list first page data
+    // first page note list data
+
+    var shouldHideSyncStatus = true;
+
+    _noteList.clear();
+    _noteList.addAll(noteList);
+
+    if (noteList.length == 0 && _isAppFirstTimeToLaunch)
+      shouldHideSyncStatus = false;
+    _refreshNoteListPageCaptionAndHideSyncStatus(
+        shouldHideSyncStatus: shouldHideSyncStatus);
+
+    if (!_isLoading) _loadMore();
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   void resetLoadingConfigsAfterUpdatingSqlite() {
@@ -696,13 +708,18 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     return shouldBreak;
   }
 
-  void _refreshNoteListPageCaption() async {
+  void _refreshNoteListPageCaptionAndHideSyncStatus(
+      {bool shouldHideSyncStatus = true}) async {
     // Get the note list page title
     GlobalState.appState.noteListPageTitle = await GlobalState.database
         .getFolderNameById(GlobalState.selectedFolderIdCurrently);
 
     // Hide the sync status on the app bar
-    GlobalState.appState.isExecutingSync = false;
+    if (shouldHideSyncStatus) {
+      Timer(const Duration(seconds: 1), () {
+        GlobalState.appState.isExecutingSync = false;
+      });
+    }
   }
 
   String _getNoteTitleFormatForNoteList(
