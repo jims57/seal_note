@@ -62,6 +62,7 @@ class AppState extends ChangeNotifier {
 
   // ignore: unnecessary_getters_setters
   set noteListPageTitle(String value) {
+    GlobalState.selectedFolderNameCurrently = value;
     _noteListPageTitle = value;
     notifyListeners();
   }

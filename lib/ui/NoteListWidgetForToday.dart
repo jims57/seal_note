@@ -8,6 +8,7 @@ import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/database/database.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:seal_note/model/NoteWithProgressTotal.dart';
+import 'package:seal_note/ui/common/NoDataWidget.dart';
 import 'package:seal_note/util/html/HtmlHandler.dart';
 import 'package:seal_note/util/string/StringHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
@@ -92,9 +93,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                       width: 24,
                     ),
                   );
+                } else {
+                  return NoDataWidget();
                 }
-
-                return Text('No data');
               })
           : ListView.builder(
               itemCount: _hasMore ? _noteList.length + 1 : _noteList.length,
@@ -520,6 +521,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       if (!hasNote) {
         // Mark the app is the first time to launch
         _isAppFirstTimeToLaunch = true;
+        // _isLoading = true;
 
         // If the notes table hasn't data, insert the dummy data
         fetchPhotos(client: http.Client()).then((fetchedPhotoList) {

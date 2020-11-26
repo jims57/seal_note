@@ -37,7 +37,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
 
   @override
   void didChangeDependencies() {
-    //Always clear the existing record
+    // Always clear the existing record
     GlobalState.defaultFolderIndexList.clear();
 
     _getAllFolders();
