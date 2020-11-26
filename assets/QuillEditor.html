@@ -1982,6 +1982,10 @@
         }
     }
 
+    function getQuillEditorCurrentContent(){
+        return $('div.ql-editor').html();
+    }
+
     function quillOnceHandler() {
         console.log('quillOnceHandler() in js');
         if (printLogToDartFromJs) Print.postMessage('quillOnceHandler()');
@@ -2087,24 +2091,35 @@
 <!-- 【For dart to eval js】 -->
 <script>
     function clearQuillContent(replacedByContent = '<p><br></p>', showWatermark = true){
+        if(printLogToDartFromJs) Print.postMessage('clearQuillContent(replacedByContent = '+replacedByContent+', showWatermark = '+showWatermark+')');
+        if (printLogToDartFromJs) Print.postMessage('Quill content2:'+getQuillEditorCurrentContent());
+
         $theEditor = $('div.ql-editor');
         var startIndexToDelete = 0;
         if(!showWatermark) startIndexToDelete = 1;
 
         if (printLogToDartFromJs) Print.postMessage('$theEditor.children().remove();');
 
-
+        if (printLogToDartFromJs) Print.postMessage('Quill content3:'+getQuillEditorCurrentContent());
         quill.deleteText(startIndexToDelete, 10000000);
-
-        // Check if the watermark should be shown or not
-        // if(!showWatermark) $theEditor.prepend(' a');
-        // $theEditor.prepend(' -------');
+        if (printLogToDartFromJs) Print.postMessage('Quill content4:'+getQuillEditorCurrentContent());
 
         if (printLogToDartFromJs) Print.postMessage('$theEditor.prepend(replacedByContent)');
+        if (printLogToDartFromJs) Print.postMessage('Quill content5:'+getQuillEditorCurrentContent());
         $theEditor.append(replacedByContent);
+        if (printLogToDartFromJs) Print.postMessage('Quill content6:'+getQuillEditorCurrentContent());
 
+
+
+        if (printLogToDartFromJs) Print.postMessage('Quill content7:'+getQuillEditorCurrentContent());
         if(!showWatermark) quill.deleteText(0, startIndexToDelete);
-        // $theEditor.prepend(' a');
+        if (printLogToDartFromJs) Print.postMessage('Quill content8:'+getQuillEditorCurrentContent());
+
+        // Remove the first br tag which is added automatically
+        if($theEditor.children().length > 0&& $theEditor.children()[0].outerHTML=='<p><br></p>'){
+            $($('div.ql-editor').children()[0]).remove();
+        }
+        if (printLogToDartFromJs) Print.postMessage('Quill content9:'+getQuillEditorCurrentContent());
     }
 
     function replaceQuillContentWithOldNoteContent(responseJsonString, goToTopAfterLoading = false) { // *responseJsonString* is the encoded html of a note
@@ -2128,10 +2143,6 @@
         if (isCreatingNote) { // If it is createing a new note
             if (printLogToDartFromJs) Print.postMessage('inside if(isCreatingNote) {}');
 
-            // Clear all children except the first one
-            // removeQuillEditorAllChildrenExceptFirstOne($editorChildren);
-            // $editorChildren.replaceWith(noteContent);
-
             clearQuillContent(noteContent, true);
 
             setQuillToReadOnly(false, isCreatingNote);
@@ -2141,12 +2152,13 @@
 
             if (printLogToDartFromJs) Print.postMessage('setQuillToReadOnly(true, isCreatingNote);');
             setQuillToReadOnly(true, isCreatingNote);
-            // removeQuillEditorWatermark();
 
             var childrenCount = $editorChildren.length;
             if (childrenCount > 0) {
                 if (printLogToDartFromJs) Print.postMessage('clearQuillContent(noteContent);');
+                if (printLogToDartFromJs) Print.postMessage('Quill content1:'+getQuillEditorCurrentContent());
                 clearQuillContent(noteContent, false);
+                
 
                 if (printLogToDartFromJs) Print.postMessage('getAllImagesBase64FromImageFiles();');
                 getAllImagesBase64FromImageFiles();
@@ -2402,7 +2414,6 @@
 
         return result;
     }
-
 
     function getIsCreatingNote() {
         console.log('isCreatingNote = ' + isCreatingNote);
