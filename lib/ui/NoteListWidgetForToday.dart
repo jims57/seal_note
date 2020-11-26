@@ -167,6 +167,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                     // get note list item content // get note item content
                                     // get note list abstract // get note list item abstract
                                     // show note list abstract // format note list content
+                                    // format abstract content // format note list abstract content
                                     '${_getNoteContentFormatForNoteList(encodedContent: theNote.content)}',
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
@@ -428,7 +429,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     // Get note related variables
                     var folderId = theNote.folderId;
                     var noteId = theNote.id;
-                    var noteContent = theNote.content;
+                    // Force to get note content from sqlite rather than from UI directly to beef up the robustness
+                    var noteContent = await GlobalState.database
+                        .getNoteContentById(noteId: noteId);
 
                     // Record the encoded content saved in db for future comparison
                     GlobalState.noteContentEncodedInDb =

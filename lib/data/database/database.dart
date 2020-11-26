@@ -288,6 +288,17 @@ class Database extends _$Database {
   }
 
   // Notes
+  Future<String> getNoteContentById({int noteId}) async {
+    var noteContent = '';
+
+    var noteEntry =
+        await (select(notes)..where((n) => n.id.equals(noteId))).getSingle();
+
+    if (noteEntry != null) noteContent = noteEntry.content;
+
+    return noteContent;
+  }
+
   Future<int> insertNote(NoteEntry noteEntry) {
     // Add a note to db
 
@@ -307,7 +318,8 @@ class Database extends _$Database {
   }
 
   Future<int> updateNote(NotesCompanion notesCompanion) async {
-    return (update(notes)..where((e) => e.id.equals(GlobalState.selectedNoteModel.id)))
+    return (update(notes)
+          ..where((e) => e.id.equals(GlobalState.selectedNoteModel.id)))
         .write(notesCompanion);
   }
 
