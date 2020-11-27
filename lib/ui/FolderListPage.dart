@@ -46,7 +46,7 @@ class FolderListPageState extends State<FolderListPage>
         ],
         tailChildren: [
           // folder page add button // add folder button
-          // new folder button
+          // new folder button // folder page folder button
           GestureDetector(
             child: Container(
               color: Colors.transparent,

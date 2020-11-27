@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/model/NoteWithProgressTotal.dart';
 import 'package:seal_note/util/converter/BooleanConverter.dart';
+import 'package:seal_note/util/time/TimeHandler.dart';
 
 part 'database.g.dart';
 
@@ -386,8 +387,10 @@ class Database extends _$Database {
       {@required int noteId, bool isDeleted = true}) {
     // Make a note as deleted or not, this won't remove the note from db, it just set isDeleted = true
 
-    return (update(notes)..where((e) => e.id.equals(noteId)))
-        .write(NotesCompanion(isDeleted: Value(isDeleted)));
+    return (update(notes)..where((e) => e.id.equals(noteId))).write(
+        NotesCompanion(
+            isDeleted: Value(isDeleted),
+            updated: Value(TimeHandler.getNowForLocal())));
   }
 
   Future<bool> hasNote() async {

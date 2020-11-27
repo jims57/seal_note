@@ -330,6 +330,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                               ),
                               onTap: () {
                                 // delete note event // swipe to delete note event
+                                // swipe to delete note button // swipe to delete button
 
                                 _noteEntryDeleted = _noteList[index];
                                 var noteTitleDeleted = _noteEntryDeleted.title;
@@ -350,6 +351,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                     }
                                   });
                                 } else {
+                                  // mark note deleted status // note delete status
                                   GlobalState.database
                                       .setNoteDeletedStatus(
                                           noteId: noteIdDeleted,
