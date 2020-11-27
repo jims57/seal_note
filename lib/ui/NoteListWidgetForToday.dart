@@ -408,12 +408,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     // click note list item // click on note list item
                     // click note item
 
-                    // Force to clear watermark first
-                    // await GlobalState.flutterWebviewPlugin.evalJavascript("javascript:clearQuillContent('<p>abc</p>');");
-
-                    // await GlobalState.flutterWebviewPlugin.evalJavascript(
-                    //     "javascript:removeQuillEditorWatermark();");
-
                     GlobalState.isInNoteDetailPage = true;
                     if (GlobalState.screenType == 1) {
                       GlobalState.isHandlingNoteDetailPage = true;
@@ -454,13 +448,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                     while (true) {
                       // while loop
-
-                      // Clear the old content from the WebView first to avoid the long content replacement operation spends too much time
-                      // await GlobalState.flutterWebviewPlugin.evalJavascript("javascript:clearQuillContent();");
-
-                      // Init Quill every time to clear old data
-                      // await GlobalState.flutterWebviewPlugin
-                      //     .evalJavascript("javascript:initQuillEditor()");
 
                       await GlobalState.flutterWebviewPlugin.evalJavascript(
                           "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString', true);");
@@ -516,12 +503,14 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       _isFirstLoad = false;
 
       // Check if the notes table has data or not, if not, we insert dummy data
-      bool hasNote = await GlobalState.database.hasNote();
+      // bool hasNote = await GlobalState.database.hasNote();
 
-      if (!hasNote) {
+      // Check if the Db has been initialized or not
+      var isDbInitialized = await GlobalState.database.isDbInitialized();
+
+      if (!isDbInitialized) {
         // Mark the app is the first time to launch
         _isAppFirstTimeToLaunch = true;
-        // _isLoading = true;
 
         // If the notes table hasn't data, insert the dummy data
         fetchPhotos(client: http.Client()).then((fetchedPhotoList) {
