@@ -34,7 +34,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   bool _hasMore;
 
   bool _isFirstLoad = true;
-  bool _isAppFirstTimeToLaunch = false;
 
   // Slide options
   double _slideIconSize = 30.0;
@@ -85,17 +84,24 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
           ? ListView.builder(
               itemCount: 1,
               itemBuilder: (context, index) {
-                if (_isLoading) {
-                  return Center(
-                    child: SizedBox(
-                      child: CircularProgressIndicator(),
-                      height: 24,
-                      width: 24,
-                    ),
-                  );
-                } else {
-                  return NoDataWidget();
-                }
+                // note list page loading widget // note list loading widget
+                // if (_isLoading) {
+
+                return NoDataWidget();
+
+                // return Container(height: 400,  child: Column(children: [NoDataWidget(),Text('b')],),);
+
+                // if (GlobalState.isAppFirstTimeToLaunch) {
+                //   return Center(
+                //     child: SizedBox(
+                //       child: CircularProgressIndicator(),
+                //       height: 24,
+                //       width: 24,
+                //     ),
+                //   );
+                // } else {
+                //   return NoDataWidget();
+                // }
               })
           : ListView.builder(
               itemCount: _hasMore ? _noteList.length + 1 : _noteList.length,
@@ -210,12 +216,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                 ],
                               ),
                             ),
-                            // elevation: 1.1,
-                            // shape: RoundedRectangleBorder(
-                            //   side: BorderSide.none,
-                            //   // borderRadius: BorderRadius.circular(
-                            //   //     GlobalState.borderRadius15),
-                            // ),
                           ),
                           actions: !_shouldShowDelaySwipeItem(
                                   nextTimeTime: theNote.nextReviewTime)
@@ -502,27 +502,21 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     if (_isFirstLoad) {
       _isFirstLoad = false;
 
-      // Check if the notes table has data or not, if not, we insert dummy data
-      // bool hasNote = await GlobalState.database.hasNote();
-
       // Check if the Db has been initialized or not
       var isDbInitialized = await GlobalState.database.isDbInitialized();
 
       if (!isDbInitialized) {
         // Mark the app is the first time to launch
-        _isAppFirstTimeToLaunch = true;
+        GlobalState.isAppFirstTimeToLaunch = true;
 
         // If the notes table hasn't data, insert the dummy data
         fetchPhotos(client: http.Client()).then((fetchedPhotoList) {
-          _isAppFirstTimeToLaunch = false;
-
           // initialize notes // init notes
           // note initialization // note init
           GlobalState.database
               .updateAllNotesContentByTitles(fetchedPhotoList)
               .whenComplete(() {
-            // TODO: To be deleted before releasing the app
-            //  After insert, update notes' content
+            GlobalState.isAppFirstTimeToLaunch = false;
 
             GlobalState
                 .noteModelForConsumer.noteListWidgetForTodayState.currentState
@@ -549,7 +543,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     _noteList.clear();
     _noteList.addAll(noteList);
 
-    if (noteList.length == 0 && _isAppFirstTimeToLaunch)
+    if (noteList.length == 0 && GlobalState.isAppFirstTimeToLaunch)
       shouldHideSyncStatus = false;
     _refreshNoteListPageCaptionAndHideSyncStatus(
         shouldHideSyncStatus: shouldHideSyncStatus);

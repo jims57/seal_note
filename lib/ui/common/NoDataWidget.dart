@@ -24,6 +24,15 @@ class _NoDataWidgetState extends State<NoDataWidget> {
         SizedBox(
           height: 20,
         ),
+        (GlobalState.isAppFirstTimeToLaunch)
+            ? Center(
+                child: SizedBox(
+                  child: CircularProgressIndicator(),
+                  height: 24,
+                  width: 24,
+                ),
+              )
+            : Container(),
         Container(
           width: 250.0,
           alignment: Alignment.bottomCenter,
@@ -40,8 +49,11 @@ class _NoDataWidgetState extends State<NoDataWidget> {
   String _showNoDataTitle() {
     var noDataTitle = '';
 
-    // Show the right title for no data according to the folder id the user is using currently
-    if (GlobalState.isDefaultFolderSelected) {
+    // Check if the app is first time to launch
+    if (GlobalState.isAppFirstTimeToLaunch) {
+      noDataTitle = 'App初始化...请耐心等待';
+    } else if (GlobalState.isDefaultFolderSelected) {
+      // Show the right title for no data according to the folder id the user is using currently
       if (GlobalState.selectedFolderNameCurrently ==
           GlobalState.defaultFolderNameForToday) {
         // For Today folder
@@ -63,8 +75,10 @@ class _NoDataWidgetState extends State<NoDataWidget> {
   String _showNoDataRemark() {
     var noDataRemark = '';
 
-    // Show the right title for no data according to the folder id the user is using currently
-    if (GlobalState.isDefaultFolderSelected) {
+    if (GlobalState.isAppFirstTimeToLaunch) {
+      noDataRemark = '';
+    } else if (GlobalState.isDefaultFolderSelected) {
+      // Show the right title for no data according to the folder id the user is using currently
       if (GlobalState.selectedFolderNameCurrently ==
           GlobalState.defaultFolderNameForToday) {
         // For Today folder
