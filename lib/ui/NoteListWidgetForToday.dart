@@ -295,7 +295,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                     // move note event // note note
                                     // swipe to move note // swipe note list item to move
 
-                                    GlobalState.selectedNoteModel.id = theNoteId;
+                                    GlobalState.selectedNoteModel.id =
+                                        theNoteId;
 
                                     // Get user folder list
                                     var userFolderListItemList = GlobalState
@@ -349,9 +350,11 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                             content: Container(
                                               // color: Colors.green,
                                               width: 350.0,
-                                              height: GlobalState
-                                                      .folderListItemHeightForFolderSelection *
-                                                  userFolderListItemList.length,
+                                              height:
+                                                  _getFolderSelectionListMaxHeight(
+                                                      folderTotal:
+                                                          userFolderListItemList
+                                                              .length),
                                               child: ListView.builder(
                                                 itemCount:
                                                     userFolderListItemList
@@ -362,9 +365,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                                   var theUserFolderListItem =
                                                       userFolderListItemList[
                                                           index];
-                                                  // var theFolderId =
-                                                  //     theUserFolderListItem
-                                                  //         .folderId;
 
                                                   return SelectFolderWidget(
                                                     // key: GlobalState
@@ -785,22 +785,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     return isDefaultFolder;
   }
 
-  // bool _isFolderSelectionItemClickable({@required int theUserFolderId}) {
-  //   var isFolderSelectionItemClickable = false;
-  //
-  //   if (theUserFolderId != GlobalState.selectedFolderIdCurrently) {
-  //     isFolderSelectionItemClickable = true;
-  //   }
-  //
-  //   return isFolderSelectionItemClickable;
-  // }
-
-  bool _shouldShowAlertDialogToConfirm() {
-    var shouldShowAlertDialog = false;
-
-    return shouldShowAlertDialog;
-  }
-
   bool _shouldBreakWhileLoop({@required String noteContentEncodedFromWebView}) {
     var shouldBreak = false;
 
@@ -966,93 +950,16 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     return noteContent;
   }
 
-// SlideAction getSlideActionForDeletion({int index}) {
-//   return SlideAction(
-//     child: Container(
-//       constraints: BoxConstraints.expand(),
-//       color: Colors.red,
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           Icon(
-//             Icons.delete_outline,
-//             size: _slideIconSize,
-//             color: Colors.white,
-//           ),
-//           Text(
-//             '删除',
-//             style: TextStyle(
-//               fontSize: _slideFontSize,
-//               color: Colors.white,
-//             ),
-//           )
-//         ],
-//       ),
-//     ),
-//     onTap: () {
-//       // delete note event // swipe to delete note event
-//       // swipe to delete note button // swipe to delete button
-//
-//       _noteEntryDeleted = _noteList[index];
-//       var noteTitleDeleted = _noteEntryDeleted.title;
-//       var noteIdDeleted = _noteEntryDeleted.id;
-//
-//       // Check if it is in Deleted folder
-//       if (GlobalState.isDefaultFolderSelected &&
-//           GlobalState.appState.noteListPageTitle ==
-//               GlobalState.defaultFolderNameForDeletion) {
-//         GlobalState.database
-//             .deleteNote(noteIdDeleted)
-//             .then((effectedRowsCount) {
-//           if (effectedRowsCount > 0) {
-//             setState(() {
-//               _noteList.removeAt(index);
-//             });
-//           }
-//         });
-//       } else {
-//         // mark note deleted status // note delete status
-//         GlobalState.database
-//             .setNoteDeletedStatus(noteId: noteIdDeleted, isDeleted: true)
-//             .then((effectedRowsCount) {
-//           if (effectedRowsCount > 0) {
-//             setState(() {
-//               _noteList.removeAt(index);
-//
-//               if (snackBar != null) {
-//                 Scaffold.of(context).hideCurrentSnackBar();
-//               }
-//
-//               // show delete message // show note delete message
-//               snackBar = SnackBar(
-//                 content: Text(
-//                     '已删除：${HtmlHandler.decodeAndRemoveAllHtmlTags(noteTitleDeleted)}'),
-//                 backgroundColor: GlobalState.themeBlueColor,
-//                 behavior: SnackBarBehavior.fixed,
-//                 action: SnackBarAction(
-//                   label: '撤消',
-//                   textColor: Colors.white,
-//                   onPressed: () {
-//                     GlobalState.database
-//                         .setNoteDeletedStatus(
-//                             noteId: noteIdDeleted, isDeleted: false)
-//                         .then((effectedRowsCount) {
-//                       if (effectedRowsCount > 0) {
-//                         setState(() {
-//                           _noteList.insert(index, _noteEntryDeleted);
-//                         });
-//                       }
-//                     });
-//                   },
-//                 ),
-//               );
-//
-//               Scaffold.of(context).showSnackBar(snackBar);
-//             });
-//           }
-//         });
-//       }
-//     },
-//   );
-// }
+  double _getFolderSelectionListMaxHeight({@required int folderTotal}) {
+    double maxHeight = 0.0;
+
+    if (folderTotal > 10) {
+      maxHeight = GlobalState.folderListItemHeightForFolderSelection * 10;
+    } else {
+      maxHeight =
+          GlobalState.folderListItemHeightForFolderSelection * folderTotal;
+    }
+
+    return maxHeight;
+  }
 }
