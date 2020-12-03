@@ -12,6 +12,8 @@ import 'package:seal_note/ui/common/NoDataWidget.dart';
 import 'package:seal_note/util/html/HtmlHandler.dart';
 import 'package:seal_note/util/string/StringHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
+import 'common/AlertDialogWidget.dart';
+import 'common/SelectFolderWidget.dart';
 import 'httper/NoteHttper.dart';
 
 class NoteListWidgetForToday extends StatefulWidget {
@@ -22,6 +24,9 @@ class NoteListWidgetForToday extends StatefulWidget {
 }
 
 class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
+  // Configuration
+  double fontSizeForFolderSelectionText = 20.0;
+
   List<NoteEntry> _noteEntryListForRefresh = List<NoteEntry>();
   List<NoteWithProgressTotal> _noteList = List<NoteWithProgressTotal>();
 
@@ -121,6 +126,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                 // Get the current note item object
                 var theNote = _noteList[index];
+                var theNoteId = theNote.id;
                 var theNoteTitle = _getNoteTitleFormatForNoteList(
                         encodedContent: theNote.content)
                     .trim();
@@ -252,60 +258,157 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                           secondaryActions: <Widget>[
                             // note list swipe item right part // note list right swipe items
 
-                            SlideAction(
-                              child: Container(
-                                constraints: BoxConstraints.expand(),
-                                color: !_isInDeletedFolder()
-                                    ? Colors.orangeAccent
-                                    : GlobalState.themeLightBlueColorAtiOSTodo,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      !_isInDeletedFolder()
-                                          ? Icons.playlist_play
-                                          : Icons.undo,
-                                      size: _slideIconSize,
-                                      color: Colors.white,
-                                    ),
-                                    Text(
-                                      !_isInDeletedFolder() ? '移动' : '还原',
-                                      style: TextStyle(
-                                        fontSize: _slideFontSize,
+                            if (!_isInDefaultFolder() || _isInDeletedFolder())
+                              SlideAction(
+                                child: Container(
+                                  constraints: BoxConstraints.expand(),
+                                  color: !_isInDeletedFolder()
+                                      ? Colors.orangeAccent
+                                      : GlobalState
+                                          .themeLightBlueColorAtiOSTodo,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        !_isInDeletedFolder()
+                                            ? Icons.playlist_play
+                                            : Icons.undo,
+                                        size: _slideIconSize,
                                         color: Colors.white,
                                       ),
-                                    )
-                                  ],
+                                      Text(
+                                        !_isInDeletedFolder() ? '移动' : '还原',
+                                        style: TextStyle(
+                                          fontSize: _slideFontSize,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              onTap: () async {
-                                // swipe to restore note // restore note
+                                onTap: () async {
+                                  // swipe to restore note // restore note
 
-                                // Check which folder is
-                                if (!_isInDeletedFolder()) {
-                                  // Not in Deleted folder
-                                  // move note event // note note
-                                  // swipe to move note
+                                  // Check which folder is
+                                  if (!_isInDeletedFolder()) {
+                                    // Not in Deleted folder
+                                    // move note event // note note
+                                    // swipe to move note // swipe note list item to move
 
-                                } else {
-                                  // In Deleted folder
-                                  // restore deleted note // swipe to restore note
+                                    GlobalState.selectedNoteModel.id = theNoteId;
 
-                                  var effectedRowCount = await GlobalState
-                                      .database
-                                      .setNoteDeletedStatus(
-                                          noteId: theNote.id, isDeleted: false);
+                                    // Get user folder list
+                                    var userFolderListItemList = GlobalState
+                                        .folderListPageState.currentState
+                                        .getUserFolderListItemList();
 
-                                  if (effectedRowCount > 0) {
-                                    GlobalState.noteListWidgetForTodayState
-                                        .currentState
-                                        .triggerSetState(
-                                            resetNoteList: true,
-                                            updateNoteListPageTitle: false);
+                                    // We should hide the WebView first, since it isn't in the UI tree which will block the dialog widget
+                                    GlobalState.flutterWebviewPlugin.hide();
+
+                                    // Dialog info
+                                    var captionText = '移动笔记？';
+                                    // var remarkForMovingNote =
+                                    //     '因为目标文件夹，有不同的复习计划。移动后，笔记的复习进度将会被重置！';
+                                    var buttonTextForOK = '确定移动';
+                                    var buttonColorForOK = Colors.red;
+
+                                    await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          GlobalState.currentShowDialogContext =
+                                              context;
+
+                                          return AlertDialog(
+                                            titlePadding: EdgeInsets.all(0),
+                                            title: Container(
+                                              color: Colors.transparent,
+                                              padding: EdgeInsets.only(
+                                                  top: 10.0, bottom: 0.0),
+                                              alignment: Alignment.center,
+                                              child: Column(
+                                                children: [
+                                                  Text('选择文件夹'),
+                                                  Divider(),
+                                                  AlertDialogWidget(
+                                                    // This alert dialog widget is used to append its widget to the UI tree, so that GlobalKey works
+                                                    key: GlobalState
+                                                        .alertDialogWidgetState,
+                                                    captionText: captionText,
+                                                    remark: GlobalState
+                                                        .remarkForMovingNote,
+                                                    buttonTextForOK:
+                                                        buttonTextForOK,
+                                                    buttonColorForOK:
+                                                        buttonColorForOK,
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            contentPadding: EdgeInsets.only(
+                                                top: 0.0, bottom: 15.0),
+                                            content: Container(
+                                              // color: Colors.green,
+                                              width: 350.0,
+                                              height: GlobalState
+                                                      .folderListItemHeightForFolderSelection *
+                                                  userFolderListItemList.length,
+                                              child: ListView.builder(
+                                                itemCount:
+                                                    userFolderListItemList
+                                                        .length,
+                                                itemBuilder:
+                                                    (BuildContext context,
+                                                        int index) {
+                                                  var theUserFolderListItem =
+                                                      userFolderListItemList[
+                                                          index];
+                                                  // var theFolderId =
+                                                  //     theUserFolderListItem
+                                                  //         .folderId;
+
+                                                  return SelectFolderWidget(
+                                                    // key: GlobalState
+                                                    //     .selectFolderWidgetState,
+                                                    folderIcon:
+                                                        theUserFolderListItem
+                                                            .icon,
+                                                    folderIconColor:
+                                                        theUserFolderListItem
+                                                            .iconColor,
+                                                    folderId:
+                                                        theUserFolderListItem
+                                                            .folderId,
+                                                    folderName:
+                                                        theUserFolderListItem
+                                                            .folderName,
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          );
+                                        });
+
+                                    GlobalState.flutterWebviewPlugin.show();
+                                  } else {
+                                    // In Deleted folder
+                                    // restore deleted note // swipe to restore note
+
+                                    var effectedRowCount = await GlobalState
+                                        .database
+                                        .setNoteDeletedStatus(
+                                            noteId: theNote.id,
+                                            isDeleted: false);
+
+                                    if (effectedRowCount > 0) {
+                                      GlobalState.noteListWidgetForTodayState
+                                          .currentState
+                                          .triggerSetState(
+                                              resetNoteList: true,
+                                              updateNoteListPageTitle: false);
+                                    }
                                   }
-                                }
-                              },
-                            ),
+                                },
+                              ),
                             SlideAction(
                               child: Container(
                                 constraints: BoxConstraints.expand(),
@@ -674,6 +777,30 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     return isInDeletedFolder;
   }
 
+  bool _isInDefaultFolder() {
+    var isDefaultFolder = false;
+
+    if (GlobalState.isDefaultFolderSelected) isDefaultFolder = true;
+
+    return isDefaultFolder;
+  }
+
+  // bool _isFolderSelectionItemClickable({@required int theUserFolderId}) {
+  //   var isFolderSelectionItemClickable = false;
+  //
+  //   if (theUserFolderId != GlobalState.selectedFolderIdCurrently) {
+  //     isFolderSelectionItemClickable = true;
+  //   }
+  //
+  //   return isFolderSelectionItemClickable;
+  // }
+
+  bool _shouldShowAlertDialogToConfirm() {
+    var shouldShowAlertDialog = false;
+
+    return shouldShowAlertDialog;
+  }
+
   bool _shouldBreakWhileLoop({@required String noteContentEncodedFromWebView}) {
     var shouldBreak = false;
 
@@ -838,4 +965,94 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
     return noteContent;
   }
+
+// SlideAction getSlideActionForDeletion({int index}) {
+//   return SlideAction(
+//     child: Container(
+//       constraints: BoxConstraints.expand(),
+//       color: Colors.red,
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           Icon(
+//             Icons.delete_outline,
+//             size: _slideIconSize,
+//             color: Colors.white,
+//           ),
+//           Text(
+//             '删除',
+//             style: TextStyle(
+//               fontSize: _slideFontSize,
+//               color: Colors.white,
+//             ),
+//           )
+//         ],
+//       ),
+//     ),
+//     onTap: () {
+//       // delete note event // swipe to delete note event
+//       // swipe to delete note button // swipe to delete button
+//
+//       _noteEntryDeleted = _noteList[index];
+//       var noteTitleDeleted = _noteEntryDeleted.title;
+//       var noteIdDeleted = _noteEntryDeleted.id;
+//
+//       // Check if it is in Deleted folder
+//       if (GlobalState.isDefaultFolderSelected &&
+//           GlobalState.appState.noteListPageTitle ==
+//               GlobalState.defaultFolderNameForDeletion) {
+//         GlobalState.database
+//             .deleteNote(noteIdDeleted)
+//             .then((effectedRowsCount) {
+//           if (effectedRowsCount > 0) {
+//             setState(() {
+//               _noteList.removeAt(index);
+//             });
+//           }
+//         });
+//       } else {
+//         // mark note deleted status // note delete status
+//         GlobalState.database
+//             .setNoteDeletedStatus(noteId: noteIdDeleted, isDeleted: true)
+//             .then((effectedRowsCount) {
+//           if (effectedRowsCount > 0) {
+//             setState(() {
+//               _noteList.removeAt(index);
+//
+//               if (snackBar != null) {
+//                 Scaffold.of(context).hideCurrentSnackBar();
+//               }
+//
+//               // show delete message // show note delete message
+//               snackBar = SnackBar(
+//                 content: Text(
+//                     '已删除：${HtmlHandler.decodeAndRemoveAllHtmlTags(noteTitleDeleted)}'),
+//                 backgroundColor: GlobalState.themeBlueColor,
+//                 behavior: SnackBarBehavior.fixed,
+//                 action: SnackBarAction(
+//                   label: '撤消',
+//                   textColor: Colors.white,
+//                   onPressed: () {
+//                     GlobalState.database
+//                         .setNoteDeletedStatus(
+//                             noteId: noteIdDeleted, isDeleted: false)
+//                         .then((effectedRowsCount) {
+//                       if (effectedRowsCount > 0) {
+//                         setState(() {
+//                           _noteList.insert(index, _noteEntryDeleted);
+//                         });
+//                       }
+//                     });
+//                   },
+//                 ),
+//               );
+//
+//               Scaffold.of(context).showSnackBar(snackBar);
+//             });
+//           }
+//         });
+//       }
+//     },
+//   );
+// }
 }

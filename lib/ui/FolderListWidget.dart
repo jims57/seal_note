@@ -16,9 +16,9 @@ class FolderListWidget extends StatefulWidget {
 }
 
 class FolderListWidgetState extends State<FolderListWidget> {
-  bool isPointerDown = false;
+  // bool isPointerDown = false;
 
-  int defaultFolderTotal = 3;
+  // int defaultFolderTotal = 3;
 
   double folderListPanelMarginForTopOrBottom = 5.0;
   List<FolderListItemWidget> childrenWidgetList = List<FolderListItemWidget>();

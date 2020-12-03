@@ -324,6 +324,16 @@ class Database extends _$Database {
         .write(notesCompanion);
   }
 
+  Future<int> changeNoteFolderId(
+      {@required int noteId, @required int newFolderId}) async {
+    var notesCompanion =
+        NotesCompanion(id: Value(noteId), folderId: Value(newFolderId));
+    var effectedRowCount = await (update(notes)..where((e) => e.id.equals(noteId)))
+        .write(notesCompanion);
+
+    return effectedRowCount;
+  }
+
   Future<List<NoteWithProgressTotal>> getNotesByPageSize(
       {@required int pageNo, @required int pageSize}) {
     // Check if it is for default folders, because we need to get specific data for default folders

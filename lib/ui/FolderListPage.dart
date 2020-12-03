@@ -159,6 +159,17 @@ class FolderListPageState extends State<FolderListPage>
     return theFolderListItemWidget;
   }
 
+  List<FolderListItemWidget> getUserFolderListItemList() {
+    var folderListItemList =
+        GlobalState.folderListWidgetState.currentState.getFolderListItemList();
+
+    var userFolderListItemList = folderListItemList
+        .where((folderListItem) => !folderListItem.isDefaultFolder)
+        .toList();
+
+    return userFolderListItemList;
+  }
+
   bool isDefaultFolder({@required folderId}) {
     // Check if the folder is a default folder or not
     var isDefault = false;

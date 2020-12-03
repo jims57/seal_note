@@ -7,7 +7,9 @@ import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/FolderListWidget.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
 import 'package:seal_note/ui/NoteListWidgetForToday.dart';
+import 'package:seal_note/ui/common/AlertDialogWidget.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
+import 'package:seal_note/ui/common/SelectFolderWidget.dart';
 
 import 'AppState.dart';
 import 'DetailPageState.dart';
@@ -110,6 +112,7 @@ class GlobalState with ChangeNotifier {
   static BuildContext folderOptionItemListPanelContext;
   static BuildContext noteDetailWidgetContext;
   static BuildContext myWebViewPluginContext;
+  static BuildContext currentShowDialogContext;
 
   // Selected note related
   static NoteWithProgressTotal selectedNoteModel =
@@ -142,6 +145,14 @@ class GlobalState with ChangeNotifier {
   static GlobalKey<FolderListPageState> folderListPageState;
   static GlobalKey<FolderListWidgetState> folderListWidgetState;
   static GlobalKey<NoteListWidgetForTodayState> noteListWidgetForTodayState;
+  static GlobalKey<SelectFolderWidgetState> selectFolderWidgetState =
+      GlobalKey<SelectFolderWidgetState>();
+  static GlobalKey<AlertDialogWidgetState> alertDialogWidgetState =
+      GlobalKey<AlertDialogWidgetState>();
+
+  // Dialog
+  static bool shouldContinueActionForShowDialog = false;
+  static String remarkForMovingNote = '因为目标文件夹，有不同的复习计划。移动后，笔记的复习进度将会被重置！';
 
   // Overlay
   static OverlayEntry overlayEntry;
@@ -153,6 +164,9 @@ class GlobalState with ChangeNotifier {
   // Folder related
   static bool isDefaultFolderSelected = false; // For default folder
   static bool isReviewFolderSelected = false; // For review folder
+
+  // Folder selection
+  static double folderListItemHeightForFolderSelection = 50.0;
 
   // Folder page
   static double folderPageTopContainerHeight = 40.0;

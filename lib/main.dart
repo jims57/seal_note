@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:moor/moor.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/util/html/HtmlHandler.dart';
-import 'package:seal_note/util/regex/RegexHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
 // Import custom files
@@ -211,13 +209,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    // var encodedString = '&lt;p class=&quot;ql-align-justify&quot;&gt;推进全面依法治国，是国家治理的一场深刻变革，必须以科学理论为指导，从理论上回答为什么要全面依法治国、怎样全面依法治国这个重大时代课题。&lt;/p&gt;&lt;p class=&quot;ql-align-justify&quot;&gt;习近平法治思想，在新时代波澜壮阔的治国理政实践中应运而生，并在坚持和完善中国特色社会主义制度、推进国家治理体系和治理能力现代化进程中创新发展，日益成熟完备。&lt;/p&gt;';
-    // var regexTagName = '&lt;p(.*?)&gt;(.*?)&lt;/p&gt;';
-    // // var regexTagName = '<p(.*?)>(.*?)</p>';
-    //
-    // var ls = RegexHandler.getMatchedEncodedStringList(encodedSourceString: encodedString, encodedRegexString: regexTagName);
-
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: MasterDetailPage(
