@@ -326,9 +326,12 @@ class Database extends _$Database {
 
   Future<int> changeNoteFolderId(
       {@required int noteId, @required int newFolderId}) async {
-    var notesCompanion =
-        NotesCompanion(id: Value(noteId), folderId: Value(newFolderId));
-    var effectedRowCount = await (update(notes)..where((e) => e.id.equals(noteId)))
+    var notesCompanion = NotesCompanion(
+        id: Value(noteId),
+        folderId: Value(newFolderId),
+        updated: Value(TimeHandler.getNowForLocal()));
+    var effectedRowCount = await (update(notes)
+          ..where((e) => e.id.equals(noteId)))
         .write(notesCompanion);
 
     return effectedRowCount;
