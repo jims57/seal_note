@@ -706,7 +706,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     }
 
     var folderListItemWidget = GlobalState.folderListPageState.currentState
-        .getFolderListItemWidgetById(folderId: folderIdNewNoteBelongsTo);
+        .getFolderListItemWidgetByFolderId(folderId: folderIdNewNoteBelongsTo);
 
     if (folderListItemWidget.reviewPlanId == null) {
       nextReviewTime = null;

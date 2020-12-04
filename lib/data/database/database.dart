@@ -325,11 +325,41 @@ class Database extends _$Database {
   }
 
   Future<int> changeNoteFolderId(
-      {@required int noteId, @required int newFolderId}) async {
-    var notesCompanion = NotesCompanion(
-        id: Value(noteId),
-        folderId: Value(newFolderId),
-        updated: Value(TimeHandler.getNowForLocal()));
+      {@required int noteId,
+      @required int newFolderId,
+      @required int typeId}) async {
+    // For more info about typeId at: https://user-images.githubusercontent.com/1920873/101114842-44bb2900-361d-11eb-9537-4492a6994286.png
+    // 0 means: Set nextReviewTime, reviewProgressNo fields to NULL and set isReviewFinished back to 0
+    // 1 means: Set value to nextReviewTime and reviewProgressNo fields and set isReviewFinished back to 0
+    // 2 means: Don't need to change all review related fields, such as nextReviewTIme, reviewProgressNo and isReviewFinished
+
+    var notesCompanion;
+
+    if (typeId == 0) {
+      notesCompanion = NotesCompanion(
+          id: Value(noteId),
+          folderId: Value(newFolderId),
+          nextReviewTime: Value(null),
+          reviewProgressNo: Value(null),
+          isReviewFinished: Value(false),
+          updated: Value(TimeHandler.getNowForLocal()));
+    } else if (typeId == 1) {
+      notesCompanion = NotesCompanion(
+          id: Value(noteId),
+          folderId: Value(newFolderId),
+          nextReviewTime: Value(TimeHandler.getNowForLocal()),
+          // Review instantly
+          reviewProgressNo: Value(0),
+          isReviewFinished: Value(false),
+          updated: Value(TimeHandler.getNowForLocal()));
+    } else {
+      // TypeId = 2
+      notesCompanion = NotesCompanion(
+          id: Value(noteId),
+          folderId: Value(newFolderId),
+          updated: Value(TimeHandler.getNowForLocal()));
+    }
+
     var effectedRowCount = await (update(notes)
           ..where((e) => e.id.equals(noteId)))
         .write(notesCompanion);
@@ -434,7 +464,7 @@ class Database extends _$Database {
     });
   }
 
-  // Model conversion
+  // Other methods
   NoteWithProgressTotal _convertModelToNoteWithProgressTotal(var row) {
     return NoteWithProgressTotal(
         id: row.id,

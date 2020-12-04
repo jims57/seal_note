@@ -10,12 +10,14 @@ class SelectFolderWidget extends StatefulWidget {
     @required this.folderIconColor,
     @required this.folderId,
     @required this.folderName,
+    @required this.reviewPlanId,
   }) : super(key: key);
 
   final IconData folderIcon;
   final Color folderIconColor;
   final int folderId;
   final String folderName;
+  final int reviewPlanId;
 
   @override
   SelectFolderWidgetState createState() => SelectFolderWidgetState();
@@ -32,6 +34,11 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
 
   @override
   Widget build(BuildContext context) {
+    var isCurrentFolder = false;
+    if (!_isFolderSelectionItemClickable(theUserFolderId: widget.folderId)) {
+      isCurrentFolder = true;
+    }
+
     return GestureDetector(
       child: Container(
         padding: EdgeInsets.only(left: 15.0, right: 15.0),
@@ -44,10 +51,9 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
               children: [
                 Icon(
                   widget.folderIcon,
-                  color: _isFolderSelectionItemClickable(
-                          theUserFolderId: widget.folderId)
-                      ? widget.folderIconColor
-                      : GlobalState.themeGrey350Color,
+                  color: isCurrentFolder
+                      ? GlobalState.themeGrey350Color
+                      : widget.folderIconColor,
                   size: 28.0,
                 ),
                 Flexible(
@@ -57,10 +63,9 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
                       widget.folderName,
                       style: TextStyle(
                           fontSize: fontSizeForFolderSelectionText,
-                          color: _isFolderSelectionItemClickable(
-                                  theUserFolderId: widget.folderId)
-                              ? GlobalState.themeBlackColor87ForFontForeColor
-                              : GlobalState.themeGrey350Color),
+                          color: isCurrentFolder
+                              ? GlobalState.themeGrey350Color
+                              : GlobalState.themeBlackColor87ForFontForeColor),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -75,9 +80,12 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
         ),
       ),
       onTap: () async {
+        // click on folder selection item // click folder selection item
+
         if (_isFolderSelectionItemClickable(theUserFolderId: widget.folderId)) {
           var folderIdClicked = widget.folderId;
           var folderNameClicked = widget.folderName;
+          var reviewPlanIdClicked = widget.reviewPlanId;
           var shouldMoveNote = true; // By default, we should note the note
           var isDialogForFolderSelectionHidden = false;
 
@@ -101,10 +109,25 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
 
           if (shouldMoveNote) {
             // When the result is that the note should be moved anyway
+
+            // Get current review plan id
+
+            var theFolderListItemWidget = GlobalState
+                .folderListPageState.currentState
+                .getFolderListItemWidgetByFolderId(
+                    folderId: GlobalState.selectedFolderIdCurrently);
+            var currentReviewPlanId = theFolderListItemWidget.reviewPlanId;
+
+            // Get typeId for moving a note
+            var typeId = _getTypeIdForMovingNote(
+                currentReviewPlanId: currentReviewPlanId,
+                targetReviewPlanId: reviewPlanIdClicked);
+
             var effectedRowCount = await GlobalState.database
                 .changeNoteFolderId(
                     noteId: GlobalState.selectedNoteModel.id,
-                    newFolderId: folderIdClicked);
+                    newFolderId: folderIdClicked,
+                    typeId: typeId);
 
             // When the dialog for folder selection isn't hidden, we should hide it by code
             if (!isDialogForFolderSelectionHidden) {
@@ -137,5 +160,29 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
     var shouldShowAlertDialog = false;
 
     return shouldShowAlertDialog;
+  }
+
+  int _getTypeIdForMovingNote(
+      {@required int currentReviewPlanId, @required int targetReviewPlanId}) {
+    // Remark about type id at: https://user-images.githubusercontent.com/1920873/101114842-44bb2900-361d-11eb-9537-4492a6994286.png
+    // 0 means: Set nextReviewTime, reviewProgressNo fields to NULL and set isReviewFinished back to 0
+    // 1 means: Set value to nextReviewTime and reviewProgressNo fields and set isReviewFinished back to 0
+    // 2 means: Don't need to change all review related fields, such as nextReviewTIme, reviewProgressNo and isReviewFinished
+
+    var typeId = 0;
+
+    if (targetReviewPlanId == null) {
+      // If the target folder's review plan id is null
+      typeId = 0;
+    } else {
+      // If the target folder's review plan id isn't null
+      if (currentReviewPlanId == targetReviewPlanId) {
+        typeId = 2;
+      } else {
+        typeId = 1;
+      }
+    }
+
+    return typeId;
   }
 }

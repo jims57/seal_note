@@ -366,9 +366,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                                       userFolderListItemList[
                                                           index];
 
+                                                  // select folder list // folder selection list
                                                   return SelectFolderWidget(
-                                                    // key: GlobalState
-                                                    //     .selectFolderWidgetState,
                                                     folderIcon:
                                                         theUserFolderListItem
                                                             .icon,
@@ -381,6 +380,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                                     folderName:
                                                         theUserFolderListItem
                                                             .folderName,
+                                                    reviewPlanId:
+                                                        theUserFolderListItem
+                                                            .reviewPlanId,
                                                   );
                                                 },
                                               ),
@@ -587,7 +589,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
         if (resetNoteList) initLoadingConfigs();
         if (updateNoteListPageTitle) {
           var noteListPageTitle = GlobalState.folderListPageState.currentState
-              .getFolderListItemWidgetById(
+              .getFolderListItemWidgetByFolderId(
                   folderId: GlobalState.selectedFolderIdCurrently)
               .folderName;
           GlobalState.appState.noteListPageTitle = noteListPageTitle;

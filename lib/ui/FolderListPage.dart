@@ -146,7 +146,7 @@ class FolderListPageState extends State<FolderListPage>
     return defaultFolderIds;
   }
 
-  FolderListItemWidget getFolderListItemWidgetById({@required folderId}) {
+  FolderListItemWidget getFolderListItemWidgetByFolderId({@required folderId}) {
     // Get folder list item widget from by a folder id
 
     var folderListItemList =
