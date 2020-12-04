@@ -27,6 +27,7 @@ class GlobalState with ChangeNotifier {
   static int noteListTitleMaxLength = 50;
   static int noteListAbstractMaxLength = 50;
   static int incrementalStepToUseRegex = 100;
+  static const int minLengthToTriggerRefreshForNoteListPage = 0;
 
   // App current info
   static bool isAppFirstTimeToLaunch = false;

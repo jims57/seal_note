@@ -450,6 +450,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                     if (effectedRowsCount > 0) {
                                       setState(() {
                                         _noteList.removeAt(index);
+
+                                        // Refresh the note list page if no data at noteList variable
+                                        refreshNoteListPageIfNoDataAtNoteListVariable(
+                                            noteList: _noteList);
                                       });
                                     }
                                   });
@@ -463,6 +467,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                     if (effectedRowsCount > 0) {
                                       setState(() {
                                         _noteList.removeAt(index);
+
+                                        // Refresh the note list page if no data at noteList variable
+                                        refreshNoteListPageIfNoDataAtNoteListVariable(
+                                            noteList: _noteList);
 
                                         if (snackBar != null) {
                                           Scaffold.of(context)
@@ -662,6 +670,18 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
   void resetLoadingConfigsAfterUpdatingSqlite() {
     initLoadingConfigs();
+  }
+
+  void refreshNoteListPageIfNoDataAtNoteListVariable(
+      {@required List<NoteWithProgressTotal> noteList,
+      int minLengthToTriggerRefresh =
+          GlobalState.minLengthToTriggerRefreshForNoteListPage}) {
+    if (noteList.length <= minLengthToTriggerRefresh) {
+      // When the note list variable has no items inside it, try to refresh the note list anyway
+
+      GlobalState.noteListWidgetForTodayState.currentState
+          .triggerSetState(resetNoteList: true);
+    }
   }
 
   List<NoteWithProgressTotal> getNoteWithProgressTotalList() {
