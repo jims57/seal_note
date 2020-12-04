@@ -5,7 +5,7 @@ class AlertDialogWidget extends StatefulWidget {
   AlertDialogWidget(
       {Key key,
       @required this.captionText,
-      @required this.remark,
+      this.remark = '',
       this.buttonTextForOK = '确定',
       this.buttonColorForOK = GlobalState.themeBlueColor,
       this.buttonTextForCancel = '取消',

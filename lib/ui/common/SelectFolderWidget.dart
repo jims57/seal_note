@@ -83,17 +83,35 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
         // click on folder selection item // click folder selection item
 
         if (_isFolderSelectionItemClickable(theUserFolderId: widget.folderId)) {
-          var folderIdClicked = widget.folderId;
-          var folderNameClicked = widget.folderName;
-          var reviewPlanIdClicked = widget.reviewPlanId;
+          var targetFolderId = widget.folderId;
+          // var targetFolderName = widget.folderName;
+          var targetReviewPlanId = widget.reviewPlanId;
           var shouldMoveNote = true; // By default, we should note the note
           var isDialogForFolderSelectionHidden = false;
 
+          // Get current review plan id
+          var theFolderListItemWidget = GlobalState
+              .folderListPageState.currentState
+              .getFolderListItemWidgetByFolderId(
+                  folderId: GlobalState.selectedFolderIdCurrently);
+          var currentReviewPlanId = theFolderListItemWidget.reviewPlanId;
+
           // Check whether we should show the alert dialog for the user to confirm before continuing this action
-          if (_shouldShowAlertDialogToConfirm()) {
+          var confirmTypeId = _getConfirmTypeIdForAlertDialog(
+              currentReviewPlanId: currentReviewPlanId,
+              targetReviewPlanId: targetReviewPlanId);
+
+          if (confirmTypeId > 0) {
+            // Greater than zero means it needs to show the alert dialog for the user to confirm
+
+            var remark = GlobalState.remarkForMovingNoteToFolderWithDifferentReviewPlan;
+            if(confirmTypeId == 1) {
+              remark = GlobalState.remarkForMovingNoteToFolderWithoutReviewPlan;
+            }
+
             var shouldContinueAction = await GlobalState
                 .alertDialogWidgetState.currentState
-                .showAlertDialog();
+                .showAlertDialog(remark: remark);
 
             if (shouldContinueAction) {
               // When the user clicks on OK button
@@ -110,23 +128,15 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
           if (shouldMoveNote) {
             // When the result is that the note should be moved anyway
 
-            // Get current review plan id
-
-            var theFolderListItemWidget = GlobalState
-                .folderListPageState.currentState
-                .getFolderListItemWidgetByFolderId(
-                    folderId: GlobalState.selectedFolderIdCurrently);
-            var currentReviewPlanId = theFolderListItemWidget.reviewPlanId;
-
             // Get typeId for moving a note
             var typeId = _getTypeIdForMovingNote(
                 currentReviewPlanId: currentReviewPlanId,
-                targetReviewPlanId: reviewPlanIdClicked);
+                targetReviewPlanId: targetReviewPlanId);
 
             var effectedRowCount = await GlobalState.database
                 .changeNoteFolderId(
                     noteId: GlobalState.selectedNoteModel.id,
-                    newFolderId: folderIdClicked,
+                    newFolderId: targetFolderId,
                     typeId: typeId);
 
             // When the dialog for folder selection isn't hidden, we should hide it by code
@@ -156,10 +166,30 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
     return isFolderSelectionItemClickable;
   }
 
-  bool _shouldShowAlertDialogToConfirm() {
-    var shouldShowAlertDialog = false;
+  int _getConfirmTypeIdForAlertDialog(
+      {@required int currentReviewPlanId, @required int targetReviewPlanId}) {
+    // Only the two situations need to show the alert dialog for the user to confirm his action
+    // confirmTypeId = [0, 1, 2], for more info at https://user-images.githubusercontent.com/1920873/101129130-fd906080-363b-11eb-882e-7809043de79e.png
 
-    return shouldShowAlertDialog;
+    var confirmTypeId;
+
+    if (currentReviewPlanId != null) {
+      // When the current review plan id isn't null
+
+      if (targetReviewPlanId == null) {
+        confirmTypeId = 1;
+      } else if (currentReviewPlanId != targetReviewPlanId) {
+        confirmTypeId = 2;
+      } else {
+        confirmTypeId = 0;
+      }
+    } else {
+      // When the current review plan id is null
+
+      confirmTypeId = 0;
+    }
+
+    return confirmTypeId;
   }
 
   int _getTypeIdForMovingNote(

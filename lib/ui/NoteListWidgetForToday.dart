@@ -335,8 +335,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                                     key: GlobalState
                                                         .alertDialogWidgetState,
                                                     captionText: captionText,
-                                                    remark: GlobalState
-                                                        .remarkForMovingNote,
                                                     buttonTextForOK:
                                                         buttonTextForOK,
                                                     buttonColorForOK:
