@@ -125,7 +125,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                 }
 
                 // Get the current note item object
-                var theNote = _noteList[index];
+                var theIndexAtNoteList = index;
+                var theNote = _noteList[theIndexAtNoteList];
                 var theNoteId = theNote.id;
                 var theNoteTitle = _getNoteTitleFormatForNoteList(
                         encodedContent: theNote.content)
@@ -308,8 +309,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                                     // Dialog info
                                     var captionText = '移动笔记？';
-                                    // var remarkForMovingNote =
-                                    //     '因为目标文件夹，有不同的复习计划。移动后，笔记的复习进度将会被重置！';
                                     var buttonTextForOK = '确定移动';
                                     var buttonColorForOK = Colors.red;
 
@@ -693,6 +692,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       {@required int noteId}) {
     // Get the specific model from the note list by a note id
     return _noteList.firstWhere((n) => n.id == noteId);
+  }
+
+  void removeItemFromNoteListByIndex({@required int indexAtNoteList}) {
+    _noteList.removeAt(indexAtNoteList);
   }
 
   // Private method

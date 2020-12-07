@@ -44,32 +44,43 @@ class AlertDialogWidgetState extends State<AlertDialogWidget> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Center(child: Text(widget.captionText)),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(theRemark),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text(widget.buttonTextForCancel),
-              onPressed: () {
-                Navigator.of(context).pop();
-                shouldContinueAction = false;
-              },
-            ),
-            FlatButton(
-              child: Text(
-                widget.buttonTextForOK,
-                style: TextStyle(color: widget.buttonColorForOK),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    Text(theRemark),
+                  ],
+                ),
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                shouldContinueAction = true;
-              },
-            ),
-          ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  FlatButton(
+                    child: Text(
+                      widget.buttonTextForCancel,
+                      style: TextStyle(color: GlobalState.themeBlueColor),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      shouldContinueAction = false;
+                    },
+                  ),
+                  FlatButton(
+                    child: Text(
+                      widget.buttonTextForOK,
+                      style: TextStyle(color: widget.buttonColorForOK),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      shouldContinueAction = true;
+                    },
+                  ),
+                ],
+              )
+            ],
+          ),
         );
       },
     );
