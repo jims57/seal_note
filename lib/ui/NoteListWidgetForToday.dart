@@ -10,7 +10,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:seal_note/model/NoteWithProgressTotal.dart';
 import 'package:seal_note/ui/common/NoDataWidget.dart';
 import 'package:seal_note/util/html/HtmlHandler.dart';
-import 'package:seal_note/util/string/StringHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 import 'common/AlertDialogWidget.dart';
 import 'common/SelectFolderWidget.dart';
@@ -56,6 +55,12 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
     initLoadingConfigs();
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
   }
 
   void _loadMore() {
@@ -196,7 +201,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                           // note review time format // note list date time format
                                           // get note review time // get review time
                                           // show note review time // review time
-                                          // show review time
+                                          // show review time // next review time format
                                           '${TimeHandler.getDateTimeFormatForAllKindOfNote(updated: theNote.updated, nextReviewTime: theNote.nextReviewTime, isReviewFinished: theNote.isReviewFinished)}',
                                           style: TextStyle(
                                               color: (_isReviewNote(theNote
@@ -225,7 +230,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                             ),
                           ),
                           actions: !_shouldShowDelaySwipeItem(
-                                  nextTimeTime: theNote.nextReviewTime)
+                                  nextReviewTime: theNote.nextReviewTime)
                               ? []
                               : <Widget>[
                                   // note list item swipe item // note list swipe item
@@ -520,61 +525,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     // click note list item // click on note list item
                     // click note item
 
-                    GlobalState.isInNoteDetailPage = true;
-                    if (GlobalState.screenType == 1) {
-                      GlobalState.isHandlingNoteDetailPage = true;
-                      GlobalState.masterDetailPageState.currentState
-                          .updatePageShowAndHide(shouldTriggerSetState: true);
-                    } else {
-                      // Screen Type = 2 or 3
-                      // GlobalState.isInNoteDetailPage = true;
-                    }
-
-                    // Save the current note model as global variable
-                    GlobalState.selectedNoteModel = theNote;
-
-                    // Get note related variables
-                    var folderId = theNote.folderId;
-                    var noteId = theNote.id;
-                    // Force to get note content from sqlite rather than from UI directly to beef up the robustness
-                    var noteContent = await GlobalState.database
-                        .getNoteContentById(noteId: noteId);
-
-                    // Record the encoded content saved in db for future comparison
-                    GlobalState.noteContentEncodedInDb =
-                        GlobalState.selectedNoteModel.content;
-
-                    // Click note list item
-                    GlobalState.isClickingNoteListItem = true;
-                    GlobalState.noteModelForConsumer.noteId = noteId;
-                    GlobalState.isQuillReadOnly = true;
-                    GlobalState.isEditingOrCreatingNote = false;
-
-                    // Force to clear the water mark in the quill editor, if coming from the note list(viewing an old note)
-                    await GlobalState.flutterWebviewPlugin.evalJavascript(
-                        "javascript:removeQuillEditorWatermark();");
-
-                    // Update the quill's content
-                    var responseJsonString =
-                        '{"isCreatingNote": false, "folderId":$folderId, "noteId":$noteId, "encodedHtml":"$noteContent"}';
-
-                    while (true) {
-                      // while loop
-
-                      await GlobalState.flutterWebviewPlugin.evalJavascript(
-                          "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString', true);");
-
-                      var noteContentEncodedFromWebView =
-                          await GlobalState.flutterWebviewPlugin.evalJavascript(
-                              "javascript:getNoteContentEncoded();");
-
-                      // It won't exit the while-loop except the note content from the WebView equals to the one in global variable
-                      if (_shouldBreakWhileLoop(
-                          noteContentEncodedFromWebView:
-                              noteContentEncodedFromWebView)) {
-                        break;
-                      }
-                    }
+                    triggerToClickOnNoteListItem(theNote: theNote);
                   },
                 );
               },
@@ -698,6 +649,62 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     _noteList.removeAt(indexAtNoteList);
   }
 
+  void triggerToClickOnNoteListItem(
+      {@required NoteWithProgressTotal theNote}) async {
+    GlobalState.isInNoteDetailPage = true;
+    if (GlobalState.screenType == 1) {
+      GlobalState.isHandlingNoteDetailPage = true;
+      GlobalState.masterDetailPageState.currentState
+          .updatePageShowAndHide(shouldTriggerSetState: true);
+    } else {
+      // Screen Type = 2 or 3
+      // GlobalState.isInNoteDetailPage = true;
+    }
+
+    // Save the current note model as global variable
+    GlobalState.selectedNoteModel = theNote;
+
+    // Get note related variables
+    var folderId = theNote.folderId;
+    var noteId = theNote.id;
+    // Force to get note content from sqlite rather than from UI directly to beef up the robustness
+    var noteContent =
+        await GlobalState.database.getNoteContentById(noteId: noteId);
+
+    // Record the encoded content saved in db for future comparison
+    GlobalState.noteContentEncodedInDb = GlobalState.selectedNoteModel.content;
+
+    // Click note list item
+    GlobalState.isClickingNoteListItem = true;
+    GlobalState.noteModelForConsumer.noteId = noteId;
+    GlobalState.isQuillReadOnly = true;
+    GlobalState.isEditingOrCreatingNote = false;
+
+    // Force to clear the water mark in the quill editor, if coming from the note list(viewing an old note)
+    await GlobalState.flutterWebviewPlugin
+        .evalJavascript("javascript:removeQuillEditorWatermark();");
+
+    // Update the quill's content
+    var responseJsonString =
+        '{"isCreatingNote": false, "folderId":$folderId, "noteId":$noteId, "encodedHtml":"$noteContent"}';
+
+    while (true) {
+      // while loop
+
+      await GlobalState.flutterWebviewPlugin.evalJavascript(
+          "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString', true);");
+
+      var noteContentEncodedFromWebView = await GlobalState.flutterWebviewPlugin
+          .evalJavascript("javascript:getNoteContentEncoded();");
+
+      // It won't exit the while-loop except the note content from the WebView equals to the one in global variable
+      if (_shouldBreakWhileLoop(
+          noteContentEncodedFromWebView: noteContentEncodedFromWebView)) {
+        break;
+      }
+    }
+  }
+
   // Private method
   Future<Null> _getRefresh() async {
     // get refresh data // refresh method
@@ -774,11 +781,20 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     return progressLabel;
   }
 
-  bool _shouldShowDelaySwipeItem({@required nextTimeTime}) {
+  bool _shouldShowDelaySwipeItem({@required DateTime nextReviewTime}) {
     // Whether it should show the delay swipe item on the note list item
     var shouldShow = true;
 
-    if (nextTimeTime == null) shouldShow = false;
+    if (nextReviewTime == null) {
+      shouldShow = false;
+    } else {
+      // When the nextReviewTime isn't null
+      var smallHoursOfTomorrow = TimeHandler.getSmallHoursOfTomorrow();
+
+      if (nextReviewTime.isAfter(smallHoursOfTomorrow)) {
+        shouldShow = false;
+      }
+    }
 
     // If it is in Deleted folder, don't show Delay item as well
     if (_isInDeletedFolder()) {

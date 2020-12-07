@@ -27,6 +27,11 @@ class TimeHandler {
     return smallHoursOfToday;
   }
 
+  static DateTime getSmallHoursOfTomorrow() {
+    var smallHoursOfToday = getSmallHoursOfToday();
+    return smallHoursOfToday.add(Duration(days: 1));
+  }
+
   static DateTime getYesterdayDateTime() {
     return DateTime.now().subtract(Duration(days: 1));
   }
@@ -147,7 +152,8 @@ class TimeHandler {
         updated.month == yesterday.month &&
         updated.day == yesterday.day) {
 // For yesterday
-      result = '昨天${updated.hour}:${_getLeftPadMinute(minutes: updated.minute)}';
+      result =
+          '昨天${updated.hour}:${_getLeftPadMinute(minutes: updated.minute)}';
     } else if (updated.compareTo(smallHoursOfSevenDaysAgo) >= 0) {
 // For these 6 days between seven days and the day before yesterday
       result = _getWeekdayName(updated.weekday);
@@ -223,7 +229,7 @@ class TimeHandler {
     return weekdayName;
   }
 
-  static String _getLeftPadMinute({@required int minutes}){
-    return minutes.toString().padLeft(2,'0');
+  static String _getLeftPadMinute({@required int minutes}) {
+    return minutes.toString().padLeft(2, '0');
   }
 }
