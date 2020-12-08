@@ -436,6 +436,14 @@ class Database extends _$Database {
             updated: Value(TimeHandler.getNowForLocal())));
   }
 
+  Future<int> updateNoteNextReviewTime(
+      {@required int noteId, @required DateTime nextReviewTime}) async {
+    return (update(notes)..where((e) => e.id.equals(noteId))).write(
+        NotesCompanion(
+            nextReviewTime: Value(nextReviewTime),
+            updated: Value(TimeHandler.getNowForLocal())));
+  }
+
   Future<bool> hasNote() async {
     // Whether the db has notes data
 

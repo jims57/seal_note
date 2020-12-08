@@ -9,6 +9,7 @@ import 'package:seal_note/data/database/database.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:seal_note/model/NoteWithProgressTotal.dart';
 import 'package:seal_note/ui/common/NoDataWidget.dart';
+import 'package:seal_note/util/dialog/SnackBarHandler.dart';
 import 'package:seal_note/util/html/HtmlHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 import 'common/AlertDialogWidget.dart';
@@ -44,10 +45,14 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   double _slideFontSize = 16.0;
 
   // Data manipulation
-  NoteWithProgressTotal _noteEntryDeleted;
+  NoteWithProgressTotal _noteEntryBeingHandled;
 
   // Global key
   SnackBar snackBar;
+
+  // Delay
+  DateTime
+      oldNextReviewTime; // Used to record the next review time for the note which has been delayed, so that we can undo the operation
 
   @override
   void initState() {
@@ -259,16 +264,90 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                         ],
                                       ),
                                     ),
+                                    onTap: () async {
+                                      // click on delay item // click delay item
+                                      // delay note to review // delay note review time
+                                      // swipe to delay note // swipe delay note
+
+                                      _noteEntryBeingHandled =
+                                          _noteList[theIndexAtNoteList];
+
+                                      oldNextReviewTime =
+                                          _noteEntryBeingHandled.nextReviewTime;
+
+                                      // Get tomorrow date time
+                                      var newNextReviewTime =
+                                          TimeHandler.getSameTimeForTomorrow(
+                                              nextReviewTime: oldNextReviewTime,
+                                              forceToUseTomorrowBasedOnNow:
+                                                  true);
+
+                                      // Set the next review time to tomorrow on the same time
+                                      var effectedRowCount = await GlobalState
+                                          .database
+                                          .updateNoteNextReviewTime(
+                                              noteId: theNoteId,
+                                              nextReviewTime:
+                                                  newNextReviewTime);
+
+                                      if (effectedRowCount > 0) {
+                                        // When updated successfully
+
+                                        setState(() {
+                                          if (isInTodayFolder()) {
+                                            _noteList
+                                                .removeAt(theIndexAtNoteList);
+                                          } else {
+                                            _noteList[theIndexAtNoteList]
+                                                    .nextReviewTime =
+                                                newNextReviewTime;
+                                          }
+                                        });
+
+                                        // Show the snack bar to tell the user it is successful
+                                        SnackBarHandler
+                                            .hideSnackBar(); // Hide the snack bar anyway to avoid the duplicate ones
+
+                                        SnackBarHandler.createSnackBar(
+                                            parentContext: context,
+                                            tipAfterDone: '$theNoteTitle到明天再复习',
+                                            actionName: '推迟',
+                                            onPressForUndo: () async {
+                                              // Undo the operation from the db
+                                              var effectedRowCount =
+                                                  await GlobalState.database
+                                                      .updateNoteNextReviewTime(
+                                                          noteId: theNoteId,
+                                                          nextReviewTime:
+                                                              oldNextReviewTime);
+
+                                              if (effectedRowCount > 0) {
+                                                setState(() {
+                                                  if (isInTodayFolder()) {
+                                                    _noteList.insert(
+                                                        theIndexAtNoteList,
+                                                        _noteEntryBeingHandled);
+                                                  } else {
+                                                    theNote.nextReviewTime =
+                                                        oldNextReviewTime;
+                                                  }
+                                                });
+                                              }
+                                            });
+
+                                        SnackBarHandler.showSnackBar();
+                                      }
+                                    },
                                   ),
                                 ],
                           secondaryActions: <Widget>[
                             // note list swipe item right part // note list right swipe items
 
-                            if (!_isInDefaultFolder() || _isInDeletedFolder())
+                            if (!isInDefaultFolder() || isInDeletedFolder())
                               SlideAction(
                                 child: Container(
                                   constraints: BoxConstraints.expand(),
-                                  color: !_isInDeletedFolder()
+                                  color: !isInDeletedFolder()
                                       ? Colors.orangeAccent
                                       : GlobalState
                                           .themeLightBlueColorAtiOSTodo,
@@ -276,14 +355,14 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Icon(
-                                        !_isInDeletedFolder()
+                                        !isInDeletedFolder()
                                             ? Icons.playlist_play
                                             : Icons.undo,
                                         size: _slideIconSize,
                                         color: Colors.white,
                                       ),
                                       Text(
-                                        !_isInDeletedFolder() ? '移动' : '还原',
+                                        !isInDeletedFolder() ? '移动' : '还原',
                                         style: TextStyle(
                                           fontSize: _slideFontSize,
                                           color: Colors.white,
@@ -296,7 +375,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                   // swipe to restore note // restore note
 
                                   // Check which folder is
-                                  if (!_isInDeletedFolder()) {
+                                  if (!isInDeletedFolder()) {
                                     // Not in Deleted folder
                                     // move note event // note note
                                     // swipe to move note // swipe note list item to move
@@ -439,9 +518,11 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                 // delete note event // swipe to delete note event
                                 // swipe to delete note button // swipe to delete button
 
-                                _noteEntryDeleted = _noteList[index];
-                                var noteTitleDeleted = _noteEntryDeleted.title;
-                                var noteIdDeleted = _noteEntryDeleted.id;
+                                _noteEntryBeingHandled =
+                                    _noteList[theIndexAtNoteList];
+                                var noteTitleDeleted =
+                                    _noteEntryBeingHandled.title;
+                                var noteIdDeleted = _noteEntryBeingHandled.id;
 
                                 // Check if it is in Deleted folder
                                 if (GlobalState.isDefaultFolderSelected &&
@@ -476,22 +557,13 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                         refreshNoteListPageIfNoDataAtNoteListVariable(
                                             noteList: _noteList);
 
-                                        if (snackBar != null) {
-                                          Scaffold.of(context)
-                                              .hideCurrentSnackBar();
-                                        }
+                                        SnackBarHandler.hideSnackBar();
 
                                         // show delete message // show note delete message
-                                        snackBar = SnackBar(
-                                          content: Text(
-                                              '已删除：${HtmlHandler.decodeAndRemoveAllHtmlTags(noteTitleDeleted)}'),
-                                          backgroundColor:
-                                              GlobalState.themeBlueColor,
-                                          behavior: SnackBarBehavior.fixed,
-                                          action: SnackBarAction(
-                                            label: '撤消',
-                                            textColor: Colors.white,
-                                            onPressed: () {
+                                        SnackBarHandler.createSnackBar(
+                                            parentContext: context,
+                                            tipAfterDone: noteTitleDeleted,
+                                            onPressForUndo: () {
                                               GlobalState.database
                                                   .setNoteDeletedStatus(
                                                       noteId: noteIdDeleted,
@@ -500,16 +572,13 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                                 if (effectedRowsCount > 0) {
                                                   setState(() {
                                                     _noteList.insert(index,
-                                                        _noteEntryDeleted);
+                                                        _noteEntryBeingHandled);
                                                   });
                                                 }
                                               });
-                                            },
-                                          ),
-                                        );
+                                            });
 
-                                        Scaffold.of(context)
-                                            .showSnackBar(snackBar);
+                                        SnackBarHandler.showSnackBar();
                                       });
                                     }
                                   });
@@ -616,6 +685,38 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     setState(() {
       _isLoading = false;
     });
+  }
+
+  bool isInDeletedFolder() {
+    var isInDeletedFolder = false;
+
+    if (GlobalState.isDefaultFolderSelected &&
+        GlobalState.appState.noteListPageTitle ==
+            GlobalState.defaultFolderNameForDeletion) {
+      isInDeletedFolder = true;
+    }
+
+    return isInDeletedFolder;
+  }
+
+  bool isInDefaultFolder() {
+    var isDefaultFolder = false;
+
+    if (GlobalState.isDefaultFolderSelected) isDefaultFolder = true;
+
+    return isDefaultFolder;
+  }
+
+  bool isInTodayFolder() {
+    var isInTodayFolder = false;
+
+    if (GlobalState.isDefaultFolderSelected &&
+        GlobalState.appState.noteListPageTitle ==
+            GlobalState.defaultFolderNameForToday) {
+      isInTodayFolder = true;
+    }
+
+    return isInTodayFolder;
   }
 
   void resetLoadingConfigsAfterUpdatingSqlite() {
@@ -797,31 +898,11 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     }
 
     // If it is in Deleted folder, don't show Delay item as well
-    if (_isInDeletedFolder()) {
+    if (isInDeletedFolder()) {
       shouldShow = false;
     }
 
     return shouldShow;
-  }
-
-  bool _isInDeletedFolder() {
-    var isInDeletedFolder = false;
-
-    if (GlobalState.isDefaultFolderSelected &&
-        GlobalState.appState.noteListPageTitle ==
-            GlobalState.defaultFolderNameForDeletion) {
-      isInDeletedFolder = true;
-    }
-
-    return isInDeletedFolder;
-  }
-
-  bool _isInDefaultFolder() {
-    var isDefaultFolder = false;
-
-    if (GlobalState.isDefaultFolderSelected) isDefaultFolder = true;
-
-    return isDefaultFolder;
   }
 
   bool _shouldBreakWhileLoop({@required String noteContentEncodedFromWebView}) {

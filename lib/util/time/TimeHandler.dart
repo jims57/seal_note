@@ -33,8 +33,56 @@ class TimeHandler {
   }
 
   static DateTime getYesterdayDateTime() {
-    return DateTime.now().subtract(Duration(days: 1));
+    return getNowForLocal().subtract(Duration(days: 1));
   }
+
+  static DateTime getSameTimeForTomorrow(
+      {@required DateTime nextReviewTime,
+      bool forceToUseTomorrowBasedOnNow = true}) {
+    // This method will force to get the same time for tomorrow, even the date time is a few days ago
+    // This means: keeping the same time but change the year, month and day to tomorrow
+    // If forceToUseTomorrowBasedOnNow = true, we will force to use year, month and day of now()'s tomorrow, rather than those of the nextReviewTime
+
+    DateTime tomorrow;
+    int year;
+    int month;
+    int day;
+
+    if (forceToUseTomorrowBasedOnNow) {
+      tomorrow = TimeHandler.getSmallHoursOfTomorrow();
+    } else {
+      tomorrow = nextReviewTime.add(Duration(days: 1));
+    }
+
+    year = tomorrow.year;
+    month = tomorrow.month;
+    day = tomorrow.day;
+
+    DateTime sameTimeForTomorrow = DateTime(
+        year,
+        month,
+        day,
+        nextReviewTime.hour,
+        nextReviewTime.minute,
+        nextReviewTime.second,
+        nextReviewTime.millisecond,
+        nextReviewTime.microsecond);
+
+    return sameTimeForTomorrow;
+  }
+
+//   // If *basedOnDateTime* is null, we use Now().local() to get the tomorrow datetime
+//
+//   DateTime dateTimeBase;
+//
+//   if (basedOnDateTime == null) {
+//   dateTimeBase = TimeHandler.getNowForLocal();
+//   } else {
+//   dateTimeBase = basedOnDateTime;
+//   }
+//
+//   return dateTimeBase.add(Duration(days: 1));
+// }static DateTime getTomorrowDateTime({DateTime basedOnDateTime}) {
 
   static bool isYesterdayDateTime(DateTime dateTime) {
     var isYesterdayDateTime = false;
@@ -55,7 +103,7 @@ class TimeHandler {
 
   static DateTime getNextReviewTimeForNoteFinishingReview() {
     // This date time is going to be stored to the nextReviewTime field for notes which finish review
-    // We make all these review finishing notes have to same nextReviewTime, so that updated field can be ordered by desc
+    // We make all these review finishing notes have the same nextReviewTime, so that updated field can be ordered by desc
     // We make it to Jan. 1st, 3000
 
     var dateTimeForReviewFinishing = DateTime(3000, 1, 1);
@@ -69,7 +117,8 @@ class TimeHandler {
     var result = '';
 
     if (nextReviewTime != null) {
-// When the next review time isn't null, showing the review time format
+      // When the next review time isn't null, showing the review time format
+
       result = _getReviewTimeFormatForReviewNote(nextReviewTime);
     } else {
       result = _getDateTimeForNormalNote(updated);
