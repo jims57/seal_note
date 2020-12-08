@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/util/time/TimeHandler.dart';
 import 'folderPageWidgets/UserFolderListListenerWidget.dart';
 
 class FolderListItemWidget extends StatefulWidget {
@@ -79,7 +80,7 @@ class FolderListItemWidgetState extends State<FolderListItemWidget> {
         isRoundTopCorner: widget.isRoundTopCorner,
         isRoundBottomCorner: widget.isRoundBottomCorner,
       ),
-      onTap: () {
+      onTap: () async {
         // click on folder item // click folder item
         // click folder list item event // click folder item event
         // click on folder list item
@@ -87,9 +88,16 @@ class FolderListItemWidgetState extends State<FolderListItemWidget> {
         // Update the note list
         GlobalState.isDefaultFolderSelected = widget.isDefaultFolder;
         GlobalState.selectedFolderIdCurrently = widget.folderId;
-        GlobalState.selectedFolderReviewPlanId = widget.reviewPlanId;
+        GlobalState.selectedFolderNameCurrently = widget.folderName;
         GlobalState.appState.noteListPageTitle = widget.folderName;
+        GlobalState.selectedFolderReviewPlanId = widget.reviewPlanId;
         GlobalState.isReviewFolderSelected = widget.isReviewFolder;
+
+        // Check if it is Deleted folder being clicked
+        if (_isDeletedFolderBeingClicked()) {
+          await _clearDeletedNotesMoreThan30DaysAgo();
+        }
+
         GlobalState.noteListWidgetForTodayState.currentState.triggerSetState();
 
         // Switch the page
@@ -99,5 +107,29 @@ class FolderListItemWidgetState extends State<FolderListItemWidget> {
             .updatePageShowAndHide(shouldTriggerSetState: true);
       },
     );
+  }
+
+  // Private methods
+  bool _isDeletedFolderBeingClicked() {
+    var isDeletedFolder = false;
+
+    if (GlobalState.isDefaultFolderSelected &&
+        GlobalState.selectedFolderNameCurrently ==
+            GlobalState.defaultFolderNameForDeletion) {
+      isDeletedFolder = true;
+    }
+
+    return isDeletedFolder;
+  }
+
+  Future<int> _clearDeletedNotesMoreThan30DaysAgo() async {
+    var minAvailableDateTime = TimeHandler.getNowForLocal()
+        .subtract(Duration(days: 30))
+        .toIso8601String();
+
+    var effectedRowCount = await GlobalState.database
+        .clearDeletedNotesMoreThan30DaysAgo(minAvailableDateTime);
+
+    return effectedRowCount;
   }
 }

@@ -209,11 +209,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    // var n = TimeHandler.getNowForLocal();
-    // var t = TimeHandler.getTomorrowDateTime(basedOnDateTime: n);
-    //
-    // var d = GlobalState.database.updateNoteNextReviewTime(noteId: 6, nextReviewTime: TimeHandler.getNowForLocal());
-    
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: MasterDetailPage(

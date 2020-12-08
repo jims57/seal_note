@@ -2293,6 +2293,15 @@ abstract class _$Database extends GeneratedDatabase {
     });
   }
 
+  Future<int> clearDeletedNotesMoreThan30DaysAgo(String minAvailableDateTime) {
+    return customUpdate(
+      'DELETE FROM notes WHERE strftime(\'%Y-%m-%d %H:%M:%S\', updated) <= strftime(\'%Y-%m-%d %H:%M:%S\', :minAvailableDateTime);',
+      variables: [Variable.withString(minAvailableDateTime)],
+      updates: {notes},
+      updateKind: UpdateKind.delete,
+    );
+  }
+
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
