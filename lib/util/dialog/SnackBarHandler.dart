@@ -14,8 +14,9 @@ class SnackBarHandler {
     context = parentContext;
 
     snackBar = SnackBar(
-      content: Text(
-          '已$actionName：${HtmlHandler.decodeAndRemoveAllHtmlTags(tipAfterDone)}'),
+      content: Text(_truncateTip(
+          tip:
+              '已$actionName：${HtmlHandler.decodeAndRemoveAllHtmlTags(tipAfterDone)}')),
       backgroundColor: GlobalState.themeBlueColor,
       behavior: SnackBarBehavior.fixed,
       action: SnackBarAction(
@@ -36,5 +37,16 @@ class SnackBarHandler {
     if (snackBar != null) {
       Scaffold.of(context).hideCurrentSnackBar();
     }
+  }
+
+  // Private methods
+  static String _truncateTip({@required String tip}) {
+    var maxLength = 100;
+
+    if (tip.length >= maxLength) {
+      tip = tip.substring(0, maxLength);
+    }
+
+    return tip;
   }
 }
