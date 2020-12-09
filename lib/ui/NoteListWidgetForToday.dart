@@ -100,23 +100,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
               itemCount: 1,
               itemBuilder: (context, index) {
                 // note list page loading widget // note list loading widget
-                // if (_isLoading) {
 
                 return NoDataWidget();
-
-                // return Container(height: 400,  child: Column(children: [NoDataWidget(),Text('b')],),);
-
-                // if (GlobalState.isAppFirstTimeToLaunch) {
-                //   return Center(
-                //     child: SizedBox(
-                //       child: CircularProgressIndicator(),
-                //       height: 24,
-                //       width: 24,
-                //     ),
-                //   );
-                // } else {
-                //   return NoDataWidget();
-                // }
               })
           : ListView.builder(
               itemCount: _hasMore ? _noteList.length + 1 : _noteList.length,
@@ -391,11 +376,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                     // We should hide the WebView first, since it isn't in the UI tree which will block the dialog widget
                                     GlobalState.flutterWebviewPlugin.hide();
 
-                                    // Dialog info
-                                    var captionText = '移动笔记？';
-                                    var buttonTextForOK = '确定移动';
-                                    var buttonColorForOK = Colors.red;
-
                                     await showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
@@ -413,16 +393,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                                 children: [
                                                   Text('选择文件夹'),
                                                   Divider(),
-                                                  AlertDialogWidget(
-                                                    // This alert dialog widget is used to append its widget to the UI tree, so that GlobalKey works
-                                                    key: GlobalState
-                                                        .alertDialogWidgetState,
-                                                    captionText: captionText,
-                                                    buttonTextForOK:
-                                                        buttonTextForOK,
-                                                    buttonColorForOK:
-                                                        buttonColorForOK,
-                                                  )
                                                 ],
                                               ),
                                             ),
@@ -837,7 +807,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     }
 
     // Insert the refreshed data in batch
-    // GlobalState.database.insertNotesInBatch(_notesCompanionList).then((value) {
     GlobalState.database
         .insertNotesInBatch(_noteEntryListForRefresh)
         .then((value) {

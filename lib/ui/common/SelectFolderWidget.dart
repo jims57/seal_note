@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/ui/common/TextFieldWithClearButtonWidget.dart';
+import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 
 import 'AlertDialogWidget.dart';
 
@@ -104,14 +106,21 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
           if (confirmTypeId > 0) {
             // Greater than zero means it needs to show the alert dialog for the user to confirm
 
-            var remark = GlobalState.remarkForMovingNoteToFolderWithDifferentReviewPlan;
-            if(confirmTypeId == 1) {
+            // confirm dialog // confirm to move note
+            // move note confirm dialog
+
+            var remark =
+                GlobalState.remarkForMovingNoteToFolderWithDifferentReviewPlan;
+            if (confirmTypeId == 1) {
               remark = GlobalState.remarkForMovingNoteToFolderWithoutReviewPlan;
             }
 
-            var shouldContinueAction = await GlobalState
-                .alertDialogWidgetState.currentState
-                .showAlertDialog(remark: remark);
+            var shouldContinueAction = await AlertDialogHandler.showAlertDialog(
+                parentContext: context,
+                captionText: '移动笔记？',
+                remark: remark,
+                buttonTextForOK: '确定移动',
+                buttonColorForOK: Colors.red);
 
             if (shouldContinueAction) {
               // When the user clicks on OK button
