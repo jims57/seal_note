@@ -310,8 +310,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                                         SnackBarHandler.createSnackBar(
                                             parentContext: context,
-                                            tipAfterDone: '$theNoteTitle到明天再复习',
-                                            actionName: '推迟',
+                                            tipAfterDone: '$theNoteTitle',
+                                            actionName: '推迟到明天再复习',
                                             onPressForUndo: () async {
                                               // Undo the operation from the db
                                               var effectedRowCount =
