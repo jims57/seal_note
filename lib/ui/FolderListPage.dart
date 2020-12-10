@@ -77,6 +77,9 @@ class FolderListPageState extends State<FolderListPage>
                   captionText: '新建文件夹',
                   remark: '请为此文件夹输入名称',
                   alwaysEnableOKButton: false,
+                  showTopLeftButton: false,
+                  showTopRightButton: false,
+                  showDivider: false,
                   child: TextFieldWithClearButtonWidget(
                     onTextChanged: (input) {
                       setState(() {
