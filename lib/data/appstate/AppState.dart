@@ -66,4 +66,15 @@ class AppState extends ChangeNotifier {
     _noteListPageTitle = value;
     notifyListeners();
   }
+
+  bool _enableOKButton = false;
+
+  // ignore: unnecessary_getters_setters
+  bool get enableOKButton => _enableOKButton;
+
+  // ignore: unnecessary_getters_setters
+  set enableOKButton(bool value) {
+    _enableOKButton = value;
+    notifyListeners();
+  }
 }

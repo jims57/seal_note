@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 
 class AlertDialogHandler {
@@ -9,6 +11,7 @@ class AlertDialogHandler {
     Widget child,
     String buttonTextForCancel = '取消',
     String buttonTextForOK = '确定',
+    bool alwaysEnableOKButton = true,
     Color buttonColorForOK = GlobalState.themeBlueColor,
   }) async {
     var shouldContinueAction = false;
@@ -47,16 +50,27 @@ class AlertDialogHandler {
                       shouldContinueAction = false;
                     },
                   ),
-                  FlatButton(
-                    child: Text(
-                      buttonTextForOK,
-                      style: TextStyle(color: buttonColorForOK),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      shouldContinueAction = true;
-                    },
-                  ),
+                  Consumer<AppState>(builder: (cxt, appState, child) {
+                    var enableOKButton = appState.enableOKButton;
+
+                    if (alwaysEnableOKButton) enableOKButton = true;
+
+                    return FlatButton(
+                      child: Text(
+                        buttonTextForOK,
+                        style: TextStyle(
+                            color: (enableOKButton)
+                                ? buttonColorForOK
+                                : GlobalState.themeGrey350Color),
+                      ),
+                      onPressed: () {
+                        if (enableOKButton) {
+                          Navigator.of(context).pop();
+                          shouldContinueAction = true;
+                        }
+                      },
+                    );
+                  }),
                 ],
               )
             ],

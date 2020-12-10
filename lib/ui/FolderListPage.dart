@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:moor/moor.dart' show Value;
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/data/database/database.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
 import 'package:after_layout/after_layout.dart';
+import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
+import 'package:seal_note/util/time/TimeHandler.dart';
 
 import 'FolderListItemWidget.dart';
 import 'FolderListWidget.dart';
+import 'common/TextFieldWithClearButtonWidget.dart';
 
 class FolderListPage extends StatefulWidget {
   FolderListPage({Key key}) : super(key: key);
@@ -59,7 +64,58 @@ class FolderListPageState extends State<FolderListPage>
                 size: 28.0,
               ),
             ),
-            onTap: () {},
+            onTap: () async {
+              // click on new folder button // click new folder button
+              // new folder button // create folder button
+              // click on create folder button // click create folder button
+              // click to create folder button
+
+              var newFolderName;
+
+              var isOKButtonClicked = await AlertDialogHandler.showAlertDialog(
+                  parentContext: context,
+                  captionText: '新建文件夹',
+                  remark: '请为此文件夹输入名称',
+                  alwaysEnableOKButton: false,
+                  child: TextFieldWithClearButtonWidget(
+                    onTextChanged: (input) {
+                      setState(() {
+                        newFolderName = input.trim();
+
+                        if (newFolderName.length > 0) {
+                          GlobalState.appState.enableOKButton = true;
+                        } else {
+                          GlobalState.appState.enableOKButton = false;
+                        }
+                      });
+                    },
+                  ));
+
+              // Check the user's action
+              if (isOKButtonClicked) {
+                // Insert the new folder into the db
+                var foldersCompanion = FoldersCompanion(
+                    name: Value(newFolderName),
+                    order: Value(3),
+                    isDefaultFolder: Value(false),
+                    created: Value(TimeHandler.getNowForLocal()),
+                    createdBy: Value(GlobalState.currentUserId));
+
+                var createdFolderId =
+                    await GlobalState.database.insertFolder(foldersCompanion);
+
+                // Increase other user folders' order by one step except the newly created folder
+                var effectedRowCount = await GlobalState.database
+                    .increaseUserFoldersOrderByOneExceptNewlyCreatedOne(
+                        createdFolderId);
+
+                if (effectedRowCount > 0) {
+                  // Trigger the folder list page to refresh
+                  GlobalState.folderListWidgetState.currentState
+                      .triggerSetState(forceToFetchFoldersFromDB: true);
+                }
+              }
+            },
           )
         ],
       ),

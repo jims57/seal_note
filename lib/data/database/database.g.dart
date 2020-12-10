@@ -2145,6 +2145,16 @@ abstract class _$Database extends GeneratedDatabase {
   $ReviewPlanConfigsTable _reviewPlanConfigs;
   $ReviewPlanConfigsTable get reviewPlanConfigs =>
       _reviewPlanConfigs ??= $ReviewPlanConfigsTable(this);
+  Future<int> increaseUserFoldersOrderByOneExceptNewlyCreatedOne(
+      int createdFolderId) {
+    return customUpdate(
+      'UPDATE folders SET [order] = [order] + 1 WHERE [order] > 2 AND id <> :createdFolderId;',
+      variables: [Variable.withInt(createdFolderId)],
+      updates: {folders},
+      updateKind: UpdateKind.update,
+    );
+  }
+
   Selectable<GetFoldersWithUnreadTotalResult> getFoldersWithUnreadTotal(
       int createdBy) {
     return customSelect(
