@@ -280,10 +280,26 @@ class Database extends _$Database {
     return into(folders).insert(entry);
   }
 
+  Future<int> updateFolder(FoldersCompanion foldersCompanion) async {
+    return (update(folders)
+      ..where((f) => f.id.equals(foldersCompanion.id.value)))
+        .write(foldersCompanion);
+  }
+
   Future<void> upsertFoldersInBatch(List<FolderEntry> folderEntryList) async {
     return await batch((batch) {
       batch.insertAllOnConflictUpdate(folders, folderEntryList);
     });
+  }
+
+  Future<int> changeFolderName(
+      {@required int folderId, @required String newFolderName}) async {
+    var foldersCompanion = FoldersCompanion(
+        id: Value(folderId), name: Value(newFolderName));
+
+    var effectedRowCount =  await updateFolder(foldersCompanion);
+
+    return effectedRowCount;
   }
 
   Future reorderFolders(List<FoldersCompanion> foldersCompanionList) async {

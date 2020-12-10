@@ -21,7 +21,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
   // int defaultFolderTotal = 3;
 
   double folderListPanelMarginForTopOrBottom = 5.0;
-  List<FolderListItemWidget> childrenWidgetList = List<FolderListItemWidget>();
+  List<FolderListItemWidget> folderListItemWidgetList = List<FolderListItemWidget>();
 
   ScrollController controller;
 
@@ -61,15 +61,15 @@ class FolderListWidgetState extends State<FolderListWidget> {
               GlobalState.folderPageBottomContainerHeight -
               folderListPanelMarginForTopOrBottom * 2,
           child: ReorderableListView(
-            children: childrenWidgetList,
+            children: folderListItemWidgetList,
             onReorder: (oldIndex, newIndex) {
               // reorder folder event // order folder event
               // order folder
 
               setState(() {
                 // These two lines are workarounds for ReorderableListView problems
-                if (newIndex > childrenWidgetList.length)
-                  newIndex = childrenWidgetList.length;
+                if (newIndex > folderListItemWidgetList.length)
+                  newIndex = folderListItemWidgetList.length;
                 if (oldIndex < newIndex) newIndex--;
 
                 var isDefaultFolder = _checkIfDefaultFolder(index: oldIndex);
@@ -77,9 +77,9 @@ class FolderListWidgetState extends State<FolderListWidget> {
                 if (newIndex != oldIndex &&
                     !isDefaultFolder &&
                     GlobalState.shouldReorderFolderListItem) {
-                  var oldWidget = childrenWidgetList.removeAt(oldIndex);
+                  var oldWidget = folderListItemWidgetList.removeAt(oldIndex);
 
-                  childrenWidgetList.insert(newIndex, oldWidget);
+                  folderListItemWidgetList.insert(newIndex, oldWidget);
 
                   // update folder order // change folder order
                   // Update the folders' order
@@ -87,7 +87,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
                   var order = 1;
 
                   // Get latest folders' order
-                  childrenWidgetList.forEach((item) {
+                  folderListItemWidgetList.forEach((item) {
                     foldersCompanionList.add(FoldersCompanion(
                         id: Value(item.folderId), order: Value(order)));
 
@@ -115,7 +115,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
   }
 
   List<FolderListItemWidget> getFolderListItemList() {
-    return childrenWidgetList;
+    return folderListItemWidgetList;
   }
 
   // Private method
@@ -133,7 +133,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
     // get folder data // get all folder data
     // get all folder // get folder list data
 
-    childrenWidgetList.clear();
+    folderListItemWidgetList.clear();
     GlobalState.defaultFolderIndexList.clear();
 
     GlobalState.database.getListForFoldersWithUnreadTotal().then((folders) {
@@ -167,7 +167,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
           showZero = false;
         }
 
-        childrenWidgetList.add(FolderListItemWidget(
+        folderListItemWidgetList.add(FolderListItemWidget(
           key: Key('FolderListItemWidget$index'),
           icon: (isTodayFolder)
               ? Icons.today_outlined

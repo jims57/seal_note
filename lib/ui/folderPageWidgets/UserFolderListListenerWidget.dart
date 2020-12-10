@@ -4,7 +4,9 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/ui/common/TextFieldWithClearButtonWidget.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
+import 'package:seal_note/ui/FolderListItemWidget.dart';
 
 import 'FolderListItemRightPartWidget.dart';
 
@@ -13,6 +15,7 @@ class UserFolderListListenerWidget extends StatefulWidget {
       {Key key,
       this.icon = Icons.folder_open_outlined,
       this.iconColor = GlobalState.themeLightBlueColor07,
+      @required this.folderId,
       @required this.folderName,
       @required this.numberToShow,
       this.isReviewFolder = false,
@@ -30,6 +33,7 @@ class UserFolderListListenerWidget extends StatefulWidget {
 
   final IconData icon;
   final Color iconColor;
+  final int folderId;
   final String folderName;
   final int numberToShow;
   final bool isReviewFolder;
@@ -227,15 +231,60 @@ class _UserFolderListListenerWidgetState
                       onTap: () async {
                         // click on more button // click on swipe more button
 
-                        AlertDialogHandler.showAlertDialog(
+                        // Hide the webView first
+                        GlobalState.flutterWebviewPlugin.hide();
+
+                        var folderId = widget.folderId;
+                        var oldFolderName = widget.folderName;
+                        var newFolderName = oldFolderName;
+
+                        var shouldContinueAction =
+                            await AlertDialogHandler.showAlertDialog(
                           parentContext: context,
                           captionText: '文件夹选项',
-                          remark: '不错的建议',
+                          showDivider: true,
                           showTopLeftButton: true,
+                          topLeftButtonText: '取消',
                           showTopRightButton: true,
+                          topRightButtonText: '保存',
+                          topRightButtonCallback: () async {
+                            var effectedRowCount = await GlobalState.database
+                                .changeFolderName(
+                                    folderId: folderId,
+                                    newFolderName: newFolderName);
+
+                            if (effectedRowCount > 0) {
+                              // When update the folder name successfully
+
+                              GlobalState.folderListWidgetState.currentState
+                                  .triggerSetState(
+                                      forceToFetchFoldersFromDB: true);
+                            }
+                          },
+                          child: TextFieldWithClearButtonWidget(
+                            currentText: oldFolderName,
+                            onTextChanged: (input) {
+                              input = input.trim();
+
+                              if (input.length > 0 && oldFolderName != input) {
+                                // Only the user has changed the name, button is available to click
+
+                                newFolderName =
+                                    input; // Record the current input
+
+                                GlobalState.appState
+                                    .enableAlertDialogTopRightButton = true;
+                              } else {
+                                GlobalState.appState
+                                    .enableAlertDialogTopRightButton = false;
+                              }
+                            },
+                          ),
                           showButtonForCancel: false,
                           showButtonForOK: false,
                         );
+
+                        GlobalState.flutterWebviewPlugin.show();
                       },
                     ),
                   ],

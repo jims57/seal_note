@@ -5,11 +5,13 @@ class TextFieldWithClearButtonWidget extends StatefulWidget {
   TextFieldWithClearButtonWidget(
       {Key key,
       this.watermarkText = '名称',
+      this.currentText = '',
       this.marginForLeftAndRight = 10.0,
       this.onTextChanged})
       : super(key: key);
 
   final String watermarkText;
+  final String currentText;
   final double marginForLeftAndRight;
   final Function(String) onTextChanged;
 
@@ -21,7 +23,15 @@ class TextFieldWithClearButtonWidget extends StatefulWidget {
 class _TextFieldWithClearButtonWidgetState
     extends State<TextFieldWithClearButtonWidget> {
   var _controller = TextEditingController();
+
   var _shouldShowClearButton = false;
+
+  @override
+  void initState() {
+    _controller.value = TextEditingValue(text: widget.currentText);
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

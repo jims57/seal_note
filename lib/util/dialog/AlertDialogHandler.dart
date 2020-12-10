@@ -17,7 +17,7 @@ class AlertDialogHandler {
     Color buttonColorForOK = GlobalState.themeBlueColor,
     String topLeftButtonText = '取消',
     bool showTopLeftButton = false,
-    VoidCallback topLeftButtonCallback,
+    // VoidCallback topLeftButtonCallback,
     String topRightButtonText = '确定',
     bool showTopRightButton = false,
     VoidCallback topRightButtonCallback,
@@ -63,38 +63,54 @@ class AlertDialogHandler {
                                       fontSize: 16),
                                 ),
                               ),
-                              onTap: topLeftButtonCallback,
+                              // onTap: topLeftButtonCallback,
+                              onTap: () async {
+                                Navigator.of(context).pop();
+                                shouldContinueAction = false;
+                              },
                             )
                           : Container(),
                     ),
-                    Expanded(
-                      child: Container(
-                        alignment: Alignment.topCenter,
-                        padding: EdgeInsets.only(
-                            left: topButtonWidth, right: topButtonWidth),
-                        child: Text(captionText),
-                      ),
+                    Container(
+                      alignment: Alignment.topCenter,
+                      padding: EdgeInsets.only(
+                          left: topButtonWidth, right: topButtonWidth),
+                      child: Text(captionText),
                     ),
                     Container(
                       alignment: Alignment.topRight,
                       child: (showTopRightButton)
-                          ? GestureDetector(
-                              // alert dialog right button // alert dialog top right button
-                              // top right button
-                              child: Container(
-                                alignment: Alignment.center,
-                                padding: EdgeInsets.only(right: 0.0),
-                                color: Colors.transparent,
-                                width: topButtonWidth,
-                                child: Text(
-                                  topRightButtonText,
-                                  style: TextStyle(
-                                      color: GlobalState.themeBlueColor,
-                                      fontSize: 16),
+                          ? Consumer<AppState>(builder: (cxt, appState, child) {
+                              var enableTopRightButton =
+                                  appState.enableAlertDialogTopRightButton;
+
+                              return GestureDetector(
+                                // alert dialog right button // alert dialog top right button
+                                // top right button
+
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  padding: EdgeInsets.only(right: 0.0),
+                                  color: Colors.transparent,
+                                  width: topButtonWidth,
+                                  child: Text(
+                                    topRightButtonText,
+                                    style: TextStyle(
+                                        color: (enableTopRightButton)
+                                            ? GlobalState.themeBlueColor
+                                            : GlobalState.themeGrey350Color,
+                                        fontSize: 16),
+                                  ),
                                 ),
-                              ),
-                              onTap: topRightButtonCallback,
-                            )
+                                onTap: () {
+                                  if (enableTopRightButton) {
+                                    shouldContinueAction = true;
+                                    topRightButtonCallback();
+                                    Navigator.of(context).pop();
+                                  }
+                                },
+                              );
+                            })
                           : Container(),
                     )
                   ],
@@ -107,16 +123,21 @@ class AlertDialogHandler {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                  padding: EdgeInsets.only(
-                      left: 15.0,
-                      right: 15.0,
-                      bottom: (showButtonForCancel || showButtonForOK)
-                          ? 0.0
-                          : 10.0),
-                  child: Text(theRemark)),
+              if (theRemark.isNotEmpty)
+                Container(
+                    padding: EdgeInsets.only(
+                        left: 15.0,
+                        right: 15.0,
+                        bottom: (child != null) ? 0.0 : 10.0),
+                    child: Text(theRemark)),
               if (child != null)
-                Container(margin: EdgeInsets.only(top: 5.0), child: child),
+                Container(
+                    margin: EdgeInsets.only(
+                        top: 5.0,
+                        bottom: (showButtonForCancel || showButtonForOK)
+                            ? 0.0
+                            : 20.0),
+                    child: child),
               if (showButtonForCancel || showButtonForOK)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -139,7 +160,8 @@ class AlertDialogHandler {
                         : Container(),
                     (showButtonForOK)
                         ? Consumer<AppState>(builder: (cxt, appState, child) {
-                            var enableOKButton = appState.enableOKButton;
+                            var enableOKButton =
+                                appState.enableAlertDialogOKButton;
 
                             if (alwaysEnableOKButton) enableOKButton = true;
 

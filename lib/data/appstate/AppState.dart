@@ -67,14 +67,25 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _enableOKButton = false;
+  bool _enableAlertDialogOKButton = false;
 
   // ignore: unnecessary_getters_setters
-  bool get enableOKButton => _enableOKButton;
+  bool get enableAlertDialogOKButton => _enableAlertDialogOKButton;
 
   // ignore: unnecessary_getters_setters
-  set enableOKButton(bool value) {
-    _enableOKButton = value;
+  set enableAlertDialogOKButton(bool value) {
+    _enableAlertDialogOKButton = value;
+    notifyListeners();
+  }
+
+  bool _enableAlertDialogTopRightButton = false;
+
+  // ignore: unnecessary_getters_setters
+  bool get enableAlertDialogTopRightButton => _enableAlertDialogTopRightButton;
+
+  // ignore: unnecessary_getters_setters
+  set enableAlertDialogTopRightButton(bool value) {
+    _enableAlertDialogTopRightButton = value;
     notifyListeners();
   }
 }

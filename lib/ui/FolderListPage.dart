@@ -86,9 +86,9 @@ class FolderListPageState extends State<FolderListPage>
                         newFolderName = input.trim();
 
                         if (newFolderName.length > 0) {
-                          GlobalState.appState.enableOKButton = true;
+                          GlobalState.appState.enableAlertDialogOKButton = true;
                         } else {
-                          GlobalState.appState.enableOKButton = false;
+                          GlobalState.appState.enableAlertDialogOKButton = false;
                         }
                       });
                     },

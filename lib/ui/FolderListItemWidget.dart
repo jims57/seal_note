@@ -65,6 +65,7 @@ class FolderListItemWidgetState extends State<FolderListItemWidget> {
       child: UserFolderListListenerWidget(
         icon: widget.icon,
         iconColor: widget.iconColor,
+        folderId: widget.folderId,
         folderName: widget.folderName,
         numberToShow: widget.numberToShow,
         isReviewFolder: widget.isReviewFolder,
