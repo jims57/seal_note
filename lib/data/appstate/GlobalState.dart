@@ -7,7 +7,6 @@ import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/FolderListWidget.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
 import 'package:seal_note/ui/NoteListWidgetForToday.dart';
-import 'package:seal_note/ui/common/AlertDialogWidget.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
 import 'package:seal_note/ui/common/SelectFolderWidget.dart';
 
@@ -148,8 +147,9 @@ class GlobalState with ChangeNotifier {
   static GlobalKey<NoteListWidgetForTodayState> noteListWidgetForTodayState;
   static GlobalKey<SelectFolderWidgetState> selectFolderWidgetState =
       GlobalKey<SelectFolderWidgetState>();
-  static GlobalKey<AlertDialogWidgetState> alertDialogWidgetState =
-      GlobalKey<AlertDialogWidgetState>();
+
+  // static GlobalKey<AlertDialogWidgetState> alertDialogWidgetState =
+  //     GlobalKey<AlertDialogWidgetState>();
 
   // Dialog
   static bool shouldContinueActionForShowDialog = false;

@@ -12,7 +12,6 @@ import 'package:seal_note/ui/common/NoDataWidget.dart';
 import 'package:seal_note/util/dialog/SnackBarHandler.dart';
 import 'package:seal_note/util/html/HtmlHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
-import 'common/AlertDialogWidget.dart';
 import 'common/SelectFolderWidget.dart';
 import 'httper/NoteHttper.dart';
 

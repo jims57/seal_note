@@ -9,18 +9,20 @@ class AlertDialogHandler {
     @required String captionText,
     String remark = '',
     Widget child,
+    bool showButtonForCancel = true,
     String buttonTextForCancel = '取消',
+    bool showButtonForOK = true,
     String buttonTextForOK = '确定',
     bool alwaysEnableOKButton = true,
     Color buttonColorForOK = GlobalState.themeBlueColor,
-    topLeftButtonText = '取消',
-    showTopLeftButton = false,
+    String topLeftButtonText = '取消',
+    bool showTopLeftButton = false,
     VoidCallback topLeftButtonCallback,
-    topRightButtonText = '确定',
-    showTopRightButton = false,
+    String topRightButtonText = '确定',
+    bool showTopRightButton = false,
     VoidCallback topRightButtonCallback,
-    barrierDismissible = false,
-    showDivider = false,
+    bool barrierDismissible = false,
+    bool showDivider = false,
   }) async {
     var shouldContinueAction = false;
     var theRemark = remark;
@@ -106,46 +108,63 @@ class AlertDialogHandler {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                  padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                  padding: EdgeInsets.only(
+                      left: 15.0,
+                      right: 15.0,
+                      bottom: (showButtonForCancel || showButtonForOK)
+                          ? 0.0
+                          : 10.0),
                   child: Text(theRemark)),
               if (child != null)
                 Container(margin: EdgeInsets.only(top: 5.0), child: child),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  FlatButton(
-                    child: Text(
-                      buttonTextForCancel,
-                      style: TextStyle(color: GlobalState.themeBlueColor),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      shouldContinueAction = false;
-                    },
-                  ),
-                  Consumer<AppState>(builder: (cxt, appState, child) {
-                    var enableOKButton = appState.enableOKButton;
+              if (showButtonForCancel || showButtonForOK)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    (showButtonForCancel)
+                        ? FlatButton(
+                            // alert dialog cancel button // cancel button
+                            // dialog cancel button
 
-                    if (alwaysEnableOKButton) enableOKButton = true;
+                            child: Text(
+                              buttonTextForCancel,
+                              style:
+                                  TextStyle(color: GlobalState.themeBlueColor),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              shouldContinueAction = false;
+                            },
+                          )
+                        : Container(),
+                    (showButtonForOK)
+                        ? Consumer<AppState>(builder: (cxt, appState, child) {
+                            var enableOKButton = appState.enableOKButton;
 
-                    return FlatButton(
-                      child: Text(
-                        buttonTextForOK,
-                        style: TextStyle(
-                            color: (enableOKButton)
-                                ? buttonColorForOK
-                                : GlobalState.themeGrey350Color),
-                      ),
-                      onPressed: () {
-                        if (enableOKButton) {
-                          Navigator.of(context).pop();
-                          shouldContinueAction = true;
-                        }
-                      },
-                    );
-                  }),
-                ],
-              )
+                            if (alwaysEnableOKButton) enableOKButton = true;
+
+                            return FlatButton(
+                              // alert dialog ok button // ok button
+                              // dialog ok button
+
+                              child: Text(
+                                buttonTextForOK,
+                                style: TextStyle(
+                                    color: (enableOKButton)
+                                        ? buttonColorForOK
+                                        : GlobalState.themeGrey350Color),
+                              ),
+                              onPressed: () {
+                                if (enableOKButton) {
+                                  Navigator.of(context).pop();
+                                  shouldContinueAction = true;
+                                }
+                              },
+                            );
+                          })
+                        : Container(),
+                  ],
+                )
             ],
           ),
         );

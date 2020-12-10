@@ -4,6 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 
 import 'FolderListItemRightPartWidget.dart';
 
@@ -203,19 +204,39 @@ class _UserFolderListListenerWidgetState
             secondaryActions: (!widget.canSwipe)
                 ? []
                 : <Widget>[
+                    // swipe folder list item // folder page swipe action
                     IconSlideAction(
+                      // swipe to review plan // swipe review plan
+
                       caption: '复习计划',
                       color: GlobalState.themeGreenColorAtiOSTodo,
                       foregroundColor: Colors.white,
                       icon: Icons.calendar_today_outlined,
-                      //          onTap: () => _showSnackBar('More'),
+                      onTap: () async {
+                        var s = 's';
+                      },
                     ),
                     IconSlideAction(
+                      // swipe to get more // swipe to more
+                      // swipe more button // swipe more
+
                       caption: '更多',
                       color: GlobalState.themeGreyColorAtiOSTodo,
                       foregroundColor: Colors.white,
                       icon: Icons.more_horiz,
-                      //          onTap: () => _showSnackBar('More'),
+                      onTap: () async {
+                        // click on more button // click on swipe more button
+
+                        AlertDialogHandler.showAlertDialog(
+                          parentContext: context,
+                          captionText: '文件夹选项',
+                          remark: '不错的建议',
+                          showTopLeftButton: true,
+                          showTopRightButton: true,
+                          showButtonForCancel: false,
+                          showButtonForOK: false,
+                        );
+                      },
                     ),
                   ],
           ),

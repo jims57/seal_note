@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/ui/common/TextFieldWithClearButtonWidget.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
-
-import 'AlertDialogWidget.dart';
 
 class SelectFolderWidget extends StatefulWidget {
   SelectFolderWidget({
