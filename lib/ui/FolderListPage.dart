@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:moor/moor.dart' show Value;
 import 'package:seal_note/data/appstate/GlobalState.dart';
@@ -98,27 +100,34 @@ class FolderListPageState extends State<FolderListPage>
 
               // Check the user's action
               if (isOKButtonClicked) {
-                // Insert the new folder into the db
-                var foldersCompanion = FoldersCompanion(
-                    name: Value(newFolderName),
-                    order: Value(3),
-                    isDefaultFolder: Value(false),
-                    created: Value(TimeHandler.getNowForLocal()),
-                    createdBy: Value(GlobalState.currentUserId));
+                GlobalState.folderListPageState.currentState
+                    .executeCallbackWithoutDuplicateFolderName(
+                        parentContext: context,
+                        newFolderName: newFolderName,
+                        callback: () async {
+                          // Insert the new folder into the db
+                          var foldersCompanion = FoldersCompanion(
+                              name: Value(newFolderName),
+                              order: Value(3),
+                              isDefaultFolder: Value(false),
+                              created: Value(TimeHandler.getNowForLocal()),
+                              createdBy: Value(GlobalState.currentUserId));
 
-                var createdFolderId =
-                    await GlobalState.database.insertFolder(foldersCompanion);
+                          var createdFolderId = await GlobalState.database
+                              .insertFolder(foldersCompanion);
 
-                // Increase other user folders' order by one step except the newly created folder
-                var effectedRowCount = await GlobalState.database
-                    .increaseUserFoldersOrderByOneExceptNewlyCreatedOne(
-                        createdFolderId);
+                          // Increase other user folders' order by one step except the newly created folder
+                          var effectedRowCount = await GlobalState.database
+                              .increaseUserFoldersOrderByOneExceptNewlyCreatedOne(
+                                  createdFolderId);
 
-                if (effectedRowCount > 0) {
-                  // Trigger the folder list page to refresh
-                  GlobalState.folderListWidgetState.currentState
-                      .triggerSetState(forceToFetchFoldersFromDB: true);
-                }
+                          if (effectedRowCount > 0) {
+                            // Trigger the folder list page to refresh
+                            GlobalState.folderListWidgetState.currentState
+                                .triggerSetState(
+                                    forceToFetchFoldersFromDB: true);
+                          }
+                        });
               }
             },
           )
@@ -274,5 +283,33 @@ class FolderListPageState extends State<FolderListPage>
     }
 
     return isFolderNameExisting;
+  }
+
+  void executeCallbackWithoutDuplicateFolderName({
+    @required BuildContext parentContext,
+    @required String newFolderName,
+    @required VoidCallback callback,
+  }) async {
+    // Check if the new folder name exists or not
+    var isNewFolderNameExisting = GlobalState.folderListPageState.currentState
+        .isFolderNameExisting(
+            folderName: newFolderName, ignoreCaseSensitive: true);
+
+    if (isNewFolderNameExisting) {
+      // When the new folder name exists
+
+      // Delay to show another alert dialog, since it is still inside the block of the previous alert dialog
+      Timer(const Duration(milliseconds: 500), () {
+        AlertDialogHandler.showAlertDialog(
+          parentContext: parentContext,
+          captionText: '名称已被使用',
+          remark: '请使用一个不同的名称',
+          showButtonForCancel: false,
+          showButtonForOK: true,
+        );
+      });
+    } else {
+      callback();
+    }
   }
 }
