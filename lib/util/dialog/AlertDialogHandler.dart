@@ -49,6 +49,7 @@ class AlertDialogHandler {
                           ? GestureDetector(
                               // top left button // alert dialog top left button
                               // alert dialog left button // alert dialog button
+
                               child: Container(
                                 margin: EdgeInsets.only(left: 0.0),
                                 alignment: Alignment.center,
@@ -62,7 +63,6 @@ class AlertDialogHandler {
                                       fontSize: 16),
                                 ),
                               ),
-                              // onTap: topLeftButtonCallback,
                               onTap: () async {
                                 Navigator.of(context).pop();
                                 shouldContinueAction = false;
@@ -139,7 +139,12 @@ class AlertDialogHandler {
                     child: child),
               if (showButtonForCancel || showButtonForOK)
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: (_hasOnlyOneBottomButton(
+                          showButtonForOK: showButtonForOK,
+                          showButtonForCancel: showButtonForCancel))
+                      ? MainAxisAlignment.center
+                      : MainAxisAlignment.spaceBetween,
+                  // mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     (showButtonForCancel)
                         ? FlatButton(
@@ -193,5 +198,18 @@ class AlertDialogHandler {
     );
 
     return shouldContinueAction;
+  }
+
+  static bool _hasOnlyOneBottomButton(
+      {@required bool showButtonForOK, @required bool showButtonForCancel}) {
+    // Bottom button means OK button and Cancel button at the bottom of the alert dialog
+
+    var hasOnlyOneBottomButton = true;
+
+    if (showButtonForOK == showButtonForCancel) {
+      hasOnlyOneBottomButton = false;
+    }
+
+    return hasOnlyOneBottomButton;
   }
 }

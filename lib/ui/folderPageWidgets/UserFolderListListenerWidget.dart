@@ -288,7 +288,8 @@ class _UserFolderListListenerWidgetState
                             }
 
                             // Set the top right button, that is Save, back to the disabled status anyway
-                            GlobalState.appState.enableAlertDialogTopRightButton = false;
+                            GlobalState.appState
+                                .enableAlertDialogTopRightButton = false;
                           },
                           child: TextFieldWithClearButtonWidget(
                             currentText: oldFolderName,
