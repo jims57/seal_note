@@ -81,6 +81,7 @@ class FolderListPageState extends State<FolderListPage>
                   showTopRightButton: false,
                   showDivider: false,
                   child: TextFieldWithClearButtonWidget(
+                    showClearButton: false,
                     onTextChanged: (input) {
                       setState(() {
                         newFolderName = input.trim();
@@ -88,7 +89,8 @@ class FolderListPageState extends State<FolderListPage>
                         if (newFolderName.length > 0) {
                           GlobalState.appState.enableAlertDialogOKButton = true;
                         } else {
-                          GlobalState.appState.enableAlertDialogOKButton = false;
+                          GlobalState.appState.enableAlertDialogOKButton =
+                              false;
                         }
                       });
                     },

@@ -263,6 +263,7 @@ class _UserFolderListListenerWidgetState
                           },
                           child: TextFieldWithClearButtonWidget(
                             currentText: oldFolderName,
+                            showClearButton: true,
                             onTextChanged: (input) {
                               input = input.trim();
 
