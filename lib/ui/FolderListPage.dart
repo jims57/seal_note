@@ -207,7 +207,8 @@ class FolderListPageState extends State<FolderListPage>
     return defaultFolderIds;
   }
 
-  FolderListItemWidget getFolderListItemWidgetByFolderId({@required folderId}) {
+  FolderListItemWidget getFolderListItemWidgetByFolderId(
+      {@required int folderId}) {
     // Get folder list item widget from by a folder id
 
     var folderListItemList =
@@ -231,7 +232,7 @@ class FolderListPageState extends State<FolderListPage>
     return userFolderListItemList;
   }
 
-  bool isDefaultFolder({@required folderId}) {
+  bool isDefaultFolder({@required int folderId}) {
     // Check if the folder is a default folder or not
     var isDefault = false;
 
@@ -240,5 +241,38 @@ class FolderListPageState extends State<FolderListPage>
     }
 
     return isDefault;
+  }
+
+  bool isFolderNameExisting(
+      {@required String folderName, bool ignoreCaseSensitive = false}) {
+    var isFolderNameExisting = false;
+
+    var folderListItemWidgetList = getUserFolderListItemList();
+
+    var theFolderListItemWidget =
+        folderListItemWidgetList.firstWhere((folderListItemWidget) {
+      var isEqual = false;
+
+      if (ignoreCaseSensitive) {
+        isEqual = folderListItemWidget.folderName.toLowerCase() ==
+            folderName.toLowerCase();
+      } else {
+        isEqual = folderListItemWidget.folderName == folderName;
+      }
+
+      return isEqual;
+    }, orElse: () {
+      return FolderListItemWidget(
+          folderId: null,
+          folderName: null,
+          numberToShow: null,
+          reviewPlanId: null);
+    });
+
+    if (theFolderListItemWidget.folderName != null) {
+      isFolderNameExisting = true;
+    }
+
+    return isFolderNameExisting;
   }
 }

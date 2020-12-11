@@ -238,8 +238,7 @@ class _UserFolderListListenerWidgetState
                         var oldFolderName = widget.folderName;
                         var newFolderName = oldFolderName;
 
-                        var shouldContinueAction =
-                            await AlertDialogHandler.showAlertDialog(
+                        await AlertDialogHandler.showAlertDialog(
                           parentContext: context,
                           captionText: '文件夹选项',
                           showDivider: true,
@@ -248,17 +247,44 @@ class _UserFolderListListenerWidgetState
                           showTopRightButton: true,
                           topRightButtonText: '保存',
                           topRightButtonCallback: () async {
-                            var effectedRowCount = await GlobalState.database
-                                .changeFolderName(
-                                    folderId: folderId,
-                                    newFolderName: newFolderName);
+                            // change folder name event // click on change folder name
+                            // click to change folder name // click change folder name
 
-                            if (effectedRowCount > 0) {
-                              // When update the folder name successfully
+                            // Check if the new folder name exists or not
+                            var isNewFolderNameExisting = GlobalState
+                                .folderListPageState.currentState
+                                .isFolderNameExisting(
+                                    folderName: newFolderName,
+                                    ignoreCaseSensitive: true);
 
-                              GlobalState.folderListWidgetState.currentState
-                                  .triggerSetState(
-                                      forceToFetchFoldersFromDB: true);
+                            if (isNewFolderNameExisting) {
+                              // When the new folder name exists
+
+                              // Delay to show another alert dialog, since it is still inside the block of the previous alert dialog
+                              Timer(const Duration(milliseconds: 500), () {
+                                AlertDialogHandler.showAlertDialog(
+                                  parentContext: context,
+                                  captionText: '名称已被使用',
+                                  remark: '请使用一个不同的名称',
+                                  showButtonForCancel: false,
+                                  showButtonForOK: true,
+                                );
+                              });
+                            } else {
+                              // When the new folder name doesn't exist, in this case, we allow it to change the folder name
+
+                              var effectedRowCount = await GlobalState.database
+                                  .changeFolderName(
+                                      folderId: folderId,
+                                      newFolderName: newFolderName);
+
+                              if (effectedRowCount > 0) {
+                                // When update the folder name successfully
+
+                                GlobalState.folderListWidgetState.currentState
+                                    .triggerSetState(
+                                        forceToFetchFoldersFromDB: true);
+                              }
                             }
                           },
                           child: TextFieldWithClearButtonWidget(

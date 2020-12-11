@@ -17,7 +17,6 @@ class AlertDialogHandler {
     Color buttonColorForOK = GlobalState.themeBlueColor,
     String topLeftButtonText = '取消',
     bool showTopLeftButton = false,
-    // VoidCallback topLeftButtonCallback,
     String topRightButtonText = '确定',
     bool showTopRightButton = false,
     VoidCallback topRightButtonCallback,
