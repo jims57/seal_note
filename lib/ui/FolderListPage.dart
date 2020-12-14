@@ -74,6 +74,9 @@ class FolderListPageState extends State<FolderListPage>
 
               var newFolderName;
 
+              // Disable OK button every time
+              GlobalState.appState.enableAlertDialogOKButton = false;
+
               var isOKButtonClicked = await AlertDialogHandler.showAlertDialog(
                   parentContext: context,
                   captionText: '新建文件夹',
@@ -306,6 +309,7 @@ class FolderListPageState extends State<FolderListPage>
           remark: '请使用一个不同的名称',
           showButtonForCancel: false,
           showButtonForOK: true,
+          buttonTextForOK: '明白',
         );
       });
     } else {

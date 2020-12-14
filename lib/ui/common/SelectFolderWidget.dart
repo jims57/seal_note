@@ -112,6 +112,9 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
               remark = GlobalState.remarkForMovingNoteToFolderWithoutReviewPlan;
             }
 
+            // Always enable the OK button every time
+            GlobalState.appState.enableAlertDialogOKButton = true;
+
             var shouldContinueAction = await AlertDialogHandler.showAlertDialog(
                 parentContext: context,
                 captionText: '移动笔记？',
