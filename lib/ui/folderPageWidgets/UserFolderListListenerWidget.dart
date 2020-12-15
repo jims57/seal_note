@@ -234,6 +234,11 @@ class _UserFolderListListenerWidgetState
                         // click on more button // click on swipe more button
 
                         // var r = await GlobalState.database.deleteFolder(folderId: 49);
+                        // var r = await GlobalState.database
+                        //     .setFolderDeletedStatus(
+                        //         folderId: 5, isDeleted: true);
+                        //
+                        // var r1 = await GlobalState.database.setNotesDeletedStatusByFolderId(folderId:4, isDeleted: true);
 
                         // Hide the webView first
                         GlobalState.flutterWebviewPlugin.hide();
@@ -307,6 +312,7 @@ class _UserFolderListListenerWidgetState
                               ),
                               RoundCornerButtonWidget(
                                   // delete folder button
+
                                   buttonText: '删除文件夹',
                                   buttonThemeColor: Colors.red,
                                   topMargin: 25.0,
@@ -314,8 +320,10 @@ class _UserFolderListListenerWidgetState
                                     // delete folder event
 
                                     var continueAction = true;
+                                    var hasNotesInsideFolder =
+                                        _hasNotesInsideFolder();
 
-                                    if (_hasNotesInsideFolder()) {
+                                    if (hasNotesInsideFolder) {
                                       continueAction = await AlertDialogHandler()
                                           .showAlertDialog(
                                               parentContext: context,
@@ -328,10 +336,31 @@ class _UserFolderListListenerWidgetState
 
                                     if (continueAction) {
                                       // Decide to delete the folder anyway
-                                      var s = 's';
-                                    } else {
-                                      // Don't delete the folder
-                                      var ss = 'ss';
+
+                                      var effectedRowCount = 0;
+
+                                      if (hasNotesInsideFolder) {
+                                        // When there is any note inside the folder, just mark the folder as deleted status
+
+                                        effectedRowCount = await GlobalState
+                                            .database
+                                            .setFolderAndItsNotesToDeletedStatus(
+                                                folderId: folderId);
+                                      } else {
+                                        // When there is no notes inside the folder, delete the folder directly
+                                        effectedRowCount = await GlobalState
+                                            .database
+                                            .deleteFolder(folderId: folderId);
+                                      }
+
+                                      GlobalState
+                                          .folderListWidgetState.currentState
+                                          .triggerSetState(
+                                              forceToFetchFoldersFromDB: true);
+
+                                      if (Navigator.canPop(context)) {
+                                        Navigator.pop(context);
+                                      }
                                     }
                                   })
                             ],
