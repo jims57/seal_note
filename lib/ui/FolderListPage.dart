@@ -77,29 +77,31 @@ class FolderListPageState extends State<FolderListPage>
               // Disable OK button every time
               GlobalState.appState.enableAlertDialogOKButton = false;
 
-              var isOKButtonClicked = await AlertDialogHandler.showAlertDialog(
-                  parentContext: context,
-                  captionText: '新建文件夹',
-                  remark: '请为此文件夹输入名称',
-                  alwaysEnableOKButton: false,
-                  showTopLeftButton: false,
-                  showTopRightButton: false,
-                  showDivider: false,
-                  child: TextFieldWithClearButtonWidget(
-                    showClearButton: false,
-                    onTextChanged: (input) {
-                      setState(() {
-                        newFolderName = input.trim();
+              var isOKButtonClicked =
+                  await AlertDialogHandler().showAlertDialog(
+                      parentContext: context,
+                      captionText: '新建文件夹',
+                      remark: '请为此文件夹输入名称',
+                      alwaysEnableOKButton: false,
+                      showTopLeftButton: false,
+                      showTopRightButton: false,
+                      showDivider: false,
+                      child: TextFieldWithClearButtonWidget(
+                        showClearButton: false,
+                        onTextChanged: (input) {
+                          setState(() {
+                            newFolderName = input.trim();
 
-                        if (newFolderName.length > 0) {
-                          GlobalState.appState.enableAlertDialogOKButton = true;
-                        } else {
-                          GlobalState.appState.enableAlertDialogOKButton =
-                              false;
-                        }
-                      });
-                    },
-                  ));
+                            if (newFolderName.length > 0) {
+                              GlobalState.appState.enableAlertDialogOKButton =
+                                  true;
+                            } else {
+                              GlobalState.appState.enableAlertDialogOKButton =
+                                  false;
+                            }
+                          });
+                        },
+                      ));
 
               // Check the user's action
               if (isOKButtonClicked) {
@@ -303,7 +305,7 @@ class FolderListPageState extends State<FolderListPage>
 
       // Delay to show another alert dialog, since it is still inside the block of the previous alert dialog
       Timer(const Duration(milliseconds: 500), () {
-        AlertDialogHandler.showAlertDialog(
+        AlertDialogHandler().showAlertDialog(
           parentContext: parentContext,
           captionText: '名称已被使用',
           remark: '请使用一个不同的名称',

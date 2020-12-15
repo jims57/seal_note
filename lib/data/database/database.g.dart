@@ -486,6 +486,7 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
   final bool isDefaultFolder;
   final int reviewPlanId;
   final DateTime created;
+  final bool isDeleted;
   final int createdBy;
   FolderEntry(
       {@required this.id,
@@ -494,6 +495,7 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
       @required this.isDefaultFolder,
       this.reviewPlanId,
       @required this.created,
+      @required this.isDeleted,
       @required this.createdBy});
   factory FolderEntry.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
@@ -511,6 +513,8 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
           .mapFromDatabaseResponse(data['${effectivePrefix}reviewPlanId']),
       created: $FoldersTable.$converter0.mapToDart(stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}created'])),
+      isDeleted:
+          boolType.mapFromDatabaseResponse(data['${effectivePrefix}isDeleted']),
       createdBy:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}createdBy']),
     );
@@ -537,6 +541,9 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
       final converter = $FoldersTable.$converter0;
       map['created'] = Variable<String>(converter.mapToSql(created));
     }
+    if (!nullToAbsent || isDeleted != null) {
+      map['isDeleted'] = Variable<bool>(isDeleted);
+    }
     if (!nullToAbsent || createdBy != null) {
       map['createdBy'] = Variable<int>(createdBy);
     }
@@ -558,6 +565,9 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
       created: created == null && nullToAbsent
           ? const Value.absent()
           : Value(created),
+      isDeleted: isDeleted == null && nullToAbsent
+          ? const Value.absent()
+          : Value(isDeleted),
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
@@ -574,6 +584,7 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
       isDefaultFolder: serializer.fromJson<bool>(json['isDefaultFolder']),
       reviewPlanId: serializer.fromJson<int>(json['reviewPlanId']),
       created: serializer.fromJson<DateTime>(json['created']),
+      isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<int>(json['createdBy']),
     );
   }
@@ -587,6 +598,7 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
       'isDefaultFolder': serializer.toJson<bool>(isDefaultFolder),
       'reviewPlanId': serializer.toJson<int>(reviewPlanId),
       'created': serializer.toJson<DateTime>(created),
+      'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<int>(createdBy),
     };
   }
@@ -598,6 +610,7 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
           bool isDefaultFolder,
           int reviewPlanId,
           DateTime created,
+          bool isDeleted,
           int createdBy}) =>
       FolderEntry(
         id: id ?? this.id,
@@ -606,6 +619,7 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
         isDefaultFolder: isDefaultFolder ?? this.isDefaultFolder,
         reviewPlanId: reviewPlanId ?? this.reviewPlanId,
         created: created ?? this.created,
+        isDeleted: isDeleted ?? this.isDeleted,
         createdBy: createdBy ?? this.createdBy,
       );
   @override
@@ -617,6 +631,7 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
           ..write('isDefaultFolder: $isDefaultFolder, ')
           ..write('reviewPlanId: $reviewPlanId, ')
           ..write('created: $created, ')
+          ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy')
           ..write(')'))
         .toString();
@@ -631,8 +646,10 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
               order.hashCode,
               $mrjc(
                   isDefaultFolder.hashCode,
-                  $mrjc(reviewPlanId.hashCode,
-                      $mrjc(created.hashCode, createdBy.hashCode)))))));
+                  $mrjc(
+                      reviewPlanId.hashCode,
+                      $mrjc(created.hashCode,
+                          $mrjc(isDeleted.hashCode, createdBy.hashCode))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -643,6 +660,7 @@ class FolderEntry extends DataClass implements Insertable<FolderEntry> {
           other.isDefaultFolder == this.isDefaultFolder &&
           other.reviewPlanId == this.reviewPlanId &&
           other.created == this.created &&
+          other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy);
 }
 
@@ -653,6 +671,7 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
   final Value<bool> isDefaultFolder;
   final Value<int> reviewPlanId;
   final Value<DateTime> created;
+  final Value<bool> isDeleted;
   final Value<int> createdBy;
   const FoldersCompanion({
     this.id = const Value.absent(),
@@ -661,6 +680,7 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
     this.isDefaultFolder = const Value.absent(),
     this.reviewPlanId = const Value.absent(),
     this.created = const Value.absent(),
+    this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
   });
   FoldersCompanion.insert({
@@ -670,6 +690,7 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
     this.isDefaultFolder = const Value.absent(),
     this.reviewPlanId = const Value.absent(),
     @required DateTime created,
+    this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
   })  : name = Value(name),
         order = Value(order),
@@ -681,6 +702,7 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
     Expression<bool> isDefaultFolder,
     Expression<int> reviewPlanId,
     Expression<String> created,
+    Expression<bool> isDeleted,
     Expression<int> createdBy,
   }) {
     return RawValuesInsertable({
@@ -690,6 +712,7 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
       if (isDefaultFolder != null) 'isDefaultFolder': isDefaultFolder,
       if (reviewPlanId != null) 'reviewPlanId': reviewPlanId,
       if (created != null) 'created': created,
+      if (isDeleted != null) 'isDeleted': isDeleted,
       if (createdBy != null) 'createdBy': createdBy,
     });
   }
@@ -701,6 +724,7 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
       Value<bool> isDefaultFolder,
       Value<int> reviewPlanId,
       Value<DateTime> created,
+      Value<bool> isDeleted,
       Value<int> createdBy}) {
     return FoldersCompanion(
       id: id ?? this.id,
@@ -709,6 +733,7 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
       isDefaultFolder: isDefaultFolder ?? this.isDefaultFolder,
       reviewPlanId: reviewPlanId ?? this.reviewPlanId,
       created: created ?? this.created,
+      isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
     );
   }
@@ -735,6 +760,9 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
       final converter = $FoldersTable.$converter0;
       map['created'] = Variable<String>(converter.mapToSql(created.value));
     }
+    if (isDeleted.present) {
+      map['isDeleted'] = Variable<bool>(isDeleted.value);
+    }
     if (createdBy.present) {
       map['createdBy'] = Variable<int>(createdBy.value);
     }
@@ -750,6 +778,7 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
           ..write('isDefaultFolder: $isDefaultFolder, ')
           ..write('reviewPlanId: $reviewPlanId, ')
           ..write('created: $created, ')
+          ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy')
           ..write(')'))
         .toString();
@@ -827,6 +856,15 @@ class $FoldersTable extends Folders with TableInfo<$FoldersTable, FolderEntry> {
     );
   }
 
+  final VerificationMeta _isDeletedMeta = const VerificationMeta('isDeleted');
+  GeneratedBoolColumn _isDeleted;
+  @override
+  GeneratedBoolColumn get isDeleted => _isDeleted ??= _constructIsDeleted();
+  GeneratedBoolColumn _constructIsDeleted() {
+    return GeneratedBoolColumn('isDeleted', $tableName, false,
+        defaultValue: const Constant(false));
+  }
+
   final VerificationMeta _createdByMeta = const VerificationMeta('createdBy');
   GeneratedIntColumn _createdBy;
   @override
@@ -837,8 +875,16 @@ class $FoldersTable extends Folders with TableInfo<$FoldersTable, FolderEntry> {
   }
 
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, name, order, isDefaultFolder, reviewPlanId, created, createdBy];
+  List<GeneratedColumn> get $columns => [
+        id,
+        name,
+        order,
+        isDefaultFolder,
+        reviewPlanId,
+        created,
+        isDeleted,
+        createdBy
+      ];
   @override
   $FoldersTable get asDslTable => this;
   @override
@@ -878,6 +924,10 @@ class $FoldersTable extends Folders with TableInfo<$FoldersTable, FolderEntry> {
               data['reviewPlanId'], _reviewPlanIdMeta));
     }
     context.handle(_createdMeta, const VerificationResult.success());
+    if (data.containsKey('isDeleted')) {
+      context.handle(_isDeletedMeta,
+          isDeleted.isAcceptableOrUnknown(data['isDeleted'], _isDeletedMeta));
+    }
     if (data.containsKey('createdBy')) {
       context.handle(_createdByMeta,
           createdBy.isAcceptableOrUnknown(data['createdBy'], _createdByMeta));
@@ -2158,7 +2208,7 @@ abstract class _$Database extends GeneratedDatabase {
   Selectable<GetFoldersWithUnreadTotalResult> getFoldersWithUnreadTotal(
       int createdBy) {
     return customSelect(
-        'SELECT f.id, f.name, f.[order], CASE WHEN f.isDefaultFolder = 1 AND f.name = \'今天\' THEN( SELECT count( *) FROM notes n, folders f WHERE n.folderId = f.id AND f.reviewPlanId IS NOT NULL AND n.isDeleted = 0 AND strftime(\'%Y-%m-%d %H:%M:%S\', n.nextReviewTime) < strftime(\'%Y-%m-%d %H:%M:%S\', \'now\', \'localtime\', \'start of day\', \'+1 day\') AND n.isReviewFinished = 0 AND n.createdBy = :createdBy ) WHEN f.isDefaultFolder = 1 AND f.name = \'全部笔记\' THEN ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy ) WHEN f.isDefaultFolder = 1 AND f.name = \'删除笔记\' THEN ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 1 AND n.createdBy = :createdBy ) ELSE ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = f.id AND CASE WHEN f.reviewPlanId IS NOT NULL THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ) END numberToShow, f.isDefaultFolder, f.reviewPlanId, f.created, f.createdBy FROM folders f WHERE createdBy = :createdBy ORDER BY [order] ASC;',
+        'SELECT f.id, f.name, f.[order], CASE WHEN f.isDefaultFolder = 1 AND f.name = \'今天\' THEN( SELECT count( *) FROM notes n, folders f WHERE n.folderId = f.id AND f.reviewPlanId IS NOT NULL AND n.isDeleted = 0 AND strftime(\'%Y-%m-%d %H:%M:%S\', n.nextReviewTime) < strftime(\'%Y-%m-%d %H:%M:%S\', \'now\', \'localtime\', \'start of day\', \'+1 day\') AND n.isReviewFinished = 0 AND n.createdBy = :createdBy ) WHEN f.isDefaultFolder = 1 AND f.name = \'全部笔记\' THEN ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy ) WHEN f.isDefaultFolder = 1 AND f.name = \'删除笔记\' THEN ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 1 AND n.createdBy = :createdBy ) ELSE ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = f.id AND CASE WHEN f.reviewPlanId IS NOT NULL THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ) END numberToShow, f.isDefaultFolder, f.reviewPlanId, f.created, f.createdBy FROM folders f WHERE f.createdBy = :createdBy AND f.isDeleted = 0 ORDER BY f.[order] ASC, f.created ASC;',
         variables: [Variable.withInt(createdBy)],
         readsFrom: {folders, notes}).map((QueryRow row) {
       return GetFoldersWithUnreadTotalResult(

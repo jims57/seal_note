@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/ui/common/RoundCornerButtonWidget.dart';
 import 'package:seal_note/ui/common/TextFieldWithClearButtonWidget.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/ui/FolderListItemWidget.dart';
@@ -231,6 +233,8 @@ class _UserFolderListListenerWidgetState
                       onTap: () async {
                         // click on more button // click on swipe more button
 
+                        // var r = await GlobalState.database.deleteFolder(folderId: 49);
+
                         // Hide the webView first
                         GlobalState.flutterWebviewPlugin.hide();
 
@@ -238,7 +242,7 @@ class _UserFolderListListenerWidgetState
                         var oldFolderName = widget.folderName;
                         var newFolderName = oldFolderName;
 
-                        await AlertDialogHandler.showAlertDialog(
+                        await AlertDialogHandler().showAlertDialog(
                           parentContext: context,
                           captionText: '文件夹选项',
                           showDivider: true,
@@ -277,25 +281,60 @@ class _UserFolderListListenerWidgetState
                             GlobalState.appState
                                 .enableAlertDialogTopRightButton = false;
                           },
-                          child: TextFieldWithClearButtonWidget(
-                            currentText: oldFolderName,
-                            showClearButton: true,
-                            onTextChanged: (input) {
-                              input = input.trim();
+                          child: Column(
+                            children: [
+                              TextFieldWithClearButtonWidget(
+                                currentText: oldFolderName,
+                                showClearButton: true,
+                                onTextChanged: (input) {
+                                  input = input.trim();
 
-                              if (input.length > 0 && oldFolderName != input) {
-                                // Only the user has changed the name, button is available to click
+                                  if (input.length > 0 &&
+                                      oldFolderName != input) {
+                                    // Only the user has changed the name, button is available to click
 
-                                newFolderName =
-                                    input; // Record the current input
+                                    newFolderName =
+                                        input; // Record the current input
 
-                                GlobalState.appState
-                                    .enableAlertDialogTopRightButton = true;
-                              } else {
-                                GlobalState.appState
-                                    .enableAlertDialogTopRightButton = false;
-                              }
-                            },
+                                    GlobalState.appState
+                                        .enableAlertDialogTopRightButton = true;
+                                  } else {
+                                    GlobalState.appState
+                                            .enableAlertDialogTopRightButton =
+                                        false;
+                                  }
+                                },
+                              ),
+                              RoundCornerButtonWidget(
+                                  // delete folder button
+                                  buttonText: '删除文件夹',
+                                  buttonThemeColor: Colors.red,
+                                  topMargin: 25.0,
+                                  buttonCallback: () async {
+                                    // delete folder event
+
+                                    var continueAction = true;
+
+                                    if (_hasNotesInsideFolder()) {
+                                      continueAction = await AlertDialogHandler()
+                                          .showAlertDialog(
+                                              parentContext: context,
+                                              captionText: '删除文件夹？',
+                                              remark:
+                                                  '此文件夹已有笔记。删除后，相关的所有笔记也会被删除！',
+                                              buttonTextForOK: '确定',
+                                              buttonColorForOK: Colors.red);
+                                    }
+
+                                    if (continueAction) {
+                                      // Decide to delete the folder anyway
+                                      var s = 's';
+                                    } else {
+                                      // Don't delete the folder
+                                      var ss = 'ss';
+                                    }
+                                  })
+                            ],
                           ),
                           showButtonForCancel: false,
                           showButtonForOK: false,
@@ -492,5 +531,15 @@ class _UserFolderListListenerWidgetState
 
   void _stopCountdown() {
     _timer.cancel();
+  }
+
+  bool _hasNotesInsideFolder() {
+    var hasNotes = true;
+
+    if (widget.numberToShow == 0) {
+      hasNotes = false;
+    }
+
+    return hasNotes;
   }
 }

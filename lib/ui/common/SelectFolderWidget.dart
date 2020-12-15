@@ -115,7 +115,7 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
             // Always enable the OK button every time
             GlobalState.appState.enableAlertDialogOKButton = true;
 
-            var shouldContinueAction = await AlertDialogHandler.showAlertDialog(
+            var shouldContinueAction = await AlertDialogHandler().showAlertDialog(
                 parentContext: context,
                 captionText: '移动笔记？',
                 remark: remark,

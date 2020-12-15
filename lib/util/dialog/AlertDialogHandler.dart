@@ -4,7 +4,7 @@ import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 
 class AlertDialogHandler {
-  static Future<bool> showAlertDialog({
+  Future<bool> showAlertDialog({
     @required BuildContext parentContext,
     @required String captionText,
     String remark = '',
@@ -200,7 +200,7 @@ class AlertDialogHandler {
     return shouldContinueAction;
   }
 
-  static bool _hasOnlyOneBottomButton(
+  bool _hasOnlyOneBottomButton(
       {@required bool showButtonForOK, @required bool showButtonForCancel}) {
     // Bottom button means OK button and Cancel button at the bottom of the alert dialog
 
