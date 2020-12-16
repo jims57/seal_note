@@ -233,13 +233,6 @@ class _UserFolderListListenerWidgetState
                       onTap: () async {
                         // click on more button // click on swipe more button
 
-                        // var r = await GlobalState.database.deleteFolder(folderId: 49);
-                        // var r = await GlobalState.database
-                        //     .setFolderDeletedStatus(
-                        //         folderId: 5, isDeleted: true);
-                        //
-                        // var r1 = await GlobalState.database.setNotesDeletedStatusByFolderId(folderId:4, isDeleted: true);
-
                         // Hide the webView first
                         GlobalState.flutterWebviewPlugin.hide();
 
@@ -320,10 +313,13 @@ class _UserFolderListListenerWidgetState
                                     // delete folder event
 
                                     var continueAction = true;
-                                    var hasNotesInsideFolder =
-                                        _hasNotesInsideFolder();
+                                    var hasAvailableNotesInsideFolder =
+                                        await GlobalState.database
+                                            .hasNotesInFolder(
+                                                folderId: folderId,
+                                                includeDeletedNotes: false);
 
-                                    if (hasNotesInsideFolder) {
+                                    if (hasAvailableNotesInsideFolder) {
                                       continueAction = await AlertDialogHandler()
                                           .showAlertDialog(
                                               parentContext: context,
@@ -337,19 +333,22 @@ class _UserFolderListListenerWidgetState
                                     if (continueAction) {
                                       // Decide to delete the folder anyway
 
-                                      var effectedRowCount = 0;
+                                      // Check if the folder has deleted notes
+                                      var hasDeletedNotesInsideFolder =
+                                          await GlobalState.database
+                                              .hasNotesInFolder(
+                                                  folderId: folderId,
+                                                  includeDeletedNotes: true);
 
-                                      if (hasNotesInsideFolder) {
+                                      if (hasDeletedNotesInsideFolder) {
                                         // When there is any note inside the folder, just mark the folder as deleted status
 
-                                        effectedRowCount = await GlobalState
-                                            .database
+                                        await GlobalState.database
                                             .setFolderAndItsNotesToDeletedStatus(
                                                 folderId: folderId);
                                       } else {
                                         // When there is no notes inside the folder, delete the folder directly
-                                        effectedRowCount = await GlobalState
-                                            .database
+                                        await GlobalState.database
                                             .deleteFolder(folderId: folderId);
                                       }
 

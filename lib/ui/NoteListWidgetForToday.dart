@@ -445,13 +445,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                     GlobalState.flutterWebviewPlugin.show();
                                   } else {
                                     // In Deleted folder
-                                    // restore deleted note // swipe to restore note
 
-                                    // var effectedRowCount = await GlobalState
-                                    //     .database
-                                    //     .setNoteDeletedStatus(
-                                    //         noteId: theNote.id,
-                                    //         isDeleted: false);
+                                    // restore deleted note // swipe to restore note
 
                                     var effectedRowCount = await GlobalState
                                         .database
@@ -490,7 +485,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                   ],
                                 ),
                               ),
-                              onTap: () {
+                              onTap: () async {
                                 // delete note event // swipe to delete note event
                                 // swipe to delete note button // swipe to delete button
 
@@ -499,65 +494,69 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                 var noteTitleDeleted =
                                     _noteEntryBeingHandled.title;
                                 var noteIdDeleted = _noteEntryBeingHandled.id;
+                                var effectedRowCount = 0;
 
                                 // Check if it is in Deleted folder
                                 if (GlobalState.isDefaultFolderSelected &&
                                     GlobalState.appState.noteListPageTitle ==
                                         GlobalState
                                             .defaultFolderNameForDeletion) {
-                                  GlobalState.database
-                                      .deleteNote(noteIdDeleted)
-                                      .then((effectedRowsCount) {
-                                    if (effectedRowsCount > 0) {
-                                      setState(() {
-                                        _noteList.removeAt(index);
+                                  // delete note in deleted folder // deleted folder delete note
+                                  // delete note from deleted folder
 
-                                        // Refresh the note list page if no data at noteList variable
-                                        refreshNoteListPageIfNoDataAtNoteListVariable(
-                                            noteList: _noteList);
-                                      });
-                                    }
-                                  });
+                                  effectedRowCount = await GlobalState.database
+                                      .deleteNote(noteIdDeleted,
+                                          forceToDeleteFolderWhenNoNote: false, autoDeleteFolderWithDeletedStatus: true);
+
+                                  if (effectedRowCount > 0) {
+                                    setState(() {
+                                      _noteList.removeAt(index);
+
+                                      // Refresh the note list page if no data at noteList variable
+                                      refreshNoteListPageIfNoDataAtNoteListVariable(
+                                          noteList: _noteList);
+                                    });
+                                  }
                                 } else {
                                   // mark note deleted status // note delete status
-                                  GlobalState.database
+                                  effectedRowCount = await GlobalState.database
                                       .setNoteDeletedStatus(
                                           noteId: noteIdDeleted,
-                                          isDeleted: true)
-                                      .then((effectedRowsCount) {
-                                    if (effectedRowsCount > 0) {
-                                      setState(() {
-                                        _noteList.removeAt(index);
+                                          isDeleted: true);
 
-                                        // Refresh the note list page if no data at noteList variable
-                                        refreshNoteListPageIfNoDataAtNoteListVariable(
-                                            noteList: _noteList);
+                                  if (effectedRowCount > 0) {
+                                    setState(() {
+                                      _noteList.removeAt(index);
 
-                                        SnackBarHandler.hideSnackBar();
+                                      // Refresh the note list page if no data at noteList variable
+                                      refreshNoteListPageIfNoDataAtNoteListVariable(
+                                          noteList: _noteList);
 
-                                        // show delete message // show note delete message
-                                        SnackBarHandler.createSnackBar(
-                                            parentContext: context,
-                                            tipAfterDone: noteTitleDeleted,
-                                            onPressForUndo: () {
-                                              GlobalState.database
-                                                  .setNoteDeletedStatus(
-                                                      noteId: noteIdDeleted,
-                                                      isDeleted: false)
-                                                  .then((effectedRowsCount) {
-                                                if (effectedRowsCount > 0) {
-                                                  setState(() {
-                                                    _noteList.insert(index,
-                                                        _noteEntryBeingHandled);
-                                                  });
-                                                }
+                                      SnackBarHandler.hideSnackBar();
+
+                                      // show delete message // show note delete message
+                                      SnackBarHandler.createSnackBar(
+                                          parentContext: context,
+                                          tipAfterDone: noteTitleDeleted,
+                                          onPressForUndo: () async {
+                                            var effectedRowCount =
+                                                await GlobalState
+                                                    .database
+                                                    .setNoteDeletedStatus(
+                                                        noteId: noteIdDeleted,
+                                                        isDeleted: false);
+
+                                            if (effectedRowCount > 0) {
+                                              setState(() {
+                                                _noteList.insert(index,
+                                                    _noteEntryBeingHandled);
                                               });
-                                            });
+                                            }
+                                          });
 
-                                        SnackBarHandler.showSnackBar();
-                                      });
-                                    }
-                                  });
+                                      SnackBarHandler.showSnackBar();
+                                    });
+                                  }
                                 }
                               },
                             ),
