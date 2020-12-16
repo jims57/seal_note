@@ -103,10 +103,11 @@ class Notes extends Table {
 
   TextColumn get updated => text().map(const IsoDateTimeConverter())();
 
-  TextColumn get nextReviewTime => text()
-      .nullable()
-      .named('nextReviewTime')
-      .map(const IsoDateTimeConverter())();
+  TextColumn get nextReviewTime =>
+      text()
+          .nullable()
+          .named('nextReviewTime')
+          .map(const IsoDateTimeConverter())();
 
   IntColumn get reviewProgressNo =>
       integer().nullable().named('reviewProgressNo')();
@@ -165,23 +166,23 @@ class ReviewPlanConfigs extends Table {
 ], queries: {
   // For folder order
   'increaseUserFoldersOrderByOneExceptNewlyCreatedOne':
-      "UPDATE folders SET [order] = [order] + 1 WHERE [order] > 2 AND id <> :createdFolderId;",
+  "UPDATE folders SET [order] = [order] + 1 WHERE [order] > 2 AND id <> :createdFolderId;",
 
   // For folder list
   'getFoldersWithUnreadTotal':
-      "SELECT f.id, f.name, f.[order], CASE WHEN f.isDefaultFolder = 1 AND f.name = '今天' THEN( SELECT count( *) FROM notes n, folders f WHERE n.folderId = f.id AND f.reviewPlanId IS NOT NULL AND n.isDeleted = 0 AND strftime('%Y-%m-%d %H:%M:%S', n.nextReviewTime) < strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime', 'start of day', '+1 day') AND n.isReviewFinished = 0 AND n.createdBy = :createdBy ) WHEN f.isDefaultFolder = 1 AND f.name = '全部笔记' THEN ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy ) WHEN f.isDefaultFolder = 1 AND f.name = '删除笔记' THEN ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 1 AND n.createdBy = :createdBy ) ELSE ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = f.id AND CASE WHEN f.reviewPlanId IS NOT NULL THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ) END numberToShow, f.isDefaultFolder, f.reviewPlanId, f.created, f.createdBy FROM folders f WHERE f.createdBy = :createdBy AND f.isDeleted = 0 ORDER BY f.[order] ASC, f.created DESC; ",
+  "SELECT f.id, f.name, f.[order], CASE WHEN f.isDefaultFolder = 1 AND f.name = '今天' THEN( SELECT count( *) FROM notes n, folders f WHERE n.folderId = f.id AND f.reviewPlanId IS NOT NULL AND n.isDeleted = 0 AND strftime('%Y-%m-%d %H:%M:%S', n.nextReviewTime) < strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime', 'start of day', '+1 day') AND n.isReviewFinished = 0 AND n.createdBy = :createdBy ) WHEN f.isDefaultFolder = 1 AND f.name = '全部笔记' THEN ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy ) WHEN f.isDefaultFolder = 1 AND f.name = '删除笔记' THEN ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 1 AND n.createdBy = :createdBy ) ELSE ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = f.id AND CASE WHEN f.reviewPlanId IS NOT NULL THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ) END numberToShow, f.isDefaultFolder, f.reviewPlanId, f.created, f.createdBy FROM folders f WHERE f.createdBy = :createdBy AND f.isDeleted = 0 ORDER BY f.[order] ASC, f.created DESC; ",
 
   // For note list
   'getNoteListForToday':
-      "SELECT n.id, n.folderId, CASE WHEN INSTR(content, '&lt;/p&gt;') > 0 THEN substr(content, 1, INSTR(content, '&lt;/p&gt;') + 9) ELSE content END AS title, n.content, n.created, n.updated, n.nextReviewTime, CASE WHEN n.reviewProgressNo IS NULL THEN 0 ELSE n.reviewProgressNo END AS reviewProgressNo, n.isReviewFinished, n.isDeleted, n.createdBy,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n, folders f WHERE n.folderId = f.id AND f.reviewPlanId IS NOT NULL AND n.isDeleted = 0 AND strftime('%Y-%m-%d %H:%M:%S', n.nextReviewTime) < strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime', 'start of day', '+1 day') AND n.isReviewFinished = 0 AND n.createdBy = :createdBy ORDER BY n.nextReviewTime ASC, n.id ASC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1); ",
+  "SELECT n.id, n.folderId, CASE WHEN INSTR(content, '&lt;/p&gt;') > 0 THEN substr(content, 1, INSTR(content, '&lt;/p&gt;') + 9) ELSE content END AS title, n.content, n.created, n.updated, n.nextReviewTime, CASE WHEN n.reviewProgressNo IS NULL THEN 0 ELSE n.reviewProgressNo END AS reviewProgressNo, n.isReviewFinished, n.isDeleted, n.createdBy,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n, folders f WHERE n.folderId = f.id AND f.reviewPlanId IS NOT NULL AND n.isDeleted = 0 AND strftime('%Y-%m-%d %H:%M:%S', n.nextReviewTime) < strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime', 'start of day', '+1 day') AND n.isReviewFinished = 0 AND n.createdBy = :createdBy ORDER BY n.nextReviewTime ASC, n.id ASC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1); ",
   'getNoteListForAllNotes':
-      "SELECT id, folderId, CASE WHEN INSTR(content, '&lt;/p&gt;') > 0 THEN substr(content, 1, INSTR(content, '&lt;/p&gt;') + 9) ELSE content END AS title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy ORDER BY n.updated DESC, n.id DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1); ",
+  "SELECT id, folderId, CASE WHEN INSTR(content, '&lt;/p&gt;') > 0 THEN substr(content, 1, INSTR(content, '&lt;/p&gt;') + 9) ELSE content END AS title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy ORDER BY n.updated DESC, n.id DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1); ",
   'getNoteListForDeletedNotes':
-      "SELECT id, folderId, CASE WHEN INSTR(content, '&lt;/p&gt;') > 0 THEN substr(content, 1, INSTR(content, '&lt;/p&gt;') + 9) ELSE content END AS title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 1 AND n.createdBy = :createdBy ORDER BY n.updated DESC, n.id DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1); ",
+  "SELECT id, folderId, CASE WHEN INSTR(content, '&lt;/p&gt;') > 0 THEN substr(content, 1, INSTR(content, '&lt;/p&gt;') + 9) ELSE content END AS title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy,( SELECT count( *) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 1 AND n.createdBy = :createdBy ORDER BY n.updated DESC, n.id DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1); ",
   'getNoteListForUserFolders':
-      "WITH isReviewFolderTable AS( SELECT CASE WHEN reviewPlanId IS NOT NULL THEN 1 ELSE 0 END AS isReviewFolder FROM folders WHERE id = :folderId) SELECT id, folderId, CASE WHEN INSTR(content, '&lt;/p&gt;') > 0 THEN substr(content, 1, INSTR(content, '&lt;/p&gt;') + 9) ELSE content END AS title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy, ( SELECT count( * ) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = :folderId AND CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ORDER BY n.isReviewFinished ASC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.nextReviewTime END ASC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 0 THEN n.updated END DESC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.updated END DESC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 0 THEN n.id END DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1); ",
+  "WITH isReviewFolderTable AS( SELECT CASE WHEN reviewPlanId IS NOT NULL THEN 1 ELSE 0 END AS isReviewFolder FROM folders WHERE id = :folderId) SELECT id, folderId, CASE WHEN INSTR(content, '&lt;/p&gt;') > 0 THEN substr(content, 1, INSTR(content, '&lt;/p&gt;') + 9) ELSE content END AS title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy, ( SELECT count( * ) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = :folderId AND CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ORDER BY n.isReviewFinished ASC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.nextReviewTime END ASC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 0 THEN n.updated END DESC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.updated END DESC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 0 THEN n.id END DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1); ",
   'clearDeletedNotesMoreThan30DaysAgo':
-      "DELETE FROM notes WHERE strftime('%Y-%m-%d %H:%M:%S', updated) <= strftime('%Y-%m-%d %H:%M:%S', :minAvailableDateTime); "
+  "DELETE FROM notes WHERE strftime('%Y-%m-%d %H:%M:%S', updated) <= strftime('%Y-%m-%d %H:%M:%S', :minAvailableDateTime); "
 })
 class Database extends _$Database {
   Database(QueryExecutor e) : super(e);
@@ -197,8 +198,9 @@ class Database extends _$Database {
 
     bool isDbInitialized = true;
     FolderEntry folderEntry = await (select(folders)
-          ..where((f) => f.name.equals(GlobalState.defaultFolderNameForToday))
-          ..where((f) => f.isDefaultFolder.equals(true)))
+      ..where((f) =>
+          f.name.equals(GlobalState.defaultFolderNameForToday))..where((f) =>
+          f.isDefaultFolder.equals(true)))
         .getSingle();
 
     if (folderEntry == null) isDbInitialized = false;
@@ -247,7 +249,7 @@ class Database extends _$Database {
   Future<bool> isReviewFolder(int folderId) async {
     var isReviewFolder = false;
     FolderEntry folderEntry = await (select(folders)
-          ..where((f) => f.id.equals(folderId)))
+      ..where((f) => f.id.equals(folderId)))
         .getSingle();
 
     if (folderEntry != null && folderEntry.reviewPlanId != null) {
@@ -260,7 +262,7 @@ class Database extends _$Database {
   Future<String> getFolderNameById(int folderId) async {
     var folderName = '';
     FolderEntry folderEntry = await (select(folders)
-          ..where((f) => f.id.equals(folderId)))
+      ..where((f) => f.id.equals(folderId)))
         .getSingle();
 
     if (folderEntry != null) {
@@ -271,7 +273,7 @@ class Database extends _$Database {
   }
 
   Future<List<GetFoldersWithUnreadTotalResult>>
-      getListForFoldersWithUnreadTotal() {
+  getListForFoldersWithUnreadTotal() {
     var folders = getFoldersWithUnreadTotal(GlobalState.currentUserId).get();
 
     return folders;
@@ -283,7 +285,7 @@ class Database extends _$Database {
 
   Future<int> updateFolder(FoldersCompanion foldersCompanion) async {
     return (update(folders)
-          ..where((f) => f.id.equals(foldersCompanion.id.value)))
+      ..where((f) => f.id.equals(foldersCompanion.id.value)))
         .write(foldersCompanion);
   }
 
@@ -296,7 +298,7 @@ class Database extends _$Database {
   Future<int> changeFolderName(
       {@required int folderId, @required String newFolderName}) async {
     var foldersCompanion =
-        FoldersCompanion(id: Value(folderId), name: Value(newFolderName));
+    FoldersCompanion(id: Value(folderId), name: Value(newFolderName));
 
     var effectedRowCount = await updateFolder(foldersCompanion);
 
@@ -307,7 +309,7 @@ class Database extends _$Database {
     var result = await transaction(() async {
       for (var foldersCompanion in foldersCompanionList) {
         await (update(folders)
-              ..where((f) => f.id.equals(foldersCompanion.id.value)))
+          ..where((f) => f.id.equals(foldersCompanion.id.value)))
             .write(FoldersCompanion(
           order: Value(foldersCompanion.order.value),
         ));
@@ -319,7 +321,8 @@ class Database extends _$Database {
 
   Future<int> deleteFolder({@required int folderId}) async {
     var result =
-        await (delete(folders)..where((f) => f.id.equals(folderId))).go();
+    await (delete(folders)
+      ..where((f) => f.id.equals(folderId))).go();
 
     return result;
   }
@@ -328,7 +331,8 @@ class Database extends _$Database {
       {@required int folderId, bool isDeleted}) async {
     // Make a note as deleted or not, this won't remove the note from db, it just set isDeleted = true
 
-    var result = await (update(folders)..where((f) => f.id.equals(folderId)))
+    var result = await (update(folders)
+      ..where((f) => f.id.equals(folderId)))
         .write(FoldersCompanion(
       isDeleted: Value(isDeleted),
     ));
@@ -343,7 +347,7 @@ class Database extends _$Database {
 
       // Set folder to deleted status
       folderEffectedRowCount =
-          await setFolderDeletedStatus(folderId: folderId, isDeleted: true);
+      await setFolderDeletedStatus(folderId: folderId, isDeleted: true);
 
       // Set notes inside the folder to deleted status
       await setNotesDeletedStatusByFolderId(
@@ -360,7 +364,8 @@ class Database extends _$Database {
     var noteContent = '';
 
     var noteEntry =
-        await (select(notes)..where((n) => n.id.equals(noteId))).getSingle();
+    await (select(notes)
+      ..where((n) => n.id.equals(noteId))).getSingle();
 
     if (noteEntry != null) noteContent = noteEntry.content;
 
@@ -387,14 +392,13 @@ class Database extends _$Database {
 
   Future<int> updateNote(NotesCompanion notesCompanion) async {
     return (update(notes)
-          ..where((e) => e.id.equals(GlobalState.selectedNoteModel.id)))
+      ..where((e) => e.id.equals(GlobalState.selectedNoteModel.id)))
         .write(notesCompanion);
   }
 
-  Future<int> changeNoteFolderId(
-      {@required int noteId,
-      @required int newFolderId,
-      @required int typeId}) async {
+  Future<int> changeNoteFolderId({@required int noteId,
+    @required int newFolderId,
+    @required int typeId}) async {
     // For more info about typeId at: https://user-images.githubusercontent.com/1920873/101114842-44bb2900-361d-11eb-9537-4492a6994286.png
     // 0 means: Set nextReviewTime, reviewProgressNo fields to NULL and set isReviewFinished back to 0
     // 1 means: Set value to nextReviewTime and reviewProgressNo fields and set isReviewFinished back to 0
@@ -428,7 +432,7 @@ class Database extends _$Database {
     }
 
     var effectedRowCount = await (update(notes)
-          ..where((e) => e.id.equals(noteId)))
+      ..where((e) => e.id.equals(noteId)))
         .write(notesCompanion);
 
     return effectedRowCount;
@@ -452,7 +456,7 @@ class Database extends _$Database {
         // today note list
 
         return getNoteListForToday(
-                GlobalState.currentUserId, pageSize, pageNo.toDouble())
+            GlobalState.currentUserId, pageSize, pageNo.toDouble())
             .map((row) => _convertModelToNoteWithProgressTotal(row))
             .get();
         // } else if (GlobalState.selectedFolderName ==
@@ -462,7 +466,7 @@ class Database extends _$Database {
 
         // get all notes note list
         return getNoteListForAllNotes(
-                GlobalState.currentUserId, pageSize, pageNo.toDouble())
+            GlobalState.currentUserId, pageSize, pageNo.toDouble())
             .map((row) => _convertModelToNoteWithProgressTotal(row))
             .get();
       } else {
@@ -470,7 +474,7 @@ class Database extends _$Database {
 
         // For Deleted Notes folder
         return getNoteListForDeletedNotes(
-                GlobalState.currentUserId, pageSize, pageNo.toDouble())
+            GlobalState.currentUserId, pageSize, pageNo.toDouble())
             .map((row) => _convertModelToNoteWithProgressTotal(row))
             .get();
       }
@@ -480,7 +484,7 @@ class Database extends _$Database {
       // get user folder note data
 
       return getNoteListForUserFolders(GlobalState.selectedFolderIdCurrently,
-              GlobalState.currentUserId, pageSize, pageNo.toDouble())
+          GlobalState.currentUserId, pageSize, pageNo.toDouble())
           .map((row) => _convertModelToNoteWithProgressTotal(row))
           .get();
     }
@@ -489,14 +493,16 @@ class Database extends _$Database {
   Future<int> deleteNote(int noteId) async {
     // Delete a note, this will remove the note from db
 
-    return await (delete(notes)..where((n) => n.id.equals(noteId))).go();
+    return await (delete(notes)
+      ..where((n) => n.id.equals(noteId))).go();
   }
 
   Future<int> setNoteDeletedStatus(
       {@required int noteId, bool isDeleted}) async {
     // Make a note as deleted or not, this won't remove the note from db, it just set isDeleted = true
 
-    return await (update(notes)..where((e) => e.id.equals(noteId))).write(
+    return await (update(notes)
+      ..where((e) => e.id.equals(noteId))).write(
         NotesCompanion(
             isDeleted: Value(isDeleted),
             updated: Value(TimeHandler.getNowForLocal())));
@@ -506,15 +512,53 @@ class Database extends _$Database {
       {@required int folderId, bool isDeleted}) async {
     // Make all note inside a folder as deleted or not, this won't remove the note from db, it just set isDeleted = true
 
-    return await (update(notes)..where((e) => e.folderId.equals(folderId)))
+    return await (update(notes)
+      ..where((e) => e.folderId.equals(folderId)))
         .write(NotesCompanion(
-            isDeleted: Value(isDeleted),
-            updated: Value(TimeHandler.getNowForLocal())));
+        isDeleted: Value(isDeleted),
+        updated: Value(TimeHandler.getNowForLocal())));
+  }
+
+  Future<int> restoreNoteFromDeletedFolder({@required int noteId}) async {
+    // Make a note as deleted or not, this won't remove the note from db, it just set isDeleted = true
+    var effectedRowCount = 0;
+
+    effectedRowCount = await transaction(() async {
+      var folderId = 0;
+
+      // Restore the note (isDeleted == false)
+      effectedRowCount = await (update(notes)
+        ..where((e) => e.id.equals(noteId)))
+          .write(NotesCompanion(
+          isDeleted: Value(false),
+          updated: Value(TimeHandler.getNowForLocal())));
+
+      // Get the folder id the note belongs to
+      NoteEntry noteEntry =
+      await (select(notes)
+        ..where((n) => n.id.equals(noteId))).getSingle();
+
+      if (noteEntry != null) {
+        folderId = noteEntry.folderId;
+      }
+
+      // Restore the folder anyway
+      await (update(folders)
+        ..where((f) => f.id.equals(folderId)))
+          .write(FoldersCompanion(
+        isDeleted: Value(false),
+      ));
+
+      return effectedRowCount;
+    });
+
+    return effectedRowCount;
   }
 
   Future<int> updateNoteNextReviewTime(
       {@required int noteId, @required DateTime nextReviewTime}) async {
-    return (update(notes)..where((e) => e.id.equals(noteId))).write(
+    return (update(notes)
+      ..where((e) => e.id.equals(noteId))).write(
         NotesCompanion(
             nextReviewTime: Value(nextReviewTime),
             updated: Value(TimeHandler.getNowForLocal())));
@@ -524,7 +568,8 @@ class Database extends _$Database {
     // Whether the db has notes data
 
     bool hasNote = true;
-    NoteEntry noteEntry = await (select(notes)..limit(1)).getSingle();
+    NoteEntry noteEntry = await (select(notes)
+      ..limit(1)).getSingle();
 
     if (noteEntry == null) hasNote = false;
 

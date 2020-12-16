@@ -357,6 +357,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                 ),
                                 onTap: () async {
                                   // swipe to restore note // restore note
+                                  // restore note event // click on restore note button
+                                  // click to restore note button
 
                                   // Check which folder is
                                   if (!isInDeletedFolder()) {
@@ -445,11 +447,16 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                     // In Deleted folder
                                     // restore deleted note // swipe to restore note
 
+                                    // var effectedRowCount = await GlobalState
+                                    //     .database
+                                    //     .setNoteDeletedStatus(
+                                    //         noteId: theNote.id,
+                                    //         isDeleted: false);
+
                                     var effectedRowCount = await GlobalState
                                         .database
-                                        .setNoteDeletedStatus(
-                                            noteId: theNote.id,
-                                            isDeleted: false);
+                                        .restoreNoteFromDeletedFolder(
+                                            noteId: theNoteId);
 
                                     if (effectedRowCount > 0) {
                                       GlobalState.noteListWidgetForTodayState
