@@ -506,7 +506,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                                   effectedRowCount = await GlobalState.database
                                       .deleteNote(noteIdDeleted,
-                                          forceToDeleteFolderWhenNoNote: false, autoDeleteFolderWithDeletedStatus: true);
+                                          forceToDeleteFolderWhenNoNote: false,
+                                          autoDeleteFolderWithDeletedStatus:
+                                              true);
 
                                   if (effectedRowCount > 0) {
                                     setState(() {
@@ -931,9 +933,15 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       encodedContent = encodedContent.substring(0, encodedContent.length);
     }
 
+    // Force to replace <ol> to <p>
+    encodedContent = encodedContent
+        .replaceAll('&lt;ol&gt;', '&lt;p&gt;')
+        .replaceAll('&lt;/ol&gt;', '&lt;/p&gt;');
+
     var htmlTagList = HtmlHandler.getHtmlTagList(
         encodedHtmlString: encodedContent,
         tagNameToMatch: 'p',
+        // tagNameToMatch: 'ol',
         forceToAddTagWhenNotExistent: true);
 
     for (var i = 0; i < htmlTagList.length; i++) {

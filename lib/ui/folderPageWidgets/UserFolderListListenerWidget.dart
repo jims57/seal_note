@@ -561,13 +561,13 @@ class _UserFolderListListenerWidgetState
     _timer.cancel();
   }
 
-  bool _hasNotesInsideFolder() {
-    var hasNotes = true;
-
-    if (widget.numberToShow == 0) {
-      hasNotes = false;
-    }
-
-    return hasNotes;
-  }
+  // bool _hasNotesInsideFolder() {
+  //   var hasNotes = true;
+  //
+  //   if (widget.numberToShow == 0) {
+  //     hasNotes = false;
+  //   }
+  //
+  //   return hasNotes;
+  // }
 }
