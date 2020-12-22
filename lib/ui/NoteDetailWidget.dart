@@ -39,7 +39,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   int _idKeyboardListener;
 
   // App bar width related
-  double appBarTailWidth = 90.0;
+  double appBarTailWidth = 200.0;
 
   @override
   void initState() {
@@ -477,7 +477,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                     key: GlobalState.appBarWidgetState,
                     showSyncStatus: false,
                     leadingWidth: _getAppBarLeadingWidth(),
-                    tailWidth: appBarTailWidth,
+                    tailWidth: appBarTailWidth / 2,
+                    // tailWidth: 50,
                     leadingChildren: [
                       (GlobalState.screenType == 1)
                           ? AppBarBackButtonWidget(
@@ -543,42 +544,46 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                           : Container()
                     ],
                     tailChildren: [
-                      IconButton(
-                          // edit web view button // edit note button
-                          // web view action button // note detail edit button
-                          // edit detail button // detail edit button
-                          // note edit button // edit note
-                          // save note button
+                      Container(
+                        alignment: Alignment.centerRight,
+                        color: Colors.red,
+                        child: IconButton(
+                            // edit web view button // edit note button
+                            // web view action button // note detail edit button
+                            // edit detail button // detail edit button
+                            // note edit button // edit note
+                            // save note button
 
-                          icon: (GlobalState.isQuillReadOnly
-                              ? Icon(
-                                  Icons.edit,
-                                  color: GlobalState.themeBlueColor,
-                                )
-                              : Icon(
-                                  Icons.done,
-                                  color: GlobalState.themeBlueColor,
-                                )),
-                          onPressed: () {
-                            // click on save button // click save button
-                            // save button // edit button
+                            icon: (GlobalState.isQuillReadOnly
+                                ? Icon(
+                                    Icons.edit,
+                                    color: GlobalState.themeBlueColor,
+                                  )
+                                : Icon(
+                                    Icons.done,
+                                    color: GlobalState.themeBlueColor,
+                                  )),
+                            onPressed: () {
+                              // click on save button // click save button
+                              // save button // edit button
 
-                            _toggleQuillModeBetweenReadOnlyAndEdit(
-                                keepNoteDetailPageOpen: true);
-                          }),
-                      IconButton(
-                          // web view test button // test button
-                          // run button // test run button
-                          icon: Icon(
-                            Icons.directions_run,
-                            color: GlobalState.themeBlueColor,
-                          ),
-                          onPressed: () async {
-                            var pageHtml = await GlobalState
-                                .flutterWebviewPlugin
-                                .evalJavascript("javascript:getPageHtml();");
-                            var s = 's';
-                          }),
+                              _toggleQuillModeBetweenReadOnlyAndEdit(
+                                  keepNoteDetailPageOpen: true);
+                            }),
+                      ),
+                      // IconButton(
+                      //     // web view test button // test button
+                      //     // run button // test run button
+                      //     icon: Icon(
+                      //       Icons.directions_run,
+                      //       color: GlobalState.themeBlueColor,
+                      //     ),
+                      //     onPressed: () async {
+                      //       var pageHtml = await GlobalState
+                      //           .flutterWebviewPlugin
+                      //           .evalJavascript("javascript:getPageHtml();");
+                      //       var s = 's';
+                      //     }),
                     ]),
                 javascriptChannels: jsChannels,
                 initialChild: Container(

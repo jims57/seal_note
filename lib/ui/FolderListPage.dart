@@ -36,11 +36,12 @@ class FolderListPageState extends State<FolderListPage>
         backgroundColor: GlobalState.themeGreyColorAtiOSTodoForBackground,
         forceToShowLeadingWidgets: true,
         showSyncStatus: false,
-        leadingWidth: GlobalState.currentFolderPageWidth / 2,
-        tailWidth: GlobalState.currentFolderPageWidth / 4,
+        leadingWidth: 90,
+        tailWidth: 40,
         leadingChildren: [
           // folder page title // folder page caption
           Container(
+            // color: Colors.red,
             padding: EdgeInsets.only(left: 15.0),
             child: Text(
               '文件夹',
@@ -57,7 +58,7 @@ class FolderListPageState extends State<FolderListPage>
           GestureDetector(
             child: Container(
               color: Colors.transparent,
-              width: double.infinity,
+              width: double.maxFinite,
               alignment: Alignment.centerRight,
               padding: EdgeInsets.only(right: 15.0),
               child: Icon(
