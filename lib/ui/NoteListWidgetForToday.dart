@@ -123,7 +123,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                 var theNote = _noteList[theIndexAtNoteList];
                 var theNoteId = theNote.id;
                 var theNoteTitle = _getNoteTitleFormatForNoteList(
-                        encodedContent: theNote.content)
+                        encodedContent: theNote.content,
+                        replaceOlTagToPTag: true)
                     .trim();
 
                 // Handle title if it is empty
@@ -920,7 +921,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   String _getNoteTitleFormatForNoteList(
-      {@required String encodedContent, int pageIndex = 0}) {
+      {@required String encodedContent,
+      int pageIndex = 0,
+      replaceOlTagToPTag = false}) {
     // var noteTitle = GlobalState.defaultTitleWhenNoteHasNoTitle;
     var noteTitle = '';
     var oldEncodedContent = encodedContent;
@@ -934,14 +937,15 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     }
 
     // Force to replace <ol> to <p>
-    encodedContent = encodedContent
-        .replaceAll('&lt;ol&gt;', '&lt;p&gt;')
-        .replaceAll('&lt;/ol&gt;', '&lt;/p&gt;');
+    if (replaceOlTagToPTag) {
+      encodedContent = encodedContent
+          .replaceAll('&lt;ol&gt;', '&lt;p&gt;')
+          .replaceAll('&lt;/ol&gt;', '&lt;/p&gt;');
+    }
 
     var htmlTagList = HtmlHandler.getHtmlTagList(
         encodedHtmlString: encodedContent,
         tagNameToMatch: 'p',
-        // tagNameToMatch: 'ol',
         forceToAddTagWhenNotExistent: true);
 
     for (var i = 0; i < htmlTagList.length; i++) {
