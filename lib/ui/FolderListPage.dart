@@ -150,43 +150,46 @@ class FolderListPageState extends State<FolderListPage>
                 userFolderTotal: 20,
               ),
             ),
-            Container(
-              // folder page bottom panel // setting panel
-              // folder page setting panel
-              height: GlobalState.folderPageBottomContainerHeight,
-              child: Column(
-                children: [
-                  Container(
-                    height: GlobalState.folderPageBottomContainerHeight,
-                    color: GlobalState.themeGreyColorAtiOSTodoForBackground,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          child: Container(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.settings,
-                                    size: 20,
-                                  ),
-                                  Text(
-                                    '设置',
-                                    style: TextStyle(fontSize: 10),
-                                  )
-                                ]),
-                            color: Colors.transparent,
-                            padding: EdgeInsets.only(left: 15.0, right: 15.0),
-                          ),
-                          onTap: () {
-                            // setting event // click setting event
-                          },
-                        )
-                      ],
+            SafeArea(
+              child: Container(
+                // folder page bottom panel // setting panel
+                // folder page setting panel
+                height: GlobalState.folderPageBottomContainerHeight,
+                child: Column(
+                  children: [
+                    Container(
+                      height: GlobalState.folderPageBottomContainerHeight,
+                      color: GlobalState.themeGreyColorAtiOSTodoForBackground,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            child: Container(
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.settings,
+                                      size: 20,
+                                    ),
+                                    Text(
+                                      '设置',
+                                      style: TextStyle(fontSize: 10),
+                                    )
+                                  ]),
+                              color: Colors.transparent,
+                              padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                            ),
+                            onTap: () {
+                              // setting event // click setting event
+                              var s = 's';
+                            },
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
