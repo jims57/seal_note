@@ -39,7 +39,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   int _idKeyboardListener;
 
   // App bar width related
-  double appBarTailWidth = 200.0;
+  double appBarTailWidth = 100.0;
 
   @override
   void initState() {
@@ -477,7 +477,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                     key: GlobalState.appBarWidgetState,
                     showSyncStatus: false,
                     leadingWidth: _getAppBarLeadingWidth(),
-                    tailWidth: appBarTailWidth / 2,
+                    tailWidth: appBarTailWidth,
                     // tailWidth: 50,
                     leadingChildren: [
                       (GlobalState.screenType == 1)
@@ -666,6 +666,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
     if (GlobalState.screenType == 1) {
       appBarWidth = GlobalState.screenWidth;
+      leadingWidth = (appBarWidth - appBarTailWidth);
     } else if (GlobalState.screenType == 2) {
       appBarWidth =
           GlobalState.screenWidth - GlobalState.noteListPageDefaultWidth;
@@ -674,8 +675,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           GlobalState.folderPageDefaultWidth -
           GlobalState.noteListPageDefaultWidth;
     }
-
-    leadingWidth = (appBarWidth - appBarTailWidth);
 
     return leadingWidth;
   }
