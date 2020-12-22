@@ -73,6 +73,10 @@ class FolderListPageState extends State<FolderListPage>
               // click on create folder button // click create folder button
               // click to create folder button
 
+
+              // Hide the WebView first
+              GlobalState.flutterWebviewPlugin.hide();
+
               var newFolderName;
 
               // Disable OK button every time
@@ -135,6 +139,9 @@ class FolderListPageState extends State<FolderListPage>
                           }
                         });
               }
+
+              // Show the WebView anyway
+              GlobalState.flutterWebviewPlugin.show();
             },
           )
         ],

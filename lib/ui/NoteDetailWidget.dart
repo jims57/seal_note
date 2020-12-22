@@ -546,7 +546,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                     tailChildren: [
                       Container(
                         alignment: Alignment.centerRight,
-                        color: Colors.red,
                         child: IconButton(
                             // edit web view button // edit note button
                             // web view action button // note detail edit button
