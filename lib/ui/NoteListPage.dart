@@ -72,13 +72,15 @@ class _NoteListPageState extends State<NoteListPage> {
                 context: context,
                 isScrollControlled: true,
                 builder: (BuildContext context) {
-                  return Container(
-                    height: GlobalState.folderOptionItemHeight * 6 + 10,
-                    child: MaterialApp(
-                      debugShowCheckedModeBanner: false,
-                      home: Scaffold(
-                        backgroundColor: Colors.transparent,
-                        body: FolderOptionListWidget(),
+                  return SafeArea(
+                    child: Container(
+                      height: GlobalState.folderOptionItemHeight * 9,
+                      child: MaterialApp(
+                        debugShowCheckedModeBanner: false,
+                        home: Scaffold(
+                          backgroundColor: Colors.transparent,
+                          body: FolderOptionListWidget(),
+                        ),
                       ),
                     ),
                   );

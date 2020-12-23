@@ -78,6 +78,7 @@ class _MyAppState extends State<MyApp> {
             order: 1,
             isDefaultFolder: true,
             created: now,
+            isDeleted: false,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
@@ -85,6 +86,7 @@ class _MyAppState extends State<MyApp> {
             order: 2,
             isDefaultFolder: true,
             created: now,
+            isDeleted: false,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
@@ -92,6 +94,7 @@ class _MyAppState extends State<MyApp> {
             order: 3,
             isDefaultFolder: false,
             created: now,
+            isDeleted: false,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
@@ -99,6 +102,7 @@ class _MyAppState extends State<MyApp> {
             order: 5,
             isDefaultFolder: false,
             created: now,
+            isDeleted: false,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
@@ -106,6 +110,7 @@ class _MyAppState extends State<MyApp> {
             order: 4,
             isDefaultFolder: false,
             created: now,
+            isDeleted: false,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
@@ -113,6 +118,7 @@ class _MyAppState extends State<MyApp> {
             order: 6,
             isDefaultFolder: false,
             created: now,
+            isDeleted: false,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: null,
@@ -120,6 +126,7 @@ class _MyAppState extends State<MyApp> {
             order: 7,
             isDefaultFolder: true,
             created: now,
+            isDeleted: false,
             createdBy: GlobalState.adminUserId));
         GlobalState.database.upsertFoldersInBatch(folderEntryList);
 
@@ -209,9 +216,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-
-
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: MasterDetailPage(
@@ -220,41 +224,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-// import 'package:flutter/material.dart';
-// import 'package:flutter/cupertino.dart';
-// import 'package:seal_note/ui/common/RoundCornerButtonWidget.dart';
-//
-// void main() => runApp(MyApp());
-//
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: Scaffold(
-//         appBar: AppBar(
-//           title: Text('Welcome to Flutter'),
-//         ),
-//         body: ParentWidget(),
-//       ),
-//     );
-//   }
-// }
-//
-// class ParentWidget extends StatefulWidget {
-//   @override
-//   State<StatefulWidget> createState() => ParentWidgetState();
-// }
-//
-// class ParentWidgetState extends State<ParentWidget> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return RoundCornerButtonWidget(
-//       buttonText: '删除文件夹',
-//       buttonThemeColor: Colors.red,
-//       buttonCallback: () {
-//         var v = 's';
-//       },
-//     );
-//   }
-// }

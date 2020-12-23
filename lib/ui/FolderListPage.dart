@@ -36,7 +36,7 @@ class FolderListPageState extends State<FolderListPage>
         backgroundColor: GlobalState.themeGreyColorAtiOSTodoForBackground,
         forceToShowLeadingWidgets: true,
         showSyncStatus: false,
-        leadingWidth: 90,
+        leadingWidth: 120,
         tailWidth: 40,
         leadingChildren: [
           // folder page title // folder page caption
