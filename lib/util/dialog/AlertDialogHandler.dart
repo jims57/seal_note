@@ -119,79 +119,82 @@ class AlertDialogHandler {
             ),
           )),
           contentPadding: EdgeInsets.all(0.0),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (theRemark.isNotEmpty)
-                Container(
-                    padding: EdgeInsets.only(
-                        left: 15.0,
-                        right: 15.0,
-                        bottom: (child != null) ? 0.0 : 10.0),
-                    child: Text(theRemark)),
-              if (child != null)
-                Container(
-                    margin: EdgeInsets.only(
-                        top: 5.0,
-                        bottom: (showButtonForCancel || showButtonForOK)
-                            ? 0.0
-                            : 20.0),
-                    child: child),
-              if (showButtonForCancel || showButtonForOK)
-                Row(
-                  mainAxisAlignment: (_hasOnlyOneBottomButton(
-                          showButtonForOK: showButtonForOK,
-                          showButtonForCancel: showButtonForCancel))
-                      ? MainAxisAlignment.center
-                      : MainAxisAlignment.spaceBetween,
-                  // mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    (showButtonForCancel)
-                        ? FlatButton(
-                            // alert dialog cancel button // cancel button
-                            // dialog cancel button
-
-                            child: Text(
-                              buttonTextForCancel,
-                              style:
-                                  TextStyle(color: GlobalState.themeBlueColor),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              shouldContinueAction = false;
-                            },
-                          )
-                        : Container(),
-                    (showButtonForOK)
-                        ? Consumer<AppState>(builder: (cxt, appState, child) {
-                            var enableOKButton =
-                                appState.enableAlertDialogOKButton;
-
-                            if (alwaysEnableOKButton) enableOKButton = true;
-
-                            return FlatButton(
-                              // alert dialog ok button // ok button
-                              // dialog ok button
+          content: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (theRemark.isNotEmpty)
+                  Container(
+                      padding: EdgeInsets.only(
+                          left: 15.0,
+                          right: 15.0,
+                          bottom: (child != null) ? 0.0 : 10.0),
+                      child: Text(theRemark)),
+                if (child != null)
+                  Container(
+                      margin: EdgeInsets.only(
+                          top: 5.0,
+                          bottom: (showButtonForCancel || showButtonForOK)
+                              ? 0.0
+                              : 20.0),
+                      child: child),
+                if (showButtonForCancel || showButtonForOK)
+                  Row(
+                    mainAxisAlignment: (_hasOnlyOneBottomButton(
+                            showButtonForOK: showButtonForOK,
+                            showButtonForCancel: showButtonForCancel))
+                        ? MainAxisAlignment.center
+                        : MainAxisAlignment.spaceBetween,
+                    // mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      (showButtonForCancel)
+                          ? FlatButton(
+                              // alert dialog cancel button // cancel button
+                              // dialog cancel button
 
                               child: Text(
-                                buttonTextForOK,
+                                buttonTextForCancel,
                                 style: TextStyle(
-                                    color: (enableOKButton)
-                                        ? buttonColorForOK
-                                        : GlobalState.themeGrey350Color),
+                                    color: GlobalState.themeBlueColor),
                               ),
                               onPressed: () {
-                                if (enableOKButton) {
-                                  Navigator.of(context).pop();
-                                  shouldContinueAction = true;
-                                }
+                                Navigator.of(context).pop();
+                                shouldContinueAction = false;
                               },
-                            );
-                          })
-                        : Container(),
-                  ],
-                )
-            ],
+                            )
+                          : Container(),
+                      (showButtonForOK)
+                          ? Consumer<AppState>(builder: (cxt, appState, child) {
+                              var enableOKButton =
+                                  appState.enableAlertDialogOKButton;
+
+                              if (alwaysEnableOKButton) enableOKButton = true;
+
+                              return FlatButton(
+                                // alert dialog ok button // ok button
+                                // dialog ok button
+
+                                child: Text(
+                                  buttonTextForOK,
+                                  style: TextStyle(
+                                      color: (enableOKButton)
+                                          ? buttonColorForOK
+                                          : GlobalState.themeGrey350Color),
+                                ),
+                                onPressed: () {
+                                  if (enableOKButton) {
+                                    Navigator.of(context).pop();
+                                    shouldContinueAction = true;
+                                  }
+                                },
+                              );
+                            })
+                          : Container(),
+                    ],
+                  )
+              ],
+            ),
           ),
         );
       },
