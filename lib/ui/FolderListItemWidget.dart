@@ -86,6 +86,9 @@ class FolderListItemWidgetState extends State<FolderListItemWidget> {
         // click folder list item event // click folder item event
         // click on folder list item
 
+        GlobalState.isNoteListSelectedAutomaticallyAfterNoteListPageLoaded =
+            false;
+
         // Update the note list
         GlobalState.isDefaultFolderSelected = widget.isDefaultFolder;
         GlobalState.selectedFolderIdCurrently = widget.folderId;

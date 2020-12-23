@@ -26,8 +26,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   // Configuration
   double fontSizeForFolderSelectionText = 20.0;
 
-  List<NoteEntry> _noteEntryListForRefresh = List<NoteEntry>();
-  List<NoteWithProgressTotal> _noteList = List<NoteWithProgressTotal>();
+  List<NoteEntry> _noteEntryListForRefresh = <NoteEntry>[];
+  List<NoteWithProgressTotal> _noteList = <NoteWithProgressTotal>[];
+  // NoteWithProgressTotal _theFirstNote;
 
   int _pageNo;
   int _pageSize;
@@ -100,6 +101,15 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
               itemBuilder: (context, index) {
                 // note list page loading widget // note list loading widget
 
+                // Hide the web view if there is no data
+                GlobalState.flutterWebviewPlugin.hide();
+                Timer(
+                    const Duration(
+                        milliseconds: GlobalState.millisecondToSyncWithWebView),
+                    () {
+                  GlobalState.appState.hasDataInNoteListPage = false;
+                });
+
                 return NoDataWidget();
               })
           : ListView.builder(
@@ -121,6 +131,33 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                 // Get the current note item object
                 var theIndexAtNoteList = index;
                 var theNote = _noteList[theIndexAtNoteList];
+                // Save the first note
+                if (index == 0) {
+                  GlobalState.firstNoteToBeSelected = theNote;
+
+                  // Show the web view if there is data
+                  GlobalState.flutterWebviewPlugin.show();
+                  Timer(
+                      const Duration(
+                          milliseconds:
+                              GlobalState.millisecondToSyncWithWebView), () {
+                    GlobalState.appState.hasDataInNoteListPage = true;
+                  });
+
+                  // Trigger the web view to show the first note by the way
+                  if (!GlobalState
+                      .isNoteListSelectedAutomaticallyAfterNoteListPageLoaded) {
+                    GlobalState
+                            .isNoteListSelectedAutomaticallyAfterNoteListPageLoaded =
+                        true;
+                    Timer(
+                        const Duration(
+                            milliseconds:
+                                GlobalState.millisecondToSyncWithWebView), () {
+                      triggerToClickOnNoteListItem(theNote: GlobalState.firstNoteToBeSelected);
+                    });
+                  }
+                }
                 var theNoteId = theNote.id;
                 var theNoteTitle = _getNoteTitleFormatForNoteList(
                         encodedContent: theNote.content,

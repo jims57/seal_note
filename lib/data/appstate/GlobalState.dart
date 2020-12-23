@@ -115,6 +115,7 @@ class GlobalState with ChangeNotifier {
   static BuildContext currentShowDialogContext;
 
   // Selected note related
+  static NoteWithProgressTotal firstNoteToBeSelected;
   static NoteWithProgressTotal selectedNoteModel =
       NoteWithProgressTotal(); // When the user clicks on the note list item, we store the note model to this variable for the sake of future usage to update these values shown on the note list
   static String defaultTitleForNewNote = '新笔记';
@@ -133,11 +134,10 @@ class GlobalState with ChangeNotifier {
       reviewPlanIdOfDefaultSelectedFolder; // The review plan id of the default selected folder, that is the review plan id for selectedFolderIdByDefault
   static String
       noteContentEncodedInDb; // The note encoded content which is saved in db currently
-  // static String newNoteContentEncoded = GlobalState.selectedNoteModel
-  //     .content; // The new note content which is encoded, and is going to be saved to db
   static SelectedNoteModel noteModelForConsumer;
   static bool isNewNoteBeingSaved =
       false; // Indicate if a new note is being saved, avoiding duplicate notes being created
+  static bool isNoteListSelectedAutomaticallyAfterNoteListPageLoaded = false;
 
   // State objects
   static GlobalKey<MasterDetailPageState> masterDetailPageState;
@@ -147,9 +147,6 @@ class GlobalState with ChangeNotifier {
   static GlobalKey<NoteListWidgetForTodayState> noteListWidgetForTodayState;
   static GlobalKey<SelectFolderWidgetState> selectFolderWidgetState =
       GlobalKey<SelectFolderWidgetState>();
-
-  // static GlobalKey<AlertDialogWidgetState> alertDialogWidgetState =
-  //     GlobalKey<AlertDialogWidgetState>();
 
   // Dialog
   static bool shouldContinueActionForShowDialog = false;
@@ -210,6 +207,7 @@ class GlobalState with ChangeNotifier {
   static FlutterWebviewPlugin flutterWebviewPlugin;
   static WebviewScaffold webViewScaffold;
   static bool needRefreshWebView = false;
+  static const int millisecondToSyncWithWebView = 200;
 
   // Quill editor
   static bool isQuillReadOnly = true;

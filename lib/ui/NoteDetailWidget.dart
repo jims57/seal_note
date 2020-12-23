@@ -10,6 +10,7 @@ import 'package:keyboard_utils/keyboard_utils.dart';
 import 'package:moor/moor.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/DetailPageState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/database/database.dart';
@@ -544,51 +545,49 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                           : Container()
                     ],
                     tailChildren: [
-                      Container(
-                        alignment: Alignment.centerRight,
-                        child: IconButton(
-                            // edit web view button // edit note button
-                            // web view action button // note detail edit button
-                            // edit detail button // detail edit button
-                            // note edit button // edit note
-                            // save note button
+                      Consumer<AppState>(builder: (cxt, appState, child) {
+                        if (appState.hasDataInNoteListPage) {
+                          return Container(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                                // edit web view button // edit note button
+                                // web view action button // note detail edit button
+                                // edit detail button // detail edit button
+                                // note edit button // edit note
+                                // save note button
 
-                            icon: (GlobalState.isQuillReadOnly
-                                ? Icon(
-                                    Icons.edit,
-                                    color: GlobalState.themeBlueColor,
-                                  )
-                                : Icon(
-                                    Icons.done,
-                                    color: GlobalState.themeBlueColor,
-                                  )),
-                            onPressed: () {
-                              // click on save button // click save button
-                              // save button // edit button
+                                icon: (GlobalState.isQuillReadOnly
+                                    ? Icon(
+                                        Icons.edit,
+                                        color: GlobalState.themeBlueColor,
+                                      )
+                                    : Icon(
+                                        Icons.done,
+                                        color: GlobalState.themeBlueColor,
+                                      )),
+                                onPressed: () {
+                                  // click on save button // click save button
+                                  // save button // edit button
 
-                              _toggleQuillModeBetweenReadOnlyAndEdit(
-                                  keepNoteDetailPageOpen: true);
-                            }),
-                      ),
-                      // IconButton(
-                      //     // web view test button // test button
-                      //     // run button // test run button
-                      //     icon: Icon(
-                      //       Icons.directions_run,
-                      //       color: GlobalState.themeBlueColor,
-                      //     ),
-                      //     onPressed: () async {
-                      //       var pageHtml = await GlobalState
-                      //           .flutterWebviewPlugin
-                      //           .evalJavascript("javascript:getPageHtml();");
-                      //       var s = 's';
-                      //     }),
+                                  _toggleQuillModeBetweenReadOnlyAndEdit(
+                                      keepNoteDetailPageOpen: true);
+                                }),
+                          );
+                        } else {
+                          return Container();
+                        }
+                      })
                     ]),
                 javascriptChannels: jsChannels,
                 initialChild: Container(
                   color: GlobalState.themeGreyColorAtiOSTodoForBackground,
-                  child: Center(
-                    child: Container(),
+                  height: double.maxFinite,
+                  width: double.maxFinite,
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.only(bottom: GlobalState.appBarHeight),
+                  child: Text(
+                    '没有选择笔记',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w200),
                   ),
                 ),
                 hidden: true,
@@ -612,7 +611,15 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   }
 
   @override
-  void afterFirstLayout(BuildContext context) {}
+  void afterFirstLayout(BuildContext context) {
+    Timer(
+        const Duration(milliseconds: GlobalState.millisecondToSyncWithWebView),
+        () {
+      GlobalState.noteListWidgetForTodayState.currentState
+          .triggerToClickOnNoteListItem(
+              theNote: GlobalState.firstNoteToBeSelected);
+    });
+  }
 
   // Private methods
   void _toggleQuillModeBetweenReadOnlyAndEdit(

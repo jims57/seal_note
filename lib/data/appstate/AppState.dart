@@ -88,4 +88,14 @@ class AppState extends ChangeNotifier {
     _enableAlertDialogTopRightButton = value;
     notifyListeners();
   }
+
+  bool _hasDataInNoteListPage = false;
+
+  // ignore: unnecessary_getters_setters
+  bool get hasDataInNoteListPage => _hasDataInNoteListPage;
+
+  set hasDataInNoteListPage(bool value) {
+    _hasDataInNoteListPage = value;
+    notifyListeners();
+  }
 }
