@@ -6,6 +6,7 @@ import 'package:seal_note/model/NoteWithProgressTotal.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/FolderListWidget.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
+import 'package:seal_note/ui/NoteDetailWidget.dart';
 import 'package:seal_note/ui/NoteListWidgetForToday.dart';
 import 'package:seal_note/ui/common/AppBarWidget.dart';
 import 'package:seal_note/ui/common/SelectFolderWidget.dart';
@@ -147,6 +148,8 @@ class GlobalState with ChangeNotifier {
   static GlobalKey<NoteListWidgetForTodayState> noteListWidgetForTodayState;
   static GlobalKey<SelectFolderWidgetState> selectFolderWidgetState =
       GlobalKey<SelectFolderWidgetState>();
+  static GlobalKey<NoteDetailWidgetState> noteDetailWidgetState =
+      GlobalKey<NoteDetailWidgetState>();
 
   // Dialog
   static bool shouldContinueActionForShowDialog = false;
@@ -186,7 +189,7 @@ class GlobalState with ChangeNotifier {
   static int allFolderTotal = 0; // All folder including default folders
 
   // Default folders
-  static List<int> defaultFolderIndexList = List<int>();
+  static List<int> defaultFolderIndexList = <int>[];
 
   // Folder Options
   static double folderOptionItemHeight = 40.0;
@@ -208,6 +211,7 @@ class GlobalState with ChangeNotifier {
   static WebviewScaffold webViewScaffold;
   static bool needRefreshWebView = false;
   static const int millisecondToSyncWithWebView = 200;
+  static bool shouldHideWebView = false;
 
   // Quill editor
   static bool isQuillReadOnly = true;
@@ -215,7 +219,7 @@ class GlobalState with ChangeNotifier {
       false; // Indicating if the user is creating a new note
 
   // Photo Views
-  static List<ImageSyncItem> imageSyncItemList = List<ImageSyncItem>();
+  static List<ImageSyncItem> imageSyncItemList = <ImageSyncItem>[];
 
   // Testing
   static String imageId;

@@ -19,6 +19,7 @@ import 'package:seal_note/ui/common/AppBarWidget.dart';
 import 'package:seal_note/util/converter/ImageConverter.dart';
 import 'package:seal_note/util/crypto/CryptoHandler.dart';
 import 'package:seal_note/util/file/FileHandler.dart';
+import 'package:seal_note/util/robustness/RetryHandler.dart';
 import 'package:seal_note/util/route/ScaleRoute.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
@@ -27,6 +28,8 @@ import 'package:seal_note/model/ImageSyncItem.dart';
 import 'package:after_layout/after_layout.dart';
 
 class NoteDetailWidget extends StatefulWidget {
+  NoteDetailWidget({Key key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return NoteDetailWidgetState();
@@ -213,6 +216,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           // view photo // click on photo event
           // click on photo event // click photo view event
           // click on photo view event // click photo event
+          // show image event // show big image event
+
+          // Mark the photo view is showing
+          GlobalState.shouldHideWebView = true;
 
           print(message.message);
 
@@ -225,6 +232,20 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
               ScaleRoute(page: PhotoViewWidget()));
 
           GlobalState.flutterWebviewPlugin.hide();
+
+          // int millisecondsToHideWebView = 500;
+          // if (!GlobalState.isQuillReadOnly) {
+          //   millisecondsToHideWebView = 1000;
+          // }
+
+          // Timer(Duration(milliseconds: 500), () async {
+          //   await GlobalState.flutterWebviewPlugin.hide();
+          // });
+
+          // hideWebView(retryTimes: 5, millisecondsToDelay: 100);
+          // RetryHandler.retryExecutionWithTimerDelay(retryTimes: 3,callback: () async {
+          //   await GlobalState.flutterWebviewPlugin.hide();
+          // });
         }), // TriggerPhotoView
     JavascriptChannel(
         name: 'SyncImageSyncArrayToDart',
@@ -234,7 +255,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           var imageSyncArray = jsonResponse['imageSyncArray'] as List;
           var shouldClearArrayInDart =
               jsonResponse['shouldClearArrayInDart'] as bool;
-          var imageIdList = List<String>();
+          var imageIdList = <String>[];
 
           var latestImageSyncItemList = imageSyncArray.map((imageSync) {
             var _imageSyncItem = ImageSyncItem.fromJson(imageSync);
@@ -243,27 +264,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
           // If the page is being initialized, we should clear all old data from imageSyncItemList to avoid duplicate data
           if (shouldClearArrayInDart) {
-            // List<ImageSyncItem> clonedImageSyncItemList = []
-            //   ..addAll(GlobalState.imageSyncItemList);
-
             GlobalState.imageSyncItemList.clear();
-
-            // GlobalState.imageSyncItemList.addAll(latestImageSyncItemList);
-
-            // for (var i = 0; i < clonedImageSyncItemList.length; i++) {
-            //   var theCloneImageSyncItem = clonedImageSyncItemList[i];
-            //
-            //   ImageSyncItem d = latestImageSyncItemList.firstWhere(
-            //       (latestImageSyncItem) =>
-            //           latestImageSyncItem.imageId==
-            //           theCloneImageSyncItem.imageId);
-            //
-            //   if (d == null) {
-            //     GlobalState.imageSyncItemList.removeAt(i);
-            //   } else {
-            //     GlobalState.imageSyncItemList[i].syncId = 3;
-            //   }
-            // }
           }
 
           for (var i = 0; i < latestImageSyncItemList.length; i++) {
@@ -516,7 +517,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                             "javascript:saveNoteToDb(true);");
                                   }
 
-                                  _toggleQuillModeBetweenReadOnlyAndEdit(
+                                  toggleQuillModeBetweenReadOnlyAndEdit(
                                       keepNoteDetailPageOpen: false);
                                 }
 
@@ -569,7 +570,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                   // click on save button // click save button
                                   // save button // edit button
 
-                                  _toggleQuillModeBetweenReadOnlyAndEdit(
+                                  toggleQuillModeBetweenReadOnlyAndEdit(
                                       keepNoteDetailPageOpen: true);
                                 }),
                           );
@@ -615,7 +616,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     if (GlobalState.screenType != 1) {
       Timer(
           const Duration(
-              milliseconds: GlobalState.millisecondToSyncWithWebView), () {
+              milliseconds: GlobalState.millisecondToSyncWithWebView * 4), () {
         GlobalState.noteListWidgetForTodayState.currentState
             .triggerToClickOnNoteListItem(
                 theNote: GlobalState.firstNoteToBeSelected);
@@ -624,51 +625,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   }
 
   // Private methods
-  void _toggleQuillModeBetweenReadOnlyAndEdit(
-      {bool keepNoteDetailPageOpen = true}) async {
-    // toggle edit mode // toggle read only mode
-
-    // Both edit and read only mode will view it as handling the detail page
-    GlobalState.isHandlingNoteDetailPage = true;
-
-    // Check if it keeps stay at the detail page or note after executing this
-    if (keepNoteDetailPageOpen) {
-      GlobalState.isInNoteDetailPage = true;
-    } else {
-      GlobalState.isInNoteDetailPage = false;
-    }
-
-    if (GlobalState.isQuillReadOnly) {
-      // edit note // set note to edit mode
-
-      // If it is currently in readonly mode
-
-      GlobalState.isEditingOrCreatingNote = true;
-
-      // Set it to the edit mode
-      await GlobalState.flutterWebviewPlugin
-          .evalJavascript("javascript:setQuillToReadOnly(false);");
-    } else {
-      // save note // set note to read only mode
-      // save note event // save button execute save note
-
-      // Set it to the read only mode
-
-      // execute save note
-      // Trigger the auto-save function to save the note
-      await GlobalState.flutterWebviewPlugin
-          .evalJavascript("javascript:saveNoteToDb(false, true);");
-
-      await GlobalState.flutterWebviewPlugin
-          .evalJavascript("javascript:setQuillToReadOnly(true);");
-    }
-
-    // Switch the readonly status
-    GlobalState.isQuillReadOnly = !GlobalState.isQuillReadOnly;
-
-    setState(() {});
-  }
-
   double _getAppBarLeadingWidth() {
     double leadingWidth = 0.0;
     double appBarWidth = 0.0;
@@ -764,5 +720,86 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     }
 
     return shouldSave;
+  }
+
+  // Public methods
+  static void hideWebView(
+      {int retryTimes = 2,
+      int currentExecutionTimes = 0,
+      int millisecondsToDelay = 500}) async {
+    var executionTimes = currentExecutionTimes;
+
+    Timer(Duration(milliseconds: millisecondsToDelay), () async {
+      await GlobalState.flutterWebviewPlugin.hide();
+
+      executionTimes++;
+
+      if (executionTimes < retryTimes) {
+        hideWebView(
+            retryTimes: retryTimes,
+            currentExecutionTimes: executionTimes,
+            millisecondsToDelay: millisecondsToDelay);
+      }
+    });
+  }
+
+  void toggleQuillModeBetweenReadOnlyAndEdit(
+      {bool keepNoteDetailPageOpen = true}) async {
+    // toggle edit mode // toggle read only mode
+
+    // Both edit and read only mode will view it as handling the detail page
+    GlobalState.isHandlingNoteDetailPage = true;
+
+    // Check if it keeps stay at the detail page or note after executing this
+    if (keepNoteDetailPageOpen) {
+      GlobalState.isInNoteDetailPage = true;
+    } else {
+      GlobalState.isInNoteDetailPage = false;
+    }
+
+    if (GlobalState.isQuillReadOnly) {
+      // edit note // set note to edit mode
+
+      // If it is currently in readonly mode
+
+      GlobalState.isEditingOrCreatingNote = true;
+
+      // Set it to the edit mode
+      await GlobalState.flutterWebviewPlugin
+          .evalJavascript("javascript:setQuillToReadOnly(false);");
+    } else {
+      // save note // set note to read only mode
+      // save note event // save button execute save note
+
+      // Set it to the read only mode
+
+      // execute save note
+      // Trigger the auto-save function to save the note
+      await GlobalState.flutterWebviewPlugin
+          .evalJavascript("javascript:saveNoteToDb(false, true);");
+
+      await GlobalState.flutterWebviewPlugin
+          .evalJavascript("javascript:setQuillToReadOnly(true);");
+    }
+
+    // Switch the readonly status
+    GlobalState.isQuillReadOnly = !GlobalState.isQuillReadOnly;
+
+    setState(() {});
+  }
+
+  void setQuillAtWebViewToReadOnlyMode(
+      {bool keepNoteDetailPageOpen = true}) async {
+    if (!GlobalState.isQuillReadOnly) {
+      toggleQuillModeBetweenReadOnlyAndEdit(
+          keepNoteDetailPageOpen: keepNoteDetailPageOpen);
+    }
+  }
+
+  void setQuillAtWebViewToEditMode({bool keepNoteDetailPageOpen = true}) async {
+    if (GlobalState.isQuillReadOnly) {
+      toggleQuillModeBetweenReadOnlyAndEdit(
+          keepNoteDetailPageOpen: keepNoteDetailPageOpen);
+    }
   }
 }

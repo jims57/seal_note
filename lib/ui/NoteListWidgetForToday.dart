@@ -137,7 +137,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                   GlobalState.firstNoteToBeSelected = theNote;
 
                   // Show the web view if there is data
-                  GlobalState.flutterWebviewPlugin.show();
+                  if (!GlobalState.shouldHideWebView) {
+                    GlobalState.flutterWebviewPlugin.show();
+                  }
+
                   Timer(
                       const Duration(
                           milliseconds:
@@ -152,6 +155,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     GlobalState
                             .isNoteListSelectedAutomaticallyAfterNoteListPageLoaded =
                         true;
+
                     Timer(
                         const Duration(
                             milliseconds:
@@ -613,6 +617,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     // click note item
 
                     triggerToClickOnNoteListItem(theNote: theNote);
+
+                    // always set the check button back to edit button on the web view
+                    GlobalState.appState.hasDataInNoteListPage = true;
                   },
                 );
               },

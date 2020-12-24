@@ -103,15 +103,15 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
                   ),
                   onTap: () {
                     setState(() {
+                      GlobalState.shouldHideWebView = false;
+                      GlobalState.flutterWebviewPlugin.show();
+
                       GlobalState.appState.widgetNo = 2;
 
                       GlobalState.shouldTriggerPageTransitionAnimation = false;
                       // GlobalState.masterDetailPageState.currentState.updatePageShowAndHide(shouldTriggerSetState: false, hasAnimation: false);
 
                       Navigator.pop(GlobalState.noteDetailWidgetContext);
-                      // GlobalState.shouldTriggerPageTransitionAnimation = true;
-
-                      GlobalState.flutterWebviewPlugin.show();
                     });
                   },
                 )

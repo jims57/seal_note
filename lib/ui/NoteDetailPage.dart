@@ -22,9 +22,11 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
       body: Consumer<DetailPageChangeNotifier>(
         builder: (ctx, detailPageChangeNotifier, child) {
           if (GlobalState.webViewScaffold != null) {
-            return NoteDetailWidget();
+            return Container();
+            // return NoteDetailWidget();
           } else {
-            return NoteDetailWidget();
+            return Container();
+            // return NoteDetailWidget();
           }
         },
       ),

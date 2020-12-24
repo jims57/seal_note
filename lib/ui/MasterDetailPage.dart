@@ -209,7 +209,9 @@ class MasterDetailPageState extends State<MasterDetailPage>
                 margin: getNoteDetailPageLeftEdgeInset(),
                 width: noteDetailPageWidth,
                 // color: Colors.red,
-                child: NoteDetailWidget()),
+                child: NoteDetailWidget(
+                  key: GlobalState.noteDetailWidgetState,
+                )),
           ),
           // Note detail page
         ],
