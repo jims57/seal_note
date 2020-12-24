@@ -28,6 +28,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
   List<NoteEntry> _noteEntryListForRefresh = <NoteEntry>[];
   List<NoteWithProgressTotal> _noteList = <NoteWithProgressTotal>[];
+
   // NoteWithProgressTotal _theFirstNote;
 
   int _pageNo;
@@ -146,7 +147,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                   // Trigger the web view to show the first note by the way
                   if (!GlobalState
-                      .isNoteListSelectedAutomaticallyAfterNoteListPageLoaded) {
+                          .isNoteListSelectedAutomaticallyAfterNoteListPageLoaded &&
+                      GlobalState.screenType != 1) {
                     GlobalState
                             .isNoteListSelectedAutomaticallyAfterNoteListPageLoaded =
                         true;
@@ -154,7 +156,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                         const Duration(
                             milliseconds:
                                 GlobalState.millisecondToSyncWithWebView), () {
-                      triggerToClickOnNoteListItem(theNote: GlobalState.firstNoteToBeSelected);
+                      triggerToClickOnNoteListItem(
+                          theNote: GlobalState.firstNoteToBeSelected);
                     });
                   }
                 }

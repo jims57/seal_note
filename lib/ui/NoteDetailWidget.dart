@@ -612,13 +612,15 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
   @override
   void afterFirstLayout(BuildContext context) {
-    Timer(
-        const Duration(milliseconds: GlobalState.millisecondToSyncWithWebView),
-        () {
-      GlobalState.noteListWidgetForTodayState.currentState
-          .triggerToClickOnNoteListItem(
-              theNote: GlobalState.firstNoteToBeSelected);
-    });
+    if (GlobalState.screenType != 1) {
+      Timer(
+          const Duration(
+              milliseconds: GlobalState.millisecondToSyncWithWebView), () {
+        GlobalState.noteListWidgetForTodayState.currentState
+            .triggerToClickOnNoteListItem(
+                theNote: GlobalState.firstNoteToBeSelected);
+      });
+    }
   }
 
   // Private methods
