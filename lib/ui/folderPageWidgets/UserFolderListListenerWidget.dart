@@ -304,65 +304,67 @@ class _UserFolderListListenerWidgetState
                                   }
                                 },
                               ),
-                              RoundCornerButtonWidget(
-                                  // delete folder button
+                              if (folderId != 3)
+                                RoundCornerButtonWidget(
+                                    // delete folder button
 
-                                  buttonText: '删除文件夹',
-                                  buttonThemeColor: Colors.red,
-                                  topMargin: 25.0,
-                                  buttonCallback: () async {
-                                    // delete folder event
+                                    buttonText: '删除文件夹',
+                                    buttonThemeColor: Colors.red,
+                                    topMargin: 25.0,
+                                    buttonCallback: () async {
+                                      // delete folder event
 
-                                    var continueAction = true;
-                                    var hasAvailableNotesInsideFolder =
-                                        await GlobalState.database
-                                            .hasNotesInFolder(
-                                                folderId: folderId,
-                                                includeDeletedNotes: false);
-
-                                    if (hasAvailableNotesInsideFolder) {
-                                      continueAction = await AlertDialogHandler()
-                                          .showAlertDialog(
-                                              parentContext: context,
-                                              captionText: '删除文件夹？',
-                                              remark:
-                                                  '此文件夹已有笔记。删除后，相关的所有笔记也会被删除！',
-                                              buttonTextForOK: '确定',
-                                              buttonColorForOK: Colors.red);
-                                    }
-
-                                    if (continueAction) {
-                                      // Decide to delete the folder anyway
-
-                                      // Check if the folder has deleted notes
-                                      var hasDeletedNotesInsideFolder =
+                                      var continueAction = true;
+                                      var hasAvailableNotesInsideFolder =
                                           await GlobalState.database
                                               .hasNotesInFolder(
                                                   folderId: folderId,
-                                                  includeDeletedNotes: true);
+                                                  includeDeletedNotes: false);
 
-                                      if (hasDeletedNotesInsideFolder) {
-                                        // When there is any note inside the folder, just mark the folder as deleted status
-
-                                        await GlobalState.database
-                                            .setFolderAndItsNotesToDeletedStatus(
-                                                folderId: folderId);
-                                      } else {
-                                        // When there is no notes inside the folder, delete the folder directly
-                                        await GlobalState.database
-                                            .deleteFolder(folderId: folderId);
+                                      if (hasAvailableNotesInsideFolder) {
+                                        continueAction = await AlertDialogHandler()
+                                            .showAlertDialog(
+                                                parentContext: context,
+                                                captionText: '删除文件夹？',
+                                                remark:
+                                                    '此文件夹已有笔记。删除后，相关的所有笔记也会被删除！',
+                                                buttonTextForOK: '确定',
+                                                buttonColorForOK: Colors.red);
                                       }
 
-                                      GlobalState
-                                          .folderListWidgetState.currentState
-                                          .triggerSetState(
-                                              forceToFetchFoldersFromDB: true);
+                                      if (continueAction) {
+                                        // Decide to delete the folder anyway
 
-                                      if (Navigator.canPop(context)) {
-                                        Navigator.pop(context);
+                                        // Check if the folder has deleted notes
+                                        var hasDeletedNotesInsideFolder =
+                                            await GlobalState.database
+                                                .hasNotesInFolder(
+                                                    folderId: folderId,
+                                                    includeDeletedNotes: true);
+
+                                        if (hasDeletedNotesInsideFolder) {
+                                          // When there is any note inside the folder, just mark the folder as deleted status
+
+                                          await GlobalState.database
+                                              .setFolderAndItsNotesToDeletedStatus(
+                                                  folderId: folderId);
+                                        } else {
+                                          // When there is no notes inside the folder, delete the folder directly
+                                          await GlobalState.database
+                                              .deleteFolder(folderId: folderId);
+                                        }
+
+                                        GlobalState
+                                            .folderListWidgetState.currentState
+                                            .triggerSetState(
+                                                forceToFetchFoldersFromDB:
+                                                    true);
+
+                                        if (Navigator.canPop(context)) {
+                                          Navigator.pop(context);
+                                        }
                                       }
-                                    }
-                                  })
+                                    })
                             ],
                           ),
                           showButtonForCancel: false,
@@ -563,13 +565,13 @@ class _UserFolderListListenerWidgetState
     _timer.cancel();
   }
 
-  // bool _hasNotesInsideFolder() {
-  //   var hasNotes = true;
-  //
-  //   if (widget.numberToShow == 0) {
-  //     hasNotes = false;
-  //   }
-  //
-  //   return hasNotes;
-  // }
+// bool _hasNotesInsideFolder() {
+//   var hasNotes = true;
+//
+//   if (widget.numberToShow == 0) {
+//     hasNotes = false;
+//   }
+//
+//   return hasNotes;
+// }
 }

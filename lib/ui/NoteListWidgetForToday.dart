@@ -103,7 +103,14 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                 // note list page loading widget // note list loading widget
 
                 // Hide the web view if there is no data
-                GlobalState.flutterWebviewPlugin.hide();
+                if (GlobalState.isEditingOrCreatingNote) {
+                  GlobalState.shouldHideWebView = false;
+                  GlobalState.flutterWebviewPlugin.show();
+                } else {
+                  GlobalState.shouldHideWebView = true;
+                  GlobalState.flutterWebviewPlugin.hide();
+                }
+
                 Timer(
                     const Duration(
                         milliseconds: GlobalState.millisecondToSyncWithWebView),

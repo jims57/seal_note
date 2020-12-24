@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -123,7 +125,14 @@ class _NoteListPageState extends State<NoteListPage> {
           // new note event // click on new note button
           // click add note button // new floating button
           // new note button // new note floating button
-          // click on new button
+          // click on new button // create new note button
+
+          // Always show the web view
+
+          // Timer(const Duration(seconds: 5), () {
+          //   GlobalState.shouldHideWebView = false;
+          //   GlobalState.flutterWebviewPlugin.show();
+          // });
 
           // Update action status
           GlobalState.isQuillReadOnly = false;

@@ -723,25 +723,25 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   }
 
   // Public methods
-  static void hideWebView(
-      {int retryTimes = 2,
-      int currentExecutionTimes = 0,
-      int millisecondsToDelay = 500}) async {
-    var executionTimes = currentExecutionTimes;
-
-    Timer(Duration(milliseconds: millisecondsToDelay), () async {
-      await GlobalState.flutterWebviewPlugin.hide();
-
-      executionTimes++;
-
-      if (executionTimes < retryTimes) {
-        hideWebView(
-            retryTimes: retryTimes,
-            currentExecutionTimes: executionTimes,
-            millisecondsToDelay: millisecondsToDelay);
-      }
-    });
-  }
+  // static void hideWebView(
+  //     {int retryTimes = 2,
+  //     int currentExecutionTimes = 0,
+  //     int millisecondsToDelay = 500}) async {
+  //   var executionTimes = currentExecutionTimes;
+  //
+  //   Timer(Duration(milliseconds: millisecondsToDelay), () async {
+  //     await GlobalState.flutterWebviewPlugin.hide();
+  //
+  //     executionTimes++;
+  //
+  //     if (executionTimes < retryTimes) {
+  //       // hideWebView(
+  //       //     retryTimes: retryTimes,
+  //       //     currentExecutionTimes: executionTimes,
+  //       //     millisecondsToDelay: millisecondsToDelay);
+  //     }
+  //   });
+  // }
 
   void toggleQuillModeBetweenReadOnlyAndEdit(
       {bool keepNoteDetailPageOpen = true}) async {
@@ -788,18 +788,18 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     setState(() {});
   }
 
-  void setQuillAtWebViewToReadOnlyMode(
-      {bool keepNoteDetailPageOpen = true}) async {
-    if (!GlobalState.isQuillReadOnly) {
-      toggleQuillModeBetweenReadOnlyAndEdit(
-          keepNoteDetailPageOpen: keepNoteDetailPageOpen);
-    }
-  }
-
-  void setQuillAtWebViewToEditMode({bool keepNoteDetailPageOpen = true}) async {
-    if (GlobalState.isQuillReadOnly) {
-      toggleQuillModeBetweenReadOnlyAndEdit(
-          keepNoteDetailPageOpen: keepNoteDetailPageOpen);
-    }
-  }
+  // void setQuillAtWebViewToReadOnlyMode(
+  //     {bool keepNoteDetailPageOpen = true}) async {
+  //   if (!GlobalState.isQuillReadOnly) {
+  //     toggleQuillModeBetweenReadOnlyAndEdit(
+  //         keepNoteDetailPageOpen: keepNoteDetailPageOpen);
+  //   }
+  // }
+  //
+  // void setQuillAtWebViewToEditMode({bool keepNoteDetailPageOpen = true}) async {
+  //   if (GlobalState.isQuillReadOnly) {
+  //     toggleQuillModeBetweenReadOnlyAndEdit(
+  //         keepNoteDetailPageOpen: keepNoteDetailPageOpen);
+  //   }
+  // }
 }
