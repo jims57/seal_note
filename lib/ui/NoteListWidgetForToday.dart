@@ -104,11 +104,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                 // Hide the web view if there is no data
                 if (GlobalState.isEditingOrCreatingNote) {
-                  GlobalState.shouldHideWebView = false;
-                  GlobalState.flutterWebviewPlugin.show();
+                  GlobalState.noteDetailWidgetState.currentState.showWebView();
                 } else {
-                  GlobalState.shouldHideWebView = true;
-                  GlobalState.flutterWebviewPlugin.hide();
+                  GlobalState.noteDetailWidgetState.currentState.hideWebView();
                 }
 
                 Timer(
@@ -145,7 +143,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                   // Show the web view if there is data
                   if (!GlobalState.shouldHideWebView) {
-                    GlobalState.flutterWebviewPlugin.show();
+                    GlobalState.noteDetailWidgetState.currentState.showWebView(
+                        forceToSyncWithShouldHideWebViewVar: false);
                   }
 
                   Timer(
@@ -158,7 +157,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                   // Trigger the web view to show the first note by the way
                   if (!GlobalState
                           .isNoteListSelectedAutomaticallyAfterNoteListPageLoaded &&
-                      GlobalState.screenType != 1) {
+                      GlobalState.screenType != 1 &&
+                      GlobalState.isQuillReadOnly) {
                     GlobalState
                             .isNoteListSelectedAutomaticallyAfterNoteListPageLoaded =
                         true;
@@ -427,7 +427,11 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                         .getUserFolderListItemList();
 
                                     // We should hide the WebView first, since it isn't in the UI tree which will block the dialog widget
-                                    GlobalState.flutterWebviewPlugin.hide();
+                                    GlobalState
+                                        .noteDetailWidgetState.currentState
+                                        .hideWebView(
+                                            forceToSyncWithShouldHideWebViewVar:
+                                                false);
 
                                     await showDialog(
                                         context: context,
@@ -494,7 +498,11 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                           );
                                         });
 
-                                    GlobalState.flutterWebviewPlugin.show();
+                                    GlobalState
+                                        .noteDetailWidgetState.currentState
+                                        .showWebView(
+                                            forceToSyncWithShouldHideWebViewVar:
+                                                false);
                                   } else {
                                     // In Deleted folder
 
@@ -790,9 +798,12 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       GlobalState.masterDetailPageState.currentState
           .updatePageShowAndHide(shouldTriggerSetState: true);
     } else {
+      // For screenType = 2 or 3, we don't need to change the page show and hide
       // Screen Type = 2 or 3
-      // GlobalState.isInNoteDetailPage = true;
     }
+
+    // Force to show the web view
+    GlobalState.noteDetailWidgetState.currentState.showWebView();
 
     // Save the current note model as global variable
     GlobalState.selectedNoteModel = theNote;

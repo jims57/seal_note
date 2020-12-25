@@ -126,13 +126,10 @@ class _NoteListPageState extends State<NoteListPage> {
           // click add note button // new floating button
           // new note button // new note floating button
           // click on new button // create new note button
+          // click on floating button // click floating button
 
-          // Always show the web view
-
-          // Timer(const Duration(seconds: 5), () {
-          //   GlobalState.shouldHideWebView = false;
-          //   GlobalState.flutterWebviewPlugin.show();
-          // });
+          // Set web view related variables
+          GlobalState.isNoteListSelectedAutomaticallyAfterNoteListPageLoaded = false;
 
           // Update action status
           GlobalState.isQuillReadOnly = false;

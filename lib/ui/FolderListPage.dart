@@ -75,8 +75,7 @@ class FolderListPageState extends State<FolderListPage>
 
 
               // Hide the WebView first
-              GlobalState.shouldHideWebView = true;
-              GlobalState.flutterWebviewPlugin.hide();
+              GlobalState.noteDetailWidgetState.currentState.hideWebView();
 
               var newFolderName;
 
@@ -142,8 +141,8 @@ class FolderListPageState extends State<FolderListPage>
               }
 
               // Show the WebView anyway
-              GlobalState.shouldHideWebView = false;
-              GlobalState.flutterWebviewPlugin.show();
+              GlobalState.noteDetailWidgetState.currentState.showWebView();
+
             },
           )
         ],

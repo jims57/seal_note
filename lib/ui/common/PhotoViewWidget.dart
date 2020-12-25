@@ -103,8 +103,7 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
                   ),
                   onTap: () {
                     setState(() {
-                      GlobalState.shouldHideWebView = false;
-                      GlobalState.flutterWebviewPlugin.show();
+                      GlobalState.noteDetailWidgetState.currentState.showWebView();
 
                       GlobalState.appState.widgetNo = 2;
 

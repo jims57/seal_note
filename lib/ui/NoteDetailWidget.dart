@@ -231,21 +231,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           Navigator.push(GlobalState.noteDetailWidgetContext,
               ScaleRoute(page: PhotoViewWidget()));
 
-          GlobalState.flutterWebviewPlugin.hide();
-
-          // int millisecondsToHideWebView = 500;
-          // if (!GlobalState.isQuillReadOnly) {
-          //   millisecondsToHideWebView = 1000;
-          // }
-
-          // Timer(Duration(milliseconds: 500), () async {
-          //   await GlobalState.flutterWebviewPlugin.hide();
-          // });
-
-          // hideWebView(retryTimes: 5, millisecondsToDelay: 100);
-          // RetryHandler.retryExecutionWithTimerDelay(retryTimes: 3,callback: () async {
-          //   await GlobalState.flutterWebviewPlugin.hide();
-          // });
+          GlobalState.noteDetailWidgetState.currentState.hideWebView(forceToSyncWithShouldHideWebViewVar: false);
         }), // TriggerPhotoView
     JavascriptChannel(
         name: 'SyncImageSyncArrayToDart',
@@ -723,25 +709,21 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   }
 
   // Public methods
-  // static void hideWebView(
-  //     {int retryTimes = 2,
-  //     int currentExecutionTimes = 0,
-  //     int millisecondsToDelay = 500}) async {
-  //   var executionTimes = currentExecutionTimes;
-  //
-  //   Timer(Duration(milliseconds: millisecondsToDelay), () async {
-  //     await GlobalState.flutterWebviewPlugin.hide();
-  //
-  //     executionTimes++;
-  //
-  //     if (executionTimes < retryTimes) {
-  //       // hideWebView(
-  //       //     retryTimes: retryTimes,
-  //       //     currentExecutionTimes: executionTimes,
-  //       //     millisecondsToDelay: millisecondsToDelay);
-  //     }
-  //   });
-  // }
+  void showWebView({bool forceToSyncWithShouldHideWebViewVar = true}) {
+    if (forceToSyncWithShouldHideWebViewVar) {
+      GlobalState.shouldHideWebView = false;
+    }
+
+    GlobalState.flutterWebviewPlugin.show();
+  }
+
+  void hideWebView({bool forceToSyncWithShouldHideWebViewVar = true}) {
+    if (forceToSyncWithShouldHideWebViewVar) {
+      GlobalState.shouldHideWebView = true;
+    }
+
+    GlobalState.flutterWebviewPlugin.hide();
+  }
 
   void toggleQuillModeBetweenReadOnlyAndEdit(
       {bool keepNoteDetailPageOpen = true}) async {
@@ -787,19 +769,4 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
     setState(() {});
   }
-
-  // void setQuillAtWebViewToReadOnlyMode(
-  //     {bool keepNoteDetailPageOpen = true}) async {
-  //   if (!GlobalState.isQuillReadOnly) {
-  //     toggleQuillModeBetweenReadOnlyAndEdit(
-  //         keepNoteDetailPageOpen: keepNoteDetailPageOpen);
-  //   }
-  // }
-  //
-  // void setQuillAtWebViewToEditMode({bool keepNoteDetailPageOpen = true}) async {
-  //   if (GlobalState.isQuillReadOnly) {
-  //     toggleQuillModeBetweenReadOnlyAndEdit(
-  //         keepNoteDetailPageOpen: keepNoteDetailPageOpen);
-  //   }
-  // }
 }

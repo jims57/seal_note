@@ -234,8 +234,7 @@ class _UserFolderListListenerWidgetState
                         // click on more button // click on swipe more button
 
                         // Hide the webView first
-                        GlobalState.shouldHideWebView = true;
-                        GlobalState.flutterWebviewPlugin.hide();
+                        GlobalState.noteDetailWidgetState.currentState.hideWebView();
 
                         var folderId = widget.folderId;
                         var oldFolderName = widget.folderName;
@@ -371,8 +370,7 @@ class _UserFolderListListenerWidgetState
                           showButtonForOK: false,
                         );
 
-                        GlobalState.shouldHideWebView = false;
-                        GlobalState.flutterWebviewPlugin.show();
+                        GlobalState.noteDetailWidgetState.currentState.showWebView();
                       },
                     ),
                   ],
