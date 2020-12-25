@@ -73,7 +73,6 @@ class FolderListPageState extends State<FolderListPage>
               // click on create folder button // click create folder button
               // click to create folder button
 
-
               // Hide the WebView first
               GlobalState.noteDetailWidgetState.currentState.hideWebView();
 
@@ -142,7 +141,6 @@ class FolderListPageState extends State<FolderListPage>
 
               // Show the WebView anyway
               GlobalState.noteDetailWidgetState.currentState.showWebView();
-
             },
           )
         ],
@@ -191,7 +189,42 @@ class FolderListPageState extends State<FolderListPage>
                             ),
                             onTap: () {
                               // setting event // click setting event
+                              // setting button // setting button event
                               var s = 's';
+
+                              GlobalState.noteDetailWidgetState.currentState
+                                  .setWebViewToEditMode();
+
+                              // GlobalState.noteDetailWidgetState.currentState.saveNoteToDb();
+                            },
+                          ),
+                          GestureDetector(
+                            child: Container(
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.settings,
+                                      size: 20,
+                                    ),
+                                    Text(
+                                      '测试',
+                                      style: TextStyle(fontSize: 10),
+                                    )
+                                  ]),
+                              color: Colors.transparent,
+                              padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                            ),
+                            onTap: () {
+                              // setting event // click setting event
+                              // setting button // setting button event
+                              var s = 's';
+
+                              GlobalState.noteDetailWidgetState.currentState
+                                  .setWebViewToReadOnlyMode(
+                                      forceToSaveNoteToDbIfAnyUpdates: true);
+
+                              // GlobalState.noteDetailWidgetState.currentState.saveNoteToDb();
                             },
                           )
                         ],

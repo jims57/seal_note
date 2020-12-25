@@ -231,7 +231,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           Navigator.push(GlobalState.noteDetailWidgetContext,
               ScaleRoute(page: PhotoViewWidget()));
 
-          GlobalState.noteDetailWidgetState.currentState.hideWebView(forceToSyncWithShouldHideWebViewVar: false);
+          GlobalState.noteDetailWidgetState.currentState
+              .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
         }), // TriggerPhotoView
     JavascriptChannel(
         name: 'SyncImageSyncArrayToDart',
@@ -503,7 +504,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                             "javascript:saveNoteToDb(true);");
                                   }
 
-                                  toggleQuillModeBetweenReadOnlyAndEdit(
+                                  await toggleQuillModeBetweenReadOnlyAndEdit(
                                       keepNoteDetailPageOpen: false);
                                 }
 
@@ -552,11 +553,11 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                         Icons.done,
                                         color: GlobalState.themeBlueColor,
                                       )),
-                                onPressed: () {
+                                onPressed: () async {
                                   // click on save button // click save button
                                   // save button // edit button
 
-                                  toggleQuillModeBetweenReadOnlyAndEdit(
+                                  await toggleQuillModeBetweenReadOnlyAndEdit(
                                       keepNoteDetailPageOpen: true);
                                 }),
                           );
@@ -725,8 +726,31 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     GlobalState.flutterWebviewPlugin.hide();
   }
 
-  void toggleQuillModeBetweenReadOnlyAndEdit(
+  Future<void> setWebViewToReadOnlyMode(
+      {bool keepNoteDetailPageOpen = true,
+      bool forceToSaveNoteToDbIfAnyUpdates = false}) async {
+    if (forceToSaveNoteToDbIfAnyUpdates) {
+      await saveNoteToDb(forceToSave: forceToSaveNoteToDbIfAnyUpdates);
+    }
+
+    if (!GlobalState.isQuillReadOnly) {
+      await toggleQuillModeBetweenReadOnlyAndEdit(
+          keepNoteDetailPageOpen: keepNoteDetailPageOpen,
+          executeAutoSaveNoteWhenSettingToReadOnlyMode: false);
+    }
+  }
+
+  Future<void> setWebViewToEditMode(
       {bool keepNoteDetailPageOpen = true}) async {
+    if (GlobalState.isQuillReadOnly) {
+      await toggleQuillModeBetweenReadOnlyAndEdit(
+          keepNoteDetailPageOpen: keepNoteDetailPageOpen);
+    }
+  }
+
+  Future<void> toggleQuillModeBetweenReadOnlyAndEdit(
+      {bool keepNoteDetailPageOpen = true,
+      bool executeAutoSaveNoteWhenSettingToReadOnlyMode = true}) async {
     // toggle edit mode // toggle read only mode
 
     // Both edit and read only mode will view it as handling the detail page
@@ -757,8 +781,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
       // execute save note
       // Trigger the auto-save function to save the note
-      await GlobalState.flutterWebviewPlugin
-          .evalJavascript("javascript:saveNoteToDb(false, true);");
+      if (executeAutoSaveNoteWhenSettingToReadOnlyMode) {
+        await GlobalState.flutterWebviewPlugin
+            .evalJavascript("javascript:saveNoteToDb(false, true);");
+      }
 
       await GlobalState.flutterWebviewPlugin
           .evalJavascript("javascript:setQuillToReadOnly(true);");
@@ -768,5 +794,15 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     GlobalState.isQuillReadOnly = !GlobalState.isQuillReadOnly;
 
     setState(() {});
+  }
+
+  Future<void> saveNoteToDb(
+      {bool forceToSave = true, bool canSaveInReadOnly = false}) async {
+    // save note to db function // save note to db method
+
+    var evalString =
+        "javascript:saveNoteToDb($forceToSave, $canSaveInReadOnly);";
+
+    await GlobalState.flutterWebviewPlugin.evalJavascript(evalString);
   }
 }

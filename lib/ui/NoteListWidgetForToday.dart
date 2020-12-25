@@ -631,7 +631,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     // click note list item // click on note list item
                     // click note item
 
-                    triggerToClickOnNoteListItem(theNote: theNote);
+                    triggerToClickOnNoteListItem(
+                        theNote: theNote,
+                        forceToSaveNoteToDbIfAnyUpdates: true);
 
                     // always set the check button back to edit button on the web view
                     GlobalState.appState.hasDataInNoteListPage = true;
@@ -791,7 +793,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   void triggerToClickOnNoteListItem(
-      {@required NoteWithProgressTotal theNote}) async {
+      {@required NoteWithProgressTotal theNote,
+      bool forceToSetWebViewReadOnlyMode = true,
+      bool forceToSaveNoteToDbIfAnyUpdates = true,
+      bool keepNoteDetailPageOpen = true}) async {
     GlobalState.isInNoteDetailPage = true;
     if (GlobalState.screenType == 1) {
       GlobalState.isHandlingNoteDetailPage = true;
@@ -800,6 +805,14 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     } else {
       // For screenType = 2 or 3, we don't need to change the page show and hide
       // Screen Type = 2 or 3
+    }
+
+    print('triggerToClickOnNoteListItem() hit');
+
+    if (forceToSetWebViewReadOnlyMode) {
+      await GlobalState.noteDetailWidgetState.currentState.setWebViewToReadOnlyMode(
+          keepNoteDetailPageOpen: keepNoteDetailPageOpen,
+          forceToSaveNoteToDbIfAnyUpdates: forceToSaveNoteToDbIfAnyUpdates);
     }
 
     // Force to show the web view

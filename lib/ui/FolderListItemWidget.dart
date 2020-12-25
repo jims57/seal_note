@@ -86,6 +86,10 @@ class FolderListItemWidgetState extends State<FolderListItemWidget> {
         // click folder list item event // click folder item event
         // click on folder list item
 
+        // Force to set the web view to read only mode
+        await GlobalState.noteDetailWidgetState.currentState
+            .setWebViewToReadOnlyMode(forceToSaveNoteToDbIfAnyUpdates: true);
+
         GlobalState.isNoteListSelectedAutomaticallyAfterNoteListPageLoaded =
             false;
 
