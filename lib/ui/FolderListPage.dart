@@ -253,7 +253,7 @@ class FolderListPageState extends State<FolderListPage>
   List<int> getDefaultFolderIds() {
     // Get all default folder Ids
 
-    var defaultFolderIds = List<int>();
+    var defaultFolderIds = <int>[];
     var folderListItemList =
         GlobalState.folderListWidgetState.currentState.getFolderListItemList();
 

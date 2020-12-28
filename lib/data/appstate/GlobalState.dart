@@ -41,6 +41,7 @@ class GlobalState with ChangeNotifier {
   static const Color themeBlackColor = Color(0xff000000);
   static const Color themeBlackColorForFont = Color(0xff000000);
   static const Color themeBlueColor = Color(0xff2b98f0);
+  static const Color themeBlueColorForSelectedItemBackground = Color(0xffb4d8fd);
   static const Color themeGreenColorAtiOSTodo = Color(0xff67d844);
   static const Color themeLightBlueColor07 = Color.fromRGBO(43, 152, 240, 0.7);
   static const Color themeLightBlueColor02 = Color.fromRGBO(43, 152, 240, 0.2);

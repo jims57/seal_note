@@ -29,8 +29,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   List<NoteEntry> _noteEntryListForRefresh = <NoteEntry>[];
   List<NoteWithProgressTotal> _noteList = <NoteWithProgressTotal>[];
 
-  // NoteWithProgressTotal _theFirstNote;
-
   int _pageNo;
   int _pageSize;
 
@@ -137,6 +135,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                 // Get the current note item object
                 var theIndexAtNoteList = index;
                 var theNote = _noteList[theIndexAtNoteList];
+
                 // Save the first note
                 if (index == 0) {
                   GlobalState.firstNoteToBeSelected = theNote;
@@ -172,6 +171,14 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                     });
                   }
                 }
+
+                // Check if the note list is the selected note currently
+                var isSelectedItem = false;
+                if (GlobalState.screenType != 1 &&
+                    GlobalState.selectedNoteModel.id == theNote.id) {
+                  isSelectedItem = true;
+                }
+
                 var theNoteId = theNote.id;
                 var theNoteTitle = _getNoteTitleFormatForNoteList(
                         encodedContent: theNote.content,
@@ -199,7 +206,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                           actionExtentRatio: 0.25,
                           child: Container(
                             // get note list item // note list item data
-                            color: Colors.white,
+                            color: (isSelectedItem)
+                                ? GlobalState
+                                    .themeBlueColorForSelectedItemBackground
+                                : Colors.white,
                             child: ListTile(
                               contentPadding: EdgeInsets.only(
                                   top: 15.0,
@@ -252,7 +262,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                                               .nextReviewTime) &&
                                                       !theNote.isReviewFinished)
                                                   ? Colors.red
-                                                  : Colors.grey[400],
+                                                  : (isSelectedItem)
+                                                      ? GlobalState
+                                                          .themeBlackColor87ForFontForeColor
+                                                      : Colors.grey[400],
                                               fontSize: 10.0),
                                         ),
                                         Text(
@@ -807,19 +820,20 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       // Screen Type = 2 or 3
     }
 
-    print('triggerToClickOnNoteListItem() hit');
-
     if (forceToSetWebViewReadOnlyMode) {
-      await GlobalState.noteDetailWidgetState.currentState.setWebViewToReadOnlyMode(
-          keepNoteDetailPageOpen: keepNoteDetailPageOpen,
-          forceToSaveNoteToDbIfAnyUpdates: forceToSaveNoteToDbIfAnyUpdates);
+      await GlobalState.noteDetailWidgetState.currentState
+          .setWebViewToReadOnlyMode(
+              keepNoteDetailPageOpen: keepNoteDetailPageOpen,
+              forceToSaveNoteToDbIfAnyUpdates: forceToSaveNoteToDbIfAnyUpdates);
     }
 
     // Force to show the web view
     GlobalState.noteDetailWidgetState.currentState.showWebView();
 
     // Save the current note model as global variable
-    GlobalState.selectedNoteModel = theNote;
+    setState(() {
+      GlobalState.selectedNoteModel = theNote;
+    });
 
     // Get note related variables
     var folderId = theNote.folderId;

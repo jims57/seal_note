@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
@@ -22,7 +24,8 @@ class FolderListItemWidget extends StatefulWidget {
       this.showZero: true,
       this.isRoundTopCorner: false,
       this.isRoundBottomCorner: false,
-      this.folderListPanelMarginForTopOrBottom: 5.0})
+      this.folderListPanelMarginForTopOrBottom: 5.0,
+      this.isItemSelected = false})
       : super(key: key);
 
   final int index;
@@ -42,6 +45,7 @@ class FolderListItemWidget extends StatefulWidget {
   final bool isRoundTopCorner;
   final bool isRoundBottomCorner;
   final double folderListPanelMarginForTopOrBottom;
+  final bool isItemSelected;
 
   @override
   FolderListItemWidgetState createState() => FolderListItemWidgetState();
@@ -80,6 +84,7 @@ class FolderListItemWidgetState extends State<FolderListItemWidget> {
             widget.folderListPanelMarginForTopOrBottom,
         isRoundTopCorner: widget.isRoundTopCorner,
         isRoundBottomCorner: widget.isRoundBottomCorner,
+        isItemSelected: widget.isItemSelected,
       ),
       onTap: () async {
         // click on folder item // click folder item
@@ -107,12 +112,14 @@ class FolderListItemWidgetState extends State<FolderListItemWidget> {
         }
 
         GlobalState.noteListWidgetForTodayState.currentState.triggerSetState();
+        GlobalState.folderListWidgetState.currentState.triggerSetState(forceToFetchFoldersFromDB: false);
 
         // Switch the page
         GlobalState.isHandlingFolderPage = true;
         GlobalState.isInFolderPage = false;
         GlobalState.masterDetailPageState.currentState
             .updatePageShowAndHide(shouldTriggerSetState: true);
+
       },
     );
   }

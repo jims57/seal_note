@@ -13,7 +13,8 @@ class FolderListItemRightPartWidget extends StatefulWidget {
       this.badgeBackgroundColor = GlobalState.themeBlueColor,
       this.showBadgeBackgroundColor = false,
       this.showZero = false,
-      this.isDefaultFolderRightPart = false})
+      this.isDefaultFolderRightPart = false,
+      this.isItemSelected = false})
       : super(key: key);
 
   final int numberToShow;
@@ -21,6 +22,7 @@ class FolderListItemRightPartWidget extends StatefulWidget {
   final bool showBadgeBackgroundColor;
   final bool showZero;
   final bool isDefaultFolderRightPart;
+  final bool isItemSelected;
 
   @override
   _FolderListItemRightPartWidgetState createState() =>
@@ -65,12 +67,18 @@ class _FolderListItemRightPartWidgetState
                               borderRadius: BorderRadius.all(
                                   Radius.circular(GlobalState.borderRadius40))),
                           child: Text(
+                            // folder list item number
                             '${widget.numberToShow}',
                             style: TextStyle(
                                 color: (widget.showBadgeBackgroundColor)
                                     ? Colors.white
-                                    : GlobalState.themeGrey350Color,
-                                fontWeight: FontWeight.bold),
+                                    : (widget.isItemSelected)
+                                        ? GlobalState
+                                            .themeBlackColor87ForFontForeColor
+                                        : GlobalState.themeGrey350Color,
+                                fontWeight: (widget.isItemSelected)
+                                    ? FontWeight.normal
+                                    : FontWeight.bold),
                             overflow: TextOverflow.ellipsis,
                           ));
                     }),

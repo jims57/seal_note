@@ -30,7 +30,8 @@ class UserFolderListListenerWidget extends StatefulWidget {
       this.folderListItemHeight = 60.0,
       this.folderListPanelMarginForTopOrBottom = 5.0,
       this.isRoundTopCorner = false,
-      this.isRoundBottomCorner = false})
+      this.isRoundBottomCorner = false,
+      this.isItemSelected = false})
       : super(key: key);
 
   final IconData icon;
@@ -50,6 +51,7 @@ class UserFolderListListenerWidget extends StatefulWidget {
   final double folderListPanelMarginForTopOrBottom;
   final bool isRoundTopCorner;
   final bool isRoundBottomCorner;
+  final bool isItemSelected;
 
   @override
   _UserFolderListListenerWidgetState createState() =>
@@ -95,7 +97,6 @@ class _UserFolderListListenerWidgetState
         child: Container(
           // folder list item // folder item
           height: widget.folderListItemHeight,
-          // color: Colors.green,
           child: Slidable(
             actionPane: SlidableDrawerActionPane(),
             actionExtentRatio: 0.25,
@@ -105,7 +106,9 @@ class _UserFolderListListenerWidgetState
                   // folder list item content
                   padding: EdgeInsets.only(left: 10.0, right: 10.0),
                   decoration: BoxDecoration(
-                    color: GlobalState.themeWhiteColorAtiOSTodo,
+                    color: (widget.isItemSelected)
+                        ? GlobalState.themeBlueColorForSelectedItemBackground
+                        : GlobalState.themeWhiteColorAtiOSTodo,
                   ),
                   child: Column(
                     children: [
@@ -173,6 +176,7 @@ class _UserFolderListListenerWidgetState
                                 showZero: widget.showZero,
                                 isDefaultFolderRightPart:
                                     widget.isDefaultFolder,
+                                isItemSelected: widget.isItemSelected,
                               ),
                             ),
                           ],
@@ -234,7 +238,8 @@ class _UserFolderListListenerWidgetState
                         // click on more button // click on swipe more button
 
                         // Hide the webView first
-                        GlobalState.noteDetailWidgetState.currentState.hideWebView();
+                        GlobalState.noteDetailWidgetState.currentState
+                            .hideWebView();
 
                         var folderId = widget.folderId;
                         var oldFolderName = widget.folderName;
@@ -370,7 +375,8 @@ class _UserFolderListListenerWidgetState
                           showButtonForOK: false,
                         );
 
-                        GlobalState.noteDetailWidgetState.currentState.showWebView();
+                        GlobalState.noteDetailWidgetState.currentState
+                            .showWebView();
                       },
                     ),
                   ],
