@@ -46,6 +46,12 @@ class _NoteListPageState extends State<NoteListPage> {
                 // click on note list back button // click note list back button
                 // note list back button event
 
+                // Always to set the web view to read only mode and save the note to db
+                GlobalState.noteDetailWidgetState.currentState
+                    .setWebViewToReadOnlyMode(
+                        keepNoteDetailPageOpen: true,
+                        forceToSaveNoteToDbIfAnyUpdates: true);
+
                 GlobalState.isHandlingFolderPage = true;
                 GlobalState.isInFolderPage = true;
                 GlobalState.masterDetailPageState.currentState
@@ -129,7 +135,8 @@ class _NoteListPageState extends State<NoteListPage> {
           // click on floating button // click floating button
 
           // Set web view related variables
-          GlobalState.isNoteListSelectedAutomaticallyAfterNoteListPageLoaded = false;
+          GlobalState.isNoteListSelectedAutomaticallyAfterNoteListPageLoaded =
+              false;
 
           // Update action status
           GlobalState.isQuillReadOnly = false;
