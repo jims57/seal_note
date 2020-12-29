@@ -556,9 +556,23 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                 onPressed: () async {
                                   // click on save button // click save button
                                   // save button // edit button
+                                  // click on edit button // click edit note button
+                                  // click on edit note button // click edit button
 
-                                  await toggleQuillModeBetweenReadOnlyAndEdit(
-                                      keepNoteDetailPageOpen: true);
+                                  if (GlobalState.isQuillReadOnly) {
+                                    await GlobalState
+                                        .noteDetailWidgetState.currentState
+                                        .setWebViewToEditMode(
+                                            keepNoteDetailPageOpen: true);
+                                  } else {
+                                    // Always to set the web view to read only mode and save the note to db
+                                    await GlobalState
+                                        .noteDetailWidgetState.currentState
+                                        .setWebViewToReadOnlyMode(
+                                            keepNoteDetailPageOpen: true,
+                                            forceToSaveNoteToDbIfAnyUpdates:
+                                                true);
+                                  }
                                 }),
                           );
                         } else {
