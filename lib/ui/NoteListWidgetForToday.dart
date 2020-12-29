@@ -512,6 +512,24 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                           );
                                         });
 
+                                    // Check if the user has selected a folder to move this note or not
+                                    if (GlobalState
+                                            .targetFolderIdNoteIsMovingTo ==0) {
+                                      GlobalState.noteListWidgetForTodayState
+                                          .currentState
+                                          .triggerSetState(
+                                              forceToRefreshNoteListByDb: true,
+                                              setBackgroundColorToFirstItemIfBackgroundNeeded: true,
+                                              refreshFolderListPageFromDbByTheWay:
+                                                  false);
+
+
+                                    }
+
+                                    // Reset the target folder id for future usage
+                                    GlobalState.targetFolderIdNoteIsMovingTo =
+                                    0;
+
                                     GlobalState
                                         .noteDetailWidgetState.currentState
                                         .showWebView(

@@ -128,6 +128,7 @@ class GlobalState with ChangeNotifier {
       3; // The user folder id by default, since default folders can save notes actually, we need a user folder to store notes when creating a new note from a default folder
   static int selectedFolderIdCurrently =
       selectedFolderIdByDefault; // The current selected folder id the user clicks on folder list page
+  static int targetFolderIdNoteIsMovingTo = 0;
   static String selectedFolderNameCurrently = '';
 
   static int

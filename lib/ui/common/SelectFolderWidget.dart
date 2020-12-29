@@ -82,8 +82,8 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
         // click on folder selection item // click folder selection item
 
         if (_isFolderSelectionItemClickable(theUserFolderId: widget.folderId)) {
-          var targetFolderId = widget.folderId;
-          // var targetFolderName = widget.folderName;
+          GlobalState.targetFolderIdNoteIsMovingTo = widget.folderId;
+          // var targetFolderId = widget.folderId;
           var targetReviewPlanId = widget.reviewPlanId;
           var shouldMoveNote = true; // By default, we should note the note
           var isDialogForFolderSelectionHidden = false;
@@ -146,7 +146,7 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
             var effectedRowCount = await GlobalState.database
                 .changeNoteFolderId(
                     noteId: GlobalState.selectedNoteModel.id,
-                    newFolderId: targetFolderId,
+                    newFolderId: GlobalState.targetFolderIdNoteIsMovingTo,
                     typeId: typeId);
 
             // When the dialog for folder selection isn't hidden, we should hide it by code
