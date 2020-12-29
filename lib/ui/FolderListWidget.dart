@@ -112,9 +112,6 @@ class FolderListWidgetState extends State<FolderListWidget> {
   void triggerSetState({bool forceToFetchFoldersFromDB = false}) {
     setState(() {
       _getAllFolders(forceToFetchFoldersFromDB: forceToFetchFoldersFromDB);
-      // if (forceToFetchFoldersFromDB) {
-      //   _getAllFolders();
-      // }
     });
   }
 

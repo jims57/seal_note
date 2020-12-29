@@ -100,7 +100,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
       isFirstLoad = false;
     } else {
       // Get app bar height after rotation
-      // after rotation
+
       Timer(const Duration(milliseconds: 700), () {
         var newAppBarHeight =
             GlobalState.appBarWidgetState.currentState.getAppBarHeight();
@@ -108,8 +108,17 @@ class MasterDetailPageState extends State<MasterDetailPage>
         // Update the app bar's height on the folder list page
         refreshFolderListPageAppBarHeight();
 
+        // Always to refresh the folder page, making sure the selected item's background will be shown properly
+        if (GlobalState.screenType == 3) {
+          GlobalState.folderListWidgetState.currentState
+              .triggerSetState(forceToFetchFoldersFromDB: false);
+        }
+
         // Check if it is rotating // check if rotation // check rotation action
         if (GlobalState.appBarHeight != newAppBarHeight) {
+          // after rotation // after rotation event
+          // after rotating event
+
           GlobalState.appBarHeight = newAppBarHeight;
           var newWebViewScreenHeight =
               GlobalState.screenHeight - GlobalState.appBarHeight;
