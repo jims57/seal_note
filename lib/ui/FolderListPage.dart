@@ -71,10 +71,15 @@ class FolderListPageState extends State<FolderListPage>
               // click on new folder button // click new folder button
               // new folder button // create folder button
               // click on create folder button // click create folder button
-              // click to create folder button
+              // click to create folder button // new folder event
 
-              // Hide the WebView first
-              GlobalState.noteDetailWidgetState.currentState.hideWebView();
+              // Handling the web view before creating a new folder
+              await GlobalState.noteDetailWidgetState.currentState
+                  .setWebViewToReadOnlyMode(
+                      keepNoteDetailPageOpen: true,
+                      forceToSaveNoteToDbIfAnyUpdates: true); // Force to save note content to db if there is any change
+              GlobalState.noteDetailWidgetState.currentState
+                  .hideWebView(); // Hide the WebView first
 
               var newFolderName;
 
@@ -187,15 +192,15 @@ class FolderListPageState extends State<FolderListPage>
                               color: Colors.transparent,
                               padding: EdgeInsets.only(left: 15.0, right: 15.0),
                             ),
-                            onTap: () {
+                            onTap: () async {
                               // setting event // click setting event
                               // setting button // setting button event
-                              var s = 's';
 
-                              GlobalState.noteDetailWidgetState.currentState
-                                  .setWebViewToEditMode();
-
-                              // GlobalState.noteDetailWidgetState.currentState.saveNoteToDb();
+                              // Force to save note content to db if there is any change
+                              await GlobalState.noteDetailWidgetState.currentState
+                                  .setWebViewToReadOnlyMode(
+                                  keepNoteDetailPageOpen: true,
+                                  forceToSaveNoteToDbIfAnyUpdates: true);
                             },
                           ),
                           GestureDetector(

@@ -742,7 +742,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
   Future<void> setWebViewToReadOnlyMode(
       {bool keepNoteDetailPageOpen = true,
-      bool forceToSaveNoteToDbIfAnyUpdates = false}) async {
+      bool forceToSaveNoteToDbIfAnyUpdates = false,
+      Future<VoidCallback> callback}) async {
     if (forceToSaveNoteToDbIfAnyUpdates) {
       await saveNoteToDb(forceToSave: forceToSaveNoteToDbIfAnyUpdates);
     }
@@ -751,6 +752,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
       await toggleQuillModeBetweenReadOnlyAndEdit(
           keepNoteDetailPageOpen: keepNoteDetailPageOpen,
           executeAutoSaveNoteWhenSettingToReadOnlyMode: false);
+
+      await callback;
     }
   }
 

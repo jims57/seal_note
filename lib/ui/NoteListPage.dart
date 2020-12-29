@@ -126,13 +126,28 @@ class _NoteListPageState extends State<NoteListPage> {
         // add note button // new note floating button
         // add button
         child: Icon(Icons.add),
-        onPressed: () {
+        onPressed: () async {
           // click new note button // click new button
           // new note event // click on new note button
           // click add note button // new floating button
           // new note button // new note floating button
           // click on new button // create new note button
           // click on floating button // click floating button
+
+          // Force to save note old content to db if there is any change
+          if (!GlobalState.isQuillReadOnly) {
+            await GlobalState.noteDetailWidgetState.currentState
+                .saveNoteToDb(forceToSave: true);
+            // await GlobalState.noteDetailWidgetState.currentState
+            //     .setWebViewToReadOnlyMode(
+            //         keepNoteDetailPageOpen: true,
+            //         forceToSaveNoteToDbIfAnyUpdates: true);
+
+            // await GlobalState.noteDetailWidgetState.currentState
+            //     .setWebViewToEditMode(keepNoteDetailPageOpen: true);
+          }
+
+          // Set the web view back to edit mode, since this operation is about to create a new note
 
           // Set web view related variables
           GlobalState.isNoteListSelectedAutomaticallyAfterNoteListPageLoaded =
@@ -154,7 +169,7 @@ class _NoteListPageState extends State<NoteListPage> {
 
           var responseJsonString =
               '{"isCreatingNote": true, "folderId":$folderId, "noteId":${GlobalState.selectedNoteModel.id}, "encodedHtml":""}';
-          GlobalState.flutterWebviewPlugin.evalJavascript(
+          await GlobalState.flutterWebviewPlugin.evalJavascript(
               "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString', true);");
 
           // Refresh the note list
