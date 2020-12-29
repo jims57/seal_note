@@ -112,7 +112,7 @@ class FolderListItemWidgetState extends State<FolderListItemWidget> {
         }
 
         GlobalState.noteListWidgetForTodayState.currentState.triggerSetState();
-        GlobalState.folderListWidgetState.currentState.triggerSetState(forceToFetchFoldersFromDB: false);
+        GlobalState.folderListWidgetState.currentState.triggerSetState(forceToFetchFoldersFromDb: false);
 
         // Switch the page
         GlobalState.isHandlingFolderPage = true;

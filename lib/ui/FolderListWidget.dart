@@ -109,9 +109,9 @@ class FolderListWidgetState extends State<FolderListWidget> {
   }
 
   // Public methods
-  void triggerSetState({bool forceToFetchFoldersFromDB = false}) {
+  void triggerSetState({bool forceToFetchFoldersFromDb = false}) {
     setState(() {
-      _getAllFolders(forceToFetchFoldersFromDB: forceToFetchFoldersFromDB);
+      _getAllFolders(forceToFetchFoldersFromDb: forceToFetchFoldersFromDb);
     });
   }
 
@@ -130,14 +130,14 @@ class FolderListWidgetState extends State<FolderListWidget> {
     return isDefaultFolder;
   }
 
-  void _getAllFolders({bool forceToFetchFoldersFromDB = true}) {
+  void _getAllFolders({bool forceToFetchFoldersFromDb = true}) {
     // get folder data // get all folder data
     // get all folder // get folder list data
 
     folderListItemWidgetList.clear();
     GlobalState.defaultFolderIndexList.clear();
 
-    if (forceToFetchFoldersFromDB) {
+    if (forceToFetchFoldersFromDb) {
       GlobalState.database.getListForFoldersWithUnreadTotal().then((folders) {
         foldersWithUnreadTotalResultList = folders;
         _buildFolderListItemsByList(foldersWithUnreadTotalResultList: folders);

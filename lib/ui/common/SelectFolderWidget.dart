@@ -115,12 +115,13 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
             // Always enable the OK button every time
             GlobalState.appState.enableAlertDialogOKButton = true;
 
-            var shouldContinueAction = await AlertDialogHandler().showAlertDialog(
-                parentContext: context,
-                captionText: '移动笔记？',
-                remark: remark,
-                buttonTextForOK: '确定移动',
-                buttonColorForOK: Colors.red);
+            var shouldContinueAction = await AlertDialogHandler()
+                .showAlertDialog(
+                    parentContext: context,
+                    captionText: '移动笔记？',
+                    remark: remark,
+                    buttonTextForOK: '确定移动',
+                    buttonColorForOK: Colors.red);
 
             if (shouldContinueAction) {
               // When the user clicks on OK button
@@ -155,8 +156,12 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
 
             if (effectedRowCount > 0) {
               // When sqlite is updated, refresh the note list
+
               GlobalState.noteListWidgetForTodayState.currentState
-                  .triggerSetState(resetNoteList: true);
+                  .triggerSetState(
+                      forceToRefreshNoteListByDb: true,
+                      setBackgroundColorToFirstItemIfBackgroundNeeded: true,
+                      refreshFolderListPageFromDbByTheWay: true);
             }
           }
         }

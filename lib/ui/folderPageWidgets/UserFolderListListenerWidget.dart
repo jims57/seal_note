@@ -275,7 +275,7 @@ class _UserFolderListListenerWidgetState
 
                                   GlobalState.folderListWidgetState.currentState
                                       .triggerSetState(
-                                          forceToFetchFoldersFromDB: true);
+                                          forceToFetchFoldersFromDb: true);
                                 }
                               },
                             );
@@ -361,7 +361,7 @@ class _UserFolderListListenerWidgetState
                                         GlobalState
                                             .folderListWidgetState.currentState
                                             .triggerSetState(
-                                                forceToFetchFoldersFromDB:
+                                                forceToFetchFoldersFromDb:
                                                     true);
 
                                         if (Navigator.canPop(context)) {

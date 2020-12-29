@@ -375,7 +375,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                   _setToReadingOldNoteStatus(resetCounter: true);
 
                   GlobalState.noteListWidgetForTodayState.currentState
-                      .triggerSetState(resetNoteList: true);
+                      .triggerSetState(forceToRefreshNoteListByDb: true);
 
                   break;
                 }
@@ -429,8 +429,11 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
                       GlobalState.noteListWidgetForTodayState.currentState
                           .triggerSetState(
-                              resetNoteList: true,
-                              updateNoteListPageTitle: true);
+                              forceToRefreshNoteListByDb: true,
+                              updateNoteListPageTitle: true,
+                              setBackgroundColorToFirstItemIfBackgroundNeeded:
+                                  true,
+                              refreshFolderListPageFromDbByTheWay: true);
 
                       break;
                     }
@@ -525,7 +528,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                   GlobalState
                                       .noteListWidgetForTodayState.currentState
                                       .triggerSetState(
-                                          resetNoteList: true,
+                                          forceToRefreshNoteListByDb: true,
                                           updateNoteListPageTitle: false,
                                           millisecondToDelayExecution: 1500);
                                 }
@@ -706,8 +709,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
       GlobalState.isDefaultFolderSelected = false;
       GlobalState.selectedFolderIdCurrently = folderIdNoteShouldSaveTo;
 
-      GlobalState.noteListWidgetForTodayState.currentState
-          .triggerSetState(resetNoteList: true, updateNoteListPageTitle: true);
+      GlobalState.noteListWidgetForTodayState.currentState.triggerSetState(
+          forceToRefreshNoteListByDb: true, updateNoteListPageTitle: true);
     }
   }
 

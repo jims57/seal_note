@@ -191,7 +191,7 @@ class _MyAppState extends State<MyApp> {
         // Trigger folder list page to refresh so that the initialized folder list can be shown properly
         if (GlobalState.isFolderListPageLoaded) {
           GlobalState.folderListWidgetState.currentState
-              .triggerSetState(forceToFetchFoldersFromDB: true);
+              .triggerSetState(forceToFetchFoldersFromDb: true);
         }
       } else {
         // When db is initialized

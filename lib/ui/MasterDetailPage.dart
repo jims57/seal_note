@@ -111,7 +111,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
         // Always to refresh the folder page, making sure the selected item's background will be shown properly
         if (GlobalState.screenType == 3) {
           GlobalState.folderListWidgetState.currentState
-              .triggerSetState(forceToFetchFoldersFromDB: false);
+              .triggerSetState(forceToFetchFoldersFromDb: false);
         }
 
         // Check if it is rotating // check if rotation // check rotation action

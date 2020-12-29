@@ -62,7 +62,7 @@ class _NoteListPageState extends State<NoteListPage> {
 
                 // Refresh folder list every time the user clicks on the note list back button
                 GlobalState.folderListWidgetState.currentState
-                    .triggerSetState(forceToFetchFoldersFromDB: true);
+                    .triggerSetState(forceToFetchFoldersFromDb: true);
               }),
         ],
         tailChildren: [
@@ -138,16 +138,7 @@ class _NoteListPageState extends State<NoteListPage> {
           if (!GlobalState.isQuillReadOnly) {
             await GlobalState.noteDetailWidgetState.currentState
                 .saveNoteToDb(forceToSave: true);
-            // await GlobalState.noteDetailWidgetState.currentState
-            //     .setWebViewToReadOnlyMode(
-            //         keepNoteDetailPageOpen: true,
-            //         forceToSaveNoteToDbIfAnyUpdates: true);
-
-            // await GlobalState.noteDetailWidgetState.currentState
-            //     .setWebViewToEditMode(keepNoteDetailPageOpen: true);
           }
-
-          // Set the web view back to edit mode, since this operation is about to create a new note
 
           // Set web view related variables
           GlobalState.isNoteListSelectedAutomaticallyAfterNoteListPageLoaded =
@@ -176,7 +167,7 @@ class _NoteListPageState extends State<NoteListPage> {
           if (GlobalState.screenType != 1) {
             GlobalState.noteListWidgetForTodayState.currentState
                 .triggerSetState(
-                    resetNoteList: false, updateNoteListPageTitle: false);
+                    forceToRefreshNoteListByDb: false, updateNoteListPageTitle: false);
           }
 
           // Refresh tree

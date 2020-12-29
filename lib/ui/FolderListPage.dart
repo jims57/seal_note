@@ -139,7 +139,7 @@ class FolderListPageState extends State<FolderListPage>
                             // Trigger the folder list page to refresh
                             GlobalState.folderListWidgetState.currentState
                                 .triggerSetState(
-                                    forceToFetchFoldersFromDB: true);
+                                    forceToFetchFoldersFromDb: true);
                           }
                         });
               }

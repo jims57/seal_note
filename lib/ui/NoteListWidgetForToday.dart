@@ -531,8 +531,12 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                       GlobalState.noteListWidgetForTodayState
                                           .currentState
                                           .triggerSetState(
-                                              resetNoteList: true,
-                                              updateNoteListPageTitle: false);
+                                              forceToRefreshNoteListByDb: true,
+                                              updateNoteListPageTitle: false,
+                                              setBackgroundColorToFirstItemIfBackgroundNeeded:
+                                                  true,
+                                              refreshFolderListPageFromDbByTheWay:
+                                                  true);
                                     }
                                   }
                                 },
@@ -634,6 +638,13 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                     });
                                   }
                                 }
+
+                                // Refresh the note list page, it will set background color for the first item when needed
+                                triggerSetState(
+                                    forceToRefreshNoteListByDb: true,
+                                    setBackgroundColorToFirstItemIfBackgroundNeeded:
+                                        true,
+                                    refreshFolderListPageFromDbByTheWay: true);
                               },
                             ),
                           ],
@@ -660,14 +671,27 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
   // Public methods
   void triggerSetState(
-      {bool resetNoteList = true,
+      {bool forceToRefreshNoteListByDb = true,
       bool updateNoteListPageTitle = false,
+      bool setBackgroundColorToFirstItemIfBackgroundNeeded = false,
+      bool refreshFolderListPageFromDbByTheWay = false,
       int millisecondToDelayExecution = 0}) {
     // If resetNoteList = true, it will fetch data from db again to get the latest note list
 
+    // Refresh the note list anyway, so that it will set the selected item background color
+    if (setBackgroundColorToFirstItemIfBackgroundNeeded) {
+      GlobalState.isNoteListSelectedAutomaticallyAfterNoteListPageLoaded =
+          false;
+    }
+
+    if (refreshFolderListPageFromDbByTheWay) {
+      GlobalState.folderListWidgetState.currentState
+          .triggerSetState(forceToFetchFoldersFromDb: true);
+    }
+
     Timer(Duration(milliseconds: millisecondToDelayExecution), () {
       setState(() {
-        if (resetNoteList) initLoadingConfigs();
+        if (forceToRefreshNoteListByDb) initLoadingConfigs();
         if (updateNoteListPageTitle) {
           var noteListPageTitle = GlobalState.folderListPageState.currentState
               .getFolderListItemWidgetByFolderId(
@@ -787,7 +811,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       // When the note list variable has no items inside it, try to refresh the note list anyway
 
       GlobalState.noteListWidgetForTodayState.currentState
-          .triggerSetState(resetNoteList: true);
+          .triggerSetState(forceToRefreshNoteListByDb: true);
     }
   }
 
