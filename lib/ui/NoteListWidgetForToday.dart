@@ -175,7 +175,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                 // Check if the note list is the selected note currently
                 var isSelectedItem = false;
                 if (GlobalState.screenType != 1 &&
-                    GlobalState.selectedNoteModel.id == theNote.id) {
+                    GlobalState.selectedNoteModel.id == theNote.id &&
+                    theNote.id != 0) {
                   isSelectedItem = true;
                 }
 

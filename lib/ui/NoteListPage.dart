@@ -157,6 +157,13 @@ class _NoteListPageState extends State<NoteListPage> {
           GlobalState.flutterWebviewPlugin.evalJavascript(
               "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString', true);");
 
+          // Refresh the note list
+          if (GlobalState.screenType != 1) {
+            GlobalState.noteListWidgetForTodayState.currentState
+                .triggerSetState(
+                    resetNoteList: false, updateNoteListPageTitle: false);
+          }
+
           // Refresh tree
           GlobalState.masterDetailPageState.currentState
               .updatePageShowAndHide(shouldTriggerSetState: true);
