@@ -95,8 +95,7 @@ class FolderListItemWidgetState extends State<FolderListItemWidget> {
         await GlobalState.noteDetailWidgetState.currentState
             .setWebViewToReadOnlyMode(forceToSaveNoteToDbIfAnyUpdates: true);
 
-        GlobalState.isNoteListSelectedAutomaticallyAfterNoteListPageLoaded =
-            false;
+        GlobalState.shouldSetBackgroundColorToFirstNoteAutomatically = true;
 
         // Update the note list
         GlobalState.isDefaultFolderSelected = widget.isDefaultFolder;
@@ -112,14 +111,14 @@ class FolderListItemWidgetState extends State<FolderListItemWidget> {
         }
 
         GlobalState.noteListWidgetForTodayState.currentState.triggerSetState();
-        GlobalState.folderListWidgetState.currentState.triggerSetState(forceToFetchFoldersFromDb: false);
+        GlobalState.folderListWidgetState.currentState
+            .triggerSetState(forceToFetchFoldersFromDb: false);
 
         // Switch the page
         GlobalState.isHandlingFolderPage = true;
         GlobalState.isInFolderPage = false;
         GlobalState.masterDetailPageState.currentState
             .updatePageShowAndHide(shouldTriggerSetState: true);
-
       },
     );
   }

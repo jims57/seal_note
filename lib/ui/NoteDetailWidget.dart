@@ -384,7 +384,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
               // Add new note
 
               // add new note to db // insert new note to db
-              // create new note to db
+              // create new note to db // save new note to db
 
               if (!GlobalState.isNewNoteBeingSaved) {
                 _setToCreatingNewNoteStatus(resetCounter: false);

@@ -154,20 +154,22 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                   });
 
                   // Trigger the web view to show the first note by the way
-                  if (!GlobalState
-                          .isNoteListSelectedAutomaticallyAfterNoteListPageLoaded &&
+                  if (GlobalState
+                          .shouldSetBackgroundColorToFirstNoteAutomatically &&
                       GlobalState.screenType != 1 &&
                       GlobalState.isQuillReadOnly) {
                     GlobalState
-                            .isNoteListSelectedAutomaticallyAfterNoteListPageLoaded =
-                        true;
+                            .shouldSetBackgroundColorToFirstNoteAutomatically =
+                        false;
 
                     Timer(
                         const Duration(
                             milliseconds:
                                 GlobalState.millisecondToSyncWithWebView), () {
                       triggerToClickOnNoteListItem(
-                          theNote: GlobalState.firstNoteToBeSelected);
+                          theNote: GlobalState.firstNoteToBeSelected,
+                          forceToSetBackgroundColorToFirstNoteWhenBackgroundNeeded:
+                              false);
                     });
                   }
                 }
@@ -514,21 +516,21 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                                     // Check if the user has selected a folder to move this note or not
                                     if (GlobalState
-                                            .targetFolderIdNoteIsMovingTo ==0) {
+                                            .targetFolderIdNoteIsMovingTo ==
+                                        0) {
                                       GlobalState.noteListWidgetForTodayState
                                           .currentState
                                           .triggerSetState(
                                               forceToRefreshNoteListByDb: true,
-                                              setBackgroundColorToFirstItemIfBackgroundNeeded: true,
+                                              setBackgroundColorToFirstItemIfBackgroundNeeded:
+                                                  true,
                                               refreshFolderListPageFromDbByTheWay:
                                                   false);
-
-
                                     }
 
                                     // Reset the target folder id for future usage
                                     GlobalState.targetFolderIdNoteIsMovingTo =
-                                    0;
+                                        0;
 
                                     GlobalState
                                         .noteDetailWidgetState.currentState
@@ -676,7 +678,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                     triggerToClickOnNoteListItem(
                         theNote: theNote,
-                        forceToSaveNoteToDbIfAnyUpdates: true);
+                        forceToSaveNoteToDbIfAnyUpdates: true,
+                        forceToSetBackgroundColorToFirstNoteWhenBackgroundNeeded:
+                            false);
 
                     // always set the check button back to edit button on the web view
                     GlobalState.appState.hasDataInNoteListPage = true;
@@ -698,8 +702,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
     // Refresh the note list anyway, so that it will set the selected item background color
     if (setBackgroundColorToFirstItemIfBackgroundNeeded) {
-      GlobalState.isNoteListSelectedAutomaticallyAfterNoteListPageLoaded =
-          false;
+      GlobalState.shouldSetBackgroundColorToFirstNoteAutomatically = true;
     }
 
     if (refreshFolderListPageFromDbByTheWay) {
@@ -852,6 +855,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       {@required NoteWithProgressTotal theNote,
       bool forceToSetWebViewReadOnlyMode = true,
       bool forceToSaveNoteToDbIfAnyUpdates = true,
+      bool forceToSetBackgroundColorToFirstNoteWhenBackgroundNeeded = true,
       bool keepNoteDetailPageOpen = true}) async {
     GlobalState.isInNoteDetailPage = true;
     if (GlobalState.screenType == 1) {
@@ -861,6 +865,11 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     } else {
       // For screenType = 2 or 3, we don't need to change the page show and hide
       // Screen Type = 2 or 3
+      if (forceToSetBackgroundColorToFirstNoteWhenBackgroundNeeded) {
+        GlobalState.shouldSetBackgroundColorToFirstNoteAutomatically = true;
+      } else {
+        GlobalState.shouldSetBackgroundColorToFirstNoteAutomatically = false;
+      }
     }
 
     if (forceToSetWebViewReadOnlyMode) {

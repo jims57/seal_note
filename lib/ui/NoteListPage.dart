@@ -141,8 +141,7 @@ class _NoteListPageState extends State<NoteListPage> {
           }
 
           // Set web view related variables
-          GlobalState.isNoteListSelectedAutomaticallyAfterNoteListPageLoaded =
-              false;
+          GlobalState.shouldSetBackgroundColorToFirstNoteAutomatically = true;
 
           // Update action status
           GlobalState.isQuillReadOnly = false;
@@ -167,7 +166,8 @@ class _NoteListPageState extends State<NoteListPage> {
           if (GlobalState.screenType != 1) {
             GlobalState.noteListWidgetForTodayState.currentState
                 .triggerSetState(
-                    forceToRefreshNoteListByDb: false, updateNoteListPageTitle: false);
+                    forceToRefreshNoteListByDb: false,
+                    updateNoteListPageTitle: false);
           }
 
           // Refresh tree
