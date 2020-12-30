@@ -110,7 +110,9 @@ class FolderListItemWidgetState extends State<FolderListItemWidget> {
           await _clearDeletedNotesMoreThan30DaysAgo();
         }
 
-        GlobalState.noteListWidgetForTodayState.currentState.triggerSetState();
+        GlobalState.noteListWidgetForTodayState.currentState.triggerSetState(
+            forceToRefreshNoteListByDb: true,
+            forceToSetBackgroundColorToFirstItemIfBackgroundNeeded: true);
         GlobalState.folderListWidgetState.currentState
             .triggerSetState(forceToFetchFoldersFromDb: false);
 
