@@ -428,6 +428,13 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                   // restore note event // click on restore note button
                                   // click to restore note button
 
+                                  // var n = theNote;
+                                  // triggerToClickOnNoteListItem(
+                                  //     theNote: theNote,
+                                  //     forceToSetBackgroundColorToFirstNoteWhenBackgroundNeeded:
+                                  //         false);
+                                  GlobalState.selectedNoteModel = theNote;
+
                                   // Check which folder is
                                   if (!isInDeletedFolder()) {
                                     // Not in Deleted folder
@@ -492,6 +499,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                                                   // select folder list // folder selection list
                                                   return SelectFolderWidget(
+                                                    indexAtNoteList:
+                                                        theIndexAtNoteList,
                                                     folderIcon:
                                                         theUserFolderListItem
                                                             .icon,
@@ -518,14 +527,21 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                     if (GlobalState
                                             .targetFolderIdNoteIsMovingTo ==
                                         0) {
+                                      // GlobalState.shouldSetBackgroundColorToFirstNoteAutomatically = false;
+
                                       GlobalState.noteListWidgetForTodayState
                                           .currentState
                                           .triggerSetState(
-                                              forceToRefreshNoteListByDb: true,
-                                              setBackgroundColorToFirstItemIfBackgroundNeeded:
-                                                  true,
+                                              forceToRefreshNoteListByDb: false,
+                                              forceToSetBackgroundColorToFirstItemIfBackgroundNeeded:
+                                                  false,
                                               refreshFolderListPageFromDbByTheWay:
                                                   false);
+
+                                      triggerToClickOnNoteListItem(
+                                          theNote: theNote,
+                                          forceToSetBackgroundColorToFirstNoteWhenBackgroundNeeded:
+                                              false);
                                     }
 
                                     // Reset the target folder id for future usage
@@ -548,12 +564,19 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                             noteId: theNoteId);
 
                                     if (effectedRowCount > 0) {
+                                      // Remove the item from the note list variable
+                                      GlobalState.noteListWidgetForTodayState
+                                          .currentState
+                                          .removeItemFromNoteListByIndex(
+                                              indexAtNoteList:
+                                                  theIndexAtNoteList);
+
                                       GlobalState.noteListWidgetForTodayState
                                           .currentState
                                           .triggerSetState(
-                                              forceToRefreshNoteListByDb: true,
+                                              forceToRefreshNoteListByDb: false,
                                               updateNoteListPageTitle: false,
-                                              setBackgroundColorToFirstItemIfBackgroundNeeded:
+                                              forceToSetBackgroundColorToFirstItemIfBackgroundNeeded:
                                                   true,
                                               refreshFolderListPageFromDbByTheWay:
                                                   true);
@@ -586,6 +609,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                               onTap: () async {
                                 // delete note event // swipe to delete note event
                                 // swipe to delete note button // swipe to delete button
+                                // delete note list item // swipe to delete note list item
 
                                 _noteEntryBeingHandled =
                                     _noteList[theIndexAtNoteList];
@@ -609,13 +633,11 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                               true);
 
                                   if (effectedRowCount > 0) {
-                                    setState(() {
-                                      _noteList.removeAt(index);
+                                    _noteList.removeAt(index);
 
-                                      // Refresh the note list page if no data at noteList variable
-                                      refreshNoteListPageIfNoDataAtNoteListVariable(
-                                          noteList: _noteList);
-                                    });
+                                    // Refresh the note list page if no data at noteList variable
+                                    refreshNoteListPageIfNoDataAtNoteListVariable(
+                                        noteList: _noteList);
                                   }
                                 } else {
                                   // mark note deleted status // note delete status
@@ -625,44 +647,41 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                           isDeleted: true);
 
                                   if (effectedRowCount > 0) {
-                                    setState(() {
-                                      _noteList.removeAt(index);
+                                    _noteList.removeAt(index);
 
-                                      // Refresh the note list page if no data at noteList variable
-                                      refreshNoteListPageIfNoDataAtNoteListVariable(
-                                          noteList: _noteList);
+                                    // Refresh the note list page if no data at noteList variable
+                                    refreshNoteListPageIfNoDataAtNoteListVariable(
+                                        noteList: _noteList);
 
-                                      SnackBarHandler.hideSnackBar();
+                                    SnackBarHandler.hideSnackBar();
 
-                                      // show delete message // show note delete message
-                                      SnackBarHandler.createSnackBar(
-                                          parentContext: context,
-                                          tipAfterDone: noteTitleDeleted,
-                                          onPressForUndo: () async {
-                                            var effectedRowCount =
-                                                await GlobalState
-                                                    .database
-                                                    .setNoteDeletedStatus(
-                                                        noteId: noteIdDeleted,
-                                                        isDeleted: false);
+                                    // show delete message // show note delete message
+                                    SnackBarHandler.createSnackBar(
+                                        parentContext: context,
+                                        tipAfterDone: noteTitleDeleted,
+                                        onPressForUndo: () async {
+                                          var effectedRowCount =
+                                              await GlobalState.database
+                                                  .setNoteDeletedStatus(
+                                                      noteId: noteIdDeleted,
+                                                      isDeleted: false);
 
-                                            if (effectedRowCount > 0) {
-                                              setState(() {
-                                                _noteList.insert(index,
-                                                    _noteEntryBeingHandled);
-                                              });
-                                            }
-                                          });
+                                          if (effectedRowCount > 0) {
+                                            setState(() {
+                                              _noteList.insert(index,
+                                                  _noteEntryBeingHandled);
+                                            });
+                                          }
+                                        });
 
-                                      SnackBarHandler.showSnackBar();
-                                    });
+                                    SnackBarHandler.showSnackBar();
                                   }
                                 }
 
                                 // Refresh the note list page, it will set background color for the first item when needed
                                 triggerSetState(
-                                    forceToRefreshNoteListByDb: true,
-                                    setBackgroundColorToFirstItemIfBackgroundNeeded:
+                                    forceToRefreshNoteListByDb: false,
+                                    forceToSetBackgroundColorToFirstItemIfBackgroundNeeded:
                                         true,
                                     refreshFolderListPageFromDbByTheWay: true);
                               },
@@ -695,15 +714,14 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   void triggerSetState(
       {bool forceToRefreshNoteListByDb = true,
       bool updateNoteListPageTitle = false,
-      bool setBackgroundColorToFirstItemIfBackgroundNeeded = false,
+      bool forceToSetBackgroundColorToFirstItemIfBackgroundNeeded = false,
       bool refreshFolderListPageFromDbByTheWay = false,
       int millisecondToDelayExecution = 0}) {
     // If resetNoteList = true, it will fetch data from db again to get the latest note list
 
     // Refresh the note list anyway, so that it will set the selected item background color
-    if (setBackgroundColorToFirstItemIfBackgroundNeeded) {
-      GlobalState.shouldSetBackgroundColorToFirstNoteAutomatically = true;
-    }
+    GlobalState.shouldSetBackgroundColorToFirstNoteAutomatically =
+        forceToSetBackgroundColorToFirstItemIfBackgroundNeeded;
 
     if (refreshFolderListPageFromDbByTheWay) {
       GlobalState.folderListWidgetState.currentState
@@ -848,6 +866,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   void removeItemFromNoteListByIndex({@required int indexAtNoteList}) {
+    // delete note list item by index
+
     _noteList.removeAt(indexAtNoteList);
   }
 

@@ -431,7 +431,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                           .triggerSetState(
                               forceToRefreshNoteListByDb: true,
                               updateNoteListPageTitle: true,
-                              setBackgroundColorToFirstItemIfBackgroundNeeded:
+                              forceToSetBackgroundColorToFirstItemIfBackgroundNeeded:
                                   true,
                               refreshFolderListPageFromDbByTheWay: true);
 

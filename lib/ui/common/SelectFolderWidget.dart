@@ -5,6 +5,7 @@ import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 class SelectFolderWidget extends StatefulWidget {
   SelectFolderWidget({
     Key key,
+    @required this.indexAtNoteList,
     @required this.folderIcon,
     @required this.folderIconColor,
     @required this.folderId,
@@ -12,6 +13,7 @@ class SelectFolderWidget extends StatefulWidget {
     @required this.reviewPlanId,
   }) : super(key: key);
 
+  final int indexAtNoteList;
   final IconData folderIcon;
   final Color folderIconColor;
   final int folderId;
@@ -80,10 +82,11 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
       ),
       onTap: () async {
         // click on folder selection item // click folder selection item
+        // click to move folder // click on select folder event
+        // move folder event
 
         if (_isFolderSelectionItemClickable(theUserFolderId: widget.folderId)) {
           GlobalState.targetFolderIdNoteIsMovingTo = widget.folderId;
-          // var targetFolderId = widget.folderId;
           var targetReviewPlanId = widget.reviewPlanId;
           var shouldMoveNote = true; // By default, we should note the note
           var isDialogForFolderSelectionHidden = false;
@@ -157,10 +160,15 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
             if (effectedRowCount > 0) {
               // When sqlite is updated, refresh the note list
 
+              // Remove the note item from the note list variable
+              GlobalState.noteListWidgetForTodayState.currentState
+                  .removeItemFromNoteListByIndex(
+                      indexAtNoteList: widget.indexAtNoteList);
+
               GlobalState.noteListWidgetForTodayState.currentState
                   .triggerSetState(
-                      forceToRefreshNoteListByDb: true,
-                      setBackgroundColorToFirstItemIfBackgroundNeeded: true,
+                      forceToRefreshNoteListByDb: false,
+                      forceToSetBackgroundColorToFirstItemIfBackgroundNeeded: true,
                       refreshFolderListPageFromDbByTheWay: true);
             }
           }
