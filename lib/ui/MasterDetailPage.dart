@@ -114,6 +114,18 @@ class MasterDetailPageState extends State<MasterDetailPage>
               .triggerSetState(forceToFetchFoldersFromDb: false);
         }
 
+        // Refresh the note list page after rotation
+        if (GlobalState.screenType != 1) {
+          if (GlobalState.selectedNoteModel.id == null) {
+            GlobalState.noteListWidgetForTodayState.currentState
+                .triggerToClickOnNoteListItem(
+                    theNote: GlobalState.firstNoteToBeSelected,
+                    forceToSaveNoteToDbIfAnyUpdates: true,
+                    forceToSetBackgroundColorToFirstNoteWhenBackgroundNeeded:
+                        false);
+          }
+        }
+
         // Check if it is rotating // check if rotation // check rotation action
         if (GlobalState.appBarHeight != newAppBarHeight) {
           // after rotation // after rotation event
