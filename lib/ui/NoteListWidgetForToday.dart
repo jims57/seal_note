@@ -428,11 +428,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                   // restore note event // click on restore note button
                                   // click to restore note button
 
-                                  // var n = theNote;
-                                  // triggerToClickOnNoteListItem(
-                                  //     theNote: theNote,
-                                  //     forceToSetBackgroundColorToFirstNoteWhenBackgroundNeeded:
-                                  //         false);
                                   GlobalState.selectedNoteModel = theNote;
 
                                   // Check which folder is
