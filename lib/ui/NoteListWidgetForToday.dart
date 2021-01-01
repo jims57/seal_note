@@ -666,6 +666,14 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                               _noteList.insert(index,
                                                   _noteEntryBeingHandled);
                                             });
+
+                                            if (GlobalState.screenType == 3) {
+                                              GlobalState.folderListWidgetState
+                                                  .currentState
+                                                  .triggerSetState(
+                                                      forceToFetchFoldersFromDb:
+                                                          true);
+                                            }
                                           }
                                         });
 
