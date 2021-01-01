@@ -130,10 +130,6 @@ class MasterDetailPageState extends State<MasterDetailPage>
             .triggerEditorToAutoFitScreen();
       });
 
-      // Adjust the height of the Quill accordingly after rotation
-      // if (GlobalState.hasWebViewLoaded &&
-      //     !GlobalState.isKeyboardEventHandling) {}
-
       GlobalState.isKeyboardEventHandling = false;
     }
 

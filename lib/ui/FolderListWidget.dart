@@ -43,7 +43,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
     // Always clear the existing record
     GlobalState.defaultFolderIndexList.clear();
 
-    _getAllFolders();
+    _getAllFolders(triggerSetState: true);
 
     super.didChangeDependencies();
   }
@@ -130,21 +130,30 @@ class FolderListWidgetState extends State<FolderListWidget> {
     return isDefaultFolder;
   }
 
-  void _getAllFolders({bool forceToFetchFoldersFromDb = true}) {
+  void _getAllFolders(
+      {bool forceToFetchFoldersFromDb = true,
+      bool triggerSetState = false}) async {
     // get folder data // get all folder data
     // get all folder // get folder list data
 
-    folderListItemWidgetList.clear();
+    if (forceToFetchFoldersFromDb) {
+      foldersWithUnreadTotalResultList.clear();
+    }
+
     GlobalState.defaultFolderIndexList.clear();
 
     if (forceToFetchFoldersFromDb) {
-      GlobalState.database.getListForFoldersWithUnreadTotal().then((folders) {
-        foldersWithUnreadTotalResultList = folders;
-        _buildFolderListItemsByList(foldersWithUnreadTotalResultList: folders);
-      });
+      foldersWithUnreadTotalResultList =
+          await GlobalState.database.getListForFoldersWithUnreadTotal();
+      _buildFolderListItemsByList(
+          foldersWithUnreadTotalResultList: foldersWithUnreadTotalResultList);
     } else {
       _buildFolderListItemsByList(
           foldersWithUnreadTotalResultList: foldersWithUnreadTotalResultList);
+    }
+
+    if (triggerSetState) {
+      setState(() {});
     }
   }
 
@@ -154,6 +163,8 @@ class FolderListWidgetState extends State<FolderListWidget> {
               foldersWithUnreadTotalResultList}) {
     GlobalState.userFolderTotal = foldersWithUnreadTotalResultList.length;
     GlobalState.allFolderTotal = GlobalState.userFolderTotal;
+
+    folderListItemWidgetList.clear(); // Always to clear items in the list
 
     for (var index = 0;
         index < foldersWithUnreadTotalResultList.length;
