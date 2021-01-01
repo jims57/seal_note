@@ -185,7 +185,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                 var theNoteId = theNote.id;
                 var theNoteTitle = _getNoteTitleFormatForNoteList(
                         encodedContent: theNote.content,
-                        replaceOlTagToPTag: true)
+                        removeOlTagAndReplaceLiTagByPTag: true)
                     .trim();
 
                 // Handle title if it is empty
@@ -241,7 +241,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                     // get note list abstract // get note list item abstract
                                     // show note list abstract // format note list content
                                     // format abstract content // format note list abstract content
-                                    '${_getNoteContentFormatForNoteList(encodedContent: theNote.content)}',
+                                    '${_getNoteContentFormatForNoteList(encodedContent: theNote.content, removeOlTagAndReplaceLiTagByPTag: true)}',
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -1096,24 +1096,23 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   String _getNoteTitleFormatForNoteList(
       {@required String encodedContent,
       int pageIndex = 0,
-      replaceOlTagToPTag = false}) {
+      removeOlTagAndReplaceLiTagByPTag = false}) {
     // var noteTitle = GlobalState.defaultTitleWhenNoteHasNoTitle;
     var noteTitle = '';
     var oldEncodedContent = encodedContent;
     var pageSize = GlobalState.incrementalStepToUseRegex;
     var endLengthToTruncate = (pageIndex + 1) * pageSize;
 
+    if (removeOlTagAndReplaceLiTagByPTag) {
+      encodedContent =
+          _removeOlTagAndReplaceLiTagByPTag(encodedContent: encodedContent);
+      oldEncodedContent = encodedContent;
+    }
+
     if (encodedContent.length >= endLengthToTruncate) {
       encodedContent = encodedContent.substring(0, endLengthToTruncate);
     } else {
       encodedContent = encodedContent.substring(0, encodedContent.length);
-    }
-
-    // Force to replace <ol> to <p>
-    if (replaceOlTagToPTag) {
-      encodedContent = encodedContent
-          .replaceAll('&lt;ol&gt;', '&lt;p&gt;')
-          .replaceAll('&lt;/ol&gt;', '&lt;/p&gt;');
     }
 
     var htmlTagList = HtmlHandler.getHtmlTagList(
@@ -1133,7 +1132,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     if (noteTitle.isEmpty) {
       if (oldEncodedContent.length > endLengthToTruncate) {
         noteTitle = _getNoteTitleFormatForNoteList(
-            encodedContent: oldEncodedContent, pageIndex: pageIndex + 1);
+            encodedContent: oldEncodedContent,
+            pageIndex: pageIndex + 1,
+            removeOlTagAndReplaceLiTagByPTag: removeOlTagAndReplaceLiTagByPTag);
       }
     }
 
@@ -1144,13 +1145,21 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   String _getNoteContentFormatForNoteList(
-      {@required String encodedContent, int pageIndex = 0}) {
+      {@required String encodedContent,
+      int pageIndex = 0,
+      bool removeOlTagAndReplaceLiTagByPTag = false}) {
     var noteContent = '';
     var oldEncodedContent = encodedContent;
     var pageSize = GlobalState.incrementalStepToUseRegex;
     var endLengthToTruncate = (pageIndex + 1) * pageSize;
     var title = '';
     var titleIndexAtHtmlTagList = -1;
+
+    if (removeOlTagAndReplaceLiTagByPTag) {
+      encodedContent =
+          _removeOlTagAndReplaceLiTagByPTag(encodedContent: encodedContent);
+      oldEncodedContent = encodedContent;
+    }
 
     if (encodedContent.length >= endLengthToTruncate) {
       encodedContent = encodedContent.substring(0, endLengthToTruncate);
@@ -1167,7 +1176,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     if (htmlTagList.length == 0 &&
         oldEncodedContent.length > endLengthToTruncate) {
       noteContent = _getNoteContentFormatForNoteList(
-          encodedContent: oldEncodedContent, pageIndex: pageIndex + 1);
+          encodedContent: oldEncodedContent,
+          pageIndex: pageIndex + 1,
+          removeOlTagAndReplaceLiTagByPTag: removeOlTagAndReplaceLiTagByPTag);
     }
 
     // We don't use index = 0, since zero index is for the title of a note
@@ -1182,7 +1193,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
           continue;
         } else {
           noteContent += _getNoteContentFormatForNoteList(
-                  encodedContent: oldEncodedContent, pageIndex: pageIndex + 1)
+                  encodedContent: oldEncodedContent,
+                  pageIndex: pageIndex + 1,
+                  removeOlTagAndReplaceLiTagByPTag:
+                      removeOlTagAndReplaceLiTagByPTag)
               .replaceAll(noteContent, '');
           break;
         }
@@ -1200,7 +1214,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
         if (oldEncodedContent.length > endLengthToTruncate &&
             i == htmlTagList.length - 1) {
           noteContent = _getNoteContentFormatForNoteList(
-              encodedContent: oldEncodedContent, pageIndex: pageIndex + 1);
+              encodedContent: oldEncodedContent,
+              pageIndex: pageIndex + 1,
+              removeOlTagAndReplaceLiTagByPTag:
+                  removeOlTagAndReplaceLiTagByPTag);
         }
       } else {
         // For content part
@@ -1217,7 +1234,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
             noteContent.length < GlobalState.noteListAbstractMaxLength &&
             oldEncodedContent.length > endLengthToTruncate) {
           noteContent += _getNoteContentFormatForNoteList(
-                  encodedContent: oldEncodedContent, pageIndex: pageIndex + 1)
+                  encodedContent: oldEncodedContent,
+                  pageIndex: pageIndex + 1,
+                  removeOlTagAndReplaceLiTagByPTag:
+                      removeOlTagAndReplaceLiTagByPTag)
               .replaceAll(noteContent, '');
         }
       }
@@ -1227,6 +1247,16 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     noteContent = HtmlHandler.decodeHtmlString(noteContent);
 
     return noteContent;
+  }
+
+  String _removeOlTagAndReplaceLiTagByPTag({@required String encodedContent}) {
+    var replacedEncodedContent = encodedContent
+        .replaceAll('&lt;ol&gt;', '')
+        .replaceAll('&lt;/ol&gt;', '')
+        .replaceAll('&lt;li&gt;', '&lt;p&gt;')
+        .replaceAll('&lt;/li&gt;', '&lt;/p&gt;');
+
+    return replacedEncodedContent;
   }
 
   double _getFolderSelectionListMaxHeight({@required int folderTotal}) {
