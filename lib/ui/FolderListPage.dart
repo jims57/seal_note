@@ -77,7 +77,8 @@ class FolderListPageState extends State<FolderListPage>
               await GlobalState.noteDetailWidgetState.currentState
                   .setWebViewToReadOnlyMode(
                       keepNoteDetailPageOpen: true,
-                      forceToSaveNoteToDbIfAnyUpdates: true); // Force to save note content to db if there is any change
+                      forceToSaveNoteToDbIfAnyUpdates:
+                          true); // Force to save note content to db if there is any change
               GlobalState.noteDetailWidgetState.currentState
                   .hideWebView(); // Hide the WebView first
 
@@ -197,10 +198,11 @@ class FolderListPageState extends State<FolderListPage>
                               // setting button // setting button event
 
                               // Force to save note content to db if there is any change
-                              await GlobalState.noteDetailWidgetState.currentState
+                              await GlobalState
+                                  .noteDetailWidgetState.currentState
                                   .setWebViewToReadOnlyMode(
-                                  keepNoteDetailPageOpen: true,
-                                  forceToSaveNoteToDbIfAnyUpdates: true);
+                                      keepNoteDetailPageOpen: true,
+                                      forceToSaveNoteToDbIfAnyUpdates: true);
                             },
                           ),
                           GestureDetector(
@@ -223,13 +225,17 @@ class FolderListPageState extends State<FolderListPage>
                             onTap: () {
                               // setting event // click setting event
                               // setting button // setting button event
-                              var s = 's';
+                              // test button // test button event
 
                               GlobalState.noteDetailWidgetState.currentState
-                                  .setWebViewToReadOnlyMode(
-                                      forceToSaveNoteToDbIfAnyUpdates: true);
+                                  .setEditorHeightWithNewWebViewScreenHeight(
+                                      newWebViewScreenHeight:
+                                          150.0);
 
-                              // GlobalState.noteDetailWidgetState.currentState.saveNoteToDb();
+                              // GlobalState.noteDetailWidgetState.currentState
+                              //     .triggerEditorToAutoFitScreen();
+
+                              var s = 's';
                             },
                           )
                         ],

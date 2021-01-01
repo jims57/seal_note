@@ -98,4 +98,14 @@ class AppState extends ChangeNotifier {
     _hasDataInNoteListPage = value;
     notifyListeners();
   }
+
+  bool _isEditorReadOnly = true;
+
+  // ignore: unnecessary_getters_setters
+  bool get isEditorReadOnly => _isEditorReadOnly;
+
+  set isEditorReadOnly(bool value) {
+    _isEditorReadOnly = value;
+    notifyListeners();
+  }
 }

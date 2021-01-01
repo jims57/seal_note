@@ -563,17 +563,24 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                   // click on edit note button // click edit button
 
                                   if (GlobalState.isQuillReadOnly) {
+                                    // When it is read only mode
                                     await GlobalState
                                         .noteDetailWidgetState.currentState
                                         .setWebViewToEditMode(
-                                            keepNoteDetailPageOpen: true);
+                                            keepNoteDetailPageOpen: true,
+                                            notifyAppStateAboutIsEditorReadOnly:
+                                                true);
                                   } else {
+                                    // When it is edit mode
+
                                     // Always to set the web view to read only mode and save the note to db
                                     await GlobalState
                                         .noteDetailWidgetState.currentState
                                         .setWebViewToReadOnlyMode(
                                             keepNoteDetailPageOpen: true,
                                             forceToSaveNoteToDbIfAnyUpdates:
+                                                true,
+                                            notifyAppStateAboutIsEditorReadOnly:
                                                 true);
                                   }
                                 }),
@@ -746,6 +753,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   Future<void> setWebViewToReadOnlyMode(
       {bool keepNoteDetailPageOpen = true,
       bool forceToSaveNoteToDbIfAnyUpdates = false,
+      bool notifyAppStateAboutIsEditorReadOnly = false,
       Future<VoidCallback> callback}) async {
     if (forceToSaveNoteToDbIfAnyUpdates) {
       await saveNoteToDb(forceToSave: forceToSaveNoteToDbIfAnyUpdates);
@@ -756,15 +764,24 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           keepNoteDetailPageOpen: keepNoteDetailPageOpen,
           executeAutoSaveNoteWhenSettingToReadOnlyMode: false);
 
+      if (notifyAppStateAboutIsEditorReadOnly) {
+        GlobalState.appState.isEditorReadOnly = true;
+      }
+
       await callback;
     }
   }
 
   Future<void> setWebViewToEditMode(
-      {bool keepNoteDetailPageOpen = true}) async {
+      {bool keepNoteDetailPageOpen = true,
+      bool notifyAppStateAboutIsEditorReadOnly = false}) async {
     if (GlobalState.isQuillReadOnly) {
       await toggleQuillModeBetweenReadOnlyAndEdit(
           keepNoteDetailPageOpen: keepNoteDetailPageOpen);
+
+      if (notifyAppStateAboutIsEditorReadOnly) {
+        GlobalState.appState.isEditorReadOnly = false;
+      }
     }
   }
 
@@ -812,8 +829,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
     // Switch the readonly status
     GlobalState.isQuillReadOnly = !GlobalState.isQuillReadOnly;
-
-    setState(() {});
   }
 
   Future<void> saveNoteToDb(
@@ -824,5 +839,30 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         "javascript:saveNoteToDb($forceToSave, $canSaveInReadOnly);";
 
     await GlobalState.flutterWebviewPlugin.evalJavascript(evalString);
+  }
+
+  Future<void> setEditorHeightWithNewWebViewScreenHeight(
+      {@required double newWebViewScreenHeight,
+      double bottomPanelHeight = 0.0,
+      bool keepHeightToShowToolbar = true}) async {
+    await GlobalState.flutterWebviewPlugin.evalJavascript(
+        "javascript:setEditorHeightWithNewWebViewScreenHeight($newWebViewScreenHeight, $bottomPanelHeight, $keepHeightToShowToolbar);");
+  }
+
+  Future<void> triggerEditorToAutoFitScreen() async {
+    var keepHeightToShowToolbar = true;
+
+    // The tool bar is only shown in edit mode
+    if (GlobalState.isQuillReadOnly) {
+      // When it is read only mode, don't keep height for tool bar
+      keepHeightToShowToolbar = false;
+    }
+
+    await GlobalState.noteDetailWidgetState.currentState
+        .setEditorHeightWithNewWebViewScreenHeight(
+            newWebViewScreenHeight:
+                GlobalState.screenHeight - GlobalState.appBarHeight,
+            bottomPanelHeight: GlobalState.keyboardHeight,
+            keepHeightToShowToolbar: keepHeightToShowToolbar);
   }
 }

@@ -867,6 +867,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   }
 
   void triggerToClickOnNoteListItem(
+      // trigger to click note list item method
+      // trigger note list iem
       {@required NoteWithProgressTotal theNote,
       bool forceToSetWebViewReadOnlyMode = true,
       bool forceToSaveNoteToDbIfAnyUpdates = true,
@@ -941,6 +943,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
         break;
       }
     }
+
+    // Always try to adjust the editor's height to fit the available screen
+    GlobalState.noteDetailWidgetState.currentState
+        .triggerEditorToAutoFitScreen();
   }
 
   // Private method

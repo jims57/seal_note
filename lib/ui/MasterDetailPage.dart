@@ -102,9 +102,6 @@ class MasterDetailPageState extends State<MasterDetailPage>
       // Get app bar height after rotation
 
       Timer(const Duration(milliseconds: 700), () {
-        var newAppBarHeight =
-            GlobalState.appBarWidgetState.currentState.getAppBarHeight();
-
         // Update the app bar's height on the folder list page
         refreshFolderListPageAppBarHeight();
 
@@ -126,32 +123,16 @@ class MasterDetailPageState extends State<MasterDetailPage>
           }
         }
 
-        // Check if it is rotating // check if rotation // check rotation action
-        if (GlobalState.appBarHeight != newAppBarHeight) {
-          // after rotation // after rotation event
-          // after rotating event
-
-          GlobalState.appBarHeight = newAppBarHeight;
-          var newWebViewScreenHeight =
-              GlobalState.screenHeight - GlobalState.appBarHeight;
-          var showToolbar = false;
-
-          // Check if it should show the toolbar
-          if (!GlobalState.isQuillReadOnly) {
-            // If it is in edit mode
-            showToolbar = true;
-          }
-
-          GlobalState.flutterWebviewPlugin.evalJavascript(
-              "javascript:setEditorHeightWithNewWebViewScreenHeight($newWebViewScreenHeight, ${GlobalState.keyboardHeight}, $showToolbar);");
-
-          print(GlobalState.appBarHeight);
-        }
+        // Check if it is rotating // check if rotation
+        // after rotation // after rotation event
+        // after rotating event // check rotation action
+        GlobalState.noteDetailWidgetState.currentState
+            .triggerEditorToAutoFitScreen();
       });
 
       // Adjust the height of the Quill accordingly after rotation
-      if (GlobalState.hasWebViewLoaded &&
-          !GlobalState.isKeyboardEventHandling) {}
+      // if (GlobalState.hasWebViewLoaded &&
+      //     !GlobalState.isKeyboardEventHandling) {}
 
       GlobalState.isKeyboardEventHandling = false;
     }
