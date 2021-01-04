@@ -59,12 +59,20 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     _idKeyboardListener = _keyboardUtils.add(
         listener: KeyboardListener(willHideKeyboard: () {
       GlobalState.isKeyboardEventHandling = true;
-      GlobalState.keyboardHeight = 0.0;
+
 
       var showToolbar = false;
 
       // Check if it is in edit mode and decide we should show the toolbar or note
-      if (!GlobalState.isQuillReadOnly) showToolbar = true;
+      if (!GlobalState.isQuillReadOnly) { // It is in edit mode
+        showToolbar = true;
+      }
+      // else { // It is in read only mode
+      //   GlobalState.keyboardHeight = 0.0;
+      //   GlobalState.bottomPanelHeight = GlobalState.keyboardHeight;
+      // }
+
+      GlobalState.keyboardHeight = 0.0;
 
       // Hide keyboard event
       GlobalState.flutterWebviewPlugin
@@ -72,6 +80,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     }, willShowKeyboard: (double keyboardHeight) {
       GlobalState.isKeyboardEventHandling = true;
       GlobalState.keyboardHeight = keyboardHeight;
+      GlobalState.bottomPanelHeight = keyboardHeight;
 
       // Show keyboard event
       GlobalState.flutterWebviewPlugin
@@ -107,6 +116,21 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         onMessageReceived: (JavascriptMessage message) {
           print(message.message);
         }), // Print
+    JavascriptChannel(
+        name: 'SyncVariables',
+        onMessageReceived: (JavascriptMessage message) {
+          // sync variables // sync js variables
+
+          var echo = message.message;
+
+          if(echo == 'pickerIsBeingShown = true'){
+            GlobalState.pickerIsBeingShown = true;
+          } else if(echo == 'pickerIsBeingShown = false'){
+            GlobalState.pickerIsBeingShown = false;
+          }
+
+          print(message.message);
+        }), // Sync variables between dart and js
     JavascriptChannel(
         name: 'NotifyDartWebViewHasLoaded',
         onMessageReceived: (JavascriptMessage message) {
@@ -850,6 +874,9 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   }
 
   Future<void> triggerEditorToAutoFitScreen() async {
+    // adjust editor height // adjust editor to fit screen
+    // edit fit screen event
+
     var keepHeightToShowToolbar = true;
 
     // The tool bar is only shown in edit mode
@@ -858,11 +885,16 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
       keepHeightToShowToolbar = false;
     }
 
+    var bottomPanelHeight  = GlobalState.keyboardHeight;
+    if(GlobalState.pickerIsBeingShown){
+      bottomPanelHeight = GlobalState.bottomPanelHeight;
+    }
+
     await GlobalState.noteDetailWidgetState.currentState
         .setEditorHeightWithNewWebViewScreenHeight(
             newWebViewScreenHeight:
                 GlobalState.screenHeight - GlobalState.appBarHeight,
-            bottomPanelHeight: GlobalState.keyboardHeight,
+            bottomPanelHeight: bottomPanelHeight,
             keepHeightToShowToolbar: keepHeightToShowToolbar);
   }
 }

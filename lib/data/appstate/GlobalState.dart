@@ -41,7 +41,8 @@ class GlobalState with ChangeNotifier {
   static const Color themeBlackColor = Color(0xff000000);
   static const Color themeBlackColorForFont = Color(0xff000000);
   static const Color themeBlueColor = Color(0xff2b98f0);
-  static const Color themeBlueColorForSelectedItemBackground = Color(0xffb4d8fd);
+  static const Color themeBlueColorForSelectedItemBackground =
+      Color(0xffb4d8fd);
   static const Color themeGreenColorAtiOSTodo = Color(0xff67d844);
   static const Color themeLightBlueColor07 = Color.fromRGBO(43, 152, 240, 0.7);
   static const Color themeLightBlueColor02 = Color.fromRGBO(43, 152, 240, 0.2);
@@ -77,6 +78,7 @@ class GlobalState with ChangeNotifier {
 
   // Keyboard related
   static double keyboardHeight = 0.0;
+  static double bottomPanelHeight = 0.0;
   static bool isKeyboardEventHandling = false;
 
   // Pages
@@ -219,6 +221,8 @@ class GlobalState with ChangeNotifier {
   static bool isQuillReadOnly = true;
   static bool isEditingOrCreatingNote =
       false; // Indicating if the user is creating a new note
+  static bool pickerIsBeingShown =
+      false; // Font color and background color pick in the tool bar of the Quill
 
   // Photo Views
   static List<ImageSyncItem> imageSyncItemList = <ImageSyncItem>[];

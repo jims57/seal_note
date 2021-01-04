@@ -1737,6 +1737,8 @@
     function setEditorHeight(bottomPanelHeight, showToolbar = true, goToCursorPosition = false) {
         // bottomPanelHeight is the grey panel with the equal height to the keyboard height
 
+        if(printLogToDartFromJs) Print.postMessage('setEditorHeight(bottomPanelHeight = '+bottomPanelHeight+', showToolbar = '+showToolbar+', goToCursorPosition = '+goToCursorPosition+')');
+
         var currentToolbarHeight = 0;
 
         // if(showToolbar === undefined) showToolbar = true;
@@ -2366,28 +2368,17 @@
     }
 
     function setEditorHeightWithNewWebViewScreenHeight(newWebViewScreenHeight, bottomPanelHeight, showToolbar = true) {
+        if(printLogToDartFromJs) Print.postMessage('setEditorHeightWithNewWebViewScreenHeight(newWebViewScreenHeight='+newWebViewScreenHeight+', bottomPanelHeight = '+bottomPanelHeight+', showToolbar = '+showToolbar+')');
+
         webViewScreenHeight = newWebViewScreenHeight;
+
+        if(printLogToDartFromJs) Print.postMessage('keyboard height is: '+ keyboardHeight);
 
         setEditorHeight(bottomPanelHeight, showToolbar, true);
 
         // Anyway, we force the Quill move to the cursor position
         //goToQuillCursorPostion();
     }
-
-    // function updateScreenHeight(newScreenHeight, newKeyboardHeight, shouldAdjustEditorHeight = true) { 
-    // // function updateScreenHeight(shouldAdjustEditorHeight = true) { 
-    //     // Sometimes, we need to notify the webView that the screen height is changed after the device has rotated,
-    //     // Thus, the height of the Quill should adjust accordingly in this situation.
-
-    //     if(printLogToDartFromJs) Print.postMessage('updateScreenHeight(newScreenHeight='+newScreenHeight+', shouldAdjustEditorHeight='+shouldAdjustEditorHeight.toString()+')');
-
-    //     screenHeight = newScreenHeight;
-
-    //     // screenHeight = $(window.top).height();
-
-    //     // screenHeight = newScreenHeight;
-    //     if (shouldAdjustEditorHeight) setEditorHeight(newKeyboardHeight, true);
-    // }
 </script>
 
 <!-- For Debug -->
@@ -2476,8 +2467,10 @@
             var isPicker1Hidden = document.getElementById('ql-picker-options-1').getAttribute('aria-hidden');
 
             if (isPicker0Hidden == 'false' || isPicker1Hidden == 'false') { // The picker is showing
+                if(printLogToDartFromJs) SyncVariables.postMessage('pickerIsBeingShown = true');
                 pickerIsBeingShown = true;
             } else { // The picker is hiding
+                if(printLogToDartFromJs) SyncVariables.postMessage('pickerIsBeingShown = false');
                 pickerIsBeingShown = false;
             }
         });
