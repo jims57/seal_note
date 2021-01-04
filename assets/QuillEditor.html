@@ -2463,10 +2463,12 @@
         document.getElementsByClassName('ql-editor')[0].addEventListener('blur', (event) => {
             actionSum += 1;
 
-            var isPicker0Hidden = document.getElementById('ql-picker-options-0').getAttribute('aria-hidden');
-            var isPicker1Hidden = document.getElementById('ql-picker-options-1').getAttribute('aria-hidden');
+            var isPicker0Hidden = document.getElementById('ql-picker-options-0').getAttribute('aria-hidden'); // Font color picker
+            var isPicker1Hidden = document.getElementById('ql-picker-options-1').getAttribute('aria-hidden'); // Background color picker
+            var isPicker2Hidden = document.getElementById('ql-picker-options-2').getAttribute('aria-hidden'); // Font size picker
+            
 
-            if (isPicker0Hidden == 'false' || isPicker1Hidden == 'false') { // The picker is showing
+            if (isPicker0Hidden == 'false' || isPicker1Hidden == 'false' || isPicker2Hidden == 'false') { // The picker is showing
                 if(printLogToDartFromJs) SyncVariables.postMessage('pickerIsBeingShown = true');
                 pickerIsBeingShown = true;
             } else { // The picker is hiding
