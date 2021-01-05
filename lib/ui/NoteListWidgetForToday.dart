@@ -929,8 +929,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     GlobalState.isEditingOrCreatingNote = false;
 
     // Force to clear the water mark in the quill editor, if coming from the note list(viewing an old note)
-    await GlobalState.flutterWebviewPlugin
-        .evalJavascript("javascript:removeQuillEditorWatermark();");
+    // await GlobalState.flutterWebviewPlugin
+    //     .evalJavascript("javascript:removeQuillEditorWatermark();");
+    //     .evalJavascript("javascript:removeQuillEditorWatermark(false);");
 
     // Update the quill's content
     var responseJsonString =
