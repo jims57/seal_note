@@ -60,11 +60,11 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         listener: KeyboardListener(willHideKeyboard: () {
       GlobalState.isKeyboardEventHandling = true;
 
-
       var showToolbar = false;
 
       // Check if it is in edit mode and decide we should show the toolbar or note
-      if (!GlobalState.isQuillReadOnly) { // It is in edit mode
+      if (!GlobalState.isQuillReadOnly) {
+        // It is in edit mode
         showToolbar = true;
       }
       // else { // It is in read only mode
@@ -123,9 +123,9 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
           var echo = message.message;
 
-          if(echo == 'pickerIsBeingShown = true'){
+          if (echo == 'pickerIsBeingShown = true') {
             GlobalState.pickerIsBeingShown = true;
-          } else if(echo == 'pickerIsBeingShown = false'){
+          } else if (echo == 'pickerIsBeingShown = false') {
             GlobalState.pickerIsBeingShown = false;
           }
 
@@ -135,6 +135,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         name: 'NotifyDartWebViewHasLoaded',
         onMessageReceived: (JavascriptMessage message) {
           GlobalState.isClickingNoteListItem = false;
+
+          // When the web view is ready, show the first note on the note list
+          GlobalState.noteListWidgetForTodayState.currentState
+              .triggerToClickOnNoteListItem(theNote: GlobalState.firstNoteToBeSelected);
 
           // If the WebView isn't loaded yet, we try to set the height in one second
           if (GlobalState.rotatedTimes > 0) {
@@ -885,8 +889,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
       keepHeightToShowToolbar = false;
     }
 
-    var bottomPanelHeight  = GlobalState.keyboardHeight;
-    if(GlobalState.pickerIsBeingShown){
+    var bottomPanelHeight = GlobalState.keyboardHeight;
+    if (GlobalState.pickerIsBeingShown) {
       bottomPanelHeight = GlobalState.bottomPanelHeight;
     }
 
