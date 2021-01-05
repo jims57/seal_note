@@ -134,11 +134,16 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     JavascriptChannel(
         name: 'NotifyDartWebViewHasLoaded',
         onMessageReceived: (JavascriptMessage message) {
+          // notify web view load // when web view load successfully
+
           GlobalState.isClickingNoteListItem = false;
 
           // When the web view is ready, show the first note on the note list
-          GlobalState.noteListWidgetForTodayState.currentState
-              .triggerToClickOnNoteListItem(theNote: GlobalState.firstNoteToBeSelected);
+          if (GlobalState.screenType != 1) {
+            GlobalState.noteListWidgetForTodayState.currentState
+                .triggerToClickOnNoteListItem(
+                    theNote: GlobalState.firstNoteToBeSelected);
+          }
 
           // If the WebView isn't loaded yet, we try to set the height in one second
           if (GlobalState.rotatedTimes > 0) {
