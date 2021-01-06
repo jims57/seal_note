@@ -8,7 +8,7 @@ import 'package:seal_note/ui/FolderListWidget.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
 import 'package:seal_note/ui/NoteDetailWidget.dart';
 import 'package:seal_note/ui/NoteListWidgetForToday.dart';
-import 'package:seal_note/ui/common/AppBarWidget.dart';
+import 'package:seal_note/ui/common/AppBar/AppBarWidget.dart';
 import 'package:seal_note/ui/common/SelectFolderWidget.dart';
 
 import 'AppState.dart';
@@ -60,6 +60,9 @@ class GlobalState with ChangeNotifier {
   static const Color themeBrownColorAtiOSTodo = Color(0xff9a8565);
   static const Color themeLightBlueColorAtiOSTodo = Color(0xff2aaff5);
 
+  // Font
+  static const double appBarTitleDefaultFontSize = 16.0;
+
   // Borders
   static double borderRadius15 = 15.0;
   static double borderRadius40 = 40.0;
@@ -92,6 +95,7 @@ class GlobalState with ChangeNotifier {
   static bool isHandlingNoteDetailPage = false;
   static bool shouldTriggerPageTransitionAnimation = true;
   static const int pageTransitionAnimationDurationMilliseconds = 200;
+  static bool isHandlingReusablePage = false;
 
   // Title String
   static final String defaultFolderNameForToday = '今天';
@@ -108,6 +112,7 @@ class GlobalState with ChangeNotifier {
   static double currentNoteListPageWidth = 270.0;
   static final double noteDetailPageDefaultWidth = 200.0;
   static double currentNoteDetailPageWidth = 200.0;
+  static double currentReusablePageWidth = 0.0;
 
   // Contexts
   static BuildContext myAppContext;

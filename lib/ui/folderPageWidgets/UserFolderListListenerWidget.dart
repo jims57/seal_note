@@ -237,10 +237,12 @@ class _UserFolderListListenerWidgetState
                       icon: Icons.more_horiz,
                       onTap: () async {
                         // click on more button // click on swipe more button
+                        // swipe to more event
 
                         // Hide the webView first
                         GlobalState.noteDetailWidgetState.currentState
-                            .hideWebView();
+                            .hideWebView(
+                                forceToSyncWithShouldHideWebViewVar: true);
 
                         var folderId = widget.folderId;
                         var oldFolderName = widget.folderName;

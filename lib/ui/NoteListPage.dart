@@ -6,8 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
-import 'package:seal_note/ui/common/AppBarBackButtonWidget.dart';
-import 'package:seal_note/ui/common/AppBarWidget.dart';
+import 'package:seal_note/ui/common/AppBar/AppBarBackButtonWidget.dart';
+import 'package:seal_note/ui/common/AppBar/AppBarWidget.dart';
 import 'folderOption/FolderOptionListWidget.dart';
 import 'NoteListWidget.dart';
 
@@ -67,11 +67,14 @@ class _NoteListPageState extends State<NoteListPage> {
         ],
         tailChildren: [
           IconButton(
+            // // note list more button
             icon: Icon(
               Icons.more_horiz,
               color: GlobalState.themeBlueColor,
             ),
             onPressed: () {
+              GlobalState.masterDetailPageState.currentState.triggerToShowReusablePage();
+
               GlobalState.appState.isInFolderOptionSubPanel = false;
 
               showModalBottomSheet<void>(
@@ -109,7 +112,7 @@ class _NoteListPageState extends State<NoteListPage> {
               '${GlobalState.appState.noteListPageTitle}',
               style: TextStyle(
                   color: GlobalState.themeBlackColor87ForFontForeColor,
-                  fontSize: 16.0),
+                  fontSize: GlobalState.appBarTitleDefaultFontSize),
             );
           },
         ),

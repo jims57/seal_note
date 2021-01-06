@@ -28,7 +28,8 @@ class AppBarWidget extends StatefulWidget with PreferredSizeWidget {
       {Key key,
       @required this.leadingChildren,
       this.title,
-      @required this.tailChildren,
+      // @required this.tailChildren,
+      this.tailChildren,
       this.showSyncStatus =
           true, // Check if we should show the sync text and icon below the title
       this.forceToShowLeadingWidgets = false,

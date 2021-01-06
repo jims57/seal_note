@@ -12,6 +12,7 @@ import 'package:seal_note/mixin/check_device.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/NoteListPage.dart';
 import 'package:after_layout/after_layout.dart';
+import 'package:seal_note/ui/common/ReusablePageWidget.dart';
 
 import 'NoteDetailWidget.dart';
 
@@ -37,6 +38,10 @@ class MasterDetailPageState extends State<MasterDetailPage>
   double folderPageWidth = GlobalState.folderPageDefaultWidth;
   double noteListPageWidth = GlobalState.noteListPageDefaultWidth;
   double noteDetailPageWidth = GlobalState.noteDetailPageDefaultWidth;
+
+  // Reusable page related
+  var reusablePageFromDx = 1.0;
+  var reusablePageToDx = 0.0;
 
   @override
   void initState() {
@@ -136,44 +141,16 @@ class MasterDetailPageState extends State<MasterDetailPage>
     super.didChangeDependencies();
   }
 
-  Animation<Offset> getAnimation(
-      {double fromDx = -1.0,
-      double toDx = 0.0,
-      int durationMilliseconds =
-          GlobalState.pageTransitionAnimationDurationMilliseconds}) {
-    AnimationController _controller = AnimationController(
-      duration: Duration(milliseconds: durationMilliseconds),
-      vsync: this,
-    )..forward();
-
-    // Check we should show the page transition animation, sometimes, we don't need the animation,
-    // although we are still using the getAnimation() to build the MasterDetailPage
-    if (!GlobalState.shouldTriggerPageTransitionAnimation) fromDx = toDx;
-
-    Animation<Offset> _animation = Tween<Offset>(
-      begin: Offset(fromDx, 0.0),
-      end: Offset(toDx, 0.0),
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInCubic,
-    ));
-
-    return _animation;
-  }
-
   @override
   Widget build(BuildContext context) {
     // master detail build method
     var scaffold = Scaffold(
-      // backgroundColor: Colors.red,
       body: Stack(
         children: [
           Container(
             // Note list page
             margin: getNoteListPageLeftEdgeInset(),
             width: noteListPageWidth,
-            // color: Colors.red,
-            // child: NoteListPage(),
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
               home: NoteListPage(),
@@ -196,6 +173,31 @@ class MasterDetailPageState extends State<MasterDetailPage>
               ),
             ),
           ), // Folder page
+          Consumer<AppState>(builder: (cxt, appState, child) {
+            // show reusable page // reusable page
+            // build reusable page
+
+            if (GlobalState.isHandlingReusablePage) {
+              GlobalState.isHandlingReusablePage = false;
+              _updateReusablePageFromDxAndToDx();
+
+              return SlideTransition(
+                position: getAnimation(
+                    fromDx: reusablePageFromDx, toDx: reusablePageToDx),
+                child: ReusablePageWidget(
+                  title: '复习计划',
+                  child: Container(
+                    color: Colors.red,
+                    height: double.maxFinite,
+                    width: double.maxFinite,
+                    child: Text('Click ME'),
+                  ),
+                ),
+              );
+            } else {
+              return Container();
+            }
+          }),
           SlideTransition(
             // Note detail page
             position: getAnimation(
@@ -226,12 +228,11 @@ class MasterDetailPageState extends State<MasterDetailPage>
     setState(() {});
   }
 
-  // Handle Page show and hide
-  // update page show and hide // set page show and hide
   void updatePageShowAndHide(
       {@required bool shouldTriggerSetState,
       bool resetFolderAndDetailPageToDefaultDx = false,
       bool hasAnimation = true}) {
+    // update page show and hide // set page show and hide
     // If you resetFolderAndDetailPageToDefaultDx = false, we will position the folder and note detail page with animation to the right place,
     // Or we will set it back to their default positions, folder page is on the left of the note list page,
     // whereas the note detail page is on the right of the note list page
@@ -405,7 +406,54 @@ class MasterDetailPageState extends State<MasterDetailPage>
     }
   }
 
+  void _updateReusablePageFromDxAndToDx() {
+    if (GlobalState.appState.isGoingToOpenReusablePage) {
+      // When it is expanding the reusable page
+      reusablePageFromDx = 1.0;
+      reusablePageToDx = 0.0;
+    } else {
+      // When it is collapsing the reusable page
+      reusablePageFromDx = 0.0;
+      reusablePageToDx = 1.0;
+    }
+  }
+
   // Public methods
+  void triggerToShowReusablePage() {
+    GlobalState.isHandlingReusablePage = true;
+    GlobalState.appState.isGoingToOpenReusablePage = true;
+  }
+
+  void triggerToHideReusablePage() {
+    GlobalState.isHandlingReusablePage = true;
+    GlobalState.appState.isGoingToOpenReusablePage = false;
+  }
+
+  Animation<Offset> getAnimation(
+      {double fromDx = -1.0,
+      double toDx = 0.0,
+      int durationMilliseconds =
+          GlobalState.pageTransitionAnimationDurationMilliseconds}) {
+    AnimationController _controller = AnimationController(
+      duration: Duration(milliseconds: durationMilliseconds),
+      vsync: this,
+    )..forward();
+
+    // Check we should show the page transition animation, sometimes, we don't need the animation,
+    // although we are still using the getAnimation() to build the MasterDetailPage
+    if (!GlobalState.shouldTriggerPageTransitionAnimation) fromDx = toDx;
+
+    Animation<Offset> _animation = Tween<Offset>(
+      begin: Offset(fromDx, 0.0),
+      end: Offset(toDx, 0.0),
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInCubic,
+    ));
+
+    return _animation;
+  }
+
   void refreshFolderListPageAppBarHeight() {
     // Update folder page app bar and trigger setState()
     GlobalState.folderPageTopContainerHeight =

@@ -449,7 +449,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                         .noteDetailWidgetState.currentState
                                         .hideWebView(
                                             forceToSyncWithShouldHideWebViewVar:
-                                                false);
+                                                true);
 
                                     await showDialog(
                                         context: context,
