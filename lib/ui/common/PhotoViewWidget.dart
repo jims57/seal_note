@@ -66,55 +66,62 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
               },
             ),
           ),
-          Container(
-            height: 56,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  color: Colors.transparent,
-                  width: 100,
-                ),
-                Container(
-                  alignment: Alignment.bottomCenter,
-                  color: Colors.transparent,
-                  width: 50,
-                  child: Text(
-                    '$_currentImageNo/$_imageTotalCount',
-                    style: TextStyle(
-                        color:
-                            (_showToolBar ? Colors.white : Colors.transparent),
-                        fontSize: 18),
+          SafeArea(
+            child: Container(
+              // height: 56,
+              height: 56,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    alignment: Alignment.center,
+                    color: Colors.transparent,
+                    width: 100,
                   ),
-                ),
-                GestureDetector(
-                  child: Container(
-                    alignment: Alignment.bottomCenter,
+                  Container(
+                    alignment: Alignment.center,
                     color: Colors.transparent,
                     width: 100,
                     child: Text(
-                      '完成',
+                      '$_currentImageNo/$_imageTotalCount',
                       style: TextStyle(
-                          color: (_showToolBar
-                              ? Colors.white
-                              : Colors.transparent),
+                          color:
+                              (_showToolBar ? Colors.white : Colors.transparent),
                           fontSize: 18),
                     ),
                   ),
-                  onTap: () {
-                    setState(() {
-                      GlobalState.noteDetailWidgetState.currentState.showWebView();
+                  GestureDetector(
+                    child: Container(
+                      alignment: Alignment.center,
+                      color: Colors.transparent,
+                      width: 100,
+                      child: Text(
+                        // photo view finish button
+                        '完成',
+                        style: TextStyle(
+                            color: (_showToolBar
+                                ? Colors.white
+                                : Colors.transparent),
+                            fontSize: 18),
+                      ),
+                    ),
+                    onTap: () {
+                      // photo view finish button event
 
-                      GlobalState.appState.widgetNo = 2;
+                      setState(() {
+                        GlobalState.noteDetailWidgetState.currentState.showWebView();
 
-                      GlobalState.shouldTriggerPageTransitionAnimation = false;
-                      // GlobalState.masterDetailPageState.currentState.updatePageShowAndHide(shouldTriggerSetState: false, hasAnimation: false);
+                        GlobalState.appState.widgetNo = 2;
 
-                      Navigator.pop(GlobalState.noteDetailWidgetContext);
-                    });
-                  },
-                )
-              ],
+                        GlobalState.shouldTriggerPageTransitionAnimation = false;
+                        // GlobalState.masterDetailPageState.currentState.updatePageShowAndHide(shouldTriggerSetState: false, hasAnimation: false);
+
+                        Navigator.pop(GlobalState.noteDetailWidgetContext);
+                      });
+                    },
+                  )
+                ],
+              ),
             ),
           )
         ],

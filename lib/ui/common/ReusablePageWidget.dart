@@ -49,6 +49,7 @@ class _ReusablePageWidgetState extends State<ReusablePageWidget> {
                 child: Text(
                   '${widget.title}',
                   style: TextStyle(
+                      color: GlobalState.themeBlackColor87ForFontForeColor,
                       fontSize: GlobalState.appBarTitleDefaultFontSize),
                 ),
               ),
