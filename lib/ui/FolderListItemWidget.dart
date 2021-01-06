@@ -91,6 +91,9 @@ class FolderListItemWidgetState extends State<FolderListItemWidget> {
         // click folder list item event // click folder item event
         // click on folder list item
 
+        // Variables
+        var forceToFetchFoldersFromDb = false;
+
         // Force to set the web view to read only mode
         await GlobalState.noteDetailWidgetState.currentState
             .setWebViewToReadOnlyMode(forceToSaveNoteToDbIfAnyUpdates: true);
@@ -113,8 +116,12 @@ class FolderListItemWidgetState extends State<FolderListItemWidget> {
         GlobalState.noteListWidgetForTodayState.currentState.triggerSetState(
             forceToRefreshNoteListByDb: true,
             forceToSetBackgroundColorToFirstItemIfBackgroundNeeded: true);
-        GlobalState.folderListWidgetState.currentState
-            .triggerSetState(forceToFetchFoldersFromDb: false);
+
+        if (GlobalState.screenType == 3) {
+          forceToFetchFoldersFromDb = true;
+        }
+        GlobalState.folderListWidgetState.currentState.triggerSetState(
+            forceToFetchFoldersFromDb: forceToFetchFoldersFromDb);
 
         // Switch the page
         GlobalState.isHandlingFolderPage = true;

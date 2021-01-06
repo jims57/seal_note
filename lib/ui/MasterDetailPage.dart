@@ -187,7 +187,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
                 child: ReusablePageWidget(
                   title: '复习计划',
                   child: Container(
-                    color: Colors.red,
+                    // color: Colors.red,
                     height: double.maxFinite,
                     width: double.maxFinite,
                     child: Text('Click ME'),
