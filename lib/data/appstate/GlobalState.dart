@@ -121,7 +121,7 @@ class GlobalState with ChangeNotifier {
   static BuildContext folderOptionItemListPanelContext;
   static BuildContext noteDetailWidgetContext;
   static BuildContext myWebViewPluginContext;
-  static BuildContext currentShowDialogContext;
+  static BuildContext currentShowingDialogContext;
 
   // Selected note related
   static NoteWithProgressTotal firstNoteToBeSelected;

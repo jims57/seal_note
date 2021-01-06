@@ -129,7 +129,7 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
             if (shouldContinueAction) {
               // When the user clicks on OK button
               // Hide the dialog to the folder selection
-              Navigator.of(GlobalState.currentShowDialogContext).pop();
+              Navigator.of(GlobalState.currentShowingDialogContext).pop();
               isDialogForFolderSelectionHidden =
                   true; // If we have hide the dialog, marking it so that the subsequent code won't hide it again
             } else {
@@ -154,7 +154,7 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
 
             // When the dialog for folder selection isn't hidden, we should hide it by code
             if (!isDialogForFolderSelectionHidden) {
-              Navigator.of(GlobalState.currentShowDialogContext).pop();
+              Navigator.of(GlobalState.currentShowingDialogContext).pop();
             }
 
             if (effectedRowCount > 0) {

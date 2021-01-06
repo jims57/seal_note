@@ -454,7 +454,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                     await showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          GlobalState.currentShowDialogContext =
+                                          GlobalState
+                                                  .currentShowingDialogContext =
                                               context;
 
                                           return AlertDialog(
@@ -522,8 +523,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                     if (GlobalState
                                             .targetFolderIdNoteIsMovingTo ==
                                         0) {
-                                      // GlobalState.shouldSetBackgroundColorToFirstNoteAutomatically = false;
-
                                       GlobalState.noteListWidgetForTodayState
                                           .currentState
                                           .triggerSetState(
@@ -533,10 +532,12 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                               refreshFolderListPageFromDbByTheWay:
                                                   false);
 
-                                      triggerToClickOnNoteListItem(
-                                          theNote: theNote,
-                                          forceToSetBackgroundColorToFirstNoteWhenBackgroundNeeded:
-                                              false);
+                                      if (GlobalState.screenType != 1) {
+                                        triggerToClickOnNoteListItem(
+                                            theNote: theNote,
+                                            forceToSetBackgroundColorToFirstNoteWhenBackgroundNeeded:
+                                                false);
+                                      }
                                     }
 
                                     // Reset the target folder id for future usage
@@ -905,7 +906,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     }
 
     // Force to show the web view
-    if(!GlobalState.isAlertDialogBeingShown){
+    if (!GlobalState.isAlertDialogBeingShown) {
       GlobalState.noteDetailWidgetState.currentState.showWebView();
     }
 

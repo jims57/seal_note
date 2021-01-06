@@ -16,7 +16,7 @@ class ShowDialogHandler {
     await showDialog(
         context: parentContext,
         builder: (BuildContext context) {
-          GlobalState.currentShowDialogContext = context;
+          GlobalState.currentShowingDialogContext = context;
 
           return AlertDialog(
             titlePadding: EdgeInsets.all(0),
