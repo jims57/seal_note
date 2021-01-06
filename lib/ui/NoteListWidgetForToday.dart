@@ -905,7 +905,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     }
 
     // Force to show the web view
-    GlobalState.noteDetailWidgetState.currentState.showWebView();
+    if(!GlobalState.isAlertDialogBeingShown){
+      GlobalState.noteDetailWidgetState.currentState.showWebView();
+    }
 
     // Save the current note model as global variable
     setState(() {

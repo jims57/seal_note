@@ -27,6 +27,8 @@ class AlertDialogHandler {
     var theRemark = remark;
     var topButtonWidth = 60.0;
 
+    GlobalState.isAlertDialogBeingShown = true;
+
     // If the remark parameter isn't null, we use it as the remark for the dialog
     if (remark != null) theRemark = remark;
 
@@ -199,6 +201,8 @@ class AlertDialogHandler {
         );
       },
     );
+
+    GlobalState.isAlertDialogBeingShown = false;
 
     return shouldContinueAction;
   }

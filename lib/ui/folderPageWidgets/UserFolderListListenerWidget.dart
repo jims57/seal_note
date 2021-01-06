@@ -248,6 +248,8 @@ class _UserFolderListListenerWidgetState
                         var oldFolderName = widget.folderName;
                         var newFolderName = oldFolderName;
 
+                        // GlobalState.isAlertDialogBeingShown = true;
+
                         await AlertDialogHandler().showAlertDialog(
                           parentContext: context,
                           captionText: '文件夹选项',
@@ -282,6 +284,8 @@ class _UserFolderListListenerWidgetState
                                 }
                               },
                             );
+
+                            // GlobalState.isAlertDialogBeingShown = false;
 
                             // Set the top right button, that is Save, back to the disabled status anyway
                             GlobalState.appState

@@ -67,14 +67,12 @@ class _NoteListPageState extends State<NoteListPage> {
         ],
         tailChildren: [
           IconButton(
-            // // note list more button
+            // note list more button // note list page more button
             icon: Icon(
               Icons.more_horiz,
               color: GlobalState.themeBlueColor,
             ),
             onPressed: () {
-              GlobalState.masterDetailPageState.currentState.triggerToShowReusablePage();
-
               GlobalState.appState.isInFolderOptionSubPanel = false;
 
               showModalBottomSheet<void>(
