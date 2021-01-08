@@ -8,7 +8,7 @@ import 'package:seal_note/ui/FolderListWidget.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
 import 'package:seal_note/ui/NoteDetailWidget.dart';
 import 'package:seal_note/ui/NoteListWidgetForToday.dart';
-import 'package:seal_note/ui/common/AppBar/AppBarWidget.dart';
+import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:seal_note/ui/common/SelectFolderWidget.dart';
 
 import 'AppState.dart';
@@ -28,6 +28,12 @@ class GlobalState with ChangeNotifier {
   static int noteListAbstractMaxLength = 50;
   static int incrementalStepToUseRegex = 100;
   static const int minLengthToTriggerRefreshForNoteListPage = 0;
+
+  // Default variables
+  static const double defaultItemHeight = 60.0;
+  static const double defaultHorizontalMarginBetweenItems = 5.0;
+  static const double defaultVerticalMarginBetweenItems = 10.0;
+  static const double defaultLeftAndRightPadding = 15.0;
 
   // App current info
   static bool isAppFirstTimeToLaunch = false;
@@ -52,6 +58,7 @@ class GlobalState with ChangeNotifier {
       Color(0xff898a8e);
   static const Color themeGreyColorAtiOSTodoForBackground = Color(0xfff1f2f6);
   static Color themeGrey350Color = Colors.grey[350];
+  static Color themeGrey700Color = Colors.grey[700];
   static const Color themeGreyColorAtiOSTodoForBlockIconBackground =
       Color(0xff8e8e93);
   static const Color themeWhiteColorAtiOSTodo = Color(0xffffffff);
@@ -61,9 +68,25 @@ class GlobalState with ChangeNotifier {
   static const Color themeLightBlueColorAtiOSTodo = Color(0xff2aaff5);
 
   // Font
-  static const double appBarTitleDefaultFontSize = 16.0;
+  static double defaultTitleFontSizeForItem = 18.0;
+  static double defaultNormalFontSizeForItem = 16.0;
+  static const double appBarTitleDefaultFontSize = 18.0;
+  static Color greyFontColor = Colors.grey[600];
+  static FontWeight defaultBoldFontWeightForItem = FontWeight.w400;
+
+  // Icon
+  static const double defaultIconSize = 25.0;
+
+  // Caption
+  static TextStyle defaultPageCaptionTextStyle = TextStyle(
+    color: GlobalState.themeBlackColor87ForFontForeColor,
+    fontSize: GlobalState.appBarTitleDefaultFontSize,
+    fontWeight: GlobalState.defaultBoldFontWeightForItem,
+  );
 
   // Borders
+  static const double defaultBorderRadius = 10.0;
+  static double borderRadius10 = 10.0;
   static double borderRadius15 = 15.0;
   static double borderRadius40 = 40.0;
 
@@ -76,6 +99,7 @@ class GlobalState with ChangeNotifier {
   static double screenWidth;
   static double screenHeight;
   static double appBarHeight;
+  static double defaultAppBarHeight = 56.0;
   static double webViewHeight;
   static int rotatedTimes;
 
@@ -95,7 +119,14 @@ class GlobalState with ChangeNotifier {
   static bool isHandlingNoteDetailPage = false;
   static bool shouldTriggerPageTransitionAnimation = true;
   static const int pageTransitionAnimationDurationMilliseconds = 200;
+
+  // Reusable page
+  static String reusablePageTitle = '';
   static bool isHandlingReusablePage = false;
+  static Widget reusablePageChild;
+
+  // Review plan
+  static double reviewPlanItemHeight = defaultItemHeight;
 
   // Title String
   static final String defaultFolderNameForToday = '今天';

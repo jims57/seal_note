@@ -71,7 +71,7 @@ class _MyAppState extends State<MyApp> {
         GlobalState.database.insertUser(usersCompanion);
 
         // Initialize folders // init folders
-        var folderEntryList = List<FolderEntry>();
+        var folderEntryList = <FolderEntry>[];
         folderEntryList.add(FolderEntry(
             id: null,
             name: '今天',
@@ -131,7 +131,7 @@ class _MyAppState extends State<MyApp> {
         GlobalState.database.upsertFoldersInBatch(folderEntryList);
 
         // Initialize review plans // init review plans
-        var reviewPlanEntryList = List<ReviewPlanEntry>();
+        var reviewPlanEntryList = <ReviewPlanEntry>[];
         reviewPlanEntryList.add(ReviewPlanEntry(
             id: null,
             name: '五段式',
@@ -145,7 +145,7 @@ class _MyAppState extends State<MyApp> {
         GlobalState.database.upsertReviewPlansInBatch(reviewPlanEntryList);
 
         // Initialize review plan configs // init review plan configs
-        var reviewPlanConfigEntryList = List<ReviewPlanConfigEntry>();
+        var reviewPlanConfigEntryList = <ReviewPlanConfigEntry>[];
         // Unit for the value. { 1 = minute, 2 = hour, 3 = day, 4 = week, 5 = month, 6 = year }
         // For Five-Part Form
         reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(

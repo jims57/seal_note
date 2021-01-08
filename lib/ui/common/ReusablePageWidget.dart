@@ -25,7 +25,7 @@ class _ReusablePageWidgetState extends State<ReusablePageWidget> {
             Stack(alignment: Alignment.center, children: [
               Container(
                 alignment: Alignment.centerLeft,
-                height: GlobalState.appBarHeight,
+                height: GlobalState.defaultAppBarHeight,
                 width: GlobalState.currentReusablePageWidth,
                 child: SafeArea(
                   child: GestureDetector(
@@ -47,10 +47,10 @@ class _ReusablePageWidgetState extends State<ReusablePageWidget> {
               ),
               Container(
                 child: Text(
+                  // reusable page title
+
                   '${widget.title}',
-                  style: TextStyle(
-                      color: GlobalState.themeBlackColor87ForFontForeColor,
-                      fontSize: GlobalState.appBarTitleDefaultFontSize),
+                  style: GlobalState.defaultPageCaptionTextStyle,
                 ),
               ),
             ]),

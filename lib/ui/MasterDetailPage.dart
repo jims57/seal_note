@@ -185,13 +185,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
                 position: getAnimation(
                     fromDx: reusablePageFromDx, toDx: reusablePageToDx),
                 child: ReusablePageWidget(
-                  title: '复习计划',
-                  child: Container(
-                    // color: Colors.red,
-                    height: double.maxFinite,
-                    width: double.maxFinite,
-                    child: Text('Click ME'),
-                  ),
+                  title: '${GlobalState.reusablePageTitle}',
+                  child: GlobalState.reusablePageChild,
                 ),
               );
             } else {
@@ -419,7 +414,9 @@ class MasterDetailPageState extends State<MasterDetailPage>
   }
 
   // Public methods
-  void triggerToShowReusablePage() {
+  void triggerToShowReusablePage({String title = '', @required Widget child}) {
+    GlobalState.reusablePageTitle = title;
+    GlobalState.reusablePageChild = child;
     GlobalState.isHandlingReusablePage = true;
     GlobalState.appState.isGoingToOpenReusablePage = true;
   }

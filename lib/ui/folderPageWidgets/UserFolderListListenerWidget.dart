@@ -7,32 +7,34 @@ import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/ui/common/RoundCornerButtonWidget.dart';
 import 'package:seal_note/ui/common/TextFieldWithClearButtonWidget.dart';
+import 'package:seal_note/ui/common/dividers/ItemDividerWidget.dart';
+import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/ui/FolderListItemWidget.dart';
 
 import 'FolderListItemRightPartWidget.dart';
 
 class UserFolderListListenerWidget extends StatefulWidget {
-  UserFolderListListenerWidget(
-      {Key key,
-      this.icon = Icons.folder_open_outlined,
-      this.iconColor = GlobalState.themeLightBlueColor07,
-      @required this.folderId,
-      @required this.folderName,
-      @required this.numberToShow,
-      this.isReviewFolder = false,
-      this.isDefaultFolder = false,
-      this.badgeBackgroundColor = GlobalState.themeBlueColor,
-      this.showBadgeBackgroundColor = false,
-      this.showZero = false,
-      this.showDivider = true,
-      this.canSwipe = true,
-      this.folderListItemHeight = 60.0,
-      this.folderListPanelMarginForTopOrBottom = 5.0,
-      this.isRoundTopCorner = false,
-      this.isRoundBottomCorner = false,
-      this.isItemSelected = false})
-      : super(key: key);
+  UserFolderListListenerWidget({
+    Key key,
+    this.icon = Icons.folder_open_outlined,
+    this.iconColor = GlobalState.themeLightBlueColor07,
+    @required this.folderId,
+    @required this.folderName,
+    @required this.numberToShow,
+    this.isReviewFolder = false,
+    this.isDefaultFolder = false,
+    this.badgeBackgroundColor = GlobalState.themeBlueColor,
+    this.showBadgeBackgroundColor = false,
+    this.showZero = false,
+    this.showDivider = true,
+    this.canSwipe = true,
+    this.folderListItemHeight = 60.0,
+    this.folderListPanelMarginForTopOrBottom = 5.0,
+    this.isRoundTopCorner = false,
+    this.isRoundBottomCorner = false,
+    this.isItemSelected = false,
+  }) : super(key: key);
 
   final IconData icon;
   final Color iconColor;
@@ -185,30 +187,7 @@ class _UserFolderListListenerWidgetState
                     ],
                   ),
                 ),
-                Container(
-                  // folder list item line // folder list item bottom line
-                  height: 1,
-                  width: double.infinity,
-                  child: Row(
-                    children: [
-                      Container(
-                        // folder list item left bottom line // left bottom line
-                        color: GlobalState.themeWhiteColorAtiOSTodo,
-                        height: 1,
-                        width: 40,
-                      ),
-                      Expanded(
-                        // folder list item right bottom line // right bottom line
-                        child: Container(
-                          color: (widget.showDivider)
-                              ? GlobalState.themeGreyColorAtiOSTodoForBackground
-                              : GlobalState.themeWhiteColorAtiOSTodo,
-                          height: 1,
-                        ),
-                      )
-                    ],
-                  ),
-                )
+                ItemDividerWidget(),
               ],
             ),
             secondaryActions: (!widget.canSwipe)
@@ -225,6 +204,11 @@ class _UserFolderListListenerWidgetState
                       onTap: () async {
                         // swipe to review plan event // click on review plan button
                         var s = 's';
+                        GlobalState.masterDetailPageState.currentState
+                            .triggerToShowReusablePage(
+                          title: '复习计划',
+                          child: ReviewPlanWidget(),
+                        );
                       },
                     ),
                     IconSlideAction(

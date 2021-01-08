@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:moor/moor.dart' show Value;
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/database/database.dart';
-import 'package:seal_note/ui/common/AppBar/AppBarWidget.dart';
+import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
@@ -199,7 +199,15 @@ class FolderListPageState extends State<FolderListPage>
                               // setting button // setting button event
 
                               GlobalState.masterDetailPageState.currentState
-                                  .triggerToShowReusablePage();
+                                  .triggerToShowReusablePage(
+                                title: '设置',
+                                child: Container(
+                                  color: Colors.red,
+                                  height: 200,
+                                  width: 200,
+                                  child: Text('Click ME2'),
+                                ),
+                              );
 
                               // Force to save note content to db if there is any change
                               await GlobalState

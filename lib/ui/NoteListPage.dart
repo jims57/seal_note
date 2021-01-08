@@ -5,9 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
-import 'package:seal_note/ui/common/AppBar/AppBarBackButtonWidget.dart';
-import 'package:seal_note/ui/common/AppBar/AppBarWidget.dart';
+import 'package:seal_note/ui/common/appBars/AppBarBackButtonWidget.dart';
+import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'folderOption/FolderOptionListWidget.dart';
 import 'NoteListWidget.dart';
 
