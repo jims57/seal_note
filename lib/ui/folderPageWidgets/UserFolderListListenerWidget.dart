@@ -204,6 +204,8 @@ class _UserFolderListListenerWidgetState
                       onTap: () async {
                         // swipe to review plan event // click on review plan button
                         var s = 's';
+                        GlobalState.reusablePageChangeNotifier.upcomingReusablePageIndex = 0;
+
                         GlobalState.masterDetailPageState.currentState
                             .triggerToShowReusablePage(
                           title: '复习计划',

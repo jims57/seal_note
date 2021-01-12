@@ -34,7 +34,6 @@ class _ItemContentWidgetState extends State<ItemContentWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // color: Colors.orange,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

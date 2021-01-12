@@ -12,7 +12,7 @@ import 'package:seal_note/mixin/check_device.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/NoteListPage.dart';
 import 'package:after_layout/after_layout.dart';
-import 'package:seal_note/ui/common/ReusablePageWidget.dart';
+import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageStackWidget.dart';
 
 import 'NoteDetailWidget.dart';
 
@@ -182,11 +182,13 @@ class MasterDetailPageState extends State<MasterDetailPage>
               _updateReusablePageFromDxAndToDx();
 
               return SlideTransition(
-                position: getAnimation(
-                    fromDx: reusablePageFromDx, toDx: reusablePageToDx),
-                child: ReusablePageWidget(
-                  title: '${GlobalState.reusablePageTitle}',
-                  child: GlobalState.reusablePageChild,
+                position: GlobalState.masterDetailPageState.currentState
+                    .getAnimation(
+                        fromDx: reusablePageFromDx, toDx: reusablePageToDx),
+                child: ReusablePageStackWidget(
+                  key: GlobalState.reusablePageStackWidgetState,
+                  firstReusablePageTitle: '${GlobalState.firstReusablePageTitle}',
+                  child: GlobalState.firstReusablePageChild,
                 ),
               );
             } else {
@@ -415,13 +417,17 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
   // Public methods
   void triggerToShowReusablePage({String title = '', @required Widget child}) {
-    GlobalState.reusablePageTitle = title;
-    GlobalState.reusablePageChild = child;
+    // trigger to show reusable page // show reusable page method
+
+    GlobalState.firstReusablePageTitle = title;
+    GlobalState.firstReusablePageChild = child;
     GlobalState.isHandlingReusablePage = true;
     GlobalState.appState.isGoingToOpenReusablePage = true;
   }
 
   void triggerToHideReusablePage() {
+    // hide reusable page method // trigger to hide reusable page
+
     GlobalState.isHandlingReusablePage = true;
     GlobalState.appState.isGoingToOpenReusablePage = false;
   }

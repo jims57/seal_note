@@ -12,12 +12,30 @@ class _ReviewPlanWidgetState extends State<ReviewPlanWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // margin: EdgeInsets.only(left: 15.0, right: 15.0),
       child: Column(
         children: [
           ChosenReviewPlanWidget(),
-          // ChosenReviewPlanWidget(),
-          SizedBox(height: GlobalState.defaultVerticalMarginBetweenItems,),
+          SizedBox(
+            height: GlobalState.defaultVerticalMarginBetweenItems,
+          ),
+          Container(
+            child: GestureDetector(
+              child: Text('Click me 2'),
+              onTap: () {
+                var second22 = Container(
+                  width: GlobalState.currentReusablePageWidth,
+                  height: 200,
+                  color: Colors.purple,
+                );
+
+                GlobalState.reusablePageStackWidgetState.currentState
+                    .showReusablePage(
+                        reusablePageTitle: 'Purple页面',
+                        reusablePageWidget: second22,
+                        upcomingReusablePageIndex: 1);
+              },
+            ),
+          ),
           Expanded(child: ManageAllReviewPlanWidget()),
         ],
       ),

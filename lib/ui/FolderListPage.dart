@@ -198,11 +198,17 @@ class FolderListPageState extends State<FolderListPage>
                               // setting event // click setting event
                               // setting button // setting button event
 
+                              GlobalState.hitTimes += 1;
+                              var color = Colors.red;
+                              if (GlobalState.hitTimes % 2 == 0) {
+                                color = Colors.green;
+                              }
+
                               GlobalState.masterDetailPageState.currentState
                                   .triggerToShowReusablePage(
                                 title: '设置',
                                 child: Container(
-                                  color: Colors.red,
+                                  color: color,
                                   height: 200,
                                   width: 200,
                                   child: Text('Click ME2'),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/ui/common/arrows/RightArrowWidget.dart';
 import 'package:seal_note/ui/common/items/ItemContentWidget.dart';
 import 'package:seal_note/ui/common/panels/RoundCornerPanelWidget.dart';
+import 'package:seal_note/ui/reviewPlans/ReviewPlanSecondSubPage.dart';
 
 class ChosenReviewPlanWidget extends StatefulWidget {
   @override
@@ -25,9 +25,12 @@ class _ChosenReviewPlanWidgetState extends State<ChosenReviewPlanWidget> {
         },
       ),
       height: GlobalState.reviewPlanItemHeight,
-      // onTap: () async {
-      //   var s = 's';
-      // },
+      onTap: () async {
+        GlobalState.reusablePageStackWidgetState.currentState.showReusablePage(
+            reusablePageTitle: '已选复习计划',
+            reusablePageWidget: ReviewPlanSecondSubPage(),
+            upcomingReusablePageIndex: 1);
+      },
     );
   }
 }

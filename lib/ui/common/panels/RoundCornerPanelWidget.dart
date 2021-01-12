@@ -91,7 +91,12 @@ class _RoundCornerPanelWidgetState extends State<RoundCornerPanelWidget> {
           ),
         ),
       ),
-      onTap: (widget.onTap != null) ? widget.onTap : () {},
+      // onTap: (widget.onTap != null) ? widget.onTap : () {},
+      onTap: () {
+        // GlobalState.isUpcomingReusablePageMovingToLeft = true;
+
+        widget.onTap();
+      },
     );
   }
 

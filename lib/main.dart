@@ -9,6 +9,7 @@ import 'package:seal_note/util/time/TimeHandler.dart';
 // Import custom files
 import 'data/appstate/AppState.dart';
 import 'data/appstate/DetailPageState.dart';
+import 'data/appstate/ReusablePageChangeNotifier.dart';
 import 'data/appstate/SelectedNoteModel.dart';
 import 'data/database/database.dart';
 import 'data/database/dbHelper/shared.dart';
@@ -34,6 +35,9 @@ void main() {
       ChangeNotifierProvider<DetailPageChangeNotifier>(
         create: (context) => DetailPageChangeNotifier(),
       ),
+      ChangeNotifierProvider<ReusablePageChangeNotifier>(
+        create: (context) => ReusablePageChangeNotifier(),
+      ),
     ],
     child: MyApp(),
   ));
@@ -49,6 +53,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     GlobalState.database = Provider.of<Database>(context, listen: false);
     GlobalState.appState = Provider.of<AppState>(context, listen: false);
+    GlobalState.reusablePageChangeNotifier =
+        Provider.of<ReusablePageChangeNotifier>(context, listen: false);
     GlobalState.noteModelForConsumer =
         Provider.of<SelectedNoteModel>(context, listen: false);
 

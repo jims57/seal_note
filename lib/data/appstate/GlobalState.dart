@@ -3,16 +3,20 @@ import 'package:seal_note/data/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:seal_note/model/ImageSyncItem.dart';
 import 'package:seal_note/model/NoteWithProgressTotal.dart';
+import 'package:seal_note/model/ReusablePage/ReusablePageModel.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/FolderListWidget.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
 import 'package:seal_note/ui/NoteDetailWidget.dart';
 import 'package:seal_note/ui/NoteListWidgetForToday.dart';
+import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageStackWidget.dart';
 import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:seal_note/ui/common/SelectFolderWidget.dart';
+import 'package:stack/stack.dart' as stackData show Stack;
 
 import 'AppState.dart';
 import 'DetailPageState.dart';
+import 'ReusablePageChangeNotifier.dart';
 import 'SelectedNoteModel.dart';
 
 class GlobalState with ChangeNotifier {
@@ -121,9 +125,16 @@ class GlobalState with ChangeNotifier {
   static const int pageTransitionAnimationDurationMilliseconds = 200;
 
   // Reusable page
-  static String reusablePageTitle = '';
+  static String firstReusablePageTitle = '';
+  static Widget firstReusablePageChild;
   static bool isHandlingReusablePage = false;
-  static Widget reusablePageChild;
+  static bool isUpcomingReusablePageMovingToLeft =
+      true; // Move left or right, it is moving to left by default
+  // static stackData.Stack<Widget> reusablePageStack = stackData.Stack();
+  // static List<Widget> reusablePageWidgetList = <Widget>[];
+  static List<ReusablePageModel> reusablePageWidgetList = <ReusablePageModel>[];
+
+  // static List<Map<String,Widget>> reusablePageWidgetList = <Map<String,Widget>>[];
 
   // Review plan
   static double reviewPlanItemHeight = defaultItemHeight;
@@ -190,6 +201,8 @@ class GlobalState with ChangeNotifier {
       GlobalKey<SelectFolderWidgetState>();
   static GlobalKey<NoteDetailWidgetState> noteDetailWidgetState =
       GlobalKey<NoteDetailWidgetState>();
+  static GlobalKey<ReusablePageStackWidgetState> reusablePageStackWidgetState =
+      GlobalKey<ReusablePageStackWidgetState>();
 
   // Dialog
   static bool shouldContinueActionForShowDialog = false;
@@ -205,6 +218,7 @@ class GlobalState with ChangeNotifier {
   // Change Notifier
   static AppState appState;
   static DetailPageChangeNotifier detailPageChangeNotifier;
+  static ReusablePageChangeNotifier reusablePageChangeNotifier;
 
   // Folder related
   static bool isDefaultFolderSelected = false; // For default folder
@@ -265,5 +279,6 @@ class GlobalState with ChangeNotifier {
   static List<ImageSyncItem> imageSyncItemList = <ImageSyncItem>[];
 
   // Testing
+  static int hitTimes = 0;
   static String imageId;
 }
