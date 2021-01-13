@@ -145,12 +145,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                     theNote: GlobalState.firstNoteToBeSelected);
           }
 
-          // If the WebView isn't loaded yet, we try to set the height in one second
-          if (GlobalState.rotatedTimes > 0) {
-            GlobalState.flutterWebviewPlugin.evalJavascript(
-                "javascript:updateScreenHeight(${GlobalState.webViewHeight},${GlobalState.keyboardHeight},true);");
-          }
-
           // Record the status of whether the WebView is loaded or note in dart
           GlobalState.hasWebViewLoaded = true;
         }), // NotifyDartWebViewHasLoaded

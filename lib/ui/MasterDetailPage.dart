@@ -83,13 +83,6 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
   @override
   void didChangeDependencies() {
-    // Record rotation times
-    if (GlobalState.rotatedTimes == null) {
-      GlobalState.rotatedTimes = 0;
-    } else {
-      GlobalState.rotatedTimes += 1;
-    }
-
     GlobalState.screenHeight = getScreenHeight(context);
     GlobalState.screenWidth = getScreenWidth(context);
     GlobalState.screenType = checkScreenType(GlobalState.screenWidth);
@@ -178,8 +171,21 @@ class MasterDetailPageState extends State<MasterDetailPage>
             // build reusable page
 
             if (GlobalState.isHandlingReusablePage) {
-              GlobalState.isHandlingReusablePage = false;
+              if (GlobalState.screenType == 1) {
+                GlobalState.noteDetailWidgetState.currentState
+                    .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
+              }
+
               _updateReusablePageFromDxAndToDx();
+
+              // Check if we should mark it is handling the reusable page or not
+              if (GlobalState
+                      .reusablePageChangeNotifier.upcomingReusablePageIndex >=
+                  0) {
+                GlobalState.isHandlingReusablePage = true;
+              } else {
+                GlobalState.isHandlingReusablePage = false;
+              }
 
               return SlideTransition(
                 position: GlobalState.masterDetailPageState.currentState
@@ -187,7 +193,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
                         fromDx: reusablePageFromDx, toDx: reusablePageToDx),
                 child: ReusablePageStackWidget(
                   key: GlobalState.reusablePageStackWidgetState,
-                  firstReusablePageTitle: '${GlobalState.firstReusablePageTitle}',
+                  firstReusablePageTitle:
+                      '${GlobalState.firstReusablePageTitle}',
                   child: GlobalState.firstReusablePageChild,
                 ),
               );
@@ -225,10 +232,12 @@ class MasterDetailPageState extends State<MasterDetailPage>
     setState(() {});
   }
 
-  void updatePageShowAndHide(
-      {@required bool shouldTriggerSetState,
-      bool resetFolderAndDetailPageToDefaultDx = false,
-      bool hasAnimation = true}) {
+  void updatePageShowAndHide({
+    @required bool shouldTriggerSetState,
+    bool resetFolderAndDetailPageToDefaultDx = false,
+    bool hasAnimation = true,
+    bool hideWebViewInSmallScreenWhenReusablePageBeingShown = true,
+  }) {
     // update page show and hide // set page show and hide
     // If you resetFolderAndDetailPageToDefaultDx = false, we will position the folder and note detail page with animation to the right place,
     // Or we will set it back to their default positions, folder page is on the left of the note list page,
@@ -238,7 +247,13 @@ class MasterDetailPageState extends State<MasterDetailPage>
       // Set width
       folderPageWidth = GlobalState.screenWidth;
       noteListPageWidth = GlobalState.screenWidth;
-      noteDetailPageWidth = GlobalState.screenWidth;
+
+      if (hideWebViewInSmallScreenWhenReusablePageBeingShown &&
+          GlobalState.isHandlingReusablePage) {
+        noteDetailPageWidth = 0.0;
+      } else {
+        noteDetailPageWidth = GlobalState.screenWidth;
+      }
 
       if (resetFolderAndDetailPageToDefaultDx) {
         folderPageFromDx = GlobalState.folderPageDefaultFromDx;

@@ -105,7 +105,7 @@ class GlobalState with ChangeNotifier {
   static double appBarHeight;
   static double defaultAppBarHeight = 56.0;
   static double webViewHeight;
-  static int rotatedTimes;
+  // static int rotatedTimes;
 
   // Keyboard related
   static double keyboardHeight = 0.0;

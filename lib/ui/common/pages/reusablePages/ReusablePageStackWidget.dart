@@ -21,9 +21,6 @@ class ReusablePageStackWidget extends StatefulWidget {
 }
 
 class ReusablePageStackWidgetState extends State<ReusablePageStackWidget> {
-  double reusablePageFromDx = 0.0;
-  double reusablePageToDx = 0.0;
-
   List<Consumer<ReusablePageChangeNotifier>> _reusablePageChangeNotifierList;
 
   @override
