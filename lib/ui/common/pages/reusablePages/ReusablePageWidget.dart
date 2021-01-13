@@ -59,11 +59,15 @@ class _ReusablePageWidgetState extends State<ReusablePageWidget> {
               ),
             ),
             Container(
+              alignment: Alignment.center,
+              width: GlobalState.currentReusablePageWidth * 0.3,
+              color: Colors.transparent,
               child: Text(
                 // reusable page title // reusable page caption
 
                 widget.title,
                 style: GlobalState.defaultPageCaptionTextStyle,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ]),

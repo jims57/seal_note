@@ -130,11 +130,7 @@ class GlobalState with ChangeNotifier {
   static bool isHandlingReusablePage = false;
   static bool isUpcomingReusablePageMovingToLeft =
       true; // Move left or right, it is moving to left by default
-  // static stackData.Stack<Widget> reusablePageStack = stackData.Stack();
-  // static List<Widget> reusablePageWidgetList = <Widget>[];
   static List<ReusablePageModel> reusablePageWidgetList = <ReusablePageModel>[];
-
-  // static List<Map<String,Widget>> reusablePageWidgetList = <Map<String,Widget>>[];
 
   // Review plan
   static double reviewPlanItemHeight = defaultItemHeight;

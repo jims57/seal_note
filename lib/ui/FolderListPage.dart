@@ -248,11 +248,6 @@ class FolderListPageState extends State<FolderListPage>
                               GlobalState.noteDetailWidgetState.currentState
                                   .setEditorHeightWithNewWebViewScreenHeight(
                                       newWebViewScreenHeight: 150.0);
-
-                              // GlobalState.noteDetailWidgetState.currentState
-                              //     .triggerEditorToAutoFitScreen();
-
-                              var s = 's';
                             },
                           )
                         ],
