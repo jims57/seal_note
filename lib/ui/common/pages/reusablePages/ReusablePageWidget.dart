@@ -24,37 +24,38 @@ class ReusablePageWidget extends StatefulWidget {
 class _ReusablePageWidgetState extends State<ReusablePageWidget> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          Stack(alignment: Alignment.center, children: [
+    return Column(
+      children: [
+        SafeArea(
+          child: Stack(alignment: Alignment.center, children: [
             Container(
               alignment: Alignment.centerLeft,
               height: GlobalState.defaultAppBarHeight,
               width: GlobalState.currentReusablePageWidth,
               color: GlobalState.themeGreyColorAtiOSTodoForBackground,
-              child: SafeArea(
-                child: GestureDetector(
+              child: GestureDetector(
+                child: SafeArea(
                   child: Container(
                     alignment: Alignment.centerLeft,
                     padding: EdgeInsets.only(left: 15.0),
                     width: GlobalState.currentReusablePageWidth / 4,
                     color: Colors.transparent,
+                    // color: Colors.red,
                     child: Icon(
                       Icons.arrow_back_ios,
                       color: GlobalState.themeBlueColor,
                     ),
                   ),
-                  onTap: () {
-                    // reusable page back button // reusable page back event
-
-                    if (widget.onBackButtonCallback != null) {
-                      widget.onBackButtonCallback(widget);
-                    }
-
-                    _clickOnBackButton(reusablePageIndex: widget.index);
-                  },
                 ),
+                onTap: () {
+                  // reusable page back button // reusable page back event
+
+                  if (widget.onBackButtonCallback != null) {
+                    widget.onBackButtonCallback(widget);
+                  }
+
+                  _clickOnBackButton(reusablePageIndex: widget.index);
+                },
               ),
             ),
             Container(
@@ -66,11 +67,11 @@ class _ReusablePageWidgetState extends State<ReusablePageWidget> {
               ),
             ),
           ]),
-          Expanded(
-            child: widget.child,
-          )
-        ],
-      ),
+        ),
+        Expanded(
+          child: widget.child,
+        )
+      ],
     );
   }
 
