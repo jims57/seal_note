@@ -156,6 +156,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
     var scaffold = Scaffold(
       body: Stack(
         children: [
+          // Note list page
           Container(
             // Note list page
             margin: getNoteListPageLeftEdgeInset(),
@@ -165,7 +166,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
               home: NoteListPage(),
             ),
           ),
-          // Note list page
+
+          // Folder page
           SlideTransition(
             // Folder page
             position:
@@ -183,7 +185,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
               ),
             ),
           ),
-          // Folder page
+
+          // Reusable page
           Consumer<ReusablePageOpenOrCloseNotifier>(
               builder: (cxt, reusablePageOpenOrCloseNotifier, child) {
             // show reusable page // reusable page
@@ -221,6 +224,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
               return Container();
             }
           }),
+
+          // Note detail page
           SlideTransition(
             // Note detail page
             position: getAnimation(
@@ -236,7 +241,6 @@ class MasterDetailPageState extends State<MasterDetailPage>
                   key: GlobalState.noteDetailWidgetState,
                 )),
           ),
-          // Note detail page
         ],
       ),
     );
@@ -451,6 +455,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
   void triggerToShowReusablePage({String title = '', @required Widget child}) {
     // trigger to show reusable page // show reusable page method
 
+    GlobalState.reusablePageChangeNotifier
+        .upcomingReusablePageIndex = 0;
     GlobalState.firstReusablePageTitle = title;
     GlobalState.firstReusablePageChild = child;
     GlobalState.isHandlingReusablePage = true;

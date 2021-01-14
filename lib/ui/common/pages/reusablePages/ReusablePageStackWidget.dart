@@ -28,26 +28,32 @@ class ReusablePageStackWidgetState extends State<ReusablePageStackWidget> {
   var theReusablePageWidth;
 
   @override
+  void initState() {
+    _initReusablePage();
+    super.initState();
+  }
+
+  @override
   void didChangeDependencies() {
-    GlobalState.reusablePageWidgetList.clear();
-
-    showReusablePage(
-        reusablePageTitle: widget.firstReusablePageTitle,
-        reusablePageWidget: widget.child,
-        upcomingReusablePageIndex: 0,
-        updateReusablePageChangeNotifier: false);
-
     super.didChangeDependencies();
   }
 
   @override
-  Widget build(BuildContext context) {
-    theReusablePageWidth = getReusablePageWidth();
+  void didUpdateWidget(covariant ReusablePageStackWidget oldWidget) {
+    // Execute the _initReusablePage method only when it is opening the new reusable page rather than closing it
+    if (GlobalState.reusablePageChangeNotifier.upcomingReusablePageIndex == 0) {
+      _initReusablePage();
+    }
 
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       color: GlobalState.themeGreyColorAtiOSTodoForBackground,
       height: double.maxFinite,
-      width: theReusablePageWidth,
+      width: getReusablePageWidth(),
       child: Stack(
         children: _reusablePageChangeNotifierList,
       ),
@@ -127,6 +133,16 @@ class ReusablePageStackWidgetState extends State<ReusablePageStackWidget> {
     if (shouldTriggerSetState) {
       triggerSetState();
     }
+  }
+
+  void _initReusablePage() {
+    GlobalState.reusablePageWidgetList.clear();
+
+    showReusablePage(
+        reusablePageTitle: widget.firstReusablePageTitle,
+        reusablePageWidget: widget.child,
+        upcomingReusablePageIndex: 0,
+        updateReusablePageChangeNotifier: false);
   }
 
   // Public methods

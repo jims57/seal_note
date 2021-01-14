@@ -203,9 +203,6 @@ class _UserFolderListListenerWidgetState
                       icon: Icons.calendar_today_outlined,
                       onTap: () async {
                         // swipe to review plan event // click on review plan button
-                        var s = 's';
-                        GlobalState.reusablePageChangeNotifier
-                            .upcomingReusablePageIndex = 0;
 
                         GlobalState.masterDetailPageState.currentState
                             .triggerToShowReusablePage(
