@@ -10,6 +10,8 @@ import 'package:seal_note/util/time/TimeHandler.dart';
 import 'data/appstate/AppState.dart';
 import 'data/appstate/DetailPageState.dart';
 import 'data/appstate/ReusablePageChangeNotifier.dart';
+import 'data/appstate/ReusablePageOpenOrCloseNotifier.dart';
+import 'data/appstate/ReusablePageWidthChangeNotifier.dart';
 import 'data/appstate/SelectedNoteModel.dart';
 import 'data/database/database.dart';
 import 'data/database/dbHelper/shared.dart';
@@ -35,8 +37,14 @@ void main() {
       ChangeNotifierProvider<DetailPageChangeNotifier>(
         create: (context) => DetailPageChangeNotifier(),
       ),
+      ChangeNotifierProvider<ReusablePageOpenOrCloseNotifier>(
+        create: (context) => ReusablePageOpenOrCloseNotifier(),
+      ),
       ChangeNotifierProvider<ReusablePageChangeNotifier>(
         create: (context) => ReusablePageChangeNotifier(),
+      ),
+      ChangeNotifierProvider<ReusablePageWidthChangeNotifier>(
+        create: (context) => ReusablePageWidthChangeNotifier(),
       ),
     ],
     child: MyApp(),
@@ -51,13 +59,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
-    GlobalState.database = Provider.of<Database>(context, listen: false);
-    GlobalState.appState = Provider.of<AppState>(context, listen: false);
-    GlobalState.reusablePageChangeNotifier =
-        Provider.of<ReusablePageChangeNotifier>(context, listen: false);
-    GlobalState.noteModelForConsumer =
-        Provider.of<SelectedNoteModel>(context, listen: false);
+    _initConsumerNotifier();
 
+    GlobalState.database = Provider.of<Database>(context, listen: false);
     GlobalState.myAppContext = context;
     GlobalState.masterDetailPageState = GlobalKey<MasterDetailPageState>();
 
@@ -228,5 +232,27 @@ class _MyAppState extends State<MyApp> {
         key: GlobalState.masterDetailPageState,
       ),
     );
+  }
+
+  // Private methods
+  void _initConsumerNotifier() {
+    // init notifier // init consumer notifier
+
+    GlobalState.appState = Provider.of<AppState>(context, listen: false);
+
+    GlobalState.noteModelForConsumer =
+        Provider.of<SelectedNoteModel>(context, listen: false);
+
+    GlobalState.detailPageChangeNotifier =
+        Provider.of<DetailPageChangeNotifier>(context, listen: false);
+
+    GlobalState.reusablePageOpenOrCloseNotifier =
+        Provider.of<ReusablePageOpenOrCloseNotifier>(context, listen: false);
+
+    GlobalState.reusablePageChangeNotifier =
+        Provider.of<ReusablePageChangeNotifier>(context, listen: false);
+
+    GlobalState.reusablePageWidthChangeNotifier =
+        Provider.of<ReusablePageWidthChangeNotifier>(context, listen: false);
   }
 }

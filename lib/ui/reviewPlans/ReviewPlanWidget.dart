@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/data/appstate/ReusablePageWidthChangeNotifier.dart';
 import 'package:seal_note/ui/reviewPlans/ChosenReviewPlanWidget.dart';
 import 'package:seal_note/ui/reviewPlans/ManageAllReviewPlanWidget.dart';
 
@@ -22,16 +24,19 @@ class _ReviewPlanWidgetState extends State<ReviewPlanWidget> {
             child: GestureDetector(
               child: Text('Click me 2'),
               onTap: () {
-                var second22 = Container(
-                  width: GlobalState.currentReusablePageWidth,
-                  height: 200,
-                  color: Colors.purple,
-                );
+                var theWidget = Consumer<ReusablePageWidthChangeNotifier>(
+                    builder: (cxt, reusablePageWidthChangeNotifier, child) {
+                  return Container(
+                    width: GlobalState.currentReusablePageWidth,
+                    height: 200,
+                    color: Colors.purple,
+                  );
+                });
 
                 GlobalState.reusablePageStackWidgetState.currentState
                     .showReusablePage(
                         reusablePageTitle: 'Purple页面',
-                        reusablePageWidget: second22,
+                        reusablePageWidget: theWidget,
                         upcomingReusablePageIndex: 1);
               },
             ),

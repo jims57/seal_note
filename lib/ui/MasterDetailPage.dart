@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/DetailPageState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/data/appstate/ReusablePageChangeNotifier.dart';
+import 'package:seal_note/data/appstate/ReusablePageOpenOrCloseNotifier.dart';
 import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 import 'package:seal_note/mixin/check_device.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
@@ -53,11 +55,6 @@ class MasterDetailPageState extends State<MasterDetailPage>
     GlobalState.noteModelForConsumer =
         Provider.of<SelectedNoteModel>(context, listen: false);
 
-    // Change notifier
-    GlobalState.appState = Provider.of<AppState>(context, listen: false);
-    GlobalState.detailPageChangeNotifier =
-        Provider.of<DetailPageChangeNotifier>(context, listen: false);
-
     // States
     GlobalState.folderListPageState = GlobalKey<FolderListPageState>();
 
@@ -98,6 +95,11 @@ class MasterDetailPageState extends State<MasterDetailPage>
       isFirstLoad = false;
     } else {
       // Get app bar height after rotation
+
+      if (GlobalState.isHandlingReusablePage) {
+        GlobalState.reusablePageWidthChangeNotifier
+            .notifyReusablePageWidthChange();
+      }
 
       Timer(const Duration(milliseconds: 700), () {
         // Update the app bar's height on the folder list page
@@ -148,7 +150,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
               debugShowCheckedModeBanner: false,
               home: NoteListPage(),
             ),
-          ), // Note list page
+          ),
+          // Note list page
           SlideTransition(
             // Folder page
             position:
@@ -165,10 +168,12 @@ class MasterDetailPageState extends State<MasterDetailPage>
                 key: GlobalState.folderListPageState,
               ),
             ),
-          ), // Folder page
-          Consumer<AppState>(builder: (cxt, appState, child) {
+          ),
+          // Folder page
+          Consumer<ReusablePageOpenOrCloseNotifier>(
+              builder: (cxt, reusablePageOpenOrCloseNotifier, child) {
             // show reusable page // reusable page
-            // build reusable page
+            // build reusable page // reusable page consumer
 
             if (GlobalState.isHandlingReusablePage) {
               if (GlobalState.screenType == 1) {
@@ -419,7 +424,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
   }
 
   void _updateReusablePageFromDxAndToDx() {
-    if (GlobalState.appState.isGoingToOpenReusablePage) {
+    if (GlobalState.reusablePageOpenOrCloseNotifier.isGoingToOpenReusablePage) {
       // When it is expanding the reusable page
       reusablePageFromDx = 1.0;
       reusablePageToDx = 0.0;
@@ -437,14 +442,16 @@ class MasterDetailPageState extends State<MasterDetailPage>
     GlobalState.firstReusablePageTitle = title;
     GlobalState.firstReusablePageChild = child;
     GlobalState.isHandlingReusablePage = true;
-    GlobalState.appState.isGoingToOpenReusablePage = true;
+    GlobalState.reusablePageOpenOrCloseNotifier.isGoingToOpenReusablePage =
+        true;
   }
 
   void triggerToHideReusablePage() {
     // hide reusable page method // trigger to hide reusable page
 
     GlobalState.isHandlingReusablePage = true;
-    GlobalState.appState.isGoingToOpenReusablePage = false;
+    GlobalState.reusablePageOpenOrCloseNotifier.isGoingToOpenReusablePage =
+        false;
   }
 
   Animation<Offset> getAnimation(

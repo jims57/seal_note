@@ -28,7 +28,9 @@ class _ChosenReviewPlanWidgetState extends State<ChosenReviewPlanWidget> {
       onTap: () async {
         GlobalState.reusablePageStackWidgetState.currentState.showReusablePage(
             reusablePageTitle: '已选复习计划',
-            reusablePageWidget: ReviewPlanSecondSubPage(),
+            reusablePageWidget: ReviewPlanSecondSubPage(
+              key: GlobalState.reviewPlanSecondSubPageState,
+            ),
             upcomingReusablePageIndex: 1);
       },
     );

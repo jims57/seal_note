@@ -12,11 +12,14 @@ import 'package:seal_note/ui/NoteListWidgetForToday.dart';
 import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageStackWidget.dart';
 import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:seal_note/ui/common/SelectFolderWidget.dart';
+import 'package:seal_note/ui/reviewPlans/ReviewPlanSecondSubPage.dart';
 import 'package:stack/stack.dart' as stackData show Stack;
 
 import 'AppState.dart';
 import 'DetailPageState.dart';
 import 'ReusablePageChangeNotifier.dart';
+import 'ReusablePageOpenOrCloseNotifier.dart';
+import 'ReusablePageWidthChangeNotifier.dart';
 import 'SelectedNoteModel.dart';
 
 class GlobalState with ChangeNotifier {
@@ -182,7 +185,6 @@ class GlobalState with ChangeNotifier {
       reviewPlanIdOfDefaultSelectedFolder; // The review plan id of the default selected folder, that is the review plan id for selectedFolderIdByDefault
   static String
       noteContentEncodedInDb; // The note encoded content which is saved in db currently
-  static SelectedNoteModel noteModelForConsumer;
   static bool isNewNoteBeingSaved =
       false; // Indicate if a new note is being saved, avoiding duplicate notes being created
   static bool shouldSetBackgroundColorToFirstNoteAutomatically = false;
@@ -199,6 +201,8 @@ class GlobalState with ChangeNotifier {
       GlobalKey<NoteDetailWidgetState>();
   static GlobalKey<ReusablePageStackWidgetState> reusablePageStackWidgetState =
       GlobalKey<ReusablePageStackWidgetState>();
+  static GlobalKey<ReviewPlanSecondSubPageState> reviewPlanSecondSubPageState =
+      GlobalKey<ReviewPlanSecondSubPageState>();
 
   // Dialog
   static bool shouldContinueActionForShowDialog = false;
@@ -213,8 +217,11 @@ class GlobalState with ChangeNotifier {
 
   // Change Notifier
   static AppState appState;
+  static SelectedNoteModel noteModelForConsumer;
   static DetailPageChangeNotifier detailPageChangeNotifier;
+  static ReusablePageOpenOrCloseNotifier reusablePageOpenOrCloseNotifier;
   static ReusablePageChangeNotifier reusablePageChangeNotifier;
+  static ReusablePageWidthChangeNotifier reusablePageWidthChangeNotifier;
 
   // Folder related
   static bool isDefaultFolderSelected = false; // For default folder

@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/appstate/ReusablePageChangeNotifier.dart';
+import 'package:seal_note/data/appstate/ReusablePageWidthChangeNotifier.dart';
 import 'package:seal_note/model/ReusablePage/ReusablePageModel.dart';
 import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageWidget.dart';
 
@@ -22,6 +25,7 @@ class ReusablePageStackWidget extends StatefulWidget {
 
 class ReusablePageStackWidgetState extends State<ReusablePageStackWidget> {
   List<Consumer<ReusablePageChangeNotifier>> _reusablePageChangeNotifierList;
+  var theReusablePageWidth;
 
   @override
   void didChangeDependencies() {
@@ -38,10 +42,12 @@ class ReusablePageStackWidgetState extends State<ReusablePageStackWidget> {
 
   @override
   Widget build(BuildContext context) {
+    theReusablePageWidth = getReusablePageWidth();
+
     return Container(
       color: GlobalState.themeGreyColorAtiOSTodoForBackground,
       height: double.maxFinite,
-      width: _getReusablePageWidth(),
+      width: theReusablePageWidth,
       child: Stack(
         children: _reusablePageChangeNotifierList,
       ),
@@ -49,23 +55,6 @@ class ReusablePageStackWidgetState extends State<ReusablePageStackWidget> {
   }
 
   // Private methods
-  double _getReusablePageWidth() {
-    var reusablePageWidth;
-
-    if (GlobalState.screenType == 1) {
-      reusablePageWidth = GlobalState.screenWidth;
-    } else if (GlobalState.screenType == 2) {
-      reusablePageWidth = GlobalState.currentFolderPageWidth;
-    } else {
-      reusablePageWidth = GlobalState.currentFolderPageWidth +
-          GlobalState.currentNoteListPageWidth;
-    }
-
-    GlobalState.currentReusablePageWidth = reusablePageWidth;
-
-    return reusablePageWidth;
-  }
-
   List<Consumer<ReusablePageChangeNotifier>> _buildReusablePageList() {
     List<Consumer<ReusablePageChangeNotifier>> list =
         <Consumer<ReusablePageChangeNotifier>>[];
@@ -145,6 +134,29 @@ class ReusablePageStackWidgetState extends State<ReusablePageStackWidget> {
     setState(() {});
   }
 
+  double getReusablePageWidth({
+    bool forceToUpdateCurrentReusablePageWidthVarAtGlobalState = true,
+  }) {
+    // get reusable page width // reusable page width
+
+    var reusablePageWidth;
+
+    if (GlobalState.screenType == 1) {
+      reusablePageWidth = GlobalState.screenWidth;
+    } else if (GlobalState.screenType == 2) {
+      reusablePageWidth = GlobalState.currentFolderPageWidth;
+    } else {
+      reusablePageWidth = GlobalState.currentFolderPageWidth +
+          GlobalState.currentNoteListPageWidth;
+    }
+
+    if (forceToUpdateCurrentReusablePageWidthVarAtGlobalState) {
+      GlobalState.currentReusablePageWidth = reusablePageWidth;
+    }
+
+    return reusablePageWidth;
+  }
+
   void showReusablePage({
     @required String reusablePageTitle,
     @required Widget reusablePageWidget,
@@ -182,17 +194,6 @@ class ReusablePageStackWidgetState extends State<ReusablePageStackWidget> {
 
     GlobalState.reusablePageWidgetList.add(ReusablePageModel(
         reusablePageTitle: reusablePageTitle, reusablePageWidget: widget));
-
-    _postHandleReusablePageWidgetList(
-      shouldTriggerSetState: shouldTriggerSetState,
-      upcomingReusablePageIndex: upcomingReusablePageIndex,
-    );
-  }
-
-  void removeLastReusablePageWidgetFromList(
-      {@required int upcomingReusablePageIndex,
-      bool shouldTriggerSetState = true}) {
-    GlobalState.reusablePageWidgetList.removeLast();
 
     _postHandleReusablePageWidgetList(
       shouldTriggerSetState: shouldTriggerSetState,

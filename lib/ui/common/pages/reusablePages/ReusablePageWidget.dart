@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/data/appstate/ReusablePageChangeNotifier.dart';
+import 'package:seal_note/data/appstate/ReusablePageWidthChangeNotifier.dart';
 
 class ReusablePageWidget extends StatefulWidget {
   ReusablePageWidget({
@@ -24,60 +27,65 @@ class ReusablePageWidget extends StatefulWidget {
 class _ReusablePageWidgetState extends State<ReusablePageWidget> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SafeArea(
-          child: Stack(alignment: Alignment.center, children: [
-            Container(
-              alignment: Alignment.centerLeft,
-              height: GlobalState.defaultAppBarHeight,
-              width: GlobalState.currentReusablePageWidth,
-              color: GlobalState.themeGreyColorAtiOSTodoForBackground,
-              child: GestureDetector(
-                child: SafeArea(
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.only(left: 15.0),
-                    width: GlobalState.currentReusablePageWidth / 4,
-                    color: Colors.transparent,
-                    // color: Colors.red,
-                    child: Icon(
-                      Icons.arrow_back_ios,
-                      color: GlobalState.themeBlueColor,
+    return Consumer<ReusablePageWidthChangeNotifier>(
+        builder: (cxt, reusablePageWidthChangeNotifier, child) {
+      return Column(
+        children: [
+          SafeArea(
+            child: Stack(alignment: Alignment.center, children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                height: GlobalState.defaultAppBarHeight,
+                width: GlobalState.currentReusablePageWidth,
+                color: GlobalState.themeGreyColorAtiOSTodoForBackground,
+                child: GestureDetector(
+                  child: SafeArea(
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.only(left: 15.0),
+                      width: GlobalState.currentReusablePageWidth / 4,
+                      color: Colors.transparent,
+                      // color: Colors.red,
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: GlobalState.themeBlueColor,
+                      ),
                     ),
                   ),
+                  onTap: () {
+                    // reusable page back button // reusable page back event
+                    // reusable page back button event
+
+                    if (widget.onBackButtonCallback != null) {
+                      widget.onBackButtonCallback(widget);
+                    }
+
+                    _clickOnBackButton(reusablePageIndex: widget.index);
+                  },
                 ),
-                onTap: () {
-                  // reusable page back button // reusable page back event
-                  // reusable page back button event
-
-                  if (widget.onBackButtonCallback != null) {
-                    widget.onBackButtonCallback(widget);
-                  }
-
-                  _clickOnBackButton(reusablePageIndex: widget.index);
-                },
               ),
-            ),
-            Container(
-              alignment: Alignment.center,
-              width: GlobalState.currentReusablePageWidth * 0.3,
-              color: Colors.transparent,
-              child: Text(
-                // reusable page title // reusable page caption
+              Container(
+                alignment: Alignment.center,
+                width: GlobalState.currentReusablePageWidth * 0.3,
+                color: Colors.transparent,
+                child: Text(
+                  // reusable page title // reusable page caption
 
-                widget.title,
-                style: GlobalState.defaultPageCaptionTextStyle,
-                overflow: TextOverflow.ellipsis,
+                  widget.title,
+                  style: GlobalState.defaultPageCaptionTextStyle,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-            ),
-          ]),
-        ),
-        Expanded(
-          child: widget.child,
-        )
-      ],
-    );
+            ]),
+          ),
+          Expanded(
+            child: widget.child,
+            // child: _addReusablePageWidthChangeNotifierToWidget(
+            //     reusablePageWidgetChild: widget.child),
+          )
+        ],
+      );
+    });
   }
 
   // Private methods
