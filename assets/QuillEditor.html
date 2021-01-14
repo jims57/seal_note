@@ -2367,14 +2367,14 @@
         pickerIsBeingShown = false;
     }
 
-    function setEditorHeightWithNewWebViewScreenHeight(newWebViewScreenHeight, bottomPanelHeight, showToolbar = true) {
+    function setEditorHeightWithNewWebViewScreenHeight(newWebViewScreenHeight, bottomPanelHeight, showToolbar = true, goToCursorPosition = true) {
         if(printLogToDartFromJs) Print.postMessage('setEditorHeightWithNewWebViewScreenHeight(newWebViewScreenHeight='+newWebViewScreenHeight+', bottomPanelHeight = '+bottomPanelHeight+', showToolbar = '+showToolbar+')');
 
         webViewScreenHeight = newWebViewScreenHeight;
 
         if(printLogToDartFromJs) Print.postMessage('keyboard height is: '+ keyboardHeight);
 
-        setEditorHeight(bottomPanelHeight, showToolbar, true);
+        setEditorHeight(bottomPanelHeight, showToolbar, goToCursorPosition);
 
         // Anyway, we force the Quill move to the cursor position
         //goToQuillCursorPostion();

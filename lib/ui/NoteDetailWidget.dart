@@ -870,17 +870,22 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     await GlobalState.flutterWebviewPlugin.evalJavascript(evalString);
   }
 
-  Future<void> setEditorHeightWithNewWebViewScreenHeight(
-      {@required double newWebViewScreenHeight,
-      double bottomPanelHeight = 0.0,
-      bool keepHeightToShowToolbar = true}) async {
+  Future<void> setEditorHeightWithNewWebViewScreenHeight({
+    @required double newWebViewScreenHeight,
+    double bottomPanelHeight = 0.0,
+    bool keepHeightToShowToolbar = true,
+    bool goToCursorPosition = true,
+  }) async {
     await GlobalState.flutterWebviewPlugin.evalJavascript(
-        "javascript:setEditorHeightWithNewWebViewScreenHeight($newWebViewScreenHeight, $bottomPanelHeight, $keepHeightToShowToolbar);");
+        "javascript:setEditorHeightWithNewWebViewScreenHeight($newWebViewScreenHeight, $bottomPanelHeight, $keepHeightToShowToolbar, $goToCursorPosition);");
   }
 
-  Future<void> triggerEditorToAutoFitScreen() async {
+  Future<void> triggerEditorToAutoFitScreen({
+    bool goToCursorPosition = true,
+  }) async {
     // adjust editor height // adjust editor to fit screen
-    // edit fit screen event
+    // edit fit screen event // auto quill height
+    // trigger auto quill height // trigger quill auto height
 
     var keepHeightToShowToolbar = true;
 
@@ -897,9 +902,11 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
     await GlobalState.noteDetailWidgetState.currentState
         .setEditorHeightWithNewWebViewScreenHeight(
-            newWebViewScreenHeight:
-                GlobalState.screenHeight - GlobalState.appBarHeight,
-            bottomPanelHeight: bottomPanelHeight,
-            keepHeightToShowToolbar: keepHeightToShowToolbar);
+      newWebViewScreenHeight:
+          GlobalState.screenHeight - GlobalState.appBarHeight,
+      bottomPanelHeight: bottomPanelHeight,
+      keepHeightToShowToolbar: keepHeightToShowToolbar,
+      goToCursorPosition: goToCursorPosition,
+    );
   }
 }

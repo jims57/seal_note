@@ -127,8 +127,15 @@ class MasterDetailPageState extends State<MasterDetailPage>
         // Check if it is rotating // check if rotation
         // after rotation // after rotation event
         // after rotating event // check rotation action
+        // Check if the editor is in edit mode or not, only it won't go to the cursor position unless it is in edit mode
+        var goToCursorPosition = false;
+        if (!GlobalState.isQuillReadOnly) {
+          // When the editor is in edit mode, force it to navigate to the cursor position
+          goToCursorPosition = true;
+        }
         GlobalState.noteDetailWidgetState.currentState
-            .triggerEditorToAutoFitScreen();
+            .triggerEditorToAutoFitScreen(
+                goToCursorPosition: goToCursorPosition);
 
         // Check if the move note alert dialog is being shown
         if (GlobalState.isMoveNoteAlertDialogBeingShown) {

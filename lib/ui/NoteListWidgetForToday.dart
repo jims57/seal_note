@@ -55,15 +55,12 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
   @override
   void initState() {
-    // _isFirstLoad = true;
-
     initLoadingConfigs();
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
 
