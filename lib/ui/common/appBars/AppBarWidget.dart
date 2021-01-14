@@ -5,30 +5,11 @@ import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'dart:math';
 import 'package:after_layout/after_layout.dart';
 
-double _getAppBarTitleWidth(
-    double screenWidth, double leadingWidth, double tailWidth) {
-  return (screenWidth - leadingWidth - tailWidth);
-}
-
-List<Widget> _getContainerList(List<Widget> leadingChildren) {
-  int _currentIndex = 0;
-
-  return leadingChildren.map((e) {
-    _currentIndex += 1;
-    return Container(
-      margin: EdgeInsets.only(
-          left: ((_currentIndex == 1) ? 0.0 : ((_currentIndex - 1) * 35.0))),
-      child: e,
-    );
-  }).toList();
-}
-
 class AppBarWidget extends StatefulWidget with PreferredSizeWidget {
   AppBarWidget(
       {Key key,
       @required this.leadingChildren,
       this.title,
-      // @required this.tailChildren,
       this.tailChildren,
       this.showSyncStatus =
           true, // Check if we should show the sync text and icon below the title
@@ -79,8 +60,6 @@ class AppBarWidgetState extends State<AppBarWidget>
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-
     GlobalState.appBarHeight = Scaffold.of(context).appBarMaxHeight;
 
     super.didChangeDependencies();
@@ -139,7 +118,7 @@ class AppBarWidgetState extends State<AppBarWidget>
             ),
           ), // App bar left and right container(leading and tailing parts)
           Container(
-            // App bar title container including sync statuc
+            // App bar title container including sync status
             alignment: Alignment.center,
             width: _titleWidth,
             height: _appBarHeight,
@@ -204,6 +183,25 @@ class AppBarWidgetState extends State<AppBarWidget>
   }
 
   // Private methods
+  double _getAppBarTitleWidth(
+      double screenWidth, double leadingWidth, double tailWidth) {
+    return (screenWidth - leadingWidth - tailWidth);
+  }
+
+  List<Widget> _getContainerList(List<Widget> leadingChildren) {
+    int _currentIndex = 0;
+
+    return leadingChildren.map((e) {
+      _currentIndex += 1;
+      return Container(
+        margin: EdgeInsets.only(
+            left: ((_currentIndex == 1) ? 0.0 : ((_currentIndex - 1) * 35.0))),
+        child: e,
+      );
+    }).toList();
+  }
+
+  // Public methods
   double getAppBarHeight() {
     var appBarHeight = Scaffold.of(context).appBarMaxHeight;
 

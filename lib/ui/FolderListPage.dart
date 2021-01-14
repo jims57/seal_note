@@ -37,7 +37,7 @@ class FolderListPageState extends State<FolderListPage>
         forceToShowLeadingWidgets: true,
         showSyncStatus: false,
         leadingWidth: 120,
-        tailWidth: 40,
+        tailWidth: (GlobalState.currentFolderPageWidth - 120) / 4,
         leadingChildren: [
           // folder page title // folder page caption
           Container(
