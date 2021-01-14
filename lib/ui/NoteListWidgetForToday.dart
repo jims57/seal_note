@@ -444,12 +444,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                         .folderListPageState.currentState
                                         .getUserFolderListItemList();
 
-                                    // We should hide the WebView first, since it isn't in the UI tree which will block the dialog widget
-                                    GlobalState
-                                        .noteDetailWidgetState.currentState
-                                        .hideWebView(
-                                            forceToSyncWithShouldHideWebViewVar:
-                                                true);
+                                    _preHandleMoveNoteAlertDialog();
 
                                     await showDialog(
                                         context: context,
@@ -540,15 +535,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                       }
                                     }
 
-                                    // Reset the target folder id for future usage
-                                    GlobalState.targetFolderIdNoteIsMovingTo =
-                                        0;
-
-                                    GlobalState
-                                        .noteDetailWidgetState.currentState
-                                        .showWebView(
-                                            forceToSyncWithShouldHideWebViewVar:
-                                                false);
+                                    _postHandleMoveNoteAlertDialog();
                                   } else {
                                     // In Deleted folder
 
@@ -931,11 +918,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     GlobalState.isQuillReadOnly = true;
     GlobalState.isEditingOrCreatingNote = false;
 
-    // Force to clear the water mark in the quill editor, if coming from the note list(viewing an old note)
-    // await GlobalState.flutterWebviewPlugin
-    //     .evalJavascript("javascript:removeQuillEditorWatermark();");
-    //     .evalJavascript("javascript:removeQuillEditorWatermark(false);");
-
     // Update the quill's content
     var responseJsonString =
         '{"isCreatingNote": false, "folderId":$folderId, "noteId":$noteId, "encodedHtml":"$noteContent"}';
@@ -1274,5 +1256,23 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     }
 
     return maxHeight;
+  }
+
+  void _preHandleMoveNoteAlertDialog() {
+    // We should hide the WebView first, since it isn't in the UI tree which will block the dialog widget
+    GlobalState.noteDetailWidgetState.currentState
+        .hideWebView(forceToSyncWithShouldHideWebViewVar: true);
+
+    GlobalState.isMoveNoteAlertDialogBeingShown = true;
+  }
+
+  void _postHandleMoveNoteAlertDialog() {
+    GlobalState.isMoveNoteAlertDialogBeingShown = false;
+
+    // Reset the target folder id for future usage
+    GlobalState.targetFolderIdNoteIsMovingTo = 0;
+
+    GlobalState.noteDetailWidgetState.currentState
+        .showWebView(forceToSyncWithShouldHideWebViewVar: false);
   }
 }

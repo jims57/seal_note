@@ -96,6 +96,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
     } else {
       // Get app bar height after rotation
 
+      // Check if it is handling the reusable page
       if (GlobalState.isHandlingReusablePage) {
         GlobalState.reusablePageWidthChangeNotifier
             .notifyReusablePageWidthChange();
@@ -128,6 +129,12 @@ class MasterDetailPageState extends State<MasterDetailPage>
         // after rotating event // check rotation action
         GlobalState.noteDetailWidgetState.currentState
             .triggerEditorToAutoFitScreen();
+
+        // Check if the move note alert dialog is being shown
+        if (GlobalState.isMoveNoteAlertDialogBeingShown) {
+          GlobalState.noteDetailWidgetState.currentState
+              .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
+        }
       });
 
       GlobalState.isKeyboardEventHandling = false;
@@ -314,8 +321,6 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
           _setFolderPageAnimation(hasAnimation: hasAnimation);
         } else {
-          // folderPageFromDx = folderPageToDx;
-
           // Check if it should show the folder page
           if (GlobalState.isInFolderPage) {
             folderPageFromDx = folderPageToDx;

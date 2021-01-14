@@ -769,7 +769,9 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     GlobalState.flutterWebviewPlugin.show();
   }
 
-  void hideWebView({bool forceToSyncWithShouldHideWebViewVar = true}) {
+  void hideWebView({
+    bool forceToSyncWithShouldHideWebViewVar = true,
+  }) {
     if (forceToSyncWithShouldHideWebViewVar) {
       GlobalState.shouldHideWebView = true;
     }

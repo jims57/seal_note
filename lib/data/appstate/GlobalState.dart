@@ -204,9 +204,10 @@ class GlobalState with ChangeNotifier {
   static GlobalKey<ReviewPlanSecondSubPageState> reviewPlanSecondSubPageState =
       GlobalKey<ReviewPlanSecondSubPageState>();
 
-  // Dialog
+  // Dialog // Alert dialog
   static bool shouldContinueActionForShowDialog = false;
   static bool isAlertDialogBeingShown = false;
+  static bool isMoveNoteAlertDialogBeingShown = false;
   static String remarkForMovingNoteToFolderWithDifferentReviewPlan =
       '因为目标文件夹，有不同的复习计划。移动后，此笔记的复习进度将会被重置！';
   static String remarkForMovingNoteToFolderWithoutReviewPlan =
