@@ -31,6 +31,7 @@ class _ReusablePageWidgetState extends State<ReusablePageWidget> {
         builder: (cxt, reusablePageWidthChangeNotifier, child) {
       return Container(
         height: double.maxFinite,
+        color: GlobalState.themeGreyColorAtiOSTodoForBackground,
         child: Column(
           children: [
             SafeArea(
