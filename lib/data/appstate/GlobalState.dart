@@ -37,10 +37,12 @@ class GlobalState with ChangeNotifier {
   static const int minLengthToTriggerRefreshForNoteListPage = 0;
 
   // Default variables
+  static const double defaultItemCaptionHeight = 25.0;
   static const double defaultItemHeight = 60.0;
   static const double defaultHorizontalMarginBetweenItems = 5.0;
   static const double defaultVerticalMarginBetweenItems = 10.0;
   static const double defaultLeftAndRightPadding = 15.0;
+  static const double defaultRoundCornerPanelBottomMargin = 15.0;
 
   // App current info
   static bool isAppFirstTimeToLaunch = false;
