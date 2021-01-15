@@ -100,6 +100,15 @@ class MasterDetailPageState extends State<MasterDetailPage>
       if (GlobalState.isHandlingReusablePage) {
         GlobalState.reusablePageWidthChangeNotifier
             .notifyReusablePageWidthChange();
+
+        // Check if the web view is in edit mode, set it to read only if yes
+        if (!GlobalState.isQuillReadOnly && GlobalState.screenType == 1) {
+          GlobalState.noteDetailWidgetState.currentState
+              .setWebViewToReadOnlyMode(
+            keepNoteDetailPageOpen: false,
+            forceToSaveNoteToDbIfAnyUpdates: true,
+          );
+        }
       }
 
       Timer(const Duration(milliseconds: 700), () {
