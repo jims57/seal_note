@@ -455,8 +455,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
   void triggerToShowReusablePage({String title = '', @required Widget child}) {
     // trigger to show reusable page // show reusable page method
 
-    GlobalState.reusablePageChangeNotifier
-        .upcomingReusablePageIndex = 0;
+    GlobalState.reusablePageChangeNotifier.upcomingReusablePageIndex = 0;
     GlobalState.firstReusablePageTitle = title;
     GlobalState.firstReusablePageChild = child;
     GlobalState.isHandlingReusablePage = true;

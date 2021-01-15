@@ -13,37 +13,38 @@ class ReviewPlanWidget extends StatefulWidget {
 class _ReviewPlanWidgetState extends State<ReviewPlanWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          ChosenReviewPlanWidget(),
-          SizedBox(
-            height: GlobalState.defaultVerticalMarginBetweenItems,
-          ),
-          Container(
-            child: GestureDetector(
-              child: Text('Click me 2'),
-              onTap: () {
-                var theWidget = Consumer<ReusablePageWidthChangeNotifier>(
-                    builder: (cxt, reusablePageWidthChangeNotifier, child) {
-                  return Container(
-                    width: GlobalState.currentReusablePageWidth,
-                    height: 200,
-                    color: Colors.purple,
-                  );
-                });
+    return Column(
+      children: [
+        ChosenReviewPlanWidget(),
+        SizedBox(
+          height: GlobalState.defaultVerticalMarginBetweenItems,
+        ),
+        Container(
+          height: 50.0,
+          color: Colors.blue,
+          child: GestureDetector(
+            child: Text('Click me 2'),
+            onTap: () {
+              var theWidget = Consumer<ReusablePageWidthChangeNotifier>(
+                  builder: (cxt, reusablePageWidthChangeNotifier, child) {
+                return Container(
+                  width: GlobalState.currentReusablePageWidth,
+                  height: 200,
+                  color: Colors.purple,
+                );
+              });
 
-                GlobalState.reusablePageStackWidgetState.currentState
-                    .showReusablePage(
-                        reusablePageTitle: 'Purple页面',
-                        reusablePageWidget: theWidget,
-                        upcomingReusablePageIndex: 1);
-              },
-            ),
+              GlobalState.reusablePageStackWidgetState.currentState
+                  .showReusablePage(
+                      reusablePageTitle: 'Purple页面',
+                      reusablePageWidget: theWidget,
+                      upcomingReusablePageIndex: 1);
+            },
           ),
-          Expanded(child: ManageAllReviewPlanWidget()),
-        ],
-      ),
+        ),
+        Container(height: 250,color: Colors.yellow,)
+        // Expanded(child: ManageAllReviewPlanWidget()),
+      ],
     );
   }
 }

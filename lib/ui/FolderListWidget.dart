@@ -16,10 +16,6 @@ class FolderListWidget extends StatefulWidget {
 }
 
 class FolderListWidgetState extends State<FolderListWidget> {
-  // bool isPointerDown = false;
-
-  // int defaultFolderTotal = 3;
-
   double folderListPanelMarginForTopOrBottom = 5.0;
   List<FolderListItemWidget> folderListItemWidgetList =
       <FolderListItemWidget>[];
@@ -106,17 +102,6 @@ class FolderListWidgetState extends State<FolderListWidget> {
         ),
       ),
     );
-  }
-
-  // Public methods
-  void triggerSetState({bool forceToFetchFoldersFromDb = false}) {
-    setState(() {
-      _getAllFolders(forceToFetchFoldersFromDb: forceToFetchFoldersFromDb);
-    });
-  }
-
-  List<FolderListItemWidget> getFolderListItemList() {
-    return folderListItemWidgetList;
   }
 
   // Private method
@@ -240,5 +225,16 @@ class FolderListWidgetState extends State<FolderListWidget> {
         isItemSelected: isItemSelected,
       ));
     }
+  }
+
+  // Public methods
+  void triggerSetState({bool forceToFetchFoldersFromDb = false}) {
+    setState(() {
+      _getAllFolders(forceToFetchFoldersFromDb: forceToFetchFoldersFromDb);
+    });
+  }
+
+  List<FolderListItemWidget> getFolderListItemList() {
+    return folderListItemWidgetList;
   }
 }
