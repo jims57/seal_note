@@ -22,6 +22,8 @@ class AlertDialogHandler {
     VoidCallback topRightButtonCallback,
     bool barrierDismissible = false,
     bool showDivider = false,
+    bool restoreWebViewToShowIfNeeded = false,
+    bool expandRemarkToMaxFinite = false,
   }) async {
     var shouldContinueAction = false;
     var theRemark = remark;
@@ -31,6 +33,29 @@ class AlertDialogHandler {
 
     // If the remark parameter isn't null, we use it as the remark for the dialog
     if (remark != null) theRemark = remark;
+
+    var singleChildScrollView = SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (theRemark.isNotEmpty)
+            Container(
+                padding: EdgeInsets.only(
+                    left: 15.0,
+                    right: 15.0,
+                    bottom: (child != null) ? 0.0 : 10.0),
+                child: Text(theRemark)),
+          if (child != null)
+            Container(
+                margin: EdgeInsets.only(
+                    top: 5.0,
+                    bottom:
+                        (showButtonForCancel || showButtonForOK) ? 0.0 : 20.0),
+                child: child),
+        ],
+      ),
+    );
 
     await showDialog<void>(
       context: parentContext,
@@ -121,28 +146,18 @@ class AlertDialogHandler {
             ),
           )),
           contentPadding: EdgeInsets.all(0.0),
-          content: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (theRemark.isNotEmpty)
-                  Container(
-                      padding: EdgeInsets.only(
-                          left: 15.0,
-                          right: 15.0,
-                          bottom: (child != null) ? 0.0 : 10.0),
-                      child: Text(theRemark)),
-                if (child != null)
-                  Container(
-                      margin: EdgeInsets.only(
-                          top: 5.0,
-                          bottom: (showButtonForCancel || showButtonForOK)
-                              ? 0.0
-                              : 20.0),
-                      child: child),
-                if (showButtonForCancel || showButtonForOK)
-                  Row(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              (expandRemarkToMaxFinite)
+                                ? Expanded(
+                                    child: singleChildScrollView,
+                                  )
+                                : singleChildScrollView,
+              // singleChildScrollView,
+              if (showButtonForCancel || showButtonForOK)
+                Container(
+                  child: Row(
                     mainAxisAlignment: (_hasOnlyOneBottomButton(
                             showButtonForOK: showButtonForOK,
                             showButtonForCancel: showButtonForCancel))
@@ -163,6 +178,11 @@ class AlertDialogHandler {
                               onPressed: () {
                                 Navigator.of(context).pop();
                                 shouldContinueAction = false;
+
+                                if (restoreWebViewToShowIfNeeded) {
+                                  GlobalState.noteDetailWidgetState.currentState
+                                      .restoreWebViewToShowIfNeeded();
+                                }
                               },
                             )
                           : Container(),
@@ -188,15 +208,21 @@ class AlertDialogHandler {
                                   if (enableOKButton) {
                                     Navigator.of(context).pop();
                                     shouldContinueAction = true;
+
+                                    if (restoreWebViewToShowIfNeeded) {
+                                      GlobalState
+                                          .noteDetailWidgetState.currentState
+                                          .restoreWebViewToShowIfNeeded();
+                                    }
                                   }
                                 },
                               );
                             })
                           : Container(),
                     ],
-                  )
-              ],
-            ),
+                  ),
+                )
+            ],
           ),
         );
       },

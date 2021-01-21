@@ -43,7 +43,7 @@ class GlobalState with ChangeNotifier {
   static const double defaultHorizontalMarginBetweenItems = 5.0;
   static const double defaultVerticalMarginBetweenItems = 10.0;
   static const double defaultLeftAndRightPadding = 15.0;
-  static const double defaultLeftAndRightMarginBetweenAppBoarderAndPanel = 15.0;
+  static const double defaultLeftAndRightMarginBetweenParentBoarderAndPanel = 15.0;
   static const double defaultRoundCornerPanelBottomMargin = 15.0;
 
   // App current info
@@ -89,10 +89,14 @@ class GlobalState with ChangeNotifier {
   static const double defaultIconSize = 25.0;
 
   // TextStyle
-  static TextStyle defaultPageCaptionTextStyle = TextStyle(
+  static TextStyle defaultCaptionTextStyle = TextStyle(
     color: GlobalState.themeBlackColor87ForFontForeColor,
     fontSize: GlobalState.appBarTitleDefaultFontSize,
     fontWeight: GlobalState.defaultBoldFontWeightForItem,
+  );
+  static TextStyle defaultNormalTextTextStyle = TextStyle(
+    color: GlobalState.themeBlackColor87ForFontForeColor,
+    fontSize: GlobalState.defaultNormalFontSizeForItem,
   );
   static TextStyle remarkTextStyle =
       TextStyle(fontSize: 16, fontWeight: FontWeight.w200);

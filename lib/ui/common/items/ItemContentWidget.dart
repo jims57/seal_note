@@ -19,6 +19,7 @@ class ItemContentWidget extends StatefulWidget {
     this.showInfoIcon = false,
     this.showRightGreyArrow = false,
     this.onSwitchChanged,
+    this.onInfoIconClicked,
   }) : super(key: key);
 
   final IconData icon;
@@ -33,6 +34,7 @@ class ItemContentWidget extends StatefulWidget {
   // final bool showCheck;
   final bool showRightGreyArrow;
   final Function(bool) onSwitchChanged;
+  final Function(String) onInfoIconClicked;
 
   @override
   _ItemContentWidgetState createState() => _ItemContentWidgetState();
@@ -99,14 +101,23 @@ class _ItemContentWidgetState extends State<ItemContentWidget> {
               ),
             ),
           if (widget.showInfoIcon)
-            Container(
-              margin: EdgeInsets.only(
-                right: GlobalState.defaultHorizontalMarginBetweenItems,
+            GestureDetector(
+              child: Container(
+                // info icon // item content info button
+                color: Colors.transparent,
+                margin: EdgeInsets.only(
+                  right: GlobalState.defaultHorizontalMarginBetweenItems,
+                ),
+                child: Icon(
+                  Icons.info_outline_rounded,
+                  color: GlobalState.themeBlueColor,
+                ),
               ),
-              child: Icon(
-                Icons.info_outline_rounded,
-                color: GlobalState.themeBlueColor,
-              ),
+              onTap: () async {
+                if (widget.onInfoIconClicked != null) {
+                  widget.onInfoIconClicked(widget.itemContent);
+                }
+              },
             ),
           if (widget.showRightGreyArrow) RightGreyArrowWidget(),
         ],

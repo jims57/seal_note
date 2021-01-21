@@ -779,6 +779,13 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     GlobalState.flutterWebviewPlugin.hide();
   }
 
+  void restoreWebViewToShowIfNeeded() {
+    if (!GlobalState.shouldHideWebView) {
+      GlobalState.noteDetailWidgetState.currentState
+          .showWebView(forceToSyncWithShouldHideWebViewVar: true);
+    }
+  }
+
   Future<void> setWebViewToReadOnlyMode(
       {bool keepNoteDetailPageOpen = true,
       bool forceToSaveNoteToDbIfAnyUpdates = false,
@@ -908,5 +915,12 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
       keepHeightToShowToolbar: keepHeightToShowToolbar,
       goToCursorPosition: goToCursorPosition,
     );
+  }
+
+  void executionCallbackToAvoidBeingBlockedByWebView(
+      {@required VoidCallback callback}) {
+    hideWebView(forceToSyncWithShouldHideWebViewVar: false);
+
+    callback();
   }
 }

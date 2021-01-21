@@ -15,12 +15,12 @@ class _ReviewPlanRemarkWidgetState extends State<ReviewPlanRemarkWidget> {
         builder: (cxt, reusablePageWidthChangeNotifier, child) {
       return Container(
         margin: EdgeInsets.only(
-          left: GlobalState.defaultLeftAndRightMarginBetweenAppBoarderAndPanel,
-          right: GlobalState.defaultLeftAndRightMarginBetweenAppBoarderAndPanel,
+          left: GlobalState.defaultLeftAndRightMarginBetweenParentBoarderAndPanel,
+          right: GlobalState.defaultLeftAndRightMarginBetweenParentBoarderAndPanel,
         ),
         padding: EdgeInsets.only(
-          left: GlobalState.defaultLeftAndRightMarginBetweenAppBoarderAndPanel,
-          right: GlobalState.defaultLeftAndRightMarginBetweenAppBoarderAndPanel,
+          left: GlobalState.defaultLeftAndRightMarginBetweenParentBoarderAndPanel,
+          right: GlobalState.defaultLeftAndRightMarginBetweenParentBoarderAndPanel,
         ),
         // height: 200,
         width: GlobalState.currentReusablePageWidth,

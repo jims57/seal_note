@@ -147,7 +147,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
                 goToCursorPosition: goToCursorPosition);
 
         // Check if the move note alert dialog is being shown
-        if (GlobalState.isMoveNoteAlertDialogBeingShown) {
+        if (GlobalState.isAlertDialogBeingShown) {
           GlobalState.noteDetailWidgetState.currentState
               .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
         }

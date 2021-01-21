@@ -78,7 +78,7 @@ class _ReusablePageWidgetState extends State<ReusablePageWidget> {
                     // reusable page title // reusable page caption
 
                     widget.title,
-                    style: GlobalState.defaultPageCaptionTextStyle,
+                    style: GlobalState.defaultCaptionTextStyle,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),

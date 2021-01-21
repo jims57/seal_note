@@ -1261,10 +1261,12 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
         .hideWebView(forceToSyncWithShouldHideWebViewVar: true);
 
     GlobalState.isMoveNoteAlertDialogBeingShown = true;
+    GlobalState.isAlertDialogBeingShown = true;
   }
 
   void _postHandleMoveNoteAlertDialog() {
     GlobalState.isMoveNoteAlertDialogBeingShown = false;
+    GlobalState.isAlertDialogBeingShown = false;
 
     // Reset the target folder id for future usage
     GlobalState.targetFolderIdNoteIsMovingTo = 0;
