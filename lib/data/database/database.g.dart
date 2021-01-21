@@ -2362,6 +2362,19 @@ abstract class _$Database extends GeneratedDatabase {
     );
   }
 
+  Selectable<GetFolderReviewPlanByFolderIdResult> getFolderReviewPlanByFolderId(
+      int folderId) {
+    return customSelect(
+        'SELECT rp.id reviewPlanId, rp.name reviewPlanName FROM reviewPlans rp WHERE id =( SELECT reviewPlanId FROM folders WHERE id = :folderId);',
+        variables: [Variable.withInt(folderId)],
+        readsFrom: {reviewPlans, folders}).map((QueryRow row) {
+      return GetFolderReviewPlanByFolderIdResult(
+        reviewPlanId: row.readInt('reviewPlanId'),
+        reviewPlanName: row.readString('reviewPlanName'),
+      );
+    });
+  }
+
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
@@ -2503,5 +2516,14 @@ class GetNoteListForUserFoldersResult {
     this.isDeleted,
     this.createdBy,
     this.progressTotal,
+  });
+}
+
+class GetFolderReviewPlanByFolderIdResult {
+  final int reviewPlanId;
+  final String reviewPlanName;
+  GetFolderReviewPlanByFolderIdResult({
+    this.reviewPlanId,
+    this.reviewPlanName,
   });
 }

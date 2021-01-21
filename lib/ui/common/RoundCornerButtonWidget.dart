@@ -8,8 +8,8 @@ class RoundCornerButtonWidget extends StatefulWidget {
     @required this.buttonCallback,
     this.buttonTextFontSize = 18.0,
     this.buttonThemeColor = GlobalState.themeBlueColor,
-    this.topMargin = 10.0,
-    this.bottomMargin = 10.0,
+    this.topMargin = 15.0,
+    this.bottomMargin = 15.0,
   }) : super(key: key);
 
   final String buttonText;

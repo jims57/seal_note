@@ -38,7 +38,7 @@ class _NoDataWidgetState extends State<NoDataWidget> {
           alignment: Alignment.bottomCenter,
           child: Text(
             _showNoDataRemark(),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w200),
+            style: GlobalState.remarkTextStyle,
           ),
         ),
       ],

@@ -16,7 +16,6 @@ class RoundCornerPanelWidget extends StatefulWidget {
     this.isTopLeftAndTopRightCornerRound = true,
     this.isBottomLeftAndBottomRightCornerRound = true,
     this.backgroundColor = Colors.white,
-    // this.bottomMargin = 0.0,
     this.addBottomMargin = false,
     this.showDivider = false,
     this.scrollable = false,
@@ -68,6 +67,8 @@ class _RoundCornerPanelWidgetState extends State<RoundCornerPanelWidget> {
             // color: Colors.red,
             child: Text(
               widget.caption,
+              // softWrap: true,
+              // maxLines: 4,
               style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w300,
@@ -126,7 +127,9 @@ class _RoundCornerPanelWidgetState extends State<RoundCornerPanelWidget> {
             ),
           ),
           onTap: () {
-            widget.onTap();
+            if (widget.onTap != null) {
+              widget.onTap();
+            }
           },
         ),
         if (widget.addBottomMargin)

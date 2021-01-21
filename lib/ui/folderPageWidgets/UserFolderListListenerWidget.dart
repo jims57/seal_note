@@ -5,6 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/data/database/database.dart';
 import 'package:seal_note/ui/common/RoundCornerButtonWidget.dart';
 import 'package:seal_note/ui/common/TextFieldWithClearButtonWidget.dart';
 import 'package:seal_note/ui/common/dividers/ItemDividerWidget.dart';
@@ -204,10 +205,23 @@ class _UserFolderListListenerWidgetState
                       onTap: () async {
                         // swipe to review plan event // click on review plan button
 
+                        // Get the review plan for the current folder
+                        GetFolderReviewPlanByFolderIdResult
+                            getFolderReviewPlanByFolderIdResult =
+                            await GlobalState.database
+                                .getFolderReviewPlanByFolderId(widget.folderId)
+                                .getSingle();
+
                         GlobalState.masterDetailPageState.currentState
                             .triggerToShowReusablePage(
-                          title: '复习计划',
-                          child: ReviewPlanWidget(),
+                          title: '选择复习计划',
+                          child: ReviewPlanWidget(
+                            key: GlobalState.reviewPlanWidgetState,
+                            folderId: widget.folderId,
+                            getFolderReviewPlanByFolderIdResult:
+                                getFolderReviewPlanByFolderIdResult,
+                            // folderId: widget.folderId,
+                          ),
                         );
                       },
                     ),

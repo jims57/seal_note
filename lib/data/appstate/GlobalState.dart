@@ -13,6 +13,7 @@ import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageStackWidget.
 import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:seal_note/ui/common/SelectFolderWidget.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanSecondSubPage.dart';
+import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
 import 'package:stack/stack.dart' as stackData show Stack;
 
 import 'AppState.dart';
@@ -42,6 +43,7 @@ class GlobalState with ChangeNotifier {
   static const double defaultHorizontalMarginBetweenItems = 5.0;
   static const double defaultVerticalMarginBetweenItems = 10.0;
   static const double defaultLeftAndRightPadding = 15.0;
+  static const double defaultLeftAndRightMarginBetweenAppBoarderAndPanel = 15.0;
   static const double defaultRoundCornerPanelBottomMargin = 15.0;
 
   // App current info
@@ -86,12 +88,14 @@ class GlobalState with ChangeNotifier {
   // Icon
   static const double defaultIconSize = 25.0;
 
-  // Caption
+  // TextStyle
   static TextStyle defaultPageCaptionTextStyle = TextStyle(
     color: GlobalState.themeBlackColor87ForFontForeColor,
     fontSize: GlobalState.appBarTitleDefaultFontSize,
     fontWeight: GlobalState.defaultBoldFontWeightForItem,
   );
+  static TextStyle remarkTextStyle =
+      TextStyle(fontSize: 16, fontWeight: FontWeight.w200);
 
   // Borders
   static const double defaultBorderRadius = 10.0;
@@ -110,6 +114,7 @@ class GlobalState with ChangeNotifier {
   static double appBarHeight;
   static double defaultAppBarHeight = 56.0;
   static double webViewHeight;
+
   // static int rotatedTimes;
 
   // Keyboard related
@@ -203,6 +208,8 @@ class GlobalState with ChangeNotifier {
       GlobalKey<NoteDetailWidgetState>();
   static GlobalKey<ReusablePageStackWidgetState> reusablePageStackWidgetState =
       GlobalKey<ReusablePageStackWidgetState>();
+  static GlobalKey<ReviewPlanWidgetState> reviewPlanWidgetState =
+      GlobalKey<ReviewPlanWidgetState>();
   static GlobalKey<ReviewPlanSecondSubPageState> reviewPlanSecondSubPageState =
       GlobalKey<ReviewPlanSecondSubPageState>();
 

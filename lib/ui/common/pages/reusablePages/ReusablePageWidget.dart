@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/appstate/ReusablePageChangeNotifier.dart';
 import 'package:seal_note/data/appstate/ReusablePageWidthChangeNotifier.dart';
+import 'package:seal_note/ui/reviewPlans/ManageReviewPlanButtonWidget.dart';
 
 class ReusablePageWidget extends StatefulWidget {
   ReusablePageWidget({
@@ -93,6 +94,7 @@ class _ReusablePageWidgetState extends State<ReusablePageWidget> {
                 ],
               ),
             ),
+            ManageReviewPlanButtonWidget(),
           ],
         ),
       );
@@ -111,6 +113,9 @@ class _ReusablePageWidgetState extends State<ReusablePageWidget> {
     if (upcomingReusablePageIndex == -1) {
       GlobalState.masterDetailPageState.currentState
           .triggerToHideReusablePage();
+
+      // When the reusable page is going to hide, we clear all items from the reusablePageWidgetList variable
+      GlobalState.reusablePageWidgetList.clear();
     }
   }
 }

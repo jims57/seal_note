@@ -181,7 +181,11 @@ class ReviewPlanConfigs extends Table {
   'getNoteListForUserFolders':
       "WITH isReviewFolderTable AS( SELECT CASE WHEN reviewPlanId IS NOT NULL THEN 1 ELSE 0 END AS isReviewFolder FROM folders WHERE id = :folderId) SELECT id, folderId, CASE WHEN INSTR(content, '&lt;/p&gt;') > 0 THEN substr(content, 1, INSTR(content, '&lt;/p&gt;') + 9) ELSE content END AS title, content, created, updated, nextReviewTime, CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END AS reviewProgressNo, isReviewFinished, isDeleted, createdBy, ( SELECT count( * ) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = :folderId AND CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ORDER BY n.isReviewFinished ASC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.nextReviewTime END ASC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 0 THEN n.updated END DESC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.updated END DESC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 0 THEN n.id END DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1); ",
   'clearDeletedNotesMoreThan30DaysAgo':
-      "DELETE FROM notes WHERE strftime('%Y-%m-%d %H:%M:%S', updated) <= strftime('%Y-%m-%d %H:%M:%S', :minAvailableDateTime); "
+      "DELETE FROM notes WHERE strftime('%Y-%m-%d %H:%M:%S', updated) <= strftime('%Y-%m-%d %H:%M:%S', :minAvailableDateTime); ",
+
+  // For review plans
+  'getFolderReviewPlanByFolderId':
+      "SELECT rp.id reviewPlanId, rp.name reviewPlanName FROM reviewPlans rp WHERE id =( SELECT reviewPlanId FROM folders WHERE id = :folderId);",
 })
 class Database extends _$Database {
   Database(QueryExecutor e) : super(e);
@@ -410,6 +414,53 @@ class Database extends _$Database {
     });
 
     return result;
+  }
+
+  Future<int> updateFolderReviewPlanId({
+    @required int folderId,
+    @required int newReviewPlanId,
+    bool forceToUpdateNotesWithNullNextReviewTimeByNow = true,
+  }) async {
+    var effectedRows = await transaction(() async {
+      var effectedRows = 0;
+
+      Value<int> reviewPlanIdValue = Value(null);
+
+      if (newReviewPlanId > 0) {
+        reviewPlanIdValue = Value(newReviewPlanId);
+      }
+
+      // Update the reviewPlanId field in folder table
+      var foldersEffectedRows = await (update(folders)
+            ..where((f) => f.id.equals(folderId)))
+          .write(FoldersCompanion(
+        reviewPlanId: reviewPlanIdValue,
+      ));
+
+      if (!forceToUpdateNotesWithNullNextReviewTimeByNow) {
+        effectedRows = foldersEffectedRows;
+      } else {
+        Value<DateTime> nextReviewTimeValue =
+            Value(TimeHandler.getNowForLocal());
+        var notesEffectedRows = 0;
+
+        // Make sure all notes with Null nextReviewTime in the folder to have nextReviewTime value
+        if (foldersEffectedRows > 0) {
+          notesEffectedRows = await (update(notes)
+                ..where((n) => isNull(n.nextReviewTime))
+                ..where((n) => n.folderId.equals(folderId)))
+              .write(NotesCompanion(
+            nextReviewTime: nextReviewTimeValue,
+          ));
+        }
+
+        effectedRows = notesEffectedRows;
+      }
+
+      return effectedRows;
+    });
+
+    return effectedRows;
   }
 
 // Notes
@@ -673,6 +724,14 @@ class Database extends _$Database {
       batch.insertAllOnConflictUpdate(
           reviewPlanConfigs, reviewPlanConfigEntryList);
     });
+  }
+
+  Future<List<ReviewPlanEntry>> getAllReviewPlans() async {
+    return await (select(reviewPlans)
+          ..orderBy([
+            (rp) => OrderingTerm(expression: rp.id, mode: OrderingMode.desc),
+          ]))
+        .get();
   }
 
 // Other methods

@@ -52,7 +52,7 @@ class ReusablePageStackWidgetState extends State<ReusablePageStackWidget> {
   Widget build(BuildContext context) {
     return Container(
       color: GlobalState.themeGreyColorAtiOSTodoForBackground,
-      height: double.maxFinite,
+      height: GlobalState.screenHeight,
       width: getReusablePageWidth(),
       child: Stack(
         children: _reusablePageChangeNotifierList,

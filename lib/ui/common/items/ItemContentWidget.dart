@@ -10,19 +10,27 @@ class ItemContentWidget extends StatefulWidget {
   ItemContentWidget({
     Key key,
     this.icon,
+    this.iconColor = GlobalState.themeLightBlueColorAtiOSTodo,
     this.itemTitle,
+    this.itemTitleForeColor = Colors.black,
     this.itemContent,
     this.itemContentForeColor = GlobalState.themeBlackColor87ForFontForeColor,
     this.showSwitch = false,
+    this.showInfoIcon = false,
     this.showRightGreyArrow = false,
     this.onSwitchChanged,
   }) : super(key: key);
 
   final IconData icon;
+  final Color iconColor;
   final String itemTitle;
+  final Color itemTitleForeColor;
   final String itemContent;
   final Color itemContentForeColor;
   final bool showSwitch;
+  final bool showInfoIcon;
+
+  // final bool showCheck;
   final bool showRightGreyArrow;
   final Function(bool) onSwitchChanged;
 
@@ -42,12 +50,12 @@ class _ItemContentWidgetState extends State<ItemContentWidget> {
               children: [
                 if (widget.icon != null)
                   Container(
-                    // color: Colors.red,
                     margin: EdgeInsets.only(
                       right: GlobalState.defaultHorizontalMarginBetweenItems,
                     ),
                     child: IconWidget(
                       icon: widget.icon,
+                      iconColor: widget.iconColor,
                     ),
                   ),
                 if (widget.itemTitle != null)
@@ -61,6 +69,7 @@ class _ItemContentWidgetState extends State<ItemContentWidget> {
                       style: TextStyle(
                         fontWeight: GlobalState.defaultBoldFontWeightForItem,
                         fontSize: GlobalState.defaultTitleFontSizeForItem,
+                        color: widget.itemTitleForeColor,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -69,7 +78,6 @@ class _ItemContentWidgetState extends State<ItemContentWidget> {
                   child: Container(
                     margin: EdgeInsets.only(
                         right: GlobalState.defaultHorizontalMarginBetweenItems),
-                    // color: Colors.blue,
                     child: Text(
                       (widget.itemContent != null) ? widget.itemContent : '',
                       style: TextStyle(
@@ -84,8 +92,21 @@ class _ItemContentWidgetState extends State<ItemContentWidget> {
             ),
           ),
           if (widget.showSwitch)
-            CupertinoSwitchWidget(
-              onSwitchChanged: widget.onSwitchChanged,
+            Container(
+              color: Colors.greenAccent,
+              child: CupertinoSwitchWidget(
+                onSwitchChanged: widget.onSwitchChanged,
+              ),
+            ),
+          if (widget.showInfoIcon)
+            Container(
+              margin: EdgeInsets.only(
+                right: GlobalState.defaultHorizontalMarginBetweenItems,
+              ),
+              child: Icon(
+                Icons.info_outline_rounded,
+                color: GlobalState.themeBlueColor,
+              ),
             ),
           if (widget.showRightGreyArrow) RightGreyArrowWidget(),
         ],
