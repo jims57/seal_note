@@ -63,7 +63,10 @@ class _ReusablePageWidgetState extends State<ReusablePageWidget> {
                         widget.onBackButtonCallback(widget);
                       }
 
-                      _clickOnBackButton(reusablePageIndex: widget.index);
+                      _clickOnBackButton(
+                        reusablePageIndex: widget.index,
+                        refreshFolderListWhenClosingLastReusablePage: true,
+                      );
                     },
                   ),
                 ),
@@ -102,7 +105,10 @@ class _ReusablePageWidgetState extends State<ReusablePageWidget> {
   }
 
   // Private methods
-  void _clickOnBackButton({@required int reusablePageIndex}) {
+  void _clickOnBackButton({
+    @required int reusablePageIndex,
+    bool refreshFolderListWhenClosingLastReusablePage = false,
+  }) {
     // Only the back button on the reusable page will move the upcoming reusable page to right
     GlobalState.isUpcomingReusablePageMovingToLeft = false;
 
@@ -111,11 +117,19 @@ class _ReusablePageWidgetState extends State<ReusablePageWidget> {
         upcomingReusablePageIndex;
 
     if (upcomingReusablePageIndex == -1) {
+      // close reusable page // exist reusable page
+
       GlobalState.masterDetailPageState.currentState
           .triggerToHideReusablePage();
 
       // When the reusable page is going to hide, we clear all items from the reusablePageWidgetList variable
       GlobalState.reusablePageWidgetList.clear();
+
+      // Check if we should refresh the folder page to reflect its up-to-date
+      if (refreshFolderListWhenClosingLastReusablePage) {
+        GlobalState.folderListWidgetState.currentState
+            .triggerSetState(forceToFetchFoldersFromDb: true);
+      }
     }
   }
 }
