@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:seal_note/data/appstate/AlertDialogHeightChangeNotifier.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 
@@ -24,6 +25,7 @@ class AlertDialogHandler {
     bool showDivider = false,
     bool restoreWebViewToShowIfNeeded = false,
     bool expandRemarkToMaxFinite = false,
+    bool centerRemark = true,
   }) async {
     var shouldContinueAction = false;
     var theRemark = remark;
@@ -41,6 +43,8 @@ class AlertDialogHandler {
         children: [
           if (theRemark.isNotEmpty)
             Container(
+                alignment:
+                    (centerRemark) ? Alignment.center : Alignment.centerLeft,
                 padding: EdgeInsets.only(
                     left: 15.0,
                     right: 15.0,
@@ -146,84 +150,174 @@ class AlertDialogHandler {
             ),
           )),
           contentPadding: EdgeInsets.all(0.0),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              (expandRemarkToMaxFinite)
-                                ? Expanded(
-                                    child: singleChildScrollView,
-                                  )
-                                : singleChildScrollView,
-              // singleChildScrollView,
-              if (showButtonForCancel || showButtonForOK)
-                Container(
-                  child: Row(
-                    mainAxisAlignment: (_hasOnlyOneBottomButton(
-                            showButtonForOK: showButtonForOK,
-                            showButtonForCancel: showButtonForCancel))
-                        ? MainAxisAlignment.center
-                        : MainAxisAlignment.spaceBetween,
-                    // mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      (showButtonForCancel)
-                          ? FlatButton(
-                              // alert dialog cancel button // cancel button
-                              // dialog cancel button
+          content: Consumer<AlertDialogHeightChangeNotifier>(
+              builder: (cxt, alertDialogHeightChangeNotifier, child) {
+            return Container(
+              height: GlobalState.screenHeight / 3,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  (expandRemarkToMaxFinite)
+                      ? Expanded(
+                          child: singleChildScrollView,
+                        )
+                      : singleChildScrollView,
+                  // singleChildScrollView,
+                  if (showButtonForCancel || showButtonForOK)
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: (_hasOnlyOneBottomButton(
+                                showButtonForOK: showButtonForOK,
+                                showButtonForCancel: showButtonForCancel))
+                            ? MainAxisAlignment.center
+                            : MainAxisAlignment.spaceBetween,
+                        // mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          (showButtonForCancel)
+                              ? FlatButton(
+                                  // alert dialog cancel button // cancel button
+                                  // dialog cancel button
 
-                              child: Text(
-                                buttonTextForCancel,
-                                style: TextStyle(
-                                    color: GlobalState.themeBlueColor),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                shouldContinueAction = false;
-
-                                if (restoreWebViewToShowIfNeeded) {
-                                  GlobalState.noteDetailWidgetState.currentState
-                                      .restoreWebViewToShowIfNeeded();
-                                }
-                              },
-                            )
-                          : Container(),
-                      (showButtonForOK)
-                          ? Consumer<AppState>(builder: (cxt, appState, child) {
-                              var enableOKButton =
-                                  appState.enableAlertDialogOKButton;
-
-                              if (alwaysEnableOKButton) enableOKButton = true;
-
-                              return FlatButton(
-                                // alert dialog ok button // ok button
-                                // dialog ok button
-
-                                child: Text(
-                                  buttonTextForOK,
-                                  style: TextStyle(
-                                      color: (enableOKButton)
-                                          ? buttonColorForOK
-                                          : GlobalState.themeGrey350Color),
-                                ),
-                                onPressed: () {
-                                  if (enableOKButton) {
+                                  child: Text(
+                                    buttonTextForCancel,
+                                    style: TextStyle(
+                                        color: GlobalState.themeBlueColor),
+                                  ),
+                                  onPressed: () {
                                     Navigator.of(context).pop();
-                                    shouldContinueAction = true;
+                                    shouldContinueAction = false;
 
                                     if (restoreWebViewToShowIfNeeded) {
                                       GlobalState
                                           .noteDetailWidgetState.currentState
                                           .restoreWebViewToShowIfNeeded();
                                     }
-                                  }
-                                },
-                              );
-                            })
-                          : Container(),
-                    ],
-                  ),
-                )
-            ],
-          ),
+                                  },
+                                )
+                              : Container(),
+                          (showButtonForOK)
+                              ? Consumer<AppState>(
+                                  builder: (cxt, appState, child) {
+                                  var enableOKButton =
+                                      appState.enableAlertDialogOKButton;
+
+                                  if (alwaysEnableOKButton)
+                                    enableOKButton = true;
+
+                                  return FlatButton(
+                                    // alert dialog ok button // ok button
+                                    // dialog ok button
+
+                                    child: Text(
+                                      buttonTextForOK,
+                                      style: TextStyle(
+                                          color: (enableOKButton)
+                                              ? buttonColorForOK
+                                              : GlobalState.themeGrey350Color),
+                                    ),
+                                    onPressed: () {
+                                      if (enableOKButton) {
+                                        Navigator.of(context).pop();
+                                        shouldContinueAction = true;
+
+                                        if (restoreWebViewToShowIfNeeded) {
+                                          GlobalState.noteDetailWidgetState
+                                              .currentState
+                                              .restoreWebViewToShowIfNeeded();
+                                        }
+                                      }
+                                    },
+                                  );
+                                })
+                              : Container(),
+                        ],
+                      ),
+                    )
+                ],
+              ),
+            );
+          }),
+          // content: Container(
+          //   height: GlobalState.screenHeight /3,
+          //   child: Column(
+          //     mainAxisSize: MainAxisSize.min,
+          //     children: [
+          //       (expandRemarkToMaxFinite)
+          //           ? Expanded(
+          //               child: singleChildScrollView,
+          //             )
+          //           : singleChildScrollView,
+          //       // singleChildScrollView,
+          //       if (showButtonForCancel || showButtonForOK)
+          //         Container(
+          //           child: Row(
+          //             mainAxisAlignment: (_hasOnlyOneBottomButton(
+          //                     showButtonForOK: showButtonForOK,
+          //                     showButtonForCancel: showButtonForCancel))
+          //                 ? MainAxisAlignment.center
+          //                 : MainAxisAlignment.spaceBetween,
+          //             // mainAxisAlignment: MainAxisAlignment.center,
+          //             children: [
+          //               (showButtonForCancel)
+          //                   ? FlatButton(
+          //                       // alert dialog cancel button // cancel button
+          //                       // dialog cancel button
+          //
+          //                       child: Text(
+          //                         buttonTextForCancel,
+          //                         style: TextStyle(
+          //                             color: GlobalState.themeBlueColor),
+          //                       ),
+          //                       onPressed: () {
+          //                         Navigator.of(context).pop();
+          //                         shouldContinueAction = false;
+          //
+          //                         if (restoreWebViewToShowIfNeeded) {
+          //                           GlobalState.noteDetailWidgetState.currentState
+          //                               .restoreWebViewToShowIfNeeded();
+          //                         }
+          //                       },
+          //                     )
+          //                   : Container(),
+          //               (showButtonForOK)
+          //                   ? Consumer<AppState>(builder: (cxt, appState, child) {
+          //                       var enableOKButton =
+          //                           appState.enableAlertDialogOKButton;
+          //
+          //                       if (alwaysEnableOKButton) enableOKButton = true;
+          //
+          //                       return FlatButton(
+          //                         // alert dialog ok button // ok button
+          //                         // dialog ok button
+          //
+          //                         child: Text(
+          //                           buttonTextForOK,
+          //                           style: TextStyle(
+          //                               color: (enableOKButton)
+          //                                   ? buttonColorForOK
+          //                                   : GlobalState.themeGrey350Color),
+          //                         ),
+          //                         onPressed: () {
+          //                           if (enableOKButton) {
+          //                             Navigator.of(context).pop();
+          //                             shouldContinueAction = true;
+          //
+          //                             if (restoreWebViewToShowIfNeeded) {
+          //                               GlobalState
+          //                                   .noteDetailWidgetState.currentState
+          //                                   .restoreWebViewToShowIfNeeded();
+          //                             }
+          //                           }
+          //                         },
+          //                       );
+          //                     })
+          //                   : Container(),
+          //             ],
+          //           ),
+          //         )
+          //     ],
+          //   ),
+          // ),
         );
       },
     );

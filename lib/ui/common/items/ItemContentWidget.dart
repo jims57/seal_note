@@ -34,7 +34,7 @@ class ItemContentWidget extends StatefulWidget {
   // final bool showCheck;
   final bool showRightGreyArrow;
   final Function(bool) onSwitchChanged;
-  final Function(String) onInfoIconClicked;
+  final VoidCallback onInfoIconClicked;
 
   @override
   _ItemContentWidgetState createState() => _ItemContentWidgetState();
@@ -115,7 +115,7 @@ class _ItemContentWidgetState extends State<ItemContentWidget> {
               ),
               onTap: () async {
                 if (widget.onInfoIconClicked != null) {
-                  widget.onInfoIconClicked(widget.itemContent);
+                  widget.onInfoIconClicked();
                 }
               },
             ),

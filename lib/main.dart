@@ -7,6 +7,7 @@ import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
 // Import custom files
+import 'data/appstate/AlertDialogHeightChangeNotifier.dart';
 import 'data/appstate/AppState.dart';
 import 'data/appstate/DetailPageState.dart';
 import 'data/appstate/ReusablePageChangeNotifier.dart';
@@ -45,6 +46,9 @@ void main() {
       ),
       ChangeNotifierProvider<ReusablePageWidthChangeNotifier>(
         create: (context) => ReusablePageWidthChangeNotifier(),
+      ),
+      ChangeNotifierProvider<AlertDialogHeightChangeNotifier>(
+        create: (context) => AlertDialogHeightChangeNotifier(),
       ),
     ],
     child: MyApp(),
@@ -254,5 +258,8 @@ class _MyAppState extends State<MyApp> {
 
     GlobalState.reusablePageWidthChangeNotifier =
         Provider.of<ReusablePageWidthChangeNotifier>(context, listen: false);
+
+    GlobalState.alertDialogHeightChangeNotifier =
+        Provider.of<AlertDialogHeightChangeNotifier>(context, listen: false);
   }
 }

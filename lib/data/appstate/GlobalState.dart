@@ -16,6 +16,7 @@ import 'package:seal_note/ui/reviewPlans/ReviewPlanSecondSubPage.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
 import 'package:stack/stack.dart' as stackData show Stack;
 
+import 'AlertDialogHeightChangeNotifier.dart';
 import 'AppState.dart';
 import 'DetailPageState.dart';
 import 'ReusablePageChangeNotifier.dart';
@@ -236,6 +237,7 @@ class GlobalState with ChangeNotifier {
   static ReusablePageOpenOrCloseNotifier reusablePageOpenOrCloseNotifier;
   static ReusablePageChangeNotifier reusablePageChangeNotifier;
   static ReusablePageWidthChangeNotifier reusablePageWidthChangeNotifier;
+  static AlertDialogHeightChangeNotifier alertDialogHeightChangeNotifier;
 
   // Folder related
   static bool isDefaultFolderSelected = false; // For default folder

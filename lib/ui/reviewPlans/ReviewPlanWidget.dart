@@ -23,6 +23,7 @@ class ReviewPlanWidget extends StatefulWidget {
 class ReviewPlanWidgetState extends State<ReviewPlanWidget> {
   var selectedReviewPlanId;
   var selectedReviewPlanName;
+  var reviewPlanList = <ReviewPlanEntry>[];
   var reviewPlanSelectionItemWidgetList = <ReviewPlanSelectionItemWidget>[];
 
   @override
@@ -53,6 +54,11 @@ class ReviewPlanWidgetState extends State<ReviewPlanWidget> {
   }
 
   // Private methods
+  Future<void> _initReviewPlanListByDataFromDb() async {
+    reviewPlanList.clear();
+    reviewPlanList = await GlobalState.database.getAllReviewPlans();
+  }
+
   void _clickReviewPlanSelectionItemWidgetCallback(
       int reviewPlanId, String reviewPlanName) {
     setState(() {
@@ -87,7 +93,8 @@ class ReviewPlanWidgetState extends State<ReviewPlanWidget> {
       {bool triggerSetState = true}) async {
     reviewPlanSelectionItemWidgetList.clear();
 
-    var reviewPlanList = await GlobalState.database.getAllReviewPlans();
+    await _initReviewPlanListByDataFromDb();
+
     var index = 0;
     var maxIndex = reviewPlanList.length - 1;
 
@@ -97,6 +104,7 @@ class ReviewPlanWidgetState extends State<ReviewPlanWidget> {
       selectedReviewPlanId: selectedReviewPlanId,
       reviewPlanId: 0,
       reviewPlanName: '不复习',
+      reviewPlanIntroduction: '不复习就是指不用复习的！',
       showDivider: true,
       isTopLeftAndTopRightCornerRound: true,
       isBottomLeftAndBottomRightCornerRound: false,
@@ -114,6 +122,7 @@ class ReviewPlanWidgetState extends State<ReviewPlanWidget> {
         selectedReviewPlanId: selectedReviewPlanId,
         reviewPlanId: reviewPlan.id,
         reviewPlanName: reviewPlan.name,
+        reviewPlanIntroduction: reviewPlan.introduction,
         showDivider: true,
         isTopLeftAndTopRightCornerRound: false,
         isBottomLeftAndBottomRightCornerRound: isLastReviewPlan,

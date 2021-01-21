@@ -150,6 +150,9 @@ class MasterDetailPageState extends State<MasterDetailPage>
         if (GlobalState.isAlertDialogBeingShown) {
           GlobalState.noteDetailWidgetState.currentState
               .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
+          
+          // When there is an alert dialog being shown, try to notify to change its height
+          GlobalState.alertDialogHeightChangeNotifier.notifyAlertDialogToChangeHeight();
         }
       });
 
