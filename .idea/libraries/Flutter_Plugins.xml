@@ -1,15 +1,15 @@
 <component name="libraryTable">
   <library name="Flutter Plugins" type="FlutterPluginsLibraryType">
     <CLASSES>
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/keyboard_utils-1.2.4" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_webview_plugin-0.3.11" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/sqlite3_flutter_libs-0.2.0" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_image_compress-0.7.0" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4+4" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_linux-0.0.1+2" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_windows-0.0.4+1" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/multi_image_picker-4.7.14" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.22" />
+      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/keyboard_utils-1.2.4" />
+      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_macos-0.0.4+8" />
+      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_windows-0.0.4+3" />
+      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider-1.6.27" />
+      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/flutter_image_compress-0.7.0" />
+      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/sqlite3_flutter_libs-0.2.0" />
+      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/flutter_webview_plugin-0.3.11" />
+      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_linux-0.0.1+2" />
+      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/multi_image_picker-4.7.14" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

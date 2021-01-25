@@ -1,10 +1,10 @@
 # This is a generated file; do not edit or check into version control.
-flutter_image_compress=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_image_compress-0.7.0/
-flutter_webview_plugin=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_webview_plugin-0.3.11/
-keyboard_utils=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/keyboard_utils-1.2.4/
-multi_image_picker=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/multi_image_picker-4.7.14/
-path_provider=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.22/
-path_provider_linux=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_linux-0.0.1+2/
-path_provider_macos=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4+4/
-path_provider_windows=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_windows-0.0.4+1/
-sqlite3_flutter_libs=/Users/mac/development/flutter/.pub-cache/hosted/pub.dartlang.org/sqlite3_flutter_libs-0.2.0/
+flutter_image_compress=/Users/mac/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/flutter_image_compress-0.7.0/
+flutter_webview_plugin=/Users/mac/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/flutter_webview_plugin-0.3.11/
+keyboard_utils=/Users/mac/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/keyboard_utils-1.2.4/
+multi_image_picker=/Users/mac/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/multi_image_picker-4.7.14/
+path_provider=/Users/mac/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider-1.6.27/
+path_provider_linux=/Users/mac/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_linux-0.0.1+2/
+path_provider_macos=/Users/mac/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_macos-0.0.4+8/
+path_provider_windows=/Users/mac/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_windows-0.0.4+3/
+sqlite3_flutter_libs=/Users/mac/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/sqlite3_flutter_libs-0.2.0/
