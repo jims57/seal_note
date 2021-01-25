@@ -8,7 +8,7 @@ class AlertDialogHandler {
   Future<bool> showAlertDialog({
     @required BuildContext parentContext,
     @required String captionText,
-    String remark = '',
+    String remark,
     Widget child,
     bool showButtonForCancel = true,
     String buttonTextForCancel = '取消',
@@ -28,13 +28,15 @@ class AlertDialogHandler {
     bool centerRemark = true,
   }) async {
     var shouldContinueAction = false;
-    var theRemark = remark;
+    var theRemark = '';
     var topButtonWidth = 60.0;
 
     GlobalState.isAlertDialogBeingShown = true;
 
     // If the remark parameter isn't null, we use it as the remark for the dialog
-    if (remark != null) theRemark = remark;
+    if (remark != null) {
+      theRemark = remark.replaceAll('<br>', '\n');
+    }
 
     var singleChildScrollView = SingleChildScrollView(
       scrollDirection: Axis.vertical,
@@ -150,11 +152,10 @@ class AlertDialogHandler {
             ),
           )),
           contentPadding: EdgeInsets.all(0.0),
-          content: Consumer<AlertDialogHeightChangeNotifier>(
-              builder: (cxt, alertDialogHeightChangeNotifier, child) {
-            return Container(
-              height: GlobalState.screenHeight / 3,
-              child: Column(
+          content: Expanded(
+            child: Consumer<AlertDialogHeightChangeNotifier>(
+                builder: (cxt, alertDialogHeightChangeNotifier, child) {
+              var theColumn = Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   (expandRemarkToMaxFinite)
@@ -232,92 +233,25 @@ class AlertDialogHandler {
                               : Container(),
                         ],
                       ),
-                    )
+                    ),
                 ],
-              ),
-            );
-          }),
-          // content: Container(
-          //   height: GlobalState.screenHeight /3,
-          //   child: Column(
-          //     mainAxisSize: MainAxisSize.min,
-          //     children: [
-          //       (expandRemarkToMaxFinite)
-          //           ? Expanded(
-          //               child: singleChildScrollView,
-          //             )
-          //           : singleChildScrollView,
-          //       // singleChildScrollView,
-          //       if (showButtonForCancel || showButtonForOK)
-          //         Container(
-          //           child: Row(
-          //             mainAxisAlignment: (_hasOnlyOneBottomButton(
-          //                     showButtonForOK: showButtonForOK,
-          //                     showButtonForCancel: showButtonForCancel))
-          //                 ? MainAxisAlignment.center
-          //                 : MainAxisAlignment.spaceBetween,
-          //             // mainAxisAlignment: MainAxisAlignment.center,
-          //             children: [
-          //               (showButtonForCancel)
-          //                   ? FlatButton(
-          //                       // alert dialog cancel button // cancel button
-          //                       // dialog cancel button
-          //
-          //                       child: Text(
-          //                         buttonTextForCancel,
-          //                         style: TextStyle(
-          //                             color: GlobalState.themeBlueColor),
-          //                       ),
-          //                       onPressed: () {
-          //                         Navigator.of(context).pop();
-          //                         shouldContinueAction = false;
-          //
-          //                         if (restoreWebViewToShowIfNeeded) {
-          //                           GlobalState.noteDetailWidgetState.currentState
-          //                               .restoreWebViewToShowIfNeeded();
-          //                         }
-          //                       },
-          //                     )
-          //                   : Container(),
-          //               (showButtonForOK)
-          //                   ? Consumer<AppState>(builder: (cxt, appState, child) {
-          //                       var enableOKButton =
-          //                           appState.enableAlertDialogOKButton;
-          //
-          //                       if (alwaysEnableOKButton) enableOKButton = true;
-          //
-          //                       return FlatButton(
-          //                         // alert dialog ok button // ok button
-          //                         // dialog ok button
-          //
-          //                         child: Text(
-          //                           buttonTextForOK,
-          //                           style: TextStyle(
-          //                               color: (enableOKButton)
-          //                                   ? buttonColorForOK
-          //                                   : GlobalState.themeGrey350Color),
-          //                         ),
-          //                         onPressed: () {
-          //                           if (enableOKButton) {
-          //                             Navigator.of(context).pop();
-          //                             shouldContinueAction = true;
-          //
-          //                             if (restoreWebViewToShowIfNeeded) {
-          //                               GlobalState
-          //                                   .noteDetailWidgetState.currentState
-          //                                   .restoreWebViewToShowIfNeeded();
-          //                             }
-          //                           }
-          //                         },
-          //                       );
-          //                     })
-          //                   : Container(),
-          //             ],
-          //           ),
-          //         )
-          //     ],
-          //   ),
-          // ),
+              );
+
+              if (expandRemarkToMaxFinite) {
+                return Container(
+                  height: GlobalState.screenHeight / 3,
+                  child: theColumn,
+                );
+              } else {
+                return SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    child: theColumn,
+                  ),
+                );
+              }
+            }),
+          ),
         );
       },
     );
@@ -326,17 +260,17 @@ class AlertDialogHandler {
 
     return shouldContinueAction;
   }
+}
 
-  bool _hasOnlyOneBottomButton(
-      {@required bool showButtonForOK, @required bool showButtonForCancel}) {
-    // Bottom button means OK button and Cancel button at the bottom of the alert dialog
+bool _hasOnlyOneBottomButton(
+    {@required bool showButtonForOK, @required bool showButtonForCancel}) {
+  // Bottom button means OK button and Cancel button at the bottom of the alert dialog
 
-    var hasOnlyOneBottomButton = true;
+  var hasOnlyOneBottomButton = true;
 
-    if (showButtonForOK == showButtonForCancel) {
-      hasOnlyOneBottomButton = false;
-    }
-
-    return hasOnlyOneBottomButton;
+  if (showButtonForOK == showButtonForCancel) {
+    hasOnlyOneBottomButton = false;
   }
+
+  return hasOnlyOneBottomButton;
 }
