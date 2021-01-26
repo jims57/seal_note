@@ -95,8 +95,6 @@ class Notes extends Table {
   IntColumn get folderId =>
       integer().withDefault(const Constant(3)).named('folderId')();
 
-  // TextColumn get title => text().withLength(min: 2, max: 200)();
-
   TextColumn get content => text().nullable()();
 
   TextColumn get created => text().map(const IsoDateTimeConverter())();
@@ -106,6 +104,11 @@ class Notes extends Table {
   TextColumn get nextReviewTime => text()
       .nullable()
       .named('nextReviewTime')
+      .map(const IsoDateTimeConverter())();
+
+  TextColumn get oldNextReviewTime => text()
+      .nullable()
+      .named('oldNextReviewTime')
       .map(const IsoDateTimeConverter())();
 
   IntColumn get reviewProgressNo =>
@@ -186,6 +189,12 @@ class ReviewPlanConfigs extends Table {
   // For review plans
   'getFolderReviewPlanByFolderId':
       "SELECT rp.id reviewPlanId, rp.name reviewPlanName FROM reviewPlans rp WHERE id =( SELECT reviewPlanId FROM folders WHERE id = :folderId);",
+  'setFolderToNonReviewOneFromReviewOne':
+      "UPDATE notes SET oldNextReviewTime = nextReviewTime, nextReviewTime = NULL WHERE folderId = :folderId;",
+  'setFolderToReviewOneFromNonReviewOne':
+      "UPDATE notes SET nextReviewTime =(CASE WHEN oldNextReviewTime IS NOT NULL THEN oldNextReviewTime ELSE :now END), oldNextReviewTime = NULL WHERE folderId = :folderId; ",
+  'setFolderToReviewOneFromAnother':
+      "UPDATE notes SET nextReviewTime =(CASE WHEN nextReviewTime IS NULL THEN :now ELSE nextReviewTime END) WHERE folderId = :folderId; ",
 })
 class Database extends _$Database {
   Database(QueryExecutor e) : super(e);
@@ -418,6 +427,7 @@ class Database extends _$Database {
 
   Future<int> updateFolderReviewPlanId({
     @required int folderId,
+    @required int oldReviewPlanId,
     @required int newReviewPlanId,
     bool forceToUpdateNotesWithNullNextReviewTimeByNow = true,
   }) async {
@@ -440,18 +450,31 @@ class Database extends _$Database {
       if (!forceToUpdateNotesWithNullNextReviewTimeByNow) {
         effectedRows = foldersEffectedRows;
       } else {
-        Value<DateTime> nextReviewTimeValue =
-            Value(TimeHandler.getNowForLocal());
         var notesEffectedRows = 0;
 
         // Make sure all notes with Null nextReviewTime in the folder to have nextReviewTime value
         if (foldersEffectedRows > 0) {
-          notesEffectedRows = await (update(notes)
-                ..where((n) => isNull(n.nextReviewTime))
-                ..where((n) => n.folderId.equals(folderId)))
-              .write(NotesCompanion(
-            nextReviewTime: nextReviewTimeValue,
-          ));
+          // When it is setting the folder to a review one
+          var now = TimeHandler.getNowForLocal().toIso8601String();
+
+          // Check if it is setting a review plan to the folder or not
+          if (oldReviewPlanId != 0 && newReviewPlanId != 0) {
+            // When switching review plans from one to another
+            notesEffectedRows =
+                await setFolderToReviewOneFromAnother(now, folderId);
+          } else {
+            // When changing review plan between review one and non-review one
+
+            if (newReviewPlanId == 0) {
+              // When it is setting the folder to a non-review one from a review one
+              notesEffectedRows =
+                  await setFolderToNonReviewOneFromReviewOne(folderId);
+            } else {
+              // When it is setting the folder to review one from a non-review one
+              notesEffectedRows =
+                  await setFolderToReviewOneFromNonReviewOne(now, folderId);
+            }
+          }
         }
 
         effectedRows = notesEffectedRows;

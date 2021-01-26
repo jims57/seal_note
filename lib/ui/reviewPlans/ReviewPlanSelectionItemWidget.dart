@@ -28,7 +28,7 @@ class ReviewPlanSelectionItemWidget extends StatefulWidget {
   final bool isBottomLeftAndBottomRightCornerRound;
   final bool showDivider;
   final bool addBottomMargin;
-  final Function(int, String) onTap;
+  final Function(int, int, String) onTap;
 
   @override
   _ReviewPlanSelectionItemWidgetState createState() =>
@@ -81,7 +81,8 @@ class _ReviewPlanSelectionItemWidgetState
           widget.isBottomLeftAndBottomRightCornerRound,
       onTap: () {
         if (widget.onTap != null) {
-          widget.onTap(widget.reviewPlanId, widget.reviewPlanName);
+          widget.onTap(widget.selectedReviewPlanId, widget.reviewPlanId,
+              widget.reviewPlanName);
         }
       },
     );

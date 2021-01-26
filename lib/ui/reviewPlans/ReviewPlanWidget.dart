@@ -60,19 +60,25 @@ class ReviewPlanWidgetState extends State<ReviewPlanWidget> {
   }
 
   void _clickReviewPlanSelectionItemWidgetCallback(
-      int reviewPlanId, String reviewPlanName) {
-    setState(() {
-      selectedReviewPlanId = reviewPlanId;
-      selectedReviewPlanName = reviewPlanName;
+    int oldReviewPlanId,
+    int newReviewPlanId,
+    String reviewPlanName,
+  ) {
+    if (selectedReviewPlanId != newReviewPlanId) {
+      setState(() {
+        selectedReviewPlanId = newReviewPlanId;
+        selectedReviewPlanName = reviewPlanName;
 
-      // Update the reviewPlanId for the folder
-      GlobalState.database.updateFolderReviewPlanId(
-        folderId: widget.folderId,
-        newReviewPlanId: selectedReviewPlanId,
-      );
+        // Update the reviewPlanId for the folder
+        GlobalState.database.updateFolderReviewPlanId(
+          folderId: widget.folderId,
+          oldReviewPlanId: oldReviewPlanId,
+          newReviewPlanId: newReviewPlanId,
+        );
 
-      _buildReviewPlanSelectionItemWidgetList(triggerSetState: false);
-    });
+        _buildReviewPlanSelectionItemWidgetList(triggerSetState: false);
+      });
+    }
   }
 
   void _initReviewPlanIdAndNameVar() {

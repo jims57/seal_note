@@ -959,6 +959,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
   final DateTime created;
   final DateTime updated;
   final DateTime nextReviewTime;
+  final DateTime oldNextReviewTime;
   final int reviewProgressNo;
   final bool isReviewFinished;
   final bool isDeleted;
@@ -970,6 +971,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       @required this.created,
       @required this.updated,
       this.nextReviewTime,
+      this.oldNextReviewTime,
       this.reviewProgressNo,
       @required this.isReviewFinished,
       @required this.isDeleted,
@@ -992,6 +994,9 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           .mapFromDatabaseResponse(data['${effectivePrefix}updated'])),
       nextReviewTime: $NotesTable.$converter2.mapToDart(stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}nextReviewTime'])),
+      oldNextReviewTime: $NotesTable.$converter3.mapToDart(
+          stringType.mapFromDatabaseResponse(
+              data['${effectivePrefix}oldNextReviewTime'])),
       reviewProgressNo: intType
           .mapFromDatabaseResponse(data['${effectivePrefix}reviewProgressNo']),
       isReviewFinished: boolType
@@ -1027,6 +1032,11 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       map['nextReviewTime'] =
           Variable<String>(converter.mapToSql(nextReviewTime));
     }
+    if (!nullToAbsent || oldNextReviewTime != null) {
+      final converter = $NotesTable.$converter3;
+      map['oldNextReviewTime'] =
+          Variable<String>(converter.mapToSql(oldNextReviewTime));
+    }
     if (!nullToAbsent || reviewProgressNo != null) {
       map['reviewProgressNo'] = Variable<int>(reviewProgressNo);
     }
@@ -1060,6 +1070,9 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       nextReviewTime: nextReviewTime == null && nullToAbsent
           ? const Value.absent()
           : Value(nextReviewTime),
+      oldNextReviewTime: oldNextReviewTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(oldNextReviewTime),
       reviewProgressNo: reviewProgressNo == null && nullToAbsent
           ? const Value.absent()
           : Value(reviewProgressNo),
@@ -1085,6 +1098,8 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       created: serializer.fromJson<DateTime>(json['created']),
       updated: serializer.fromJson<DateTime>(json['updated']),
       nextReviewTime: serializer.fromJson<DateTime>(json['nextReviewTime']),
+      oldNextReviewTime:
+          serializer.fromJson<DateTime>(json['oldNextReviewTime']),
       reviewProgressNo: serializer.fromJson<int>(json['reviewProgressNo']),
       isReviewFinished: serializer.fromJson<bool>(json['isReviewFinished']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
@@ -1101,6 +1116,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       'created': serializer.toJson<DateTime>(created),
       'updated': serializer.toJson<DateTime>(updated),
       'nextReviewTime': serializer.toJson<DateTime>(nextReviewTime),
+      'oldNextReviewTime': serializer.toJson<DateTime>(oldNextReviewTime),
       'reviewProgressNo': serializer.toJson<int>(reviewProgressNo),
       'isReviewFinished': serializer.toJson<bool>(isReviewFinished),
       'isDeleted': serializer.toJson<bool>(isDeleted),
@@ -1115,6 +1131,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           DateTime created,
           DateTime updated,
           DateTime nextReviewTime,
+          DateTime oldNextReviewTime,
           int reviewProgressNo,
           bool isReviewFinished,
           bool isDeleted,
@@ -1126,6 +1143,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
         created: created ?? this.created,
         updated: updated ?? this.updated,
         nextReviewTime: nextReviewTime ?? this.nextReviewTime,
+        oldNextReviewTime: oldNextReviewTime ?? this.oldNextReviewTime,
         reviewProgressNo: reviewProgressNo ?? this.reviewProgressNo,
         isReviewFinished: isReviewFinished ?? this.isReviewFinished,
         isDeleted: isDeleted ?? this.isDeleted,
@@ -1140,6 +1158,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           ..write('created: $created, ')
           ..write('updated: $updated, ')
           ..write('nextReviewTime: $nextReviewTime, ')
+          ..write('oldNextReviewTime: $oldNextReviewTime, ')
           ..write('reviewProgressNo: $reviewProgressNo, ')
           ..write('isReviewFinished: $isReviewFinished, ')
           ..write('isDeleted: $isDeleted, ')
@@ -1162,11 +1181,13 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
                       $mrjc(
                           nextReviewTime.hashCode,
                           $mrjc(
-                              reviewProgressNo.hashCode,
+                              oldNextReviewTime.hashCode,
                               $mrjc(
-                                  isReviewFinished.hashCode,
-                                  $mrjc(isDeleted.hashCode,
-                                      createdBy.hashCode))))))))));
+                                  reviewProgressNo.hashCode,
+                                  $mrjc(
+                                      isReviewFinished.hashCode,
+                                      $mrjc(isDeleted.hashCode,
+                                          createdBy.hashCode)))))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -1177,6 +1198,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           other.created == this.created &&
           other.updated == this.updated &&
           other.nextReviewTime == this.nextReviewTime &&
+          other.oldNextReviewTime == this.oldNextReviewTime &&
           other.reviewProgressNo == this.reviewProgressNo &&
           other.isReviewFinished == this.isReviewFinished &&
           other.isDeleted == this.isDeleted &&
@@ -1190,6 +1212,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
   final Value<DateTime> created;
   final Value<DateTime> updated;
   final Value<DateTime> nextReviewTime;
+  final Value<DateTime> oldNextReviewTime;
   final Value<int> reviewProgressNo;
   final Value<bool> isReviewFinished;
   final Value<bool> isDeleted;
@@ -1201,6 +1224,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     this.created = const Value.absent(),
     this.updated = const Value.absent(),
     this.nextReviewTime = const Value.absent(),
+    this.oldNextReviewTime = const Value.absent(),
     this.reviewProgressNo = const Value.absent(),
     this.isReviewFinished = const Value.absent(),
     this.isDeleted = const Value.absent(),
@@ -1213,6 +1237,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     @required DateTime created,
     @required DateTime updated,
     this.nextReviewTime = const Value.absent(),
+    this.oldNextReviewTime = const Value.absent(),
     this.reviewProgressNo = const Value.absent(),
     this.isReviewFinished = const Value.absent(),
     this.isDeleted = const Value.absent(),
@@ -1226,6 +1251,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     Expression<String> created,
     Expression<String> updated,
     Expression<String> nextReviewTime,
+    Expression<String> oldNextReviewTime,
     Expression<int> reviewProgressNo,
     Expression<bool> isReviewFinished,
     Expression<bool> isDeleted,
@@ -1238,6 +1264,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
       if (created != null) 'created': created,
       if (updated != null) 'updated': updated,
       if (nextReviewTime != null) 'nextReviewTime': nextReviewTime,
+      if (oldNextReviewTime != null) 'oldNextReviewTime': oldNextReviewTime,
       if (reviewProgressNo != null) 'reviewProgressNo': reviewProgressNo,
       if (isReviewFinished != null) 'isReviewFinished': isReviewFinished,
       if (isDeleted != null) 'isDeleted': isDeleted,
@@ -1252,6 +1279,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
       Value<DateTime> created,
       Value<DateTime> updated,
       Value<DateTime> nextReviewTime,
+      Value<DateTime> oldNextReviewTime,
       Value<int> reviewProgressNo,
       Value<bool> isReviewFinished,
       Value<bool> isDeleted,
@@ -1263,6 +1291,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
       created: created ?? this.created,
       updated: updated ?? this.updated,
       nextReviewTime: nextReviewTime ?? this.nextReviewTime,
+      oldNextReviewTime: oldNextReviewTime ?? this.oldNextReviewTime,
       reviewProgressNo: reviewProgressNo ?? this.reviewProgressNo,
       isReviewFinished: isReviewFinished ?? this.isReviewFinished,
       isDeleted: isDeleted ?? this.isDeleted,
@@ -1295,6 +1324,11 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
       map['nextReviewTime'] =
           Variable<String>(converter.mapToSql(nextReviewTime.value));
     }
+    if (oldNextReviewTime.present) {
+      final converter = $NotesTable.$converter3;
+      map['oldNextReviewTime'] =
+          Variable<String>(converter.mapToSql(oldNextReviewTime.value));
+    }
     if (reviewProgressNo.present) {
       map['reviewProgressNo'] = Variable<int>(reviewProgressNo.value);
     }
@@ -1319,6 +1353,7 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
           ..write('created: $created, ')
           ..write('updated: $updated, ')
           ..write('nextReviewTime: $nextReviewTime, ')
+          ..write('oldNextReviewTime: $oldNextReviewTime, ')
           ..write('reviewProgressNo: $reviewProgressNo, ')
           ..write('isReviewFinished: $isReviewFinished, ')
           ..write('isDeleted: $isDeleted, ')
@@ -1400,6 +1435,20 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
     );
   }
 
+  final VerificationMeta _oldNextReviewTimeMeta =
+      const VerificationMeta('oldNextReviewTime');
+  GeneratedTextColumn _oldNextReviewTime;
+  @override
+  GeneratedTextColumn get oldNextReviewTime =>
+      _oldNextReviewTime ??= _constructOldNextReviewTime();
+  GeneratedTextColumn _constructOldNextReviewTime() {
+    return GeneratedTextColumn(
+      'oldNextReviewTime',
+      $tableName,
+      true,
+    );
+  }
+
   final VerificationMeta _reviewProgressNoMeta =
       const VerificationMeta('reviewProgressNo');
   GeneratedIntColumn _reviewProgressNo;
@@ -1451,6 +1500,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
         created,
         updated,
         nextReviewTime,
+        oldNextReviewTime,
         reviewProgressNo,
         isReviewFinished,
         isDeleted,
@@ -1481,6 +1531,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
     context.handle(_createdMeta, const VerificationResult.success());
     context.handle(_updatedMeta, const VerificationResult.success());
     context.handle(_nextReviewTimeMeta, const VerificationResult.success());
+    context.handle(_oldNextReviewTimeMeta, const VerificationResult.success());
     if (data.containsKey('reviewProgressNo')) {
       context.handle(
           _reviewProgressNoMeta,
@@ -1522,6 +1573,8 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
   static TypeConverter<DateTime, String> $converter1 =
       const IsoDateTimeConverter();
   static TypeConverter<DateTime, String> $converter2 =
+      const IsoDateTimeConverter();
+  static TypeConverter<DateTime, String> $converter3 =
       const IsoDateTimeConverter();
 }
 
@@ -2373,6 +2426,33 @@ abstract class _$Database extends GeneratedDatabase {
         reviewPlanName: row.readString('reviewPlanName'),
       );
     });
+  }
+
+  Future<int> setFolderToNonReviewOneFromReviewOne(int folderId) {
+    return customUpdate(
+      'UPDATE notes SET oldNextReviewTime = nextReviewTime, nextReviewTime = NULL WHERE folderId = :folderId;',
+      variables: [Variable.withInt(folderId)],
+      updates: {notes},
+      updateKind: UpdateKind.update,
+    );
+  }
+
+  Future<int> setFolderToReviewOneFromNonReviewOne(String now, int folderId) {
+    return customUpdate(
+      'UPDATE notes SET nextReviewTime =(CASE WHEN oldNextReviewTime IS NOT NULL THEN oldNextReviewTime ELSE :now END), oldNextReviewTime = NULL WHERE folderId = :folderId;',
+      variables: [Variable.withString(now), Variable.withInt(folderId)],
+      updates: {notes},
+      updateKind: UpdateKind.update,
+    );
+  }
+
+  Future<int> setFolderToReviewOneFromAnother(String now, int folderId) {
+    return customUpdate(
+      'UPDATE notes SET nextReviewTime =(CASE WHEN nextReviewTime IS NULL THEN :now ELSE nextReviewTime END) WHERE folderId = :folderId;',
+      variables: [Variable.withString(now), Variable.withInt(folderId)],
+      updates: {notes},
+      updateKind: UpdateKind.update,
+    );
   }
 
   @override
