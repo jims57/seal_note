@@ -138,21 +138,23 @@ class MasterDetailPageState extends State<MasterDetailPage>
         // after rotating event // check rotation action
         // Check if the editor is in edit mode or not, only it won't go to the cursor position unless it is in edit mode
         var goToCursorPosition = false;
-        if (!GlobalState.isQuillReadOnly) {
+        if (!GlobalState.isQuillReadOnly && GlobalState.keyboardHeight > 0.0) {
           // When the editor is in edit mode, force it to navigate to the cursor position
           goToCursorPosition = true;
+
+          GlobalState.noteDetailWidgetState.currentState
+              .triggerEditorToAutoFitScreen(
+                  goToCursorPosition: goToCursorPosition);
         }
-        GlobalState.noteDetailWidgetState.currentState
-            .triggerEditorToAutoFitScreen(
-                goToCursorPosition: goToCursorPosition);
 
         // Check if the move note alert dialog is being shown
         if (GlobalState.isAlertDialogBeingShown) {
           GlobalState.noteDetailWidgetState.currentState
               .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
-          
+
           // When there is an alert dialog being shown, try to notify to change its height
-          GlobalState.alertDialogHeightChangeNotifier.notifyAlertDialogToChangeHeight();
+          GlobalState.alertDialogHeightChangeNotifier
+              .notifyAlertDialogToChangeHeight();
         }
       });
 

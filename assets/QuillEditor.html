@@ -2291,11 +2291,14 @@
 
             setTimeout(function () {
                 quill.enable();
-                quill.focus();
+                // quill.focus();
+                // quill.insertText(0, 'Hello', 'bold', true);
+                // if(printLogToDartFromJs) Print.postMessage('quill.focus(); is commented out');
                 setEditorHeight(0, true);
                 // setTimeout(function () {
-                //     setEditorHeight(0, true);
-                // }, 300);
+                //     quill.focus();
+                //     if(printLogToDartFromJs) Print.postMessage('quill.focus();100');
+                // }, 3000);
 
                 // goToQuillCursorPostion();
             }, 300);
