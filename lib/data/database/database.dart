@@ -187,7 +187,7 @@ class ReviewPlanConfigs extends Table {
       "DELETE FROM notes WHERE strftime('%Y-%m-%d %H:%M:%S', updated) <= strftime('%Y-%m-%d %H:%M:%S', :minAvailableDateTime); ",
 
   // For note review plan related
-  'setRightReviewProgressNoAndIsReviewFinishedFieldForAllNotes': // Logic: https://user-images.githubusercontent.com/1920873/106012676-969c9e80-60f6-11eb-984f-883e77df8eb5.png
+  'setRightReviewProgressNoAndIsReviewFinishedFieldForAllNotes': // Logic: https://docs.qq.com/sheet/DZEt3YWNLcURrVnF6?tab=BB08J2
       "WITH progressTable1 AS( SELECT folderId, ( SELECT CASE WHEN reviewPlanId > 0 THEN 1 ELSE 0 END FROM folders WHERE id = n.folderId) AS isReviewFolder, id AS noteId, (CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END) AS reviewProgressNo, ( SELECT (CASE WHEN count( * ) = 0 THEN 0 ELSE count( * ) + 1 END) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal, isReviewFinished FROM notes n ), progressTable2 AS ( SELECT (CASE WHEN isReviewFolder = 1 AND reviewProgressNo > progressTotal THEN 1 WHEN isReviewFolder = 1 AND reviewProgressNo = progressTotal AND isReviewFinished = 0 THEN 2 WHEN isReviewFolder = 1 AND reviewProgressNo < progressTotal AND isReviewFinished = 1 THEN 3 WHEN isReviewFolder = 0 AND isReviewFinished = 1 THEN 4 ELSE 0 END) AS conditionNo, * FROM progressTable1 ) UPDATE notes SET reviewProgressNo = (CASE WHEN ( SELECT conditionNo FROM progressTable2 WHERE noteId = notes.id ) = 1 THEN ( SELECT progressTotal FROM progressTable2 WHERE noteId = notes.id ) ELSE notes.reviewProgressNo END), isReviewFinished = (CASE WHEN ( SELECT conditionNo FROM progressTable2 WHERE noteId = notes.id ) IN (1, 2) THEN 1 ELSE 0 END) WHERE id IN ( SELECT noteId FROM progressTable2 WHERE conditionNo > 0 ); ",
 
   // For review plans
@@ -491,11 +491,17 @@ class Database extends _$Database {
   }
 
 // Notes
-  Future<String> getNoteContentById({int noteId}) async {
-    var noteContent = '';
-
+  Future<NoteEntry> getNoteEntryByNoteId({@required int noteId}) async {
     var noteEntry =
         await (select(notes)..where((n) => n.id.equals(noteId))).getSingle();
+
+    return noteEntry;
+  }
+
+  Future<String> getNoteContentById({@required int noteId}) async {
+    var noteContent = '';
+
+    var noteEntry = await getNoteEntryByNoteId(noteId: noteId);
 
     if (noteEntry != null) noteContent = noteEntry.content;
 
@@ -526,32 +532,56 @@ class Database extends _$Database {
         .write(notesCompanion);
   }
 
-  Future<int> changeNoteFolderId(
-      {@required int noteId,
-      @required int newFolderId,
-      @required int typeId}) async {
-    // For more info about typeId at: https://user-images.githubusercontent.com/1920873/101114842-44bb2900-361d-11eb-9537-4492a6994286.png
+  Future<int> changeNoteFolderId({
+    @required int noteId,
+    @required int newFolderId,
+    @required int typeId,
+    @required int currentReviewPlanId,
+    @required int targetReviewPlanId,
+  }) async {
+    // For more info about typeId at:【腾讯文档】海豚笔记关键逻辑 https://docs.qq.com/sheet/DZEt3YWNLcURrVnF6
     // 0 means: Set nextReviewTime, reviewProgressNo fields to NULL and set isReviewFinished back to 0
     // 1 means: Set value to nextReviewTime and reviewProgressNo fields and set isReviewFinished back to 0
     // 2 means: Don't need to change all review related fields, such as nextReviewTIme, reviewProgressNo and isReviewFinished
 
+    // Get old value of the note
+    var noteEntry = await getNoteEntryByNoteId(noteId: noteId);
+    var nextReviewTimeValue = Value(noteEntry.nextReviewTime);
+    var oldNextReviewTimeValue = Value(noteEntry.oldNextReviewTime);
+    var isReviewFinishedValue = Value(noteEntry.isReviewFinished);
+
     var notesCompanion;
 
     if (typeId == 0) {
+      if (nextReviewTimeValue.value != null) {
+        oldNextReviewTimeValue = nextReviewTimeValue;
+        nextReviewTimeValue = Value(null);
+      }
+      isReviewFinishedValue = Value(false);
+
       notesCompanion = NotesCompanion(
           id: Value(noteId),
           folderId: Value(newFolderId),
-          nextReviewTime: Value(null),
-          reviewProgressNo: Value(null),
-          isReviewFinished: Value(false),
+          nextReviewTime: nextReviewTimeValue,
+          oldNextReviewTime: oldNextReviewTimeValue,
+          // reviewProgressNo: Value(null),
+          isReviewFinished: isReviewFinishedValue,
           updated: Value(TimeHandler.getNowForLocal()));
     } else if (typeId == 1) {
+      if (nextReviewTimeValue.value == null) {
+        if (oldNextReviewTimeValue.value != null) {
+          nextReviewTimeValue = oldNextReviewTimeValue;
+        } else {
+          nextReviewTimeValue = Value(TimeHandler.getNowForLocal());
+        }
+      }
+
       notesCompanion = NotesCompanion(
           id: Value(noteId),
           folderId: Value(newFolderId),
-          nextReviewTime: Value(TimeHandler.getNowForLocal()),
+          nextReviewTime: nextReviewTimeValue,
           // Review instantly
-          reviewProgressNo: Value(0),
+          // reviewProgressNo: Value(0),
           isReviewFinished: Value(false),
           updated: Value(TimeHandler.getNowForLocal()));
     } else {

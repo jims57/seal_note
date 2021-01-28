@@ -146,11 +146,15 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
                 currentReviewPlanId: currentReviewPlanId,
                 targetReviewPlanId: targetReviewPlanId);
 
-            var effectedRowCount = await GlobalState.database
-                .changeNoteFolderId(
-                    noteId: GlobalState.selectedNoteModel.id,
-                    newFolderId: GlobalState.targetFolderIdNoteIsMovingTo,
-                    typeId: typeId);
+            var effectedRowCount =
+                await GlobalState.database.changeNoteFolderId(
+              // change note folder id method
+              noteId: GlobalState.selectedNoteModel.id,
+              newFolderId: GlobalState.targetFolderIdNoteIsMovingTo,
+              typeId: typeId,
+              currentReviewPlanId: currentReviewPlanId,
+              targetReviewPlanId: targetReviewPlanId,
+            );
 
             // When the dialog for folder selection isn't hidden, we should hide it by code
             if (!isDialogForFolderSelectionHidden) {
@@ -168,7 +172,8 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
               GlobalState.noteListWidgetForTodayState.currentState
                   .triggerSetState(
                       forceToRefreshNoteListByDb: false,
-                      forceToSetBackgroundColorToFirstItemIfBackgroundNeeded: true,
+                      forceToSetBackgroundColorToFirstItemIfBackgroundNeeded:
+                          true,
                       refreshFolderListPageFromDbByTheWay: true);
             }
           }
