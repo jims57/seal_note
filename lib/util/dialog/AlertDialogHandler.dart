@@ -152,53 +152,52 @@ class AlertDialogHandler {
             ),
           )),
           contentPadding: EdgeInsets.all(0.0),
-          content: Expanded(
-            child: Consumer<AlertDialogHeightChangeNotifier>(
-                builder: (cxt, alertDialogHeightChangeNotifier, child) {
-              var theColumn = Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  (expandRemarkToMaxFinite)
-                      ? Expanded(
-                          child: singleChildScrollView,
-                        )
-                      : singleChildScrollView,
-                  // singleChildScrollView,
-                  if (showButtonForCancel || showButtonForOK)
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: (_hasOnlyOneBottomButton(
-                                showButtonForOK: showButtonForOK,
-                                showButtonForCancel: showButtonForCancel))
-                            ? MainAxisAlignment.center
-                            : MainAxisAlignment.spaceBetween,
-                        // mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          (showButtonForCancel)
-                              ? FlatButton(
-                                  // alert dialog cancel button // cancel button
-                                  // dialog cancel button
+          content: Consumer<AlertDialogHeightChangeNotifier>(
+              builder: (cxt, alertDialogHeightChangeNotifier, child) {
+                var theColumn = Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    (expandRemarkToMaxFinite)
+                        ? Expanded(
+                      child: singleChildScrollView,
+                    )
+                        : singleChildScrollView,
+                    // singleChildScrollView,
+                    if (showButtonForCancel || showButtonForOK)
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: (_hasOnlyOneBottomButton(
+                              showButtonForOK: showButtonForOK,
+                              showButtonForCancel: showButtonForCancel))
+                              ? MainAxisAlignment.center
+                              : MainAxisAlignment.spaceBetween,
+                          // mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            (showButtonForCancel)
+                                ? FlatButton(
+                              // alert dialog cancel button // cancel button
+                              // dialog cancel button
 
-                                  child: Text(
-                                    buttonTextForCancel,
-                                    style: TextStyle(
-                                        color: GlobalState.themeBlueColor),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    shouldContinueAction = false;
+                              child: Text(
+                                buttonTextForCancel,
+                                style: TextStyle(
+                                    color: GlobalState.themeBlueColor),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                shouldContinueAction = false;
 
-                                    if (restoreWebViewToShowIfNeeded) {
-                                      GlobalState
-                                          .noteDetailWidgetState.currentState
-                                          .restoreWebViewToShowIfNeeded();
-                                    }
-                                  },
-                                )
-                              : Container(),
-                          (showButtonForOK)
-                              ? Consumer<AppState>(
-                                  builder: (cxt, appState, child) {
+                                if (restoreWebViewToShowIfNeeded) {
+                                  GlobalState
+                                      .noteDetailWidgetState.currentState
+                                      .restoreWebViewToShowIfNeeded();
+                                }
+                              },
+                            )
+                                : Container(),
+                            (showButtonForOK)
+                                ? Consumer<AppState>(
+                                builder: (cxt, appState, child) {
                                   var enableOKButton =
                                       appState.enableAlertDialogOKButton;
 
@@ -230,28 +229,34 @@ class AlertDialogHandler {
                                     },
                                   );
                                 })
-                              : Container(),
-                        ],
+                                : Container(),
+                          ],
+                        ),
                       ),
-                    ),
-                ],
-              );
+                  ],
+                );
 
-              if (expandRemarkToMaxFinite) {
-                return Container(
-                  height: GlobalState.screenHeight / 3,
-                  child: theColumn,
-                );
-              } else {
-                return SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  child: Container(
+                if (expandRemarkToMaxFinite) {
+                  return Container(
+                    height: GlobalState.screenHeight / 3,
                     child: theColumn,
-                  ),
-                );
-              }
-            }),
-          ),
+                  );
+                } else {
+                  // return Container(
+                  //   color: Colors.red,
+                  //   // height: 50,
+                  //   child: theColumn,
+                  // );
+
+                  return SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    child: Container(
+                      // color: Colors.red,
+                      child: theColumn,
+                    ),
+                  );
+                }
+              }),
         );
       },
     );
