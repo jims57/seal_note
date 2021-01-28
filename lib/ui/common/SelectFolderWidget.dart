@@ -164,6 +164,10 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
             if (effectedRowCount > 0) {
               // When sqlite is updated, refresh the note list
 
+              // Anyway to update review related fields in notes
+              await GlobalState.database
+                  .setRightReviewProgressNoAndIsReviewFinishedFieldForAllNotes();
+
               // Remove the note item from the note list variable
               GlobalState.noteListWidgetForTodayState.currentState
                   .removeItemFromNoteListByIndex(
