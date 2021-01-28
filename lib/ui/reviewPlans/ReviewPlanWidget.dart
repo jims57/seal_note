@@ -59,26 +59,30 @@ class ReviewPlanWidgetState extends State<ReviewPlanWidget> {
     reviewPlanList = await GlobalState.database.getAllReviewPlans();
   }
 
-  void _clickReviewPlanSelectionItemWidgetCallback(
+  Future<void> _clickReviewPlanSelectionItemWidgetCallback(
     int oldReviewPlanId,
     int newReviewPlanId,
     String reviewPlanName,
-  ) {
+  ) async {
     if (selectedReviewPlanId != newReviewPlanId) {
-      setState(() {
-        selectedReviewPlanId = newReviewPlanId;
-        selectedReviewPlanName = reviewPlanName;
+      selectedReviewPlanId = newReviewPlanId;
+      selectedReviewPlanName = reviewPlanName;
 
-        // Update the reviewPlanId for the folder
-        GlobalState.database.updateFolderReviewPlanId(
-          folderId: widget.folderId,
-          oldReviewPlanId: oldReviewPlanId,
-          newReviewPlanId: newReviewPlanId,
-        );
+      // Update the reviewPlanId for the folder
+      var effectedRows = await GlobalState.database.updateFolderReviewPlanId(
+        folderId: widget.folderId,
+        oldReviewPlanId: oldReviewPlanId,
+        newReviewPlanId: newReviewPlanId,
+      );
 
-        _buildReviewPlanSelectionItemWidgetList(triggerSetState: false);
-      });
+
+      _buildReviewPlanSelectionItemWidgetList(triggerSetState: false);
+
+      setState(() {});
     }
+
+    // Set the reviewProgressNo and isReviewFinished field to the right values
+    await GlobalState.database.setRightReviewProgressNoAndIsReviewFinishedFieldForAllNotes();
   }
 
   void _initReviewPlanIdAndNameVar() {

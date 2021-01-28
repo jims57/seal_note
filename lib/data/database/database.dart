@@ -186,6 +186,10 @@ class ReviewPlanConfigs extends Table {
   'clearDeletedNotesMoreThan30DaysAgo':
       "DELETE FROM notes WHERE strftime('%Y-%m-%d %H:%M:%S', updated) <= strftime('%Y-%m-%d %H:%M:%S', :minAvailableDateTime); ",
 
+  // For note review plan related
+  'setRightReviewProgressNoAndIsReviewFinishedFieldForAllNotes': // Logic: https://user-images.githubusercontent.com/1920873/106012676-969c9e80-60f6-11eb-984f-883e77df8eb5.png
+      "WITH progressTable1 AS( SELECT folderId, ( SELECT CASE WHEN reviewPlanId > 0 THEN 1 ELSE 0 END FROM folders WHERE id = n.folderId) AS isReviewFolder, id AS noteId, (CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END) AS reviewProgressNo, ( SELECT (CASE WHEN count( * ) = 0 THEN 0 ELSE count( * ) + 1 END) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal, isReviewFinished FROM notes n ), progressTable2 AS ( SELECT (CASE WHEN isReviewFolder = 1 AND reviewProgressNo > progressTotal THEN 1 WHEN isReviewFolder = 1 AND reviewProgressNo = progressTotal AND isReviewFinished = 0 THEN 2 WHEN isReviewFolder = 1 AND reviewProgressNo < progressTotal AND isReviewFinished = 1 THEN 3 WHEN isReviewFolder = 0 AND isReviewFinished = 1 THEN 4 ELSE 0 END) AS conditionNo, * FROM progressTable1 ) UPDATE notes SET reviewProgressNo = (CASE WHEN ( SELECT conditionNo FROM progressTable2 WHERE noteId = notes.id ) = 1 THEN ( SELECT progressTotal FROM progressTable2 WHERE noteId = notes.id ) ELSE notes.reviewProgressNo END), isReviewFinished = (CASE WHEN ( SELECT conditionNo FROM progressTable2 WHERE noteId = notes.id ) IN (1, 2) THEN 1 ELSE 0 END) WHERE id IN ( SELECT noteId FROM progressTable2 WHERE conditionNo > 0 ); ",
+
   // For review plans
   'getFolderReviewPlanByFolderId':
       "SELECT rp.id reviewPlanId, rp.name reviewPlanName FROM reviewPlans rp WHERE id =( SELECT reviewPlanId FROM folders WHERE id = :folderId);",

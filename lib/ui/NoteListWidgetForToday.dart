@@ -562,6 +562,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                                   true);
                                     }
                                   }
+
+                                  // Anyway to update review related fields in notes
+                                  await GlobalState.database
+                                      .setRightReviewProgressNoAndIsReviewFinishedFieldForAllNotes();
                                 },
                               ),
                             SlideAction(
