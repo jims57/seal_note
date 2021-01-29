@@ -751,10 +751,12 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   static bool _shouldSaveNoteToDb() {
     var shouldSave = false;
 
-    if (GlobalState.selectedNoteModel.content !=
-            GlobalState.noteContentEncodedInDb &&
-        !GlobalState.isQuillReadOnly) {
-      shouldSave = true;
+    if (GlobalState.selectedNoteModel != null) {
+      if (GlobalState.selectedNoteModel.content !=
+              GlobalState.noteContentEncodedInDb &&
+          !GlobalState.isQuillReadOnly) {
+        shouldSave = true;
+      }
     }
 
     return shouldSave;

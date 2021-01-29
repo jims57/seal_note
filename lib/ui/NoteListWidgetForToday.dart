@@ -171,10 +171,12 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                 // Check if the note list is the selected note currently
                 var isSelectedItem = false;
-                if (GlobalState.screenType != 1 &&
-                    GlobalState.selectedNoteModel.id == theNote.id &&
-                    theNote.id != 0) {
-                  isSelectedItem = true;
+                if(GlobalState.selectedNoteModel!=null){
+                  if (GlobalState.screenType != 1 &&
+                      GlobalState.selectedNoteModel.id == theNote.id &&
+                      theNote.id != 0) {
+                    isSelectedItem = true;
+                  }
                 }
 
                 var theNoteId = theNote.id;
@@ -918,45 +920,50 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       GlobalState.selectedNoteModel = theNote;
     });
 
-    // Get note related variables
-    var folderId = theNote.folderId;
-    var noteId = theNote.id;
-    // Force to get note content from sqlite rather than from UI directly to beef up the robustness
-    var noteContent =
-        await GlobalState.database.getNoteContentById(noteId: noteId);
+    // Make sure note has data
+    if (theNote != null) {
+      // Get note related variables
+      var folderId = theNote.folderId;
+      var noteId = theNote.id;
+      // Force to get note content from sqlite rather than from UI directly to beef up the robustness
+      var noteContent =
+          await GlobalState.database.getNoteContentById(noteId: noteId);
 
-    // Record the encoded content saved in db for future comparison
-    GlobalState.noteContentEncodedInDb = GlobalState.selectedNoteModel.content;
+      // Record the encoded content saved in db for future comparison
+      GlobalState.noteContentEncodedInDb =
+          GlobalState.selectedNoteModel.content;
 
-    // Click note list item
-    GlobalState.isClickingNoteListItem = true;
-    GlobalState.noteModelForConsumer.noteId = noteId;
-    GlobalState.isQuillReadOnly = true;
-    GlobalState.isEditingOrCreatingNote = false;
+      // Click note list item
+      GlobalState.isClickingNoteListItem = true;
+      GlobalState.noteModelForConsumer.noteId = noteId;
+      GlobalState.isQuillReadOnly = true;
+      GlobalState.isEditingOrCreatingNote = false;
 
-    // Update the quill's content
-    var responseJsonString =
-        '{"isCreatingNote": false, "folderId":$folderId, "noteId":$noteId, "encodedHtml":"$noteContent"}';
+      // Update the quill's content
+      var responseJsonString =
+          '{"isCreatingNote": false, "folderId":$folderId, "noteId":$noteId, "encodedHtml":"$noteContent"}';
 
-    while (true) {
-      // while loop
+      while (true) {
+        // while loop
 
-      await GlobalState.flutterWebviewPlugin.evalJavascript(
-          "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString', true);");
+        await GlobalState.flutterWebviewPlugin.evalJavascript(
+            "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString', true);");
 
-      var noteContentEncodedFromWebView = await GlobalState.flutterWebviewPlugin
-          .evalJavascript("javascript:getNoteContentEncoded();");
+        var noteContentEncodedFromWebView = await GlobalState
+            .flutterWebviewPlugin
+            .evalJavascript("javascript:getNoteContentEncoded();");
 
-      // It won't exit the while-loop except the note content from the WebView equals to the one in global variable
-      if (_shouldBreakWhileLoop(
-          noteContentEncodedFromWebView: noteContentEncodedFromWebView)) {
-        break;
+        // It won't exit the while-loop except the note content from the WebView equals to the one in global variable
+        if (_shouldBreakWhileLoop(
+            noteContentEncodedFromWebView: noteContentEncodedFromWebView)) {
+          break;
+        }
       }
-    }
 
-    // Always try to adjust the editor's height to fit the available screen
-    GlobalState.noteDetailWidgetState.currentState
-        .triggerEditorToAutoFitScreen();
+      // Always try to adjust the editor's height to fit the available screen
+      GlobalState.noteDetailWidgetState.currentState
+          .triggerEditorToAutoFitScreen();
+    }
   }
 
   // Private method
