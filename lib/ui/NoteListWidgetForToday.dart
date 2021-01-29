@@ -171,7 +171,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                 // Check if the note list is the selected note currently
                 var isSelectedItem = false;
-                if(GlobalState.selectedNoteModel!=null){
+                if (GlobalState.selectedNoteModel != null) {
                   if (GlobalState.screenType != 1 &&
                       GlobalState.selectedNoteModel.id == theNote.id &&
                       theNote.id != 0) {
@@ -773,6 +773,14 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
             _refreshNoteListPageCaptionAndHideSyncStatus(
                 shouldHideSyncStatus: false);
+
+            if (GlobalState.screenType == 3) {
+              // Refresh the folder page by the data from db, so that unread number can be shown properly
+              // See: https://github.com/jims57/seal_note/issues/335
+              GlobalState.folderListWidgetState.currentState.triggerSetState(
+                forceToFetchFoldersFromDb: true,
+              );
+            }
           });
         }).catchError((e) {});
       }
