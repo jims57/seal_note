@@ -1451,6 +1451,8 @@
 
 <!-- Initialize Quill editor -->
 <script></script>
+
+<!-- Variables -->
 <script>
     var quill;
     var cursorIndex = 0;
@@ -1478,6 +1480,10 @@
     var noteId = 0; // If note id == 0, meaning it is a new note
     var noteContent = ''; // Note's current content
 
+    // Image related variables
+    var imageWidthInEditMode = '90%';
+    var imageWidthInReadOnlyMode = '90%';
+
     // 【debug】
     var interactWithDart = true;
     var useMultiImagePicker = true; // If false, using Quill's default image uploader
@@ -1499,7 +1505,9 @@
         interactWithDart = true;
         useMultiImagePicker = true;
     }
+</script>
 
+<script>
     // function loadDummyHtmlPage() {
     //     shouldAddDummyImagesOnLoad = true;
     //     var imageMd5;
@@ -1690,9 +1698,9 @@
     function setImageWidth($theImage, isEditingMode) {
         setTimeout(function () {
             if (isEditingMode) { // In edit mode
-                $theImage.css('width', '70%');
+                $theImage.css('width', imageWidthInEditMode);
             } else { // In readOnly mode
-                $theImage.css('width', '100%');
+                $theImage.css('width', imageWidthInReadOnlyMode);
             }
         }, 200);
     }
@@ -2191,7 +2199,7 @@
         var $theEditor = $('div.ql-editor');
         var $theClonedEditor = $theEditor.clone(false, false);
         $theClonedEditor.find('img').removeAttr('src');
-        $theClonedEditor.find('img').css('width', '100%'); // Anyway, set the images' width back to 100% before saving to db
+        $theClonedEditor.find('img').css('width', imageWidthInReadOnlyMode); // Anyway, set the images' width back to 100% before saving to db
         var newNoteHtml = $theClonedEditor.html();
         var newNoteEncodedHtml = encodeHtml(newNoteHtml);
 
@@ -2284,7 +2292,7 @@
 
         if (isEditingMode) { // In edit mode
             if (printLogToDartFromJs) Print.postMessage('setQuillToReadOnly(isReadOnly =' + isReadOnly + ', isNewNote = ' + isNewNote + ') in if(isEditingMode=true)');
-            $('img').css('width', '70%');
+            $('img').css('width', imageWidthInEditMode);
             $('#toolbar').show();
 
             isCreatingNote = isNewNote;
@@ -2303,7 +2311,7 @@
                 // goToQuillCursorPostion();
             }, 300);
         } else { // In read only mode
-            $('img').css('width', '100%');
+            $('img').css('width', imageWidthInReadOnlyMode);
             $('#toolbar').hide();
 
             if (printLogToDartFromJs) Print.postMessage('setQuillToReadOnly(isReadOnly =' + isReadOnly + ', isNewNote = ' + isNewNote + ') in if(isEditingMode=false)');
