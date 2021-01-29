@@ -774,7 +774,17 @@ class Database extends _$Database {
     });
   }
 
-// Review plan configs
+  Future<int> getProgressTotalByReviewPlanId(
+      {@required int reviewPlanId}) async {
+    var progressTotal = (await (select(reviewPlanConfigs)
+                  ..where((rpc) => rpc.reviewPlanId.equals(reviewPlanId)))
+                .get())
+            .length +
+        1;
+
+    return progressTotal;
+  }
+
   Future<void> upsertReviewPlanConfigsInBatch(
       List<ReviewPlanConfigEntry> reviewPlanConfigEntryList) async {
     return await batch((batch) {

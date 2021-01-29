@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/model/NoteWithProgressTotal.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 
 class SelectFolderWidget extends StatefulWidget {
@@ -99,7 +100,8 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
           var currentReviewPlanId = theFolderListItemWidget.reviewPlanId;
 
           // Check whether we should show the alert dialog for the user to confirm before continuing this action
-          var confirmTypeId = _getConfirmTypeIdForAlertDialog(
+          var confirmTypeId = await _getConfirmTypeIdForAlertDialog(
+              indexAtNoteList: widget.indexAtNoteList,
               currentReviewPlanId: currentReviewPlanId,
               targetReviewPlanId: targetReviewPlanId);
 
@@ -110,7 +112,7 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
             // move note confirm dialog
 
             var remark =
-                GlobalState.remarkForMovingNoteToFolderWithDifferentReviewPlan;
+                GlobalState.remarkForWhenNoteWillBecomeReviewFinishedAfterMovingToTargetFolder;
             if (confirmTypeId == 1) {
               remark = GlobalState.remarkForMovingNoteToFolderWithoutReviewPlan;
             }
@@ -197,10 +199,13 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
     return isFolderSelectionItemClickable;
   }
 
-  int _getConfirmTypeIdForAlertDialog(
-      {@required int currentReviewPlanId, @required int targetReviewPlanId}) {
+  Future<int> _getConfirmTypeIdForAlertDialog({
+    @required int indexAtNoteList,
+    @required int currentReviewPlanId,
+    @required int targetReviewPlanId,
+  }) async {
     // Only the two situations need to show the alert dialog for the user to confirm his action
-    // confirmTypeId = [0, 1, 2], for more info at https://user-images.githubusercontent.com/1920873/101129130-fd906080-363b-11eb-882e-7809043de79e.png
+    // confirmTypeId = [0, 1, 2], for more info at: https://docs.qq.com/sheet/DZEt3YWNLcURrVnF6
 
     var confirmTypeId;
 
@@ -209,10 +214,25 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
 
       if (targetReviewPlanId == null) {
         confirmTypeId = 1;
-      } else if (currentReviewPlanId != targetReviewPlanId) {
-        confirmTypeId = 2;
-      } else {
+      } else if (currentReviewPlanId == targetReviewPlanId) {
         confirmTypeId = 0;
+      } else {
+        // When P1 => P2(https://user-images.githubusercontent.com/1920873/106218095-9fce5e00-6211-11eb-9496-043e23b7c5a5.png)
+
+        // Get the NoteWithProgressTotal entity
+        var theNote = GlobalState.noteListWidgetForTodayState.currentState
+            .getNoteWithProgressTotalByIndexAtNoteList(
+                indexAtNoteList: indexAtNoteList);
+
+        // Get the progress total of the target review plan
+        var targetProgressTotal = await GlobalState.database
+            .getProgressTotalByReviewPlanId(reviewPlanId: targetReviewPlanId);
+
+        if (theNote.reviewProgressNo >= targetProgressTotal) {
+          confirmTypeId = 2;
+        } else {
+          confirmTypeId = 0; // Zero means it doesn't need the user to confirm his action
+        }
       }
     } else {
       // When the current review plan id is null

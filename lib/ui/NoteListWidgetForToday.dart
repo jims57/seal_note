@@ -853,6 +853,17 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     return _noteList.firstWhere((n) => n.id == noteId);
   }
 
+  NoteWithProgressTotal getNoteWithProgressTotalByIndexAtNoteList(
+      {@required int indexAtNoteList}) {
+    var noteWithProgressTotal;
+
+    if (indexAtNoteList < _noteList.length) {
+      noteWithProgressTotal = _noteList[indexAtNoteList];
+    }
+
+    return noteWithProgressTotal;
+  }
+
   void removeItemFromNoteListByIndex({@required int indexAtNoteList}) {
     // delete note list item by index
 
