@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:moor/moor.dart' show Value;
 import 'package:http/http.dart' as http;
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/database/database.dart';
@@ -253,27 +251,37 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                           // get note review time // get review time
                                           // show note review time // review time
                                           // show review time // next review time format
-                                          '${TimeHandler.getDateTimeFormatForAllKindOfNote(updated: theNote.updated, nextReviewTime: theNote.nextReviewTime, isReviewFinished: theNote.isReviewFinished)}',
+                                          // finish review format // review finish format
+                                          '${TimeHandler.getDateTimeFormatForAllKindOfNote(
+                                            updated: theNote.updated,
+                                            nextReviewTime:
+                                                theNote.nextReviewTime,
+                                            isReviewFinished:
+                                                theNote.isReviewFinished,
+                                          )}',
                                           style: TextStyle(
-                                              color: (_isReviewNote(theNote
-                                                          .nextReviewTime) &&
-                                                      _isReviewNoteOverdue(
-                                                          theNote
-                                                              .nextReviewTime) &&
-                                                      !theNote.isReviewFinished)
-                                                  ? Colors.red
-                                                  : (isSelectedItem)
-                                                      ? GlobalState
-                                                          .themeBlackColor87ForFontForeColor
-                                                      : Colors.grey[400],
-                                              fontSize: 10.0),
+                                            color: (_isReviewNote(theNote
+                                                        .nextReviewTime) &&
+                                                    _isReviewNoteOverdue(theNote
+                                                        .nextReviewTime) &&
+                                                    !theNote.isReviewFinished)
+                                                ? Colors.red
+                                                : _getFontColorAtNoteListItemBottomBySelectedStatus(
+                                                    isSelectedItem:
+                                                        isSelectedItem,
+                                                  ),
+                                            fontSize: 10.0,
+                                          ),
                                         ),
                                         Text(
                                           // progress label // show progress label
                                           // review progress label
                                           '${_showProgressLabel(theNote)}',
                                           style: TextStyle(
-                                              color: Colors.grey[400],
+                                              color:
+                                                  _getFontColorAtNoteListItemBottomBySelectedStatus(
+                                                isSelectedItem: isSelectedItem,
+                                              ),
                                               fontSize: 10.0),
                                         ),
                                       ],
@@ -1241,6 +1249,14 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     noteContent = HtmlHandler.decodeHtmlString(noteContent);
 
     return noteContent;
+  }
+
+  Color _getFontColorAtNoteListItemBottomBySelectedStatus({
+    @required bool isSelectedItem,
+  }) {
+    return (isSelectedItem)
+        ? GlobalState.themeBlackColor87ForFontForeColor
+        : Colors.grey[400];
   }
 
   String _removeOlTagAndReplaceLiTagByPTag({@required String encodedContent}) {

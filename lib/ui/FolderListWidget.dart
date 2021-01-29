@@ -197,6 +197,7 @@ class FolderListWidgetState extends State<FolderListWidget> {
                     ? Icons.delete_sweep_outlined
                     : Icons.folder_open_outlined)),
         iconColor: (isTodayFolder)
+            // folder icon color // set folder icon color
             ? GlobalState.themeOrangeColorAtiOSTodo
             : ((isAllNotesFolder)
                 ? GlobalState.themeBrownColorAtiOSTodo
