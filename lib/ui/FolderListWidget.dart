@@ -203,7 +203,9 @@ class FolderListWidgetState extends State<FolderListWidget> {
                 : ((isDeletionFolder)
                     ? GlobalState
                         .themeGreyColorAtiOSTodoForFolderGroupBackground
-                    : GlobalState.themeLightBlueColorAtiOSTodo)),
+                    : (isReviewFolder)
+                        ? GlobalState.themeGreenColorAtiOSTodo
+                        : GlobalState.themeLightBlueColorAtiOSTodo)),
         index: index,
         isDefaultFolder: isDefaultFolder,
         folderId: folderId,
