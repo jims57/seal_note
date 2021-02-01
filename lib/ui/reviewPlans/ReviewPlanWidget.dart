@@ -75,14 +75,14 @@ class ReviewPlanWidgetState extends State<ReviewPlanWidget> {
         newReviewPlanId: newReviewPlanId,
       );
 
-
       _buildReviewPlanSelectionItemWidgetList(triggerSetState: false);
 
       setState(() {});
     }
 
     // Set the reviewProgressNo and isReviewFinished field to the right values
-    await GlobalState.database.setRightReviewProgressNoAndIsReviewFinishedFieldForAllNotes();
+    await GlobalState.database
+        .setRightReviewProgressNoAndIsReviewFinishedFieldForAllNotes();
   }
 
   void _initReviewPlanIdAndNameVar() {

@@ -10,11 +10,13 @@ import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/appstate/ReusablePageChangeNotifier.dart';
 import 'package:seal_note/data/appstate/ReusablePageOpenOrCloseNotifier.dart';
 import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
+import 'package:seal_note/data/database/database.dart';
 import 'package:seal_note/mixin/check_device.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/NoteListPage.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageStackWidget.dart';
+import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
 
 import 'NoteDetailWidget.dart';
 
@@ -516,5 +518,23 @@ class MasterDetailPageState extends State<MasterDetailPage>
     GlobalState.folderPageTopContainerHeight =
         GlobalState.appBarWidgetState.currentState.getAppBarHeight();
     GlobalState.folderListPageState.currentState.triggerSetState();
+  }
+
+  Future<void> showReviewPlanPage({@required int folderId}) async {
+    // Get the review plan for the current folder
+    GetFolderReviewPlanByFolderIdResult getFolderReviewPlanByFolderIdResult =
+    await GlobalState.database
+        .getFolderReviewPlanByFolderId(folderId)
+        .getSingle();
+
+    GlobalState.masterDetailPageState.currentState.triggerToShowReusablePage(
+      title: '选择复习计划',
+      child: ReviewPlanWidget(
+        key: GlobalState.reviewPlanWidgetState,
+        folderId: folderId,
+        getFolderReviewPlanByFolderIdResult:
+        getFolderReviewPlanByFolderIdResult,
+      ),
+    );
   }
 }

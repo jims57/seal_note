@@ -3,8 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 
-import '../NoteDetailPage.dart';
-
 class FolderOptionListWidget extends StatefulWidget {
   @override
   _FolderOptionSliverChildListDelegateState createState() =>
@@ -32,8 +30,6 @@ class _FolderOptionSliverChildListDelegateState
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      // height: GlobalState.folderOptionItemHeight * 7,
-      // height: 20,
       child: CustomScrollView(
         slivers: [
           SliverList(
@@ -41,12 +37,12 @@ class _FolderOptionSliverChildListDelegateState
               [
                 SafeArea(
                   child: Container(
-                    // height: GlobalState.folderOptionItemHeight + 10,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius:  BorderRadius.only(
-                          topLeft:  Radius.circular(GlobalState.borderRadius15),
-                          topRight:  Radius.circular(GlobalState.borderRadius15)),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(GlobalState.borderRadius15),
+                          topRight:
+                              Radius.circular(GlobalState.borderRadius15)),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -58,7 +54,7 @@ class _FolderOptionSliverChildListDelegateState
                           height: 4.0,
                           decoration: BoxDecoration(
                             color: Colors.black12,
-                            borderRadius:  BorderRadius.all(
+                            borderRadius: BorderRadius.all(
                               Radius.circular(GlobalState.borderRadius15),
                             ),
                           ),
@@ -75,10 +71,12 @@ class _FolderOptionSliverChildListDelegateState
                                       if (appState.isInFolderOptionSubPanel) {
                                         return Container(
                                             alignment: Alignment.centerLeft,
-                                            height: _folderOptionCaptionTitleHeight,
+                                            height:
+                                                _folderOptionCaptionTitleHeight,
                                             color: Colors.transparent,
                                             // color: Colors.yellow,
-                                            padding: const EdgeInsets.only(left: 15.0),
+                                            padding: const EdgeInsets.only(
+                                                left: 15.0),
                                             child: Icon(
                                               Icons.keyboard_arrow_left,
                                               color: GlobalState.themeBlueColor,
@@ -89,10 +87,11 @@ class _FolderOptionSliverChildListDelegateState
                                     },
                                   ),
                                   onTap: () {
-                                    GlobalState.appState.isInFolderOptionSubPanel = false;
+                                    GlobalState.appState
+                                        .isInFolderOptionSubPanel = false;
 
-                                    Navigator.pop(
-                                        GlobalState.folderOptionItemListPanelContext);
+                                    Navigator.pop(GlobalState
+                                        .folderOptionItemListPanelContext);
                                   },
                                 ),
                               ),
@@ -103,16 +102,16 @@ class _FolderOptionSliverChildListDelegateState
                                   height: _folderOptionCaptionTitleHeight,
                                   child: Center(
                                       child: SizedBox(
-                                        // width: 160,
-                                        child: Text(
-                                          '文件夹选项',
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: _folderOptionCaptionSize,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      )),
+                                    // width: 160,
+                                    child: Text(
+                                      '文件夹选项',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: _folderOptionCaptionSize,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  )),
                                 ),
                               ),
                               // Folder option caption finish button
@@ -126,11 +125,13 @@ class _FolderOptionSliverChildListDelegateState
                                     padding: const EdgeInsets.only(right: 15.0),
                                     child: Text(
                                       '完成',
-                                      style: TextStyle(color: GlobalState.themeBlueColor),
+                                      style: TextStyle(
+                                          color: GlobalState.themeBlueColor),
                                     ),
                                   ),
                                   onTap: () {
-                                    Navigator.pop(GlobalState.noteListPageContext);
+                                    Navigator.pop(
+                                        GlobalState.noteListPageContext);
                                   },
                                 ),
                               )
@@ -167,6 +168,7 @@ class _FolderOptionSliverChildListDelegateState
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: Text(
+                                // note list page review plan item
                                 '复习计划',
                                 style: TextStyle(
                                     color: _folderOptionColor,
@@ -183,7 +185,12 @@ class _FolderOptionSliverChildListDelegateState
                     ),
                   ),
                   onTap: () {
-                    var s ='s';
+                    // note list page review plan event
+                    var s = 's';
+
+                    GlobalState.masterDetailPageState.currentState
+                        .showReviewPlanPage(
+                            folderId: GlobalState.selectedFolderIdCurrently);
                   },
                 ),
                 // Order option
@@ -223,12 +230,6 @@ class _FolderOptionSliverChildListDelegateState
                   ),
                   onTap: () {
                     GlobalState.appState.isInFolderOptionSubPanel = true;
-
-                    // Navigator.of(
-                    //     GlobalState.folderOptionItemListPanelContext)
-                    //     .push(MaterialPageRoute(builder: (c1) {
-                    //   return NoteDetailPage();
-                    // }));
                   },
                 ),
                 // Rename option

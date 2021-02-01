@@ -205,24 +205,8 @@ class _UserFolderListListenerWidgetState
                       onTap: () async {
                         // swipe to review plan event // click on review plan button
 
-                        // Get the review plan for the current folder
-                        GetFolderReviewPlanByFolderIdResult
-                            getFolderReviewPlanByFolderIdResult =
-                            await GlobalState.database
-                                .getFolderReviewPlanByFolderId(widget.folderId)
-                                .getSingle();
-
-                        GlobalState.masterDetailPageState.currentState
-                            .triggerToShowReusablePage(
-                          title: '选择复习计划',
-                          child: ReviewPlanWidget(
-                            key: GlobalState.reviewPlanWidgetState,
-                            folderId: widget.folderId,
-                            getFolderReviewPlanByFolderIdResult:
-                                getFolderReviewPlanByFolderIdResult,
-                            // folderId: widget.folderId,
-                          ),
-                        );
+                        await GlobalState.masterDetailPageState.currentState
+                            .showReviewPlanPage(folderId: widget.folderId);
                       },
                     ),
                     IconSlideAction(
