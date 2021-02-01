@@ -150,49 +150,50 @@ class _FolderOptionSliverChildListDelegateState
                   ),
                 ),
                 // Review plan option
-                GestureDetector(
-                  child: Container(
-                    color: Colors.white,
-                    height: GlobalState.folderOptionItemHeight,
-                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: Row(children: [
-                            Icon(
-                              Icons.calendar_today,
-                              color: _folderOptionColor,
-                              size: _folderOptionIconSize,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: Text(
-                                // note list page review plan item
-                                '复习计划',
-                                style: TextStyle(
-                                    color: _folderOptionColor,
-                                    fontSize: _folderOptionFontSize),
+                if (_shouldShowReviewPlanOption())
+                  GestureDetector(
+                    child: Container(
+                      color: Colors.white,
+                      height: GlobalState.folderOptionItemHeight,
+                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            child: Row(children: [
+                              Icon(
+                                Icons.calendar_today,
+                                color: _folderOptionColor,
+                                size: _folderOptionIconSize,
                               ),
-                            )
-                          ]),
-                        ),
-                        Icon(
-                          Icons.keyboard_arrow_right,
-                          size: 14.0,
-                        )
-                      ],
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  // note list page review plan item
+                                  '复习计划',
+                                  style: TextStyle(
+                                      color: _folderOptionColor,
+                                      fontSize: _folderOptionFontSize),
+                                ),
+                              )
+                            ]),
+                          ),
+                          Icon(
+                            Icons.keyboard_arrow_right,
+                            size: 14.0,
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  onTap: () {
-                    // note list page review plan event
-                    var s = 's';
+                    onTap: () {
+                      // note list page review plan event
+                      var s = 's';
 
-                    GlobalState.masterDetailPageState.currentState
-                        .showReviewPlanPage(
-                            folderId: GlobalState.selectedFolderIdCurrently);
-                  },
-                ),
+                      GlobalState.masterDetailPageState.currentState
+                          .showReviewPlanPage(
+                              folderId: GlobalState.selectedFolderIdCurrently);
+                    },
+                  ),
                 // Order option
                 GestureDetector(
                   child: Container(
@@ -352,5 +353,16 @@ class _FolderOptionSliverChildListDelegateState
         ],
       ),
     );
+  }
+
+  // Private methods
+  bool _shouldShowReviewPlanOption() {
+    var shouldShow = true;
+
+    if (GlobalState.isDefaultFolderSelected) {
+      shouldShow = false;
+    }
+
+    return shouldShow;
   }
 }
