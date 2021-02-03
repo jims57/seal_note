@@ -160,8 +160,6 @@ class _NoteListPageState extends State<NoteListPage> {
               '{"isCreatingNote": true, "folderId":$folderId, "noteId":${GlobalState.selectedNoteModel.id}, "encodedHtml":""}';
           await GlobalState.flutterWebviewPlugin.evalJavascript(
               "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString', true);");
-          
-
 
           // Refresh the note list
           if (GlobalState.screenType != 1) {
@@ -175,7 +173,8 @@ class _NoteListPageState extends State<NoteListPage> {
           GlobalState.masterDetailPageState.currentState
               .updatePageShowAndHide(shouldTriggerSetState: true);
 
-          await GlobalState.noteDetailWidgetState.currentState.showNoteReviewButtonOrNot();
+          await GlobalState.noteDetailWidgetState.currentState
+              .showNoteReviewButtonOrNot();
         },
       ),
     );

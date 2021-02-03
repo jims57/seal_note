@@ -19,7 +19,9 @@ import 'package:seal_note/ui/common/appBars/AppBarBackButtonWidget.dart';
 import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:seal_note/util/converter/ImageConverter.dart';
 import 'package:seal_note/util/crypto/CryptoHandler.dart';
+import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/util/file/FileHandler.dart';
+import 'package:seal_note/util/html/HtmlHandler.dart';
 import 'package:seal_note/util/route/ScaleRoute.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
@@ -472,6 +474,29 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
             }
           }
         }), // SaveNoteEncodedHtmlToSqlite
+    JavascriptChannel(
+        name: 'ConfirmNoteReviewDialog',
+        onMessageReceived: (JavascriptMessage message) {
+          print(message.message);
+          GlobalState.noteDetailWidgetState.currentState
+              .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
+
+          AlertDialogHandler()
+              .showAlertDialog(
+            parentContext: GlobalState.noteDetailWidgetContext,
+            captionText: '已完成复习？',
+            remark: GlobalState.selectedNoteModel.title,
+            restoreWebViewToShowIfNeeded: true,
+            barrierDismissible: true,
+            decodeAndRemoveAllHtmlTagsForRemark: true,
+            buttonTextForOK: '我已复习',
+            cancelAndOKButtonMainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            expandRemarkToMaxFinite: false,
+          )
+              .then((isFinished) {
+            var v = isFinished;
+          });
+        }), // ConfirmNoteReviewDialog
   ].toSet();
 
   @override

@@ -3,12 +3,14 @@ import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AlertDialogHeightChangeNotifier.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/util/html/HtmlHandler.dart';
 
 class AlertDialogHandler {
   Future<bool> showAlertDialog({
     @required BuildContext parentContext,
     @required String captionText,
     String remark,
+    bool decodeAndRemoveAllHtmlTagsForRemark = false,
     Widget child,
     bool showButtonForCancel = true,
     String buttonTextForCancel = '取消',
@@ -17,6 +19,7 @@ class AlertDialogHandler {
     bool alwaysEnableOKButton = true,
     Color buttonColorForOK = GlobalState.themeBlueColor,
     String topLeftButtonText = '取消',
+    MainAxisAlignment cancelAndOKButtonMainAxisAlignment = MainAxisAlignment.spaceBetween,
     bool showTopLeftButton = false,
     String topRightButtonText = '确定',
     bool showTopRightButton = false,
@@ -36,6 +39,10 @@ class AlertDialogHandler {
     // If the remark parameter isn't null, we use it as the remark for the dialog
     if (remark != null) {
       theRemark = remark.replaceAll('<br>', '\n');
+
+      if (decodeAndRemoveAllHtmlTagsForRemark) {
+        theRemark = HtmlHandler.decodeAndRemoveAllHtmlTags(theRemark);
+      }
     }
 
     var singleChildScrollView = SingleChildScrollView(
@@ -154,112 +161,96 @@ class AlertDialogHandler {
           contentPadding: EdgeInsets.all(0.0),
           content: Consumer<AlertDialogHeightChangeNotifier>(
               builder: (cxt, alertDialogHeightChangeNotifier, child) {
-                var theColumn = Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    (expandRemarkToMaxFinite)
-                        ? Expanded(
-                      child: singleChildScrollView,
-                    )
-                        : singleChildScrollView,
-                    // singleChildScrollView,
-                    if (showButtonForCancel || showButtonForOK)
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: (_hasOnlyOneBottomButton(
+            var theColumn = Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                (expandRemarkToMaxFinite)
+                    ? Expanded(
+                        child: singleChildScrollView,
+                      )
+                    : singleChildScrollView,
+                // singleChildScrollView,
+                if (showButtonForCancel || showButtonForOK)
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: (_hasOnlyOneBottomButton(
                               showButtonForOK: showButtonForOK,
                               showButtonForCancel: showButtonForCancel))
-                              ? MainAxisAlignment.center
-                              : MainAxisAlignment.spaceBetween,
-                          // mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            (showButtonForCancel)
-                                ? FlatButton(
-                              // alert dialog cancel button // cancel button
-                              // dialog cancel button
+                          ? MainAxisAlignment.center
+                          : cancelAndOKButtonMainAxisAlignment,
+                      children: [
+                        (showButtonForCancel)
+                            ? FlatButton(
+                                // alert dialog cancel button // cancel button
+                                // dialog cancel button
 
-                              child: Text(
-                                buttonTextForCancel,
-                                style: TextStyle(
-                                    color: GlobalState.themeBlueColor),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                shouldContinueAction = false;
-
-                                if (restoreWebViewToShowIfNeeded) {
-                                  GlobalState
-                                      .noteDetailWidgetState.currentState
-                                      .restoreWebViewToShowIfNeeded();
-                                }
-                              },
-                            )
-                                : Container(),
-                            (showButtonForOK)
-                                ? Consumer<AppState>(
+                                child: Text(
+                                  buttonTextForCancel,
+                                  style: TextStyle(
+                                      color: GlobalState.themeBlueColor),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  shouldContinueAction = false;
+                                },
+                              )
+                            : Container(),
+                        (showButtonForOK)
+                            ? Consumer<AppState>(
                                 builder: (cxt, appState, child) {
-                                  var enableOKButton =
-                                      appState.enableAlertDialogOKButton;
+                                var enableOKButton =
+                                    appState.enableAlertDialogOKButton;
 
-                                  if (alwaysEnableOKButton)
-                                    enableOKButton = true;
+                                if (alwaysEnableOKButton) enableOKButton = true;
 
-                                  return FlatButton(
-                                    // alert dialog ok button // ok button
-                                    // dialog ok button
+                                return FlatButton(
+                                  // alert dialog ok button // ok button
+                                  // dialog ok button
 
-                                    child: Text(
-                                      buttonTextForOK,
-                                      style: TextStyle(
-                                          color: (enableOKButton)
-                                              ? buttonColorForOK
-                                              : GlobalState.themeGrey350Color),
-                                    ),
-                                    onPressed: () {
-                                      if (enableOKButton) {
-                                        Navigator.of(context).pop();
-                                        shouldContinueAction = true;
-
-                                        if (restoreWebViewToShowIfNeeded) {
-                                          GlobalState.noteDetailWidgetState
-                                              .currentState
-                                              .restoreWebViewToShowIfNeeded();
-                                        }
-                                      }
-                                    },
-                                  );
-                                })
-                                : Container(),
-                          ],
-                        ),
-                      ),
-                  ],
-                );
-
-                if (expandRemarkToMaxFinite) {
-                  return Container(
-                    height: GlobalState.screenHeight / 3,
-                    child: theColumn,
-                  );
-                } else {
-                  // return Container(
-                  //   color: Colors.red,
-                  //   // height: 50,
-                  //   child: theColumn,
-                  // );
-
-                  return SingleChildScrollView(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    child: Container(
-                      // color: Colors.red,
-                      child: theColumn,
+                                  child: Text(
+                                    buttonTextForOK,
+                                    style: TextStyle(
+                                        color: (enableOKButton)
+                                            ? buttonColorForOK
+                                            : GlobalState.themeGrey350Color),
+                                  ),
+                                  onPressed: () {
+                                    if (enableOKButton) {
+                                      Navigator.of(context).pop();
+                                      shouldContinueAction = true;
+                                    }
+                                  },
+                                );
+                              })
+                            : Container(),
+                      ],
                     ),
-                  );
-                }
-              }),
+                  ),
+              ],
+            );
+
+            if (expandRemarkToMaxFinite) {
+              return Container(
+                height: GlobalState.screenHeight / 3,
+                child: theColumn,
+              );
+            } else {
+              return SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  child: theColumn,
+                ),
+              );
+            }
+          }),
         );
       },
     );
+
+    if (restoreWebViewToShowIfNeeded) {
+      GlobalState.noteDetailWidgetState.currentState
+          .restoreWebViewToShowIfNeeded();
+    }
 
     GlobalState.isAlertDialogBeingShown = false;
 

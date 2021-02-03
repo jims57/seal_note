@@ -27,3 +27,72 @@ doc/api/
 ios/Flutter/.last_build_id
 ios/Flutter/.last_build_id
 .flutter-plugins-dependencies
+ios/Flutter/.last_build_id
+ios/Flutter/Flutter 18.framework/_CodeSignature/CodeResources
+ios/Flutter/Flutter 18.framework/Flutter
+ios/Flutter/Flutter 18.framework/Headers/Flutter.h
+ios/Flutter/Flutter 18.framework/Headers/FlutterAppDelegate.h
+ios/Flutter/Flutter 18.framework/Headers/FlutterBinaryMessenger.h
+ios/Flutter/Flutter 18.framework/Headers/FlutterCallbackCache.h
+ios/Flutter/Flutter 18.framework/Headers/FlutterChannels.h
+ios/Flutter/Flutter 18.framework/Headers/FlutterCodecs.h
+ios/Flutter/Flutter 18.framework/Headers/FlutterDartProject.h
+ios/Flutter/Flutter 18.framework/Headers/FlutterEngine.h
+ios/Flutter/Flutter 18.framework/Headers/FlutterHeadlessDartRunner.h
+ios/Flutter/Flutter 18.framework/Headers/FlutterMacros.h
+ios/Flutter/Flutter 18.framework/Headers/FlutterPlatformViews.h
+ios/Flutter/Flutter 18.framework/Headers/FlutterPlugin.h
+ios/Flutter/Flutter 18.framework/Headers/FlutterPluginAppLifeCycleDelegate.h
+ios/Flutter/Flutter 18.framework/Headers/FlutterTexture.h
+ios/Flutter/Flutter 18.framework/Headers/FlutterViewController.h
+ios/Flutter/Flutter 18.framework/icudtl.dat
+ios/Flutter/Flutter 18.framework/Info.plist
+ios/Flutter/Flutter 18.framework/Modules/module.modulemap
+ios/Flutter/Flutter 19.framework/_CodeSignature/CodeResources
+ios/Flutter/Flutter 19.framework/Flutter
+ios/Flutter/Flutter 19.framework/Headers/Flutter.h
+ios/Flutter/Flutter 19.framework/Headers/FlutterAppDelegate.h
+ios/Flutter/Flutter 19.framework/Headers/FlutterBinaryMessenger.h
+ios/Flutter/Flutter 19.framework/Headers/FlutterCallbackCache.h
+ios/Flutter/Flutter 19.framework/Headers/FlutterChannels.h
+ios/Flutter/Flutter 19.framework/Headers/FlutterCodecs.h
+ios/Flutter/Flutter 19.framework/Headers/FlutterDartProject.h
+ios/Flutter/Flutter 19.framework/Headers/FlutterEngine.h
+ios/Flutter/Flutter 19.framework/Headers/FlutterHeadlessDartRunner.h
+ios/Flutter/Flutter 19.framework/Headers/FlutterMacros.h
+ios/Flutter/Flutter 19.framework/Headers/FlutterPlatformViews.h
+ios/Flutter/Flutter 19.framework/Headers/FlutterPlugin.h
+ios/Flutter/Flutter 19.framework/Headers/FlutterPluginAppLifeCycleDelegate.h
+ios/Flutter/Flutter 19.framework/Headers/FlutterTexture.h
+ios/Flutter/Flutter 19.framework/Headers/FlutterViewController.h
+ios/Flutter/Flutter 19.framework/icudtl.dat
+ios/Flutter/Flutter 19.framework/Info.plist
+ios/Flutter/Flutter 19.framework/Modules/module.modulemap
+ios/Flutter/Flutter 20.framework/_CodeSignature/CodeResources
+ios/Flutter/Flutter 20.framework/Flutter
+ios/Flutter/Flutter 20.framework/Headers/Flutter.h
+ios/Flutter/Flutter 20.framework/Headers/FlutterAppDelegate.h
+ios/Flutter/Flutter 20.framework/Headers/FlutterBinaryMessenger.h
+ios/Flutter/Flutter 20.framework/Headers/FlutterCallbackCache.h
+ios/Flutter/Flutter 20.framework/Headers/FlutterChannels.h
+ios/Flutter/Flutter 20.framework/Headers/FlutterCodecs.h
+ios/Flutter/Flutter 20.framework/Headers/FlutterDartProject.h
+ios/Flutter/Flutter 20.framework/Headers/FlutterEngine.h
+ios/Flutter/Flutter 20.framework/Headers/FlutterHeadlessDartRunner.h
+ios/Flutter/Flutter 20.framework/Headers/FlutterMacros.h
+ios/Flutter/Flutter 20.framework/Headers/FlutterPlatformViews.h
+ios/Flutter/Flutter 20.framework/Headers/FlutterPlugin.h
+ios/Flutter/Flutter 20.framework/Headers/FlutterPluginAppLifeCycleDelegate.h
+ios/Flutter/Flutter 20.framework/Headers/FlutterTexture.h
+ios/Flutter/Flutter 20.framework/Headers/FlutterViewController.h
+ios/Flutter/Flutter 20.framework/icudtl.dat
+ios/Flutter/Flutter 20.framework/Info.plist
+ios/Flutter/Flutter 20.framework/Modules/module.modulemap
+ios/Flutter/.last_build_id
+ios/Flutter/.last_build_id
+.DS_Store
+.flutter-plugins-dependencies
+ios/.DS_Store
+ios/Flutter/.last_build_id
+ios/.DS_Store
+ios/Flutter/.last_build_id

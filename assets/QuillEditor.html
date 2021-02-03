@@ -2616,8 +2616,10 @@
         // Bind note review button event
         $('#review-note-button').click(function(){
             // alert( "Handler for .click() called." );
-            var isYes = confirm('确定复习完成？');
-            if (printLogToDartFromJs) Print.postMessage('isYes = ' + isYes);
+            // var isYes = confirm('确定复习完成？');
+            // if (printLogToDartFromJs) Print.postMessage('isYes = ' + isYes);
+
+            if(interactWithDart) ConfirmNoteReviewDialog.postMessage('I am confirm object');
         });
 
         // testing
