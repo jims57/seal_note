@@ -151,16 +151,17 @@ class _NoteListPageState extends State<NoteListPage> {
 
           // Get note related variables
           var folderId = GlobalState.selectedFolderIdCurrently;
-          GlobalState.selectedNoteModel.id =
-              0; // Every time when clicking on the Add button, making the note id equals zero
-          GlobalState.selectedNoteModel.title =
-              GlobalState.defaultTitleForNewNote;
+          GlobalState.noteDetailWidgetState.currentState
+              .initSelectedNoteModelForNewNote();
+
           GlobalState.noteContentEncodedInDb = null;
 
           var responseJsonString =
               '{"isCreatingNote": true, "folderId":$folderId, "noteId":${GlobalState.selectedNoteModel.id}, "encodedHtml":""}';
           await GlobalState.flutterWebviewPlugin.evalJavascript(
               "javascript:replaceQuillContentWithOldNoteContent('$responseJsonString', true);");
+          
+
 
           // Refresh the note list
           if (GlobalState.screenType != 1) {
@@ -173,6 +174,8 @@ class _NoteListPageState extends State<NoteListPage> {
           // Refresh tree
           GlobalState.masterDetailPageState.currentState
               .updatePageShowAndHide(shouldTriggerSetState: true);
+
+          await GlobalState.noteDetailWidgetState.currentState.showNoteReviewButtonOrNot();
         },
       ),
     );

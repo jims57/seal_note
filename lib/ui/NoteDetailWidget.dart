@@ -14,13 +14,12 @@ import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/DetailPageState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/database/database.dart';
+import 'package:seal_note/model/NoteWithProgressTotal.dart';
 import 'package:seal_note/ui/common/appBars/AppBarBackButtonWidget.dart';
 import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
-import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
 import 'package:seal_note/util/converter/ImageConverter.dart';
 import 'package:seal_note/util/crypto/CryptoHandler.dart';
 import 'package:seal_note/util/file/FileHandler.dart';
-import 'package:seal_note/util/robustness/RetryHandler.dart';
 import 'package:seal_note/util/route/ScaleRoute.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
@@ -589,6 +588,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                   // save button // edit button
                                   // click on edit button // click edit note button
                                   // click on edit note button // click edit button
+                                  // edit note detail button
 
                                   if (GlobalState.isQuillReadOnly) {
                                     // When it is read only mode
@@ -803,6 +803,13 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           keepNoteDetailPageOpen: keepNoteDetailPageOpen,
           executeAutoSaveNoteWhenSettingToReadOnlyMode: false);
 
+      // Show the note review button if necessary
+      // Timer(const Duration(milliseconds: 1000), () async {
+      //   await showNoteReviewButtonOrNot();
+      // });
+
+      await showNoteReviewButtonOrNot();
+
       if (notifyAppStateAboutIsEditorReadOnly) {
         GlobalState.appState.isEditorReadOnly = true;
       }
@@ -817,6 +824,9 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     if (GlobalState.isQuillReadOnly) {
       await toggleQuillModeBetweenReadOnlyAndEdit(
           keepNoteDetailPageOpen: keepNoteDetailPageOpen);
+
+      // Hide the note review button forcibly
+      await hideNoteReviewButton();
 
       if (notifyAppStateAboutIsEditorReadOnly) {
         GlobalState.appState.isEditorReadOnly = false;
@@ -925,5 +935,43 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     hideWebView(forceToSyncWithShouldHideWebViewVar: false);
 
     callback();
+  }
+
+  Future<void> showNoteReviewButtonOrNot() async {
+    var theNote = GlobalState.selectedNoteModel;
+
+    // Check if it should show the note review button or not
+    var dateTimeFormat = TimeHandler.getDateTimeFormatForAllKindOfNote(
+        updated: theNote.updated,
+        nextReviewTime: theNote.nextReviewTime,
+        isReviewFinished: theNote.isReviewFinished);
+    if (dateTimeFormat.contains('复习') && GlobalState.isQuillReadOnly) {
+      await GlobalState.flutterWebviewPlugin.evalJavascript(
+          "javascript:showNoteReviewButton('$dateTimeFormat');");
+    } else {
+      await GlobalState.flutterWebviewPlugin
+          .evalJavascript("javascript:hideNoteReviewButton();");
+    }
+  }
+
+  Future<void> hideNoteReviewButton() async {
+    await GlobalState.flutterWebviewPlugin
+        .evalJavascript("javascript:hideNoteReviewButton()");
+  }
+
+  void initSelectedNoteModelForNewNote() {
+    var now = TimeHandler.getNowForLocal();
+
+    GlobalState.selectedNoteModel.id =
+        0; // Every time when clicking on the Add button, making the note id equals zero
+    GlobalState.selectedNoteModel.title = GlobalState.defaultTitleForNewNote;
+    GlobalState.selectedNoteModel.updated = now;
+    GlobalState.selectedNoteModel.isReviewFinished = false;
+
+    if (GlobalState.isReviewFolderSelected) {
+      GlobalState.selectedNoteModel.nextReviewTime = now;
+    } else {
+      GlobalState.selectedNoteModel.nextReviewTime = null;
+    }
   }
 }

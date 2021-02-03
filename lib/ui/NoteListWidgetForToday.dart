@@ -968,6 +968,11 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
         }
       }
 
+      // Check if it should show the note review button or not
+      // await _showNoteReviewButtonOrNot(theNote: theNote);
+      await GlobalState.noteDetailWidgetState.currentState
+          .showNoteReviewButtonOrNot();
+
       // Always try to adjust the editor's height to fit the available screen
       GlobalState.noteDetailWidgetState.currentState
           .triggerEditorToAutoFitScreen();
