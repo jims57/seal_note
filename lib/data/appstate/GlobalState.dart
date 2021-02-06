@@ -44,7 +44,8 @@ class GlobalState with ChangeNotifier {
   static const double defaultHorizontalMarginBetweenItems = 5.0;
   static const double defaultVerticalMarginBetweenItems = 10.0;
   static const double defaultLeftAndRightPadding = 15.0;
-  static const double defaultLeftAndRightMarginBetweenParentBoarderAndPanel = 15.0;
+  static const double defaultLeftAndRightMarginBetweenParentBoarderAndPanel =
+      15.0;
   static const double defaultRoundCornerPanelBottomMargin = 15.0;
 
   // App current info
@@ -85,6 +86,9 @@ class GlobalState with ChangeNotifier {
   static const double appBarTitleDefaultFontSize = 18.0;
   static Color greyFontColor = Colors.grey[600];
   static FontWeight defaultBoldFontWeightForItem = FontWeight.w400;
+
+  // FlushBar
+  static const int defaultFlushBarDuration = 2500;
 
   // Icon
   static const double defaultIconSize = 25.0;
@@ -180,6 +184,7 @@ class GlobalState with ChangeNotifier {
   static NoteWithProgressTotal firstNoteToBeSelected;
   static NoteWithProgressTotal selectedNoteModel =
       NoteWithProgressTotal(); // When the user clicks on the note list item, we store the note model to this variable for the sake of future usage to update these values shown on the note list
+  static NoteWithProgressTotal lastSelectedNoteModel = NoteWithProgressTotal();
   static String defaultTitleForNewNote = '新笔记';
   static String defaultTitleWhenNoteHasNoTitle = '无标题';
   static String emptyNoteEncodedContentWithBr = '&lt;p&gt;&lt;br&gt;&lt;/p&gt;';
@@ -222,7 +227,8 @@ class GlobalState with ChangeNotifier {
   static bool shouldContinueActionForShowDialog = false;
   static bool isAlertDialogBeingShown = false;
   static bool isMoveNoteAlertDialogBeingShown = false;
-  static String remarkForWhenNoteWillBecomeReviewFinishedAfterMovingToTargetFolder =
+  static String
+      remarkForWhenNoteWillBecomeReviewFinishedAfterMovingToTargetFolder =
       '根据此笔记的复习进度，移动后，此笔记会被视为『复习完成』（不再复习）!\n原因：目标文件夹，所需复习次数更少。';
   static String remarkForMovingNoteToFolderWithoutReviewPlan =
       '因为目标文件夹，没有复习计划。移动后，此笔记将不再复习！';

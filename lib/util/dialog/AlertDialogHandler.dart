@@ -10,6 +10,7 @@ class AlertDialogHandler {
     @required BuildContext parentContext,
     @required String captionText,
     String remark,
+    int remarkMaxLines,
     bool decodeAndRemoveAllHtmlTagsForRemark = false,
     Widget child,
     bool showButtonForCancel = true,
@@ -19,7 +20,8 @@ class AlertDialogHandler {
     bool alwaysEnableOKButton = true,
     Color buttonColorForOK = GlobalState.themeBlueColor,
     String topLeftButtonText = '取消',
-    MainAxisAlignment cancelAndOKButtonMainAxisAlignment = MainAxisAlignment.spaceBetween,
+    MainAxisAlignment cancelAndOKButtonMainAxisAlignment =
+        MainAxisAlignment.spaceBetween,
     bool showTopLeftButton = false,
     String topRightButtonText = '确定',
     bool showTopRightButton = false,
@@ -52,20 +54,28 @@ class AlertDialogHandler {
         children: [
           if (theRemark.isNotEmpty)
             Container(
-                alignment:
-                    (centerRemark) ? Alignment.center : Alignment.centerLeft,
-                padding: EdgeInsets.only(
-                    left: 15.0,
-                    right: 15.0,
-                    bottom: (child != null) ? 0.0 : 10.0),
-                child: Text(theRemark)),
+              alignment:
+                  (centerRemark) ? Alignment.center : Alignment.centerLeft,
+              padding: EdgeInsets.only(
+                  left: 15.0,
+                  right: 15.0,
+                  bottom: (child != null) ? 0.0 : 10.0),
+              child: (remarkMaxLines == null)
+                  ? Text(theRemark)
+                  : Text(
+                      theRemark,
+                      maxLines: remarkMaxLines,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+            ),
           if (child != null)
             Container(
-                margin: EdgeInsets.only(
-                    top: 5.0,
-                    bottom:
-                        (showButtonForCancel || showButtonForOK) ? 0.0 : 20.0),
-                child: child),
+              margin: EdgeInsets.only(
+                  top: 5.0,
+                  bottom:
+                      (showButtonForCancel || showButtonForOK) ? 0.0 : 20.0),
+              child: child,
+            ),
         ],
       ),
     );

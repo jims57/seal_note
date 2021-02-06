@@ -1,11 +1,7 @@
-import 'dart:developer';
-
 import 'package:moor/moor.dart';
 import 'dart:async';
-
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/model/NoteWithProgressTotal.dart';
-import 'package:seal_note/util/converter/BooleanConverter.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
 part 'database.g.dart';
@@ -101,6 +97,13 @@ class Notes extends Table {
 
   TextColumn get updated => text().map(const IsoDateTimeConverter())();
 
+  // Remark
+  // * This field has to have value for review note
+  // * Zero and NULL are same
+  // * The ordering (order by asc) takes precedence over the ordering(order by desc) of *updated* filed
+  // * If you want to make the ordering of *updated* take effect, you have to set value *3000-01-01T00:00:00.000* to this field
+  //    so that all review-finished notes have the same *nextReviewTime* value to ignore this field ordering, in this case,
+  //    *updated* field can order as expected(order by asc updated)
   TextColumn get nextReviewTime => text()
       .nullable()
       .named('nextReviewTime')
@@ -111,6 +114,10 @@ class Notes extends Table {
       .named('oldNextReviewTime')
       .map(const IsoDateTimeConverter())();
 
+  // Remark:
+  // Example: total = 3
+  // * When 3/3 means this note has finished review
+  // * 0/3 is the first time to review, when finished this, it will become 1/3
   IntColumn get reviewProgressNo =>
       integer().nullable().named('reviewProgressNo')();
 
@@ -186,6 +193,10 @@ class ReviewPlanConfigs extends Table {
   'clearDeletedNotesMoreThan30DaysAgo':
       "DELETE FROM notes WHERE strftime('%Y-%m-%d %H:%M:%S', updated) <= strftime('%Y-%m-%d %H:%M:%S', :minAvailableDateTime); ",
 
+  // For note review
+  'setNoteToNextReviewPhrase': // This is used for the note review button, see:  https://user-images.githubusercontent.com/1920873/107107893-033e3880-686f-11eb-92d9-5e5ee7179956.png
+      "WITH myNoteTable AS( SELECT id AS noteId, folderId, nextReviewTime, (CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END) AS reviewProgressNo FROM notes WHERE id = :noteId), myReviewPlanConfigsTable AS ( SELECT (select noteId from myNoteTable) as noteId, rpc.id reviewPlanConfigId, rpc.[order], rpc.value, rpc.unit, (select nextReviewTime from myNoteTable) as nextReviewTime, ( SELECT reviewProgressNo + 1 FROM myNoteTable ) as newReviewProgressNo, ( SELECT count( * ) + 1 FROM reviewPlanConfigs WHERE reviewPlanId = rpc.reviewPlanId ) AS progressTotal FROM reviewPlanConfigs rpc WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM myNoteTable ) ) ) , myReviewPlanConfigsTable2 AS ( SELECT noteId, reviewPlanConfigId, [order], value, unit, nextReviewTime, newReviewProgressNo, progressTotal FROM myReviewPlanConfigsTable WHERE [order] = ( SELECT reviewProgressNo + 1 FROM myNoteTable ) ) , myDifferenceMinutesTable as( select noteId, reviewPlanConfigId as nextReviewPlanConfigId, [order], value, unit, nextReviewTime, newReviewProgressNo, progressTotal, (CASE WHEN unit = 1 THEN value WHEN unit=2 THEN value*60 WHEN unit=3 THEN value*60*24 WHEN unit=4 THEN value*60*24*7 WHEN unit=5 THEN value*60*24*30 ELSE value*60*24*365 END) as differenceMinutes from myReviewPlanConfigsTable2 ) , myReviewPlanConfigsTableWith3000Year as( select noteId,(CASE WHEN count( * ) = 0 THEN -3000 ELSE dmt.nextReviewPlanConfigId END) AS nextReviewPlanConfigId,[order],value,unit, nextReviewTime as oldNextReviewTime, newReviewProgressNo, (CASE WHEN count( * ) = 0 THEN (select progressTotal from myReviewPlanConfigsTable limit 1) ELSE dmt.progressTotal END) as progressTotal, differenceMinutes, '+'||cast(differenceMinutes as text)||' minutes' as differenceMinutesFormat from myDifferenceMinutesTable dmt ) ,myNewNextReviewTimeTable as( select noteId, nextReviewPlanConfigId, strftime('%Y-%m-%dT%H:%M:%f', 'now','localtime') as updated, oldNextReviewTime, (CASE WHEN strftime('%Y-%m-%dT%H:%M:%f',oldNextReviewTime)<strftime('%Y-%m-%dT%H:%M:%f', 'now','localtime') THEN 1 ELSE 0 END) as oldNextReviewTimeisLessThanNow, differenceMinutesFormat, newReviewProgressNo, progressTotal from myReviewPlanConfigsTableWith3000Year ), myNewNextReviewTimeTableWithCheckingNow as ( select *, (CASE /*When the oldNextReviewTime is less than now, we will use now as the base to get the newNextReviewTime,*/ /*but if the oldNextReviewTime is greater than now, we use the oldNextReviewTime as the base to calculate it.*/ WHEN oldNextReviewTimeisLessThanNow=1 THEN strftime('%Y-%m-%dT%H:%M:%f',datetime(strftime('%Y-%m-%dT%H:%M:%f', 'now','localtime'), differenceMinutesFormat)) ELSE strftime('%Y-%m-%dT%H:%M:%f',datetime(strftime('%Y-%m-%dT%H:%M:%f', oldNextReviewTime), differenceMinutesFormat)) END) as newNextReviewTime from myNewNextReviewTimeTable ) update notes set updated = (select updated from myNewNextReviewTimeTableWithCheckingNow limit 1), nextReviewTime = (CASE WHEN (select nextReviewPlanConfigId from myNewNextReviewTimeTableWithCheckingNow limit 1)=-3000 THEN '3000-01-01T00:00:00.000' ELSE (select newNextReviewTime from myNewNextReviewTimeTableWithCheckingNow limit 1) END), oldNextReviewTime = (CASE WHEN (select nextReviewPlanConfigId from myNewNextReviewTimeTableWithCheckingNow limit 1)=-3000 THEN NULL ELSE oldNextReviewTime END), reviewProgressNo =(CASE WHEN (select nextReviewPlanConfigId from myNewNextReviewTimeTableWithCheckingNow limit 1)=-3000 THEN (select progressTotal from myNewNextReviewTimeTableWithCheckingNow limit 1) ELSE (select newReviewProgressNo from myNewNextReviewTimeTableWithCheckingNow limit 1) END), isReviewFinished = (CASE WHEN (select nextReviewPlanConfigId from myNewNextReviewTimeTableWithCheckingNow limit 1)=-3000 THEN 1 ELSE 0 END) where id = (select noteId from myNewNextReviewTimeTableWithCheckingNow limit 1) ",
+
   // For note review plan related
   'setRightReviewProgressNoAndIsReviewFinishedFieldForAllNotes': // Logic: https://docs.qq.com/sheet/DZEt3YWNLcURrVnF6?tab=BB08J2
       "WITH progressTable1 AS( SELECT folderId, ( SELECT CASE WHEN reviewPlanId > 0 THEN 1 ELSE 0 END FROM folders WHERE id = n.folderId) AS isReviewFolder, id AS noteId, (CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END) AS reviewProgressNo, ( SELECT (CASE WHEN count( * ) = 0 THEN 0 ELSE count( * ) + 1 END) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal, isReviewFinished FROM notes n ), progressTable2 AS ( SELECT (CASE WHEN isReviewFolder = 1 AND reviewProgressNo > progressTotal THEN 1 WHEN isReviewFolder = 1 AND reviewProgressNo = progressTotal AND isReviewFinished = 0 THEN 2 WHEN isReviewFolder = 1 AND reviewProgressNo < progressTotal AND isReviewFinished = 1 THEN 3 WHEN isReviewFolder = 0 AND isReviewFinished = 1 THEN 4 ELSE 0 END) AS conditionNo, * FROM progressTable1 ) UPDATE notes SET reviewProgressNo = (CASE WHEN ( SELECT conditionNo FROM progressTable2 WHERE noteId = notes.id ) = 1 THEN ( SELECT progressTotal FROM progressTable2 WHERE noteId = notes.id ) ELSE notes.reviewProgressNo END), isReviewFinished = (CASE WHEN ( SELECT conditionNo FROM progressTable2 WHERE noteId = notes.id ) IN (1, 2) THEN 1 ELSE 0 END) WHERE id IN ( SELECT noteId FROM progressTable2 WHERE conditionNo > 0 ); ",
@@ -199,6 +210,11 @@ class ReviewPlanConfigs extends Table {
       "UPDATE notes SET nextReviewTime =(CASE WHEN oldNextReviewTime IS NOT NULL THEN oldNextReviewTime ELSE :now END), oldNextReviewTime = NULL WHERE folderId = :folderId; ",
   'setFolderToReviewOneFromAnother':
       "UPDATE notes SET nextReviewTime =(CASE WHEN nextReviewTime IS NULL THEN :now ELSE nextReviewTime END) WHERE folderId = :folderId; ",
+
+  // For review plan configs
+  'getNextReviewPlanConfigIdByNoteId': // return -3000, means the next review time of the note has reached its last review progress, and should set *isReviewFinished* true
+      "WITH myNoteTable AS( SELECT id AS noteId, folderId, (CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END) AS reviewProgressNo FROM notes WHERE id = :noteId), myReviewPlanConfigsTable AS ( SELECT rpc.id reviewPlanConfigId, rpc.[order], rpc.value, rpc.unit, ( SELECT reviewProgressNo + 1 FROM myNoteTable ) nextReviewProgressNo, ( SELECT count( * ) + 1 FROM reviewPlanConfigs WHERE reviewPlanId = rpc.reviewPlanId ) AS progressTotal FROM reviewPlanConfigs rpc WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM myNoteTable ) ) ), myReviewPlanConfigsTable2 AS ( SELECT reviewPlanConfigId, [order], value, unit FROM myReviewPlanConfigsTable WHERE [order] = ( SELECT reviewProgressNo + 1 FROM myNoteTable ) ), myDifferenceMinutesTable as( select reviewPlanConfigId, [order], value, unit, (CASE WHEN unit = 1 THEN value WHEN unit=2 THEN value*60 WHEN unit=3 THEN value*60*24 WHEN unit=4 THEN value*60*24*7 WHEN unit=5 THEN value*60*24*30 ELSE value*60*24*365 END) as differenceMinutes from myReviewPlanConfigsTable2 ) select (CASE WHEN count( * ) = 0 THEN -3000 ELSE dmt.reviewPlanConfigId END) AS reviewPlanConfigId,[order],value,unit, differenceMinutes from myDifferenceMinutesTable dmt",
+  // "WITH myNoteTable AS( SELECT id AS noteId, folderId, (CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END) AS reviewProgressNo FROM notes WHERE id = :noteId), myReviewPlanConfigsTable AS ( SELECT rpc.id reviewPlanConfigId, rpc.[order], rpc.value, rpc.unit, ( SELECT reviewProgressNo + 1 FROM myNoteTable ) nextReviewProgressNo, ( SELECT count( * ) + 1 FROM reviewPlanConfigs WHERE reviewPlanId = rpc.reviewPlanId ) AS progressTotal FROM reviewPlanConfigs rpc WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM myNoteTable ) ) ), myReviewPlanConfigsTable2 AS ( SELECT reviewPlanConfigId FROM myReviewPlanConfigsTable WHERE [order] = ( SELECT reviewProgressNo + 1 FROM myNoteTable ) ) SELECT (CASE WHEN count( * ) = 0 THEN -3000 ELSE t2.reviewPlanConfigId END) AS reviewPlanConfigId FROM myReviewPlanConfigsTable2 t2; ",
 })
 class Database extends _$Database {
   Database(QueryExecutor e) : super(e);
@@ -526,9 +542,10 @@ class Database extends _$Database {
     });
   }
 
-  Future<int> updateNote(NotesCompanion notesCompanion) async {
-    return (update(notes)
-          ..where((e) => e.id.equals(GlobalState.selectedNoteModel.id)))
+  Future<int> updateNote({
+    @required NotesCompanion notesCompanion,
+  }) async {
+    return (update(notes)..where((e) => e.id.equals(notesCompanion.id.value)))
         .write(notesCompanion);
   }
 

@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 
 class TimeHandler {
-  static String getDateTimeFormatForAllKindOfNote(
-      {DateTime updated,
-      DateTime nextReviewTime,
-      bool isReviewFinished = false}) {
+  static String getDateTimeFormatForAllKindOfNote({
+    DateTime updated,
+    DateTime nextReviewTime,
+    bool isReviewFinished = false,
+  }) {
     // Check if this note finished its review
     if (isReviewFinished) {
       return GlobalState.titleForReviewFinished;

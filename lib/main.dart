@@ -195,7 +195,7 @@ class _MyAppState extends State<MyApp> {
         reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
             id: null,
             reviewPlanId: 2,
-            order: 1,
+            order: 2,
             value: 3,
             unit: 2,
             createdBy: GlobalState.adminUserId));

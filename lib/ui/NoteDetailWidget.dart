@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:async';
 
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show ByteData;
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
@@ -10,6 +11,7 @@ import 'package:keyboard_utils/keyboard_utils.dart';
 import 'package:moor/moor.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:seal_note/biz/ReviewHandler.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/DetailPageState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
@@ -384,15 +386,14 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
               // Save the changes into sqlite every time
               var notesCompanion = NotesCompanion(
                   id: Value(GlobalState.selectedNoteModel.id),
-                  // title: Value(GlobalState.selectedNoteModel.title),
                   content: Value(GlobalState.selectedNoteModel.content),
                   created: Value(GlobalState.selectedNoteModel.created),
                   updated: Value(TimeHandler.getNowForLocal()));
 
               // Retry to enhance the robustness
               for (var i = 0; i <= GlobalState.retryTimesToSaveDb; i++) {
-                var effectedRowsCount =
-                    await GlobalState.database.updateNote(notesCompanion);
+                var effectedRowsCount = await GlobalState.database
+                    .updateNote(notesCompanion: notesCompanion);
 
                 if (effectedRowsCount > 0) {
                   // Make sure the note is updated successfully
@@ -477,6 +478,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     JavascriptChannel(
         name: 'ConfirmNoteReviewDialog',
         onMessageReceived: (JavascriptMessage message) {
+          // review note confirm dialog // note review confirm dialog
+
           print(message.message);
           GlobalState.noteDetailWidgetState.currentState
               .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
@@ -484,8 +487,9 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           AlertDialogHandler()
               .showAlertDialog(
             parentContext: GlobalState.noteDetailWidgetContext,
-            captionText: '已完成复习？',
+            captionText: '完成这次复习？',
             remark: GlobalState.selectedNoteModel.title,
+            remarkMaxLines: 6,
             restoreWebViewToShowIfNeeded: true,
             barrierDismissible: true,
             decodeAndRemoveAllHtmlTagsForRemark: true,
@@ -493,8 +497,133 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
             cancelAndOKButtonMainAxisAlignment: MainAxisAlignment.spaceEvenly,
             expandRemarkToMaxFinite: false,
           )
-              .then((isFinished) {
-            var v = isFinished;
+              .then((isFinished) async {
+            if (isFinished) {
+              // confirm review // confirm note review
+              // note review confirm event
+
+              // Record the last selected note mode for undo operation
+              GlobalState.lastSelectedNoteModel = GlobalState.selectedNoteModel;
+
+              var theNoteId = GlobalState.selectedNoteModel.id;
+              // var currentNextReviewTime =
+              //     GlobalState.selectedNoteModel.nextReviewTime;
+
+              var effectRowsCount = await GlobalState.database.setNoteToNextReviewPhrase(theNoteId);
+
+              if (effectRowsCount > 0) {
+                if (GlobalState.screenType == 1) {
+                  await GlobalState.noteDetailWidgetState.currentState
+                      .clickOnDetailPageBackButton();
+                }
+
+                // Refresh the note list to reflect the change
+                GlobalState.noteListWidgetForTodayState.currentState
+                    .triggerSetState(
+                  forceToRefreshNoteListByDb: true,
+                  refreshFolderListPageFromDbByTheWay: true,
+                );
+
+                // Get up-to-date note from db, since the next review time has been changed
+                var theNoteEntry = await GlobalState.database
+                    .getNoteEntryByNoteId(noteId: theNoteId);
+
+                // Get new next review time for the note
+                var nextReviewTimeFormat = GlobalState
+                    .noteDetailWidgetState.currentState
+                    .getDateTimeFormatForNote(
+                  updated: theNoteEntry.updated,
+                  nextReviewTime: theNoteEntry.nextReviewTime,
+                  isReviewFinished: theNoteEntry.isReviewFinished,
+                  shouldIncludeReviewKeyword: false,
+                );
+
+                Flushbar(
+                  title: '复习成功',
+                  messageText: Text(
+                    '下次复习：$nextReviewTimeFormat',
+                    style: TextStyle(color: Colors.white),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  duration: Duration(
+                      milliseconds: GlobalState.defaultFlushBarDuration),
+                  flushbarPosition: FlushbarPosition.TOP,
+                  backgroundColor: GlobalState.themeBlueColor,
+                  icon: Icon(
+                    Icons.info_outlined,
+                    color: Colors.white,
+                  ),
+                  mainButton: GestureDetector(
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: 60,
+                      color: Colors.white,
+                      child: Text(
+                        '撤消',
+                        style: TextStyle(
+                          color: GlobalState.themeBlueColor,
+                        ),
+                      ),
+                    ),
+                    onTap: () async {
+                      // revert review // undo review event
+
+                      var theLastSelectedNoteModel =
+                          GlobalState.lastSelectedNoteModel;
+
+                      var theNotesCompanion = NotesCompanion(
+                        id: Value(theLastSelectedNoteModel.id),
+                        nextReviewTime:
+                            Value(theLastSelectedNoteModel.nextReviewTime),
+                        reviewProgressNo:
+                            Value(theLastSelectedNoteModel.reviewProgressNo),
+                        isReviewFinished:
+                            Value(theLastSelectedNoteModel.isReviewFinished),
+                        updated: Value(theLastSelectedNoteModel.updated),
+                      );
+
+                      var effectedRowsCount = await GlobalState.database
+                          .updateNote(notesCompanion: theNotesCompanion);
+
+                      if (effectedRowsCount > 0) {
+                        var dateTimeFormatOfLastSelectedNote = GlobalState
+                            .noteDetailWidgetState.currentState
+                            .getDateTimeFormatForNote(
+                          updated: theLastSelectedNoteModel.updated,
+                          nextReviewTime:
+                              theLastSelectedNoteModel.nextReviewTime,
+                          isReviewFinished:
+                              theLastSelectedNoteModel.isReviewFinished,
+                          shouldIncludeReviewKeyword: true,
+                        );
+
+                        // Refresh the note list to reflect the change
+                        GlobalState.noteListWidgetForTodayState.currentState
+                            .triggerSetState(
+                          forceToRefreshNoteListByDb: true,
+                          refreshFolderListPageFromDbByTheWay: true,
+                        );
+
+                        Flushbar(
+                          icon: Icon(
+                            Icons.undo_outlined,
+                            color: Colors.white,
+                          ),
+                          title: '撤消成功',
+                          message: dateTimeFormatOfLastSelectedNote,
+                          duration: Duration(
+                              milliseconds:
+                                  GlobalState.defaultFlushBarDuration),
+                          flushbarPosition: FlushbarPosition.TOP,
+                          backgroundColor: GlobalState.themeBlueColor,
+                        )..show(GlobalState.noteListPageContext);
+                      }
+                    },
+                  ),
+                )..show(GlobalState.noteListPageContext);
+              }
+            }
           });
         }), // ConfirmNoteReviewDialog
   ].toSet();
@@ -535,55 +664,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                 // click detail page back button // click on detail back button
                                 // click detail back button // click detail back button event
 
-                                GlobalState.isHandlingNoteDetailPage = true;
-                                GlobalState.isInNoteDetailPage = false;
-
-                                // If the Quill is in edit mode, we set it back to read only after clicking the back button
-                                if (!GlobalState.isQuillReadOnly) {
-                                  // When the note is in edit mode
-
-                                  // Force to fetch the note content encoded from the WebView anyway
-                                  var noteContentEncodedFromWebView =
-                                      await GlobalState.flutterWebviewPlugin
-                                          .evalJavascript(
-                                              "javascript:getNoteContentEncoded();");
-
-                                  // Update the note content encoded stored at global variable
-                                  GlobalState.selectedNoteModel.content =
-                                      noteContentEncodedFromWebView;
-
-                                  // Save the changes again if the user edited the note content
-                                  if (_shouldSaveNoteToDb()) {
-                                    await GlobalState.flutterWebviewPlugin
-                                        .evalJavascript(
-                                            "javascript:saveNoteToDb(true);");
-                                  }
-
-                                  await toggleQuillModeBetweenReadOnlyAndEdit(
-                                      keepNoteDetailPageOpen: false);
-                                }
-
-                                GlobalState.masterDetailPageState.currentState
-                                    .updatePageShowAndHide(
-                                        shouldTriggerSetState: true);
-
-                                // Timer(const Duration(milliseconds: 1000), () {
-                                //   // Force the WebView to clear its old content to speed up the next loading
-                                //   GlobalState.flutterWebviewPlugin
-                                //       .evalJavascript(
-                                //           "javascript:clearQuillContent();");
-                                // });
-
-                                //Refresh the note list if a new note is noted
-                                if (GlobalState.isEditingOrCreatingNote) {
-                                  // If it is creating a new note, we need to refresh the note list to reflect its changes
-                                  GlobalState
-                                      .noteListWidgetForTodayState.currentState
-                                      .triggerSetState(
-                                          forceToRefreshNoteListByDb: true,
-                                          updateNoteListPageTitle: false,
-                                          millisecondToDelayExecution: 1500);
-                                }
+                                await clickOnDetailPageBackButton();
                               })
                           : Container()
                     ],
@@ -962,14 +1043,33 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     callback();
   }
 
+  String getDateTimeFormatForNote({
+    @required DateTime updated,
+    @required DateTime nextReviewTime,
+    @required bool isReviewFinished,
+    bool shouldIncludeReviewKeyword = true,
+  }) {
+    var dateTimeFormat = TimeHandler.getDateTimeFormatForAllKindOfNote(
+        updated: updated,
+        nextReviewTime: nextReviewTime,
+        isReviewFinished: isReviewFinished);
+
+    if (!shouldIncludeReviewKeyword && dateTimeFormat.contains('复习')) {
+      dateTimeFormat = dateTimeFormat.replaceAll('复习', '').trim();
+    }
+
+    return dateTimeFormat;
+  }
+
   Future<void> showNoteReviewButtonOrNot() async {
     var theNote = GlobalState.selectedNoteModel;
 
     // Check if it should show the note review button or not
-    var dateTimeFormat = TimeHandler.getDateTimeFormatForAllKindOfNote(
-        updated: theNote.updated,
-        nextReviewTime: theNote.nextReviewTime,
-        isReviewFinished: theNote.isReviewFinished);
+    var dateTimeFormat = getDateTimeFormatForNote(
+      updated: theNote.updated,
+      nextReviewTime: theNote.nextReviewTime,
+      isReviewFinished: theNote.isReviewFinished,
+    );
     if (dateTimeFormat.contains('复习') && GlobalState.isQuillReadOnly) {
       await GlobalState.flutterWebviewPlugin.evalJavascript(
           "javascript:showNoteReviewButton('$dateTimeFormat');");
@@ -998,5 +1098,54 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     } else {
       GlobalState.selectedNoteModel.nextReviewTime = null;
     }
+  }
+
+  Future<void> clickOnDetailPageBackButton() async {
+    GlobalState.isHandlingNoteDetailPage = true;
+    GlobalState.isInNoteDetailPage = false;
+
+    // If the Quill is in edit mode, we set it back to read only after clicking the back button
+    if (!GlobalState.isQuillReadOnly) {
+      // When the note is in edit mode
+
+      // Force to fetch the note content encoded from the WebView anyway
+      var noteContentEncodedFromWebView = await GlobalState.flutterWebviewPlugin
+          .evalJavascript("javascript:getNoteContentEncoded();");
+
+      // Update the note content encoded stored at global variable
+      GlobalState.selectedNoteModel.content = noteContentEncodedFromWebView;
+
+      // Save the changes again if the user edited the note content
+      if (_shouldSaveNoteToDb()) {
+        await GlobalState.flutterWebviewPlugin
+            .evalJavascript("javascript:saveNoteToDb(true);");
+      }
+
+      await toggleQuillModeBetweenReadOnlyAndEdit(
+          keepNoteDetailPageOpen: false);
+    }
+
+    GlobalState.masterDetailPageState.currentState
+        .updatePageShowAndHide(shouldTriggerSetState: true);
+
+    //Refresh the note list if a new note is noted
+    if (GlobalState.isEditingOrCreatingNote) {
+      // If it is creating a new note, we need to refresh the note list to reflect its changes
+      GlobalState.noteListWidgetForTodayState.currentState.triggerSetState(
+          forceToRefreshNoteListByDb: true,
+          updateNoteListPageTitle: false,
+          millisecondToDelayExecution: 1500);
+    }
+  }
+
+  String getDecodedNoteTitleOfSelectedNoteModel() {
+    var decodedNoteTitle = '';
+
+    if (GlobalState.selectedNoteModel != null) {
+      decodedNoteTitle = HtmlHandler.decodeAndRemoveAllHtmlTags(
+          GlobalState.selectedNoteModel.title);
+    }
+
+    return decodedNoteTitle;
   }
 }

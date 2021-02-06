@@ -240,14 +240,19 @@ class FolderListPageState extends State<FolderListPage>
                               color: Colors.transparent,
                               padding: EdgeInsets.only(left: 15.0, right: 15.0),
                             ),
-                            onTap: () {
+                            onTap: () async {
                               // setting event // click setting event
                               // setting button // setting button event
                               // test button // test button event
 
-                              GlobalState.noteDetailWidgetState.currentState
-                                  .setEditorHeightWithNewWebViewScreenHeight(
-                                      newWebViewScreenHeight: 150.0);
+                              var s = await GlobalState.database.setNoteToNextReviewPhrase(14);
+
+                              // var s = await GlobalState.database.getNextReviewPlanConfigIdByNoteId(14).get();
+
+                              var s1 ='s';
+                              // GlobalState.noteDetailWidgetState.currentState
+                              //     .setEditorHeightWithNewWebViewScreenHeight(
+                              //         newWebViewScreenHeight: 150.0);
                             },
                           )
                         ],

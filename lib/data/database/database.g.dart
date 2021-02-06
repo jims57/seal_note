@@ -2415,6 +2415,15 @@ abstract class _$Database extends GeneratedDatabase {
     );
   }
 
+  Future<int> setNoteToNextReviewPhrase(int noteId) {
+    return customUpdate(
+      'WITH myNoteTable AS( SELECT id AS noteId, folderId, nextReviewTime, (CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END) AS reviewProgressNo FROM notes WHERE id = :noteId), myReviewPlanConfigsTable AS ( SELECT (select noteId from myNoteTable) as noteId, rpc.id reviewPlanConfigId, rpc.[order], rpc.value, rpc.unit, (select nextReviewTime from myNoteTable) as nextReviewTime, ( SELECT reviewProgressNo + 1 FROM myNoteTable ) as newReviewProgressNo, ( SELECT count( * ) + 1 FROM reviewPlanConfigs WHERE reviewPlanId = rpc.reviewPlanId ) AS progressTotal FROM reviewPlanConfigs rpc WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM myNoteTable ) ) ) , myReviewPlanConfigsTable2 AS ( SELECT noteId, reviewPlanConfigId, [order], value, unit, nextReviewTime, newReviewProgressNo, progressTotal FROM myReviewPlanConfigsTable WHERE [order] = ( SELECT reviewProgressNo + 1 FROM myNoteTable ) ) , myDifferenceMinutesTable as( select noteId, reviewPlanConfigId as nextReviewPlanConfigId, [order], value, unit, nextReviewTime, newReviewProgressNo, progressTotal, (CASE WHEN unit = 1 THEN value WHEN unit=2 THEN value*60 WHEN unit=3 THEN value*60*24 WHEN unit=4 THEN value*60*24*7 WHEN unit=5 THEN value*60*24*30 ELSE value*60*24*365 END) as differenceMinutes from myReviewPlanConfigsTable2 ) , myReviewPlanConfigsTableWith3000Year as( select noteId,(CASE WHEN count( * ) = 0 THEN -3000 ELSE dmt.nextReviewPlanConfigId END) AS nextReviewPlanConfigId,[order],value,unit, nextReviewTime as oldNextReviewTime, newReviewProgressNo, (CASE WHEN count( * ) = 0 THEN (select progressTotal from myReviewPlanConfigsTable limit 1) ELSE dmt.progressTotal END) as progressTotal, differenceMinutes, \'+\'||cast(differenceMinutes as text)||\' minutes\' as differenceMinutesFormat from myDifferenceMinutesTable dmt ) ,myNewNextReviewTimeTable as( select noteId, nextReviewPlanConfigId, strftime(\'%Y-%m-%dT%H:%M:%f\', \'now\',\'localtime\') as updated, oldNextReviewTime, (CASE WHEN strftime(\'%Y-%m-%dT%H:%M:%f\',oldNextReviewTime)<strftime(\'%Y-%m-%dT%H:%M:%f\', \'now\',\'localtime\') THEN 1 ELSE 0 END) as oldNextReviewTimeisLessThanNow, differenceMinutesFormat, newReviewProgressNo, progressTotal from myReviewPlanConfigsTableWith3000Year ), myNewNextReviewTimeTableWithCheckingNow as ( select *, (CASE /*When the oldNextReviewTime is less than now, we will use now as the base to get the newNextReviewTime,*/ /*but if the oldNextReviewTime is greater than now, we use the oldNextReviewTime as the base to calculate it.*/ WHEN oldNextReviewTimeisLessThanNow=1 THEN strftime(\'%Y-%m-%dT%H:%M:%f\',datetime(strftime(\'%Y-%m-%dT%H:%M:%f\', \'now\',\'localtime\'), differenceMinutesFormat)) ELSE strftime(\'%Y-%m-%dT%H:%M:%f\',datetime(strftime(\'%Y-%m-%dT%H:%M:%f\', oldNextReviewTime), differenceMinutesFormat)) END) as newNextReviewTime from myNewNextReviewTimeTable ) update notes set updated = (select updated from myNewNextReviewTimeTableWithCheckingNow limit 1), nextReviewTime = (CASE WHEN (select nextReviewPlanConfigId from myNewNextReviewTimeTableWithCheckingNow limit 1)=-3000 THEN \'3000-01-01T00:00:00.000\' ELSE (select newNextReviewTime from myNewNextReviewTimeTableWithCheckingNow limit 1) END), oldNextReviewTime = (CASE WHEN (select nextReviewPlanConfigId from myNewNextReviewTimeTableWithCheckingNow limit 1)=-3000 THEN NULL ELSE oldNextReviewTime END), reviewProgressNo =(CASE WHEN (select nextReviewPlanConfigId from myNewNextReviewTimeTableWithCheckingNow limit 1)=-3000 THEN (select progressTotal from myNewNextReviewTimeTableWithCheckingNow limit 1) ELSE (select newReviewProgressNo from myNewNextReviewTimeTableWithCheckingNow limit 1) END), isReviewFinished = (CASE WHEN (select nextReviewPlanConfigId from myNewNextReviewTimeTableWithCheckingNow limit 1)=-3000 THEN 1 ELSE 0 END) where id = (select noteId from myNewNextReviewTimeTableWithCheckingNow limit 1)',
+      variables: [Variable.withInt(noteId)],
+      updates: {notes},
+      updateKind: UpdateKind.update,
+    );
+  }
+
   Future<int> setRightReviewProgressNoAndIsReviewFinishedFieldForAllNotes() {
     return customUpdate(
       'WITH progressTable1 AS( SELECT folderId, ( SELECT CASE WHEN reviewPlanId > 0 THEN 1 ELSE 0 END FROM folders WHERE id = n.folderId) AS isReviewFolder, id AS noteId, (CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END) AS reviewProgressNo, ( SELECT (CASE WHEN count( * ) = 0 THEN 0 ELSE count( * ) + 1 END) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal, isReviewFinished FROM notes n ), progressTable2 AS ( SELECT (CASE WHEN isReviewFolder = 1 AND reviewProgressNo > progressTotal THEN 1 WHEN isReviewFolder = 1 AND reviewProgressNo = progressTotal AND isReviewFinished = 0 THEN 2 WHEN isReviewFolder = 1 AND reviewProgressNo < progressTotal AND isReviewFinished = 1 THEN 3 WHEN isReviewFolder = 0 AND isReviewFinished = 1 THEN 4 ELSE 0 END) AS conditionNo, * FROM progressTable1 ) UPDATE notes SET reviewProgressNo = (CASE WHEN ( SELECT conditionNo FROM progressTable2 WHERE noteId = notes.id ) = 1 THEN ( SELECT progressTotal FROM progressTable2 WHERE noteId = notes.id ) ELSE notes.reviewProgressNo END), isReviewFinished = (CASE WHEN ( SELECT conditionNo FROM progressTable2 WHERE noteId = notes.id ) IN (1, 2) THEN 1 ELSE 0 END) WHERE id IN ( SELECT noteId FROM progressTable2 WHERE conditionNo > 0 );',
@@ -2462,6 +2471,22 @@ abstract class _$Database extends GeneratedDatabase {
       updates: {notes},
       updateKind: UpdateKind.update,
     );
+  }
+
+  Selectable<GetNextReviewPlanConfigIdByNoteIdResult>
+      getNextReviewPlanConfigIdByNoteId(int noteId) {
+    return customSelect(
+        'WITH myNoteTable AS( SELECT id AS noteId, folderId, (CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END) AS reviewProgressNo FROM notes WHERE id = :noteId), myReviewPlanConfigsTable AS ( SELECT rpc.id reviewPlanConfigId, rpc.[order], rpc.value, rpc.unit, ( SELECT reviewProgressNo + 1 FROM myNoteTable ) nextReviewProgressNo, ( SELECT count( * ) + 1 FROM reviewPlanConfigs WHERE reviewPlanId = rpc.reviewPlanId ) AS progressTotal FROM reviewPlanConfigs rpc WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM myNoteTable ) ) ), myReviewPlanConfigsTable2 AS ( SELECT reviewPlanConfigId, [order], value, unit FROM myReviewPlanConfigsTable WHERE [order] = ( SELECT reviewProgressNo + 1 FROM myNoteTable ) ), myDifferenceMinutesTable as( select reviewPlanConfigId, [order], value, unit, (CASE WHEN unit = 1 THEN value WHEN unit=2 THEN value*60 WHEN unit=3 THEN value*60*24 WHEN unit=4 THEN value*60*24*7 WHEN unit=5 THEN value*60*24*30 ELSE value*60*24*365 END) as differenceMinutes from myReviewPlanConfigsTable2 ) select (CASE WHEN count( * ) = 0 THEN -3000 ELSE dmt.reviewPlanConfigId END) AS reviewPlanConfigId,[order],value,unit, differenceMinutes from myDifferenceMinutesTable dmt',
+        variables: [Variable.withInt(noteId)],
+        readsFrom: {notes, reviewPlanConfigs, folders}).map((QueryRow row) {
+      return GetNextReviewPlanConfigIdByNoteIdResult(
+        reviewPlanConfigId: row.readInt('reviewPlanConfigId'),
+        order: row.readInt('order'),
+        value: row.readInt('value'),
+        unit: row.readInt('unit'),
+        differenceMinutes: row.readInt('differenceMinutes'),
+      );
+    });
   }
 
   @override
@@ -2614,5 +2639,20 @@ class GetFolderReviewPlanByFolderIdResult {
   GetFolderReviewPlanByFolderIdResult({
     this.reviewPlanId,
     this.reviewPlanName,
+  });
+}
+
+class GetNextReviewPlanConfigIdByNoteIdResult {
+  final int reviewPlanConfigId;
+  final int order;
+  final int value;
+  final int unit;
+  final int differenceMinutes;
+  GetNextReviewPlanConfigIdByNoteIdResult({
+    this.reviewPlanConfigId,
+    this.order,
+    this.value,
+    this.unit,
+    this.differenceMinutes,
   });
 }

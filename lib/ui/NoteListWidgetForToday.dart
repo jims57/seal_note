@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:seal_note/biz/ReviewHandler.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/database/database.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -254,7 +255,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                           // show note review time // review time
                                           // show review time // next review time format
                                           // finish review format // review finish format
-                                          '${TimeHandler.getDateTimeFormatForAllKindOfNote(
+                                          '${GlobalState.noteDetailWidgetState.currentState.getDateTimeFormatForNote(
                                             updated: theNote.updated,
                                             nextReviewTime:
                                                 theNote.nextReviewTime,
