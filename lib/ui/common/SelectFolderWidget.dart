@@ -150,7 +150,8 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
 
             var effectedRowCount =
                 await GlobalState.database.changeNoteFolderId(
-              // change note folder id method
+                  // change note folder id method // move note db operation
+                  // change note folder db operation
               noteId: GlobalState.selectedNoteModel.id,
               newFolderId: GlobalState.targetFolderIdNoteIsMovingTo,
               typeId: typeId,

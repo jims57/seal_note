@@ -97,13 +97,21 @@ class Notes extends Table {
 
   TextColumn get updated => text().map(const IsoDateTimeConverter())();
 
-  // Remark
-  // * This field has to have value for review note
-  // * Zero and NULL are same
-  // * The ordering (order by asc) takes precedence over the ordering(order by desc) of *updated* filed
-  // * If you want to make the ordering of *updated* take effect, you have to set value *3000-01-01T00:00:00.000* to this field
+  // * [basic]
+  //    a. This field has to have value for review note,
+  //    whereas NULL for non-review note,
+  //    or the non-review folder won't show the note even it is inside a folder which has no review plan.
+  //    b. Zero and NULL are same.
+  // * [Ordering]
+  //    a. The ordering (order by asc) takes precedence over the ordering(order by desc) of *updated* filed
+  //    b . If you want to make the ordering of *updated* take effect, you have to set value *3000-01-01T00:00:00.000* to this field
   //    so that all review-finished notes have the same *nextReviewTime* value to ignore this field ordering, in this case,
   //    *updated* field can order as expected(order by asc updated)
+  // * [3000Y value]
+  //    a. When this field value is 3000-01-01T00:00:00.000, it means this note has been finished all its review plans by the user's review behavior.
+  //    b. But if *isReviewFinished* field = true, and this field isn't 3000-01-01T00:00:00.000, say, 2021-02-07T15:39:56.025050,
+  //    it means this note is marked finished because it is moved from another folder which as more review plans,
+  //    in a nutshell, it is not finished by the user review behavior, but by Move Note functionality instead.
   TextColumn get nextReviewTime => text()
       .nullable()
       .named('nextReviewTime')
@@ -192,6 +200,10 @@ class ReviewPlanConfigs extends Table {
       "WITH isReviewFolderTable AS( SELECT (CASE WHEN reviewPlanId IS NOT NULL THEN 1 ELSE 0 END) AS isReviewFolder FROM folders WHERE id = :folderId) SELECT id, folderId, (CASE WHEN INSTR(content, '&lt;/p&gt;') > 0 THEN substr(content, 1, INSTR(content, '&lt;/p&gt;') + 9) ELSE content END) AS title, content, created, updated, nextReviewTime, (CASE WHEN reviewProgressNo IS NULL THEN 0 ELSE reviewProgressNo END) AS reviewProgressNo, isReviewFinished, isDeleted, createdBy, ( SELECT (CASE WHEN count( * ) = 0 THEN 0 ELSE count( * ) + 1 END) FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT reviewPlanId FROM folders WHERE id = ( SELECT folderId FROM notes WHERE id = n.id ) ) ) AS progressTotal FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = :folderId AND CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ORDER BY n.isReviewFinished ASC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.nextReviewTime END ASC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 0 THEN n.updated END DESC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 1 THEN n.updated END DESC, CASE WHEN ( SELECT isReviewFolder FROM isReviewFolderTable ) = 0 THEN n.id END DESC LIMIT :pageSize OFFSET :pageSize * (:pageNo - 1); ",
   'clearDeletedNotesMoreThan30DaysAgo':
       "DELETE FROM notes WHERE strftime('%Y-%m-%d %H:%M:%S', updated) <= strftime('%Y-%m-%d %H:%M:%S', :minAvailableDateTime); ",
+
+  // For note model
+  'getNoteWithProgressTotalByNoteId':
+      "with myTargetFolderReviewPlanIdTable as( select reviewPlanId from folders where id = :folderId), myNoteWithReviewPlanIdTable as(SELECT (CASE /*When the folder the current note belongs to isn't a review folder, reviewPlanId just return -1*/ WHEN (select reviewPlanId from myTargetFolderReviewPlanIdTable limit 1) is null THEN -1 /*If the folder the current note belongs to is a review folder, just return its reviewPlanId, say, 4*/ ELSE (select reviewPlanId from myTargetFolderReviewPlanIdTable limit 1) END) AS reviewPlanId, * FROM notes n WHERE id = :noteId), myNoteWithProgressTotalTable as ( select (CASE /*If it isn't in a review folder, the progressTotal is -1*/ WHEN reviewPlanId = -1 THEN -1 /*If it is in a review folder, just return its right progress total the folder is using*/ ELSE (select count(*)+1 from reviewPlanConfigs where reviewPlanId = nrp.reviewPlanId) END) as progressTotal,* from myNoteWithReviewPlanIdTable nrp ) select * from myNoteWithProgressTotalTable ",
 
   // For note review
   'setNoteToNextReviewPhrase': // This is used for the note review button, see:  https://user-images.githubusercontent.com/1920873/107107893-033e3880-686f-11eb-92d9-5e5ee7179956.png
@@ -556,16 +568,18 @@ class Database extends _$Database {
     @required int currentReviewPlanId,
     @required int targetReviewPlanId,
   }) async {
-    // For more info about typeId at:【腾讯文档】海豚笔记关键逻辑 https://docs.qq.com/sheet/DZEt3YWNLcURrVnF6
+    // For more info about typeId at: https://docs.qq.com/sheet/DZEt3YWNLcURrVnF6
     // 0 means: Set nextReviewTime, reviewProgressNo fields to NULL and set isReviewFinished back to 0
     // 1 means: Set value to nextReviewTime and reviewProgressNo fields and set isReviewFinished back to 0
     // 2 means: Don't need to change all review related fields, such as nextReviewTIme, reviewProgressNo and isReviewFinished
 
     // Get old value of the note
-    var noteEntry = await getNoteEntryByNoteId(noteId: noteId);
-    var nextReviewTimeValue = Value(noteEntry.nextReviewTime);
-    var oldNextReviewTimeValue = Value(noteEntry.oldNextReviewTime);
-    var isReviewFinishedValue = Value(noteEntry.isReviewFinished);
+    // var theNoteEntry = await getNoteEntryByNoteId(noteId: noteId);
+    var theNoteEntry =
+        await getNoteWithProgressTotalByNoteId(newFolderId, noteId).getSingle();
+    var nextReviewTimeValue = Value(theNoteEntry.nextReviewTime);
+    var oldNextReviewTimeValue = Value(theNoteEntry.oldNextReviewTime);
+    var isReviewFinishedValue = Value(theNoteEntry.isReviewFinished);
 
     var notesCompanion;
 
@@ -593,12 +607,16 @@ class Database extends _$Database {
         }
       }
 
+      // Check if new next review time is 3000-01-01T00:00:00.000 or not
+      if (nextReviewTimeValue.value.year >= 3000 &&
+          theNoteEntry.reviewProgressNo < theNoteEntry.progressTotal) {
+        nextReviewTimeValue = Value(TimeHandler.getNowForLocal());
+      }
+
       notesCompanion = NotesCompanion(
           id: Value(noteId),
           folderId: Value(newFolderId),
           nextReviewTime: nextReviewTimeValue,
-          // Review instantly
-          // reviewProgressNo: Value(0),
           isReviewFinished: Value(false),
           updated: Value(TimeHandler.getNowForLocal()));
     } else {
