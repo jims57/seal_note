@@ -2483,19 +2483,27 @@ abstract class _$Database extends GeneratedDatabase {
     );
   }
 
-  Future<int> setFolderToReviewOneFromNonReviewOne(String now, int folderId) {
+  Future<int> setFolderToReviewOneFromNonReviewOne(
+      String newReviewPlanId, String folderId) {
     return customUpdate(
-      'UPDATE notes SET nextReviewTime =(CASE WHEN oldNextReviewTime IS NOT NULL THEN oldNextReviewTime ELSE :now END), oldNextReviewTime = NULL WHERE folderId = :folderId;',
-      variables: [Variable.withString(now), Variable.withInt(folderId)],
+      'WITH myParametersTable AS( SELECT CAST (:newReviewPlanId AS INTEGER) AS newReviewPlanId, CAST (:folderId AS INTEGER) AS folderId, strftime(\'%Y-%m-%dT%H:%M:%f\', \'now\', \'localtime\') AS now), myTargetProgressTotalTable AS ( SELECT reviewPlanId AS targetReviewPlanId, count( * ) + 1 AS targetProgressTotal FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT newReviewPlanId FROM myParametersTable ) ) UPDATE notes SET nextReviewTime = (CASE WHEN (reviewProgressNo < ( SELECT targetProgressTotal FROM myTargetProgressTotalTable ) OR reviewProgressNo IS NULL) AND strftime(\'%Y-%m-%d\', oldNextReviewTime) >= strftime(\'%Y-%m-%d\', \'3000-01-01T00:00:00.000\') THEN ( SELECT now FROM myParametersTable ) WHEN oldNextReviewTime IS NOT NULL THEN oldNextReviewTime ELSE ( SELECT now FROM myParametersTable ) END), oldNextReviewTime = NULL WHERE folderId = ( SELECT folderId FROM myParametersTable );',
+      variables: [
+        Variable.withString(newReviewPlanId),
+        Variable.withString(folderId)
+      ],
       updates: {notes},
       updateKind: UpdateKind.update,
     );
   }
 
-  Future<int> setFolderToReviewOneFromAnother(String now, int folderId) {
+  Future<int> setFolderToReviewOneFromAnother(
+      String newReviewPlanId, String folderId) {
     return customUpdate(
-      'UPDATE notes SET nextReviewTime =(CASE WHEN nextReviewTime IS NULL THEN :now ELSE nextReviewTime END) WHERE folderId = :folderId;',
-      variables: [Variable.withString(now), Variable.withInt(folderId)],
+      'WITH myParametersTable AS( SELECT CAST (:newReviewPlanId AS INTEGER) AS newReviewPlanId, CAST (:folderId AS INTEGER) AS folderId, strftime(\'%Y-%m-%dT%H:%M:%f\', \'now\', \'localtime\') AS now), myTargetProgressTotalTable AS ( SELECT reviewPlanId AS targetReviewPlanId, count( * ) + 1 AS targetProgressTotal FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT newReviewPlanId FROM myParametersTable ) ) UPDATE notes SET nextReviewTime = (CASE WHEN strftime(\'%Y-%m-%d\', nextReviewTime) >= strftime(\'%Y-%m-%d\', \'3000-01-01T00:00:00.000\') AND (reviewProgressNo < ( SELECT targetProgressTotal FROM myTargetProgressTotalTable ) OR reviewProgressNo IS NULL) THEN ( SELECT now FROM myParametersTable ) WHEN nextReviewTime IS NULL THEN ( SELECT now FROM myParametersTable ) ELSE nextReviewTime END) WHERE folderId = ( SELECT folderId FROM myParametersTable );',
+      variables: [
+        Variable.withString(newReviewPlanId),
+        Variable.withString(folderId)
+      ],
       updates: {notes},
       updateKind: UpdateKind.update,
     );

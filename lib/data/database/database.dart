@@ -219,9 +219,9 @@ class ReviewPlanConfigs extends Table {
   'setFolderToNonReviewOneFromReviewOne':
       "UPDATE notes SET oldNextReviewTime = nextReviewTime, nextReviewTime = NULL WHERE folderId = :folderId;",
   'setFolderToReviewOneFromNonReviewOne':
-      "UPDATE notes SET nextReviewTime =(CASE WHEN oldNextReviewTime IS NOT NULL THEN oldNextReviewTime ELSE :now END), oldNextReviewTime = NULL WHERE folderId = :folderId; ",
+      "WITH myParametersTable AS( SELECT CAST (:newReviewPlanId AS INTEGER) AS newReviewPlanId, CAST (:folderId AS INTEGER) AS folderId, strftime('%Y-%m-%dT%H:%M:%f', 'now', 'localtime') AS now), myTargetProgressTotalTable AS ( SELECT reviewPlanId AS targetReviewPlanId, count( * ) + 1 AS targetProgressTotal FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT newReviewPlanId FROM myParametersTable ) ) UPDATE notes SET nextReviewTime = (CASE WHEN (reviewProgressNo < ( SELECT targetProgressTotal FROM myTargetProgressTotalTable ) OR reviewProgressNo IS NULL) AND strftime('%Y-%m-%d', oldNextReviewTime) >= strftime('%Y-%m-%d', '3000-01-01T00:00:00.000') THEN ( SELECT now FROM myParametersTable ) WHEN oldNextReviewTime IS NOT NULL THEN oldNextReviewTime ELSE ( SELECT now FROM myParametersTable ) END), oldNextReviewTime = NULL WHERE folderId = ( SELECT folderId FROM myParametersTable ); ",
   'setFolderToReviewOneFromAnother':
-      "UPDATE notes SET nextReviewTime =(CASE WHEN nextReviewTime IS NULL THEN :now ELSE nextReviewTime END) WHERE folderId = :folderId; ",
+      "WITH myParametersTable AS( SELECT CAST (:newReviewPlanId AS INTEGER) AS newReviewPlanId, CAST (:folderId AS INTEGER) AS folderId, strftime('%Y-%m-%dT%H:%M:%f', 'now', 'localtime') AS now), myTargetProgressTotalTable AS ( SELECT reviewPlanId AS targetReviewPlanId, count( * ) + 1 AS targetProgressTotal FROM reviewPlanConfigs WHERE reviewPlanId = ( SELECT newReviewPlanId FROM myParametersTable ) ) UPDATE notes SET nextReviewTime = (CASE WHEN strftime('%Y-%m-%d', nextReviewTime) >= strftime('%Y-%m-%d', '3000-01-01T00:00:00.000') AND (reviewProgressNo < ( SELECT targetProgressTotal FROM myTargetProgressTotalTable ) OR reviewProgressNo IS NULL) THEN ( SELECT now FROM myParametersTable ) WHEN nextReviewTime IS NULL THEN ( SELECT now FROM myParametersTable ) ELSE nextReviewTime END) WHERE folderId = ( SELECT folderId FROM myParametersTable ); ",
 
   // For review plan configs
   'getNextReviewPlanConfigIdByNoteId': // return -3000, means the next review time of the note has reached its last review progress, and should set *isReviewFinished* true
@@ -493,7 +493,7 @@ class Database extends _$Database {
           if (oldReviewPlanId != 0 && newReviewPlanId != 0) {
             // When switching review plans from one to another
             notesEffectedRows =
-                await setFolderToReviewOneFromAnother(now, folderId);
+                await setFolderToReviewOneFromAnother(newReviewPlanId.toString(), folderId.toString());
           } else {
             // When changing review plan between review one and non-review one
 
@@ -504,7 +504,9 @@ class Database extends _$Database {
             } else {
               // When it is setting the folder to review one from a non-review one
               notesEffectedRows =
-                  await setFolderToReviewOneFromNonReviewOne(now, folderId);
+                  // await setFolderToReviewOneFromNonReviewOne(now, folderId);
+                  await setFolderToReviewOneFromNonReviewOne(
+                      newReviewPlanId.toString(), folderId.toString());
             }
           }
         }
@@ -574,7 +576,6 @@ class Database extends _$Database {
     // 2 means: Don't need to change all review related fields, such as nextReviewTIme, reviewProgressNo and isReviewFinished
 
     // Get old value of the note
-    // var theNoteEntry = await getNoteEntryByNoteId(noteId: noteId);
     var theNoteEntry =
         await getNoteWithProgressTotalByNoteId(newFolderId, noteId).getSingle();
     var nextReviewTimeValue = Value(theNoteEntry.nextReviewTime);

@@ -64,6 +64,9 @@ class ReviewPlanWidgetState extends State<ReviewPlanWidget> {
     int newReviewPlanId,
     String reviewPlanName,
   ) async {
+    // change review plan // change folder review plan
+    // click to change folder review plan // click to change review plan
+
     if (selectedReviewPlanId != newReviewPlanId) {
       selectedReviewPlanId = newReviewPlanId;
       selectedReviewPlanName = reviewPlanName;
