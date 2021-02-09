@@ -245,9 +245,9 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
           // if yes, we don't show the alert dialog for the user to confirm, since it is finished.
           // See: https://user-images.githubusercontent.com/1920873/107311766-e81b3500-6ac9-11eb-833d-048746ed8b85.png
 
-          if(theNote.isReviewFinished){
+          if (theNote.isReviewFinished) {
             confirmTypeId = 0;
-          }else{
+          } else {
             confirmTypeId = 2;
           }
         } else {

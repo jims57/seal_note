@@ -509,7 +509,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
               // var currentNextReviewTime =
               //     GlobalState.selectedNoteModel.nextReviewTime;
 
-              var effectRowsCount = await GlobalState.database.setNoteToNextReviewPhrase(theNoteId);
+              var effectRowsCount = await GlobalState.database
+                  .setNoteToNextReviewPhrase(theNoteId);
 
               if (effectRowsCount > 0) {
                 if (GlobalState.screenType == 1) {
@@ -538,10 +539,19 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                   shouldIncludeReviewKeyword: false,
                 );
 
+                // Don't show next review time label, see bug: https://github.com/jims57/seal_note/issues/351
+                if (nextReviewTimeFormat.contains('完成')) {
+                  nextReviewTimeFormat = '复习$nextReviewTimeFormat';
+                } else {
+                  nextReviewTimeFormat = '下次复习：$nextReviewTimeFormat';
+                }
+
                 Flushbar(
+                  // review finish tip // review tip
+                  // note review tip // review note tip
                   title: '复习成功',
                   messageText: Text(
-                    '下次复习：$nextReviewTimeFormat',
+                    nextReviewTimeFormat,
                     style: TextStyle(color: Colors.white),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
