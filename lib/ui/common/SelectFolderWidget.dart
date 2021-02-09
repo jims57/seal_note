@@ -84,7 +84,7 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
       onTap: () async {
         // click on folder selection item // click folder selection item
         // click to move folder // click on select folder event
-        // move folder event
+        // move folder event // select folder to move note
 
         if (_isFolderSelectionItemClickable(theUserFolderId: widget.folderId)) {
           GlobalState.targetFolderIdNoteIsMovingTo = widget.folderId;
@@ -111,8 +111,8 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
             // confirm dialog // confirm to move note
             // move note confirm dialog
 
-            var remark =
-                GlobalState.remarkForWhenNoteWillBecomeReviewFinishedAfterMovingToTargetFolder;
+            var remark = GlobalState
+                .remarkForWhenNoteWillBecomeReviewFinishedAfterMovingToTargetFolder;
             if (confirmTypeId == 1) {
               remark = GlobalState.remarkForMovingNoteToFolderWithoutReviewPlan;
             }
@@ -150,8 +150,8 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
 
             var effectedRowCount =
                 await GlobalState.database.changeNoteFolderId(
-                  // change note folder id method // move note db operation
-                  // change note folder db operation
+              // change note folder id method // move note db operation
+              // change note folder db operation
               noteId: GlobalState.selectedNoteModel.id,
               newFolderId: GlobalState.targetFolderIdNoteIsMovingTo,
               typeId: typeId,
@@ -209,30 +209,50 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
     // confirmTypeId = [0, 1, 2], for more info at: https://docs.qq.com/sheet/DZEt3YWNLcURrVnF6
 
     var confirmTypeId;
+    NoteWithProgressTotal theNote;
 
     if (currentReviewPlanId != null) {
       // When the current review plan id isn't null
 
       if (targetReviewPlanId == null) {
-        confirmTypeId = 1;
+        // When P1 => X, we need to consider if the note has finished all its reviews, if yes, don't prompt alert dialog in this case
+        // See: https://user-images.githubusercontent.com/1920873/107310246-03d10c00-6ac7-11eb-95fe-2ba3faaa3121.png
+
+        theNote = _getNoteWithProgressTotalByIndexAtNoteList(
+            indexAtNoteList: indexAtNoteList);
+
+        // Check if the note has finished its reviews or not
+        if (theNote.isReviewFinished) {
+          confirmTypeId = 0;
+        } else {
+          confirmTypeId = 1;
+        }
       } else if (currentReviewPlanId == targetReviewPlanId) {
         confirmTypeId = 0;
       } else {
         // When P1 => P2(https://user-images.githubusercontent.com/1920873/106218095-9fce5e00-6211-11eb-9496-043e23b7c5a5.png)
 
         // Get the NoteWithProgressTotal entity
-        var theNote = GlobalState.noteListWidgetForTodayState.currentState
-            .getNoteWithProgressTotalByIndexAtNoteList(
-                indexAtNoteList: indexAtNoteList);
+        theNote = _getNoteWithProgressTotalByIndexAtNoteList(
+            indexAtNoteList: indexAtNoteList);
 
         // Get the progress total of the target review plan
         var targetProgressTotal = await GlobalState.database
             .getProgressTotalByReviewPlanId(reviewPlanId: targetReviewPlanId);
 
         if (theNote.reviewProgressNo >= targetProgressTotal) {
-          confirmTypeId = 2;
+          // Check if the note has finished its reviews,
+          // if yes, we don't show the alert dialog for the user to confirm, since it is finished.
+          // See: https://user-images.githubusercontent.com/1920873/107311766-e81b3500-6ac9-11eb-833d-048746ed8b85.png
+
+          if(theNote.isReviewFinished){
+            confirmTypeId = 0;
+          }else{
+            confirmTypeId = 2;
+          }
         } else {
-          confirmTypeId = 0; // Zero means it doesn't need the user to confirm his action
+          confirmTypeId =
+              0; // Zero means it doesn't need the user to confirm his action
         }
       }
     } else {
@@ -266,5 +286,14 @@ class SelectFolderWidgetState extends State<SelectFolderWidget> {
     }
 
     return typeId;
+  }
+
+  NoteWithProgressTotal _getNoteWithProgressTotalByIndexAtNoteList(
+      {@required int indexAtNoteList}) {
+    var theNote = GlobalState.noteListWidgetForTodayState.currentState
+        .getNoteWithProgressTotalByIndexAtNoteList(
+            indexAtNoteList: indexAtNoteList);
+
+    return theNote;
   }
 }
