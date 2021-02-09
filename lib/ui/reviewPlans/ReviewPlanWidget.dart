@@ -72,7 +72,7 @@ class ReviewPlanWidgetState extends State<ReviewPlanWidget> {
       selectedReviewPlanName = reviewPlanName;
 
       // Update the reviewPlanId for the folder
-      var effectedRows = await GlobalState.database.updateFolderReviewPlanId(
+      await GlobalState.database.updateFolderReviewPlanId(
         folderId: widget.folderId,
         oldReviewPlanId: oldReviewPlanId,
         newReviewPlanId: newReviewPlanId,

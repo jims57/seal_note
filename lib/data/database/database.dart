@@ -492,8 +492,8 @@ class Database extends _$Database {
           // Check if it is setting a review plan to the folder or not
           if (oldReviewPlanId != 0 && newReviewPlanId != 0) {
             // When switching review plans from one to another
-            notesEffectedRows =
-                await setFolderToReviewOneFromAnother(newReviewPlanId.toString(), folderId.toString());
+            notesEffectedRows = await setFolderToReviewOneFromAnother(
+                newReviewPlanId.toString(), folderId.toString());
           } else {
             // When changing review plan between review one and non-review one
 
@@ -800,6 +800,22 @@ class Database extends _$Database {
     if (noteEntry == null) hasNote = false;
 
     return hasNote;
+  }
+
+  Future<int> reviewNoteAgain({@required int noteId}) async {
+    // See bug: https://github.com/jims57/seal_note/issues/350
+
+    var nowValue = Value(TimeHandler.getNowForLocal());
+
+    return await (update(notes)..where((n) => n.id.equals(noteId))).write(
+      NotesCompanion(
+        updated: nowValue,
+        nextReviewTime: nowValue,
+        oldNextReviewTime: Value(null),
+        reviewProgressNo: Value(0),
+        isReviewFinished: Value(false),
+      ),
+    );
   }
 
 // Review plans

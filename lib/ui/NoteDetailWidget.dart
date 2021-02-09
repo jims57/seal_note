@@ -22,6 +22,7 @@ import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:seal_note/util/converter/ImageConverter.dart';
 import 'package:seal_note/util/crypto/CryptoHandler.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
+import 'package:seal_note/util/dialog/FlushBarHandler.dart';
 import 'package:seal_note/util/file/FileHandler.dart';
 import 'package:seal_note/util/html/HtmlHandler.dart';
 import 'package:seal_note/util/route/ScaleRoute.dart';
@@ -478,136 +479,54 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     JavascriptChannel(
         name: 'ConfirmNoteReviewDialog',
         onMessageReceived: (JavascriptMessage message) {
-          // review note confirm dialog // note review confirm dialog
+          var theNote = GlobalState.selectedNoteModel;
 
           print(message.message);
           GlobalState.noteDetailWidgetState.currentState
               .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
 
-          AlertDialogHandler()
-              .showAlertDialog(
-            parentContext: GlobalState.noteDetailWidgetContext,
-            captionText: '完成这次复习？',
-            remark: GlobalState.selectedNoteModel.title,
-            remarkMaxLines: 6,
-            restoreWebViewToShowIfNeeded: true,
-            barrierDismissible: true,
-            decodeAndRemoveAllHtmlTagsForRemark: true,
-            buttonTextForOK: '我已复习',
-            cancelAndOKButtonMainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            expandRemarkToMaxFinite: false,
-          )
-              .then((isFinished) async {
-            if (isFinished) {
-              // confirm review // confirm note review
-              // note review confirm event
+          // Check if the note has finished its reviews,
+          // if yes, we should notify the user if he is going to review the note again.
+          // See improvement: https://github.com/jims57/seal_note/issues/350
+          if (theNote.isReviewFinished) {
+            // When the note has finished its reviews
+            AlertDialogHandler()
+                .showAlertDialog(
+              parentContext: GlobalState.noteDetailWidgetContext,
+              captionText: '重置复习进度？',
+              remark: '此笔记已经复习完成。你是否打算『重置进度』，以便重新复习（巩固记忆）？',
+              centerRemark: true,
+              barrierDismissible: true,
+              restoreWebViewToShowIfNeeded: true,
+              buttonTextForOK: '重置进度',
+              buttonColorForOK: Colors.red,
+              cancelAndOKButtonMainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            )
+                .then((shouldReviewAgain) async {
+              if (shouldReviewAgain) {
+                var theNote = GlobalState.selectedNoteModel;
 
-              // Record the last selected note mode for undo operation
-              GlobalState.lastSelectedNoteModel = GlobalState.selectedNoteModel;
+                // Record the last selected note mode for undo operation
+                GlobalState.lastSelectedNoteModel =
+                    GlobalState.selectedNoteModel;
 
-              var theNoteId = GlobalState.selectedNoteModel.id;
-              // var currentNextReviewTime =
-              //     GlobalState.selectedNoteModel.nextReviewTime;
+                var effectedRowsCount = await GlobalState.database
+                    .reviewNoteAgain(noteId: theNote.id);
 
-              var effectRowsCount = await GlobalState.database
-                  .setNoteToNextReviewPhrase(theNoteId);
+                if (effectedRowsCount > 0) {
+                  await _goBackToNoteListAndRefreshIt();
 
-              if (effectRowsCount > 0) {
-                if (GlobalState.screenType == 1) {
-                  await GlobalState.noteDetailWidgetState.currentState
-                      .clickOnDetailPageBackButton();
-                }
+                  FlushBarHandler().showFlushBar(
+                    title: '重置成功',
+                    message: '复习时间：现在',
+                    context: GlobalState.noteListPageContext,
+                    showUndoButton: true,
+                    callbackForUndo: () async {
+                      var effectRowsCount = await _undoReviewRelatedOperation(
+                          theLastSelectedNoteModel:
+                              GlobalState.lastSelectedNoteModel);
 
-                // Refresh the note list to reflect the change
-                GlobalState.noteListWidgetForTodayState.currentState
-                    .triggerSetState(
-                  forceToRefreshNoteListByDb: true,
-                  refreshFolderListPageFromDbByTheWay: true,
-                );
-
-                // Get up-to-date note from db, since the next review time has been changed
-                var theNoteEntry = await GlobalState.database
-                    .getNoteEntryByNoteId(noteId: theNoteId);
-
-                // Get new next review time for the note
-                var nextReviewTimeFormat = GlobalState
-                    .noteDetailWidgetState.currentState
-                    .getDateTimeFormatForNote(
-                  updated: theNoteEntry.updated,
-                  nextReviewTime: theNoteEntry.nextReviewTime,
-                  isReviewFinished: theNoteEntry.isReviewFinished,
-                  shouldIncludeReviewKeyword: false,
-                );
-
-                // Don't show next review time label, see bug: https://github.com/jims57/seal_note/issues/351
-                if (nextReviewTimeFormat.contains('完成')) {
-                  nextReviewTimeFormat = '复习$nextReviewTimeFormat';
-                } else {
-                  nextReviewTimeFormat = '下次复习：$nextReviewTimeFormat';
-                }
-
-                Flushbar(
-                  // review finish tip // review tip
-                  // note review tip // review note tip
-                  title: '复习成功',
-                  messageText: Text(
-                    nextReviewTimeFormat,
-                    style: TextStyle(color: Colors.white),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                  duration: Duration(
-                      milliseconds: GlobalState.defaultFlushBarDuration),
-                  flushbarPosition: FlushbarPosition.TOP,
-                  backgroundColor: GlobalState.themeBlueColor,
-                  icon: Icon(
-                    Icons.info_outlined,
-                    color: Colors.white,
-                  ),
-                  mainButton: GestureDetector(
-                    child: Container(
-                      alignment: Alignment.center,
-                      width: 60,
-                      color: Colors.white,
-                      child: Text(
-                        '撤消',
-                        style: TextStyle(
-                          color: GlobalState.themeBlueColor,
-                        ),
-                      ),
-                    ),
-                    onTap: () async {
-                      // revert review // undo review event
-
-                      var theLastSelectedNoteModel =
-                          GlobalState.lastSelectedNoteModel;
-
-                      var theNotesCompanion = NotesCompanion(
-                        id: Value(theLastSelectedNoteModel.id),
-                        nextReviewTime:
-                            Value(theLastSelectedNoteModel.nextReviewTime),
-                        reviewProgressNo:
-                            Value(theLastSelectedNoteModel.reviewProgressNo),
-                        isReviewFinished:
-                            Value(theLastSelectedNoteModel.isReviewFinished),
-                        updated: Value(theLastSelectedNoteModel.updated),
-                      );
-
-                      var effectedRowsCount = await GlobalState.database
-                          .updateNote(notesCompanion: theNotesCompanion);
-
-                      if (effectedRowsCount > 0) {
-                        var dateTimeFormatOfLastSelectedNote = GlobalState
-                            .noteDetailWidgetState.currentState
-                            .getDateTimeFormatForNote(
-                          updated: theLastSelectedNoteModel.updated,
-                          nextReviewTime:
-                              theLastSelectedNoteModel.nextReviewTime,
-                          isReviewFinished:
-                              theLastSelectedNoteModel.isReviewFinished,
-                          shouldIncludeReviewKeyword: true,
-                        );
-
+                      if (effectRowsCount > 0) {
                         // Refresh the note list to reflect the change
                         GlobalState.noteListWidgetForTodayState.currentState
                             .triggerSetState(
@@ -615,26 +534,109 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                           refreshFolderListPageFromDbByTheWay: true,
                         );
 
-                        Flushbar(
-                          icon: Icon(
-                            Icons.undo_outlined,
-                            color: Colors.white,
-                          ),
+                        FlushBarHandler().showFlushBar(
                           title: '撤消成功',
-                          message: dateTimeFormatOfLastSelectedNote,
-                          duration: Duration(
-                              milliseconds:
-                                  GlobalState.defaultFlushBarDuration),
-                          flushbarPosition: FlushbarPosition.TOP,
-                          backgroundColor: GlobalState.themeBlueColor,
-                        )..show(GlobalState.noteListPageContext);
+                          message: '当前复习状态：已完成',
+                          context: GlobalState.noteListPageContext,
+                        );
                       }
                     },
-                  ),
-                )..show(GlobalState.noteListPageContext);
+                  );
+                }
               }
-            }
-          });
+            });
+          } else {
+            // When it hasn't finished its reviews
+            AlertDialogHandler()
+                .showAlertDialog(
+              // review note confirm dialog // note review confirm dialog
+              parentContext: GlobalState.noteDetailWidgetContext,
+              captionText: '完成这次复习？',
+              remark: GlobalState.selectedNoteModel.title,
+              remarkMaxLines: 6,
+              restoreWebViewToShowIfNeeded: true,
+              barrierDismissible: true,
+              decodeAndRemoveAllHtmlTagsForRemark: true,
+              buttonTextForOK: '我已复习',
+              cancelAndOKButtonMainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              expandRemarkToMaxFinite: false,
+            )
+                .then((isFinished) async {
+              if (isFinished) {
+                // confirm review // confirm note review
+                // note review confirm event
+
+                // Record the last selected note mode for undo operation
+                GlobalState.lastSelectedNoteModel =
+                    GlobalState.selectedNoteModel;
+
+                var theNoteId = GlobalState.selectedNoteModel.id;
+
+                var effectRowsCount = await GlobalState.database
+                    .setNoteToNextReviewPhrase(theNoteId);
+
+                if (effectRowsCount > 0) {
+                  await _goBackToNoteListAndRefreshIt();
+
+                  var nextReviewTimeFormat = await GlobalState
+                      .noteDetailWidgetState.currentState
+                      .getNextReviewTimeFormatByNoteId(noteId: theNoteId);
+
+                  // Don't show next review time label, see bug: https://github.com/jims57/seal_note/issues/351
+                  if (nextReviewTimeFormat.contains('完成')) {
+                    nextReviewTimeFormat = '状态：复习$nextReviewTimeFormat';
+                  } else {
+                    nextReviewTimeFormat = '下次复习：$nextReviewTimeFormat';
+                  }
+
+                  FlushBarHandler().showFlushBar(
+                      title: '复习成功',
+                      message: nextReviewTimeFormat,
+                      context: GlobalState.noteListPageContext,
+                      showUndoButton: true,
+                      callbackForUndo: () async {
+                        // revert review // undo review event
+
+                        var theLastSelectedNoteModel =
+                            GlobalState.lastSelectedNoteModel;
+
+                        var effectedRowsCount =
+                            await _undoReviewRelatedOperation(
+                                theLastSelectedNoteModel:
+                                    GlobalState.lastSelectedNoteModel);
+
+                        if (effectedRowsCount > 0) {
+                          var dateTimeFormatOfLastSelectedNote = GlobalState
+                              .noteDetailWidgetState.currentState
+                              .getDateTimeFormatForNote(
+                            updated: theLastSelectedNoteModel.updated,
+                            nextReviewTime:
+                                theLastSelectedNoteModel.nextReviewTime,
+                            isReviewFinished:
+                                theLastSelectedNoteModel.isReviewFinished,
+                            shouldIncludeReviewKeyword: true,
+                          );
+
+                          // Refresh the note list to reflect the change
+                          GlobalState.noteListWidgetForTodayState.currentState
+                              .triggerSetState(
+                            forceToRefreshNoteListByDb: true,
+                            refreshFolderListPageFromDbByTheWay: true,
+                          );
+
+                          FlushBarHandler().showFlushBar(
+                            icon: Icons.undo_outlined,
+                            title: '撤消成功',
+                            message: dateTimeFormatOfLastSelectedNote,
+                            context: GlobalState.noteListPageContext,
+                            showUndoButton: false,
+                          );
+                        }
+                      });
+                }
+              }
+            });
+          }
         }), // ConfirmNoteReviewDialog
   ].toSet();
 
@@ -879,6 +881,36 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     return shouldSave;
   }
 
+  static Future<void> _goBackToNoteListAndRefreshIt() async {
+    if (GlobalState.screenType == 1) {
+      await GlobalState.noteDetailWidgetState.currentState
+          .clickOnDetailPageBackButton();
+    }
+
+    // Refresh the note list to reflect the change
+    GlobalState.noteListWidgetForTodayState.currentState.triggerSetState(
+      forceToRefreshNoteListByDb: true,
+      refreshFolderListPageFromDbByTheWay: true,
+    );
+  }
+
+  static Future<int> _undoReviewRelatedOperation({
+    @required NoteWithProgressTotal theLastSelectedNoteModel,
+  }) async {
+    var theNotesCompanion = NotesCompanion(
+      id: Value(theLastSelectedNoteModel.id),
+      nextReviewTime: Value(theLastSelectedNoteModel.nextReviewTime),
+      reviewProgressNo: Value(theLastSelectedNoteModel.reviewProgressNo),
+      isReviewFinished: Value(theLastSelectedNoteModel.isReviewFinished),
+      updated: Value(theLastSelectedNoteModel.updated),
+    );
+
+    var effectedRowsCount = await GlobalState.database
+        .updateNote(notesCompanion: theNotesCompanion);
+
+    return effectedRowsCount;
+  }
+
   // Public methods
   void showWebView({bool forceToSyncWithShouldHideWebViewVar = true}) {
     if (forceToSyncWithShouldHideWebViewVar) {
@@ -1069,6 +1101,22 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     }
 
     return dateTimeFormat;
+  }
+
+  Future<String> getNextReviewTimeFormatByNoteId({@required int noteId}) async {
+    // Get up-to-date note from db, since the next review time has been changed
+    var theNoteEntry =
+        await GlobalState.database.getNoteEntryByNoteId(noteId: noteId);
+
+    // Get new next review time for the note
+    var nextReviewTimeFormat = getDateTimeFormatForNote(
+      updated: theNoteEntry.updated,
+      nextReviewTime: theNoteEntry.nextReviewTime,
+      isReviewFinished: theNoteEntry.isReviewFinished,
+      shouldIncludeReviewKeyword: false,
+    );
+
+    return nextReviewTimeFormat;
   }
 
   Future<void> showNoteReviewButtonOrNot() async {
