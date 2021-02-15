@@ -181,7 +181,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                 }
 
                 var theNoteId = theNote.id;
-                var theNoteTitle = _getNoteTitleFormatForNoteList(
+                var theNoteTitle = getNoteTitleFormatForNoteList(
+                        // format note list title // format note title
+                        // note title format // get note title
+                        // get format note title
                         encodedContent: theNote.content,
                         removeOlTagAndReplaceLiTagByPTag: true)
                     .trim();
@@ -980,6 +983,57 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     }
   }
 
+  String getNoteTitleFormatForNoteList(
+      {@required String encodedContent,
+        int pageIndex = 0,
+        removeOlTagAndReplaceLiTagByPTag = false}) {
+    // var noteTitle = GlobalState.defaultTitleWhenNoteHasNoTitle;
+    var noteTitle = '';
+    var oldEncodedContent = encodedContent;
+    var pageSize = GlobalState.incrementalStepToUseRegex;
+    var endLengthToTruncate = (pageIndex + 1) * pageSize;
+
+    if (removeOlTagAndReplaceLiTagByPTag) {
+      encodedContent =
+          _removeOlTagAndReplaceLiTagByPTag(encodedContent: encodedContent);
+      oldEncodedContent = encodedContent;
+    }
+
+    if (encodedContent.length >= endLengthToTruncate) {
+      encodedContent = encodedContent.substring(0, endLengthToTruncate);
+    } else {
+      encodedContent = encodedContent.substring(0, encodedContent.length);
+    }
+
+    var htmlTagList = HtmlHandler.getHtmlTagList(
+        encodedHtmlString: encodedContent,
+        tagNameToMatch: 'p',
+        forceToAddTagWhenNotExistent: true);
+
+    for (var i = 0; i < htmlTagList.length; i++) {
+      var theHtmlTag = htmlTagList[i];
+      noteTitle += HtmlHandler.decodeAndRemoveAllHtmlTags(theHtmlTag).trim();
+
+      // Make sure title isn't empty
+      if (noteTitle.isNotEmpty) break;
+    }
+
+    // Check if it has at least a p tag as a title
+    if (noteTitle.isEmpty) {
+      if (oldEncodedContent.length > endLengthToTruncate) {
+        noteTitle = getNoteTitleFormatForNoteList(
+            encodedContent: oldEncodedContent,
+            pageIndex: pageIndex + 1,
+            removeOlTagAndReplaceLiTagByPTag: removeOlTagAndReplaceLiTagByPTag);
+      }
+    }
+
+    // Decode the html again, for sometimes some encoded characters, such as &amp; don't decode properly
+    noteTitle = HtmlHandler.decodeHtmlString(noteTitle);
+
+    return noteTitle;
+  }
+
   // Private method
   Future<Null> _getRefresh() async {
     // get refresh data // refresh method
@@ -1114,57 +1168,6 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
         GlobalState.appState.isExecutingSync = false;
       });
     }
-  }
-
-  String _getNoteTitleFormatForNoteList(
-      {@required String encodedContent,
-      int pageIndex = 0,
-      removeOlTagAndReplaceLiTagByPTag = false}) {
-    // var noteTitle = GlobalState.defaultTitleWhenNoteHasNoTitle;
-    var noteTitle = '';
-    var oldEncodedContent = encodedContent;
-    var pageSize = GlobalState.incrementalStepToUseRegex;
-    var endLengthToTruncate = (pageIndex + 1) * pageSize;
-
-    if (removeOlTagAndReplaceLiTagByPTag) {
-      encodedContent =
-          _removeOlTagAndReplaceLiTagByPTag(encodedContent: encodedContent);
-      oldEncodedContent = encodedContent;
-    }
-
-    if (encodedContent.length >= endLengthToTruncate) {
-      encodedContent = encodedContent.substring(0, endLengthToTruncate);
-    } else {
-      encodedContent = encodedContent.substring(0, encodedContent.length);
-    }
-
-    var htmlTagList = HtmlHandler.getHtmlTagList(
-        encodedHtmlString: encodedContent,
-        tagNameToMatch: 'p',
-        forceToAddTagWhenNotExistent: true);
-
-    for (var i = 0; i < htmlTagList.length; i++) {
-      var theHtmlTag = htmlTagList[i];
-      noteTitle += HtmlHandler.decodeAndRemoveAllHtmlTags(theHtmlTag).trim();
-
-      // Make sure title isn't empty
-      if (noteTitle.isNotEmpty) break;
-    }
-
-    // Check if it has at least a p tag as a title
-    if (noteTitle.isEmpty) {
-      if (oldEncodedContent.length > endLengthToTruncate) {
-        noteTitle = _getNoteTitleFormatForNoteList(
-            encodedContent: oldEncodedContent,
-            pageIndex: pageIndex + 1,
-            removeOlTagAndReplaceLiTagByPTag: removeOlTagAndReplaceLiTagByPTag);
-      }
-    }
-
-    // Decode the html again, for sometimes some encoded characters, such as &amp; don't decode properly
-    noteTitle = HtmlHandler.decodeHtmlString(noteTitle);
-
-    return noteTitle;
   }
 
   String _getNoteContentFormatForNoteList(

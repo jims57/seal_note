@@ -546,13 +546,23 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
               }
             });
           } else {
+            // Check if this is a new note
+            if (theNote.title == GlobalState.defaultTitleForNewNote) {
+              theNote.title = GlobalState
+                  .noteListWidgetForTodayState.currentState
+                  .getNoteTitleFormatForNoteList(
+                encodedContent: theNote.content,
+                removeOlTagAndReplaceLiTagByPTag: true,
+              );
+            }
+
             // When it hasn't finished its reviews
             AlertDialogHandler()
                 .showAlertDialog(
               // review note confirm dialog // note review confirm dialog
               parentContext: GlobalState.noteDetailWidgetContext,
               captionText: '完成这次复习？',
-              remark: GlobalState.selectedNoteModel.title,
+              remark: theNote.title,
               remarkMaxLines: 6,
               restoreWebViewToShowIfNeeded: true,
               barrierDismissible: true,
