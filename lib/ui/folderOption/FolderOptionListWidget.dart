@@ -35,6 +35,7 @@ class _FolderOptionSliverChildListDelegateState
           SliverList(
             delegate: SliverChildListDelegate(
               [
+                // folder option items
                 SafeArea(
                   child: Container(
                     decoration: BoxDecoration(
@@ -187,166 +188,166 @@ class _FolderOptionSliverChildListDelegateState
                     ),
                     onTap: () {
                       // note list page review plan event
-                      var s = 's';
+                      Navigator.pop(GlobalState.noteListPageContext);
 
                       GlobalState.masterDetailPageState.currentState
                           .showReviewPlanPage(
                               folderId: GlobalState.selectedFolderIdCurrently);
                     },
                   ),
-                // Order option
-                GestureDetector(
-                  child: Container(
-                    // color: Colors.transparent,
-                    color: Colors.white,
-                    height: GlobalState.folderOptionItemHeight,
-                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: Row(children: [
-                            Icon(
-                              Icons.sort_by_alpha,
-                              color: _folderOptionColor,
-                              size: _folderOptionIconSize,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: Text(
-                                '排序',
-                                style: TextStyle(
-                                    color: _folderOptionColor,
-                                    fontSize: _folderOptionFontSize),
-                              ),
-                            )
-                          ]),
-                        ),
-                        Icon(
-                          Icons.keyboard_arrow_right,
-                          size: 14.0,
-                        )
-                      ],
-                    ),
-                  ),
-                  onTap: () {
-                    GlobalState.appState.isInFolderOptionSubPanel = true;
-                  },
-                ),
-                // Rename option
-                GestureDetector(
-                  child: Container(
-                    // color: Colors.transparent,
-                    color: Colors.white,
-                    height: GlobalState.folderOptionItemHeight,
-                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: Row(children: [
-                            Icon(
-                              Icons.credit_card,
-                              color: _folderOptionColor,
-                              size: _folderOptionIconSize,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: Text(
-                                '重新命名',
-                                style: TextStyle(
-                                    color: _folderOptionColor,
-                                    fontSize: _folderOptionFontSize),
-                              ),
-                            )
-                          ]),
-                        ),
-                        Icon(
-                          Icons.keyboard_arrow_right,
-                          size: 14.0,
-                          color: Colors.transparent,
-                        )
-                      ],
-                    ),
-                  ),
-                  onTap: () {},
-                ),
-                // Edit option
-                GestureDetector(
-                  child: Container(
-                    // color: Colors.transparent,
-                    color: Colors.white,
-                    height: GlobalState.folderOptionItemHeight,
-                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: Row(children: [
-                            Icon(
-                              Icons.edit,
-                              color: _folderOptionColor,
-                              size: _folderOptionIconSize,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: Text(
-                                '编辑',
-                                style: TextStyle(
-                                    color: _folderOptionColor,
-                                    fontSize: _folderOptionFontSize),
-                              ),
-                            )
-                          ]),
-                        ),
-                        Icon(
-                          Icons.keyboard_arrow_right,
-                          size: 14.0,
-                          color: Colors.transparent,
-                        )
-                      ],
-                    ),
-                  ),
-                  onTap: () {},
-                ),
-                // Delete folder option
-                GestureDetector(
-                  child: Container(
-                    // color: Colors.transparent,
-                    color: Colors.white,
-                    height: GlobalState.folderOptionItemHeight,
-                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: Row(children: [
-                            Icon(
-                              Icons.delete_outline,
-                              color: _folderOptionColorForDelete,
-                              size: _folderOptionIconSize,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: Text(
-                                '删除文件夹',
-                                style: TextStyle(
-                                    color: _folderOptionColorForDelete,
-                                    fontSize: _folderOptionFontSize),
-                              ),
-                            )
-                          ]),
-                        ),
-                        Icon(
-                          Icons.keyboard_arrow_right,
-                          size: 14.0,
-                          color: Colors.transparent,
-                        )
-                      ],
-                    ),
-                  ),
-                  onTap: () {},
-                ),
+                // // Order option
+                // GestureDetector(
+                //   child: Container(
+                //     // color: Colors.transparent,
+                //     color: Colors.white,
+                //     height: GlobalState.folderOptionItemHeight,
+                //     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //       children: [
+                //         Container(
+                //           child: Row(children: [
+                //             Icon(
+                //               Icons.sort_by_alpha,
+                //               color: _folderOptionColor,
+                //               size: _folderOptionIconSize,
+                //             ),
+                //             Padding(
+                //               padding: const EdgeInsets.only(left: 8.0),
+                //               child: Text(
+                //                 '排序',
+                //                 style: TextStyle(
+                //                     color: _folderOptionColor,
+                //                     fontSize: _folderOptionFontSize),
+                //               ),
+                //             )
+                //           ]),
+                //         ),
+                //         Icon(
+                //           Icons.keyboard_arrow_right,
+                //           size: 14.0,
+                //         )
+                //       ],
+                //     ),
+                //   ),
+                //   onTap: () {
+                //     GlobalState.appState.isInFolderOptionSubPanel = true;
+                //   },
+                // ),
+                // // Rename option
+                // GestureDetector(
+                //   child: Container(
+                //     // color: Colors.transparent,
+                //     color: Colors.white,
+                //     height: GlobalState.folderOptionItemHeight,
+                //     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //       children: [
+                //         Container(
+                //           child: Row(children: [
+                //             Icon(
+                //               Icons.credit_card,
+                //               color: _folderOptionColor,
+                //               size: _folderOptionIconSize,
+                //             ),
+                //             Padding(
+                //               padding: const EdgeInsets.only(left: 8.0),
+                //               child: Text(
+                //                 '重新命名',
+                //                 style: TextStyle(
+                //                     color: _folderOptionColor,
+                //                     fontSize: _folderOptionFontSize),
+                //               ),
+                //             )
+                //           ]),
+                //         ),
+                //         Icon(
+                //           Icons.keyboard_arrow_right,
+                //           size: 14.0,
+                //           color: Colors.transparent,
+                //         )
+                //       ],
+                //     ),
+                //   ),
+                //   onTap: () {},
+                // ),
+                // // Edit option
+                // GestureDetector(
+                //   child: Container(
+                //     // color: Colors.transparent,
+                //     color: Colors.white,
+                //     height: GlobalState.folderOptionItemHeight,
+                //     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //       children: [
+                //         Container(
+                //           child: Row(children: [
+                //             Icon(
+                //               Icons.edit,
+                //               color: _folderOptionColor,
+                //               size: _folderOptionIconSize,
+                //             ),
+                //             Padding(
+                //               padding: const EdgeInsets.only(left: 8.0),
+                //               child: Text(
+                //                 '编辑',
+                //                 style: TextStyle(
+                //                     color: _folderOptionColor,
+                //                     fontSize: _folderOptionFontSize),
+                //               ),
+                //             )
+                //           ]),
+                //         ),
+                //         Icon(
+                //           Icons.keyboard_arrow_right,
+                //           size: 14.0,
+                //           color: Colors.transparent,
+                //         )
+                //       ],
+                //     ),
+                //   ),
+                //   onTap: () {},
+                // ),
+                // // Delete folder option
+                // GestureDetector(
+                //   child: Container(
+                //     // color: Colors.transparent,
+                //     color: Colors.white,
+                //     height: GlobalState.folderOptionItemHeight,
+                //     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //       children: [
+                //         Container(
+                //           child: Row(children: [
+                //             Icon(
+                //               Icons.delete_outline,
+                //               color: _folderOptionColorForDelete,
+                //               size: _folderOptionIconSize,
+                //             ),
+                //             Padding(
+                //               padding: const EdgeInsets.only(left: 8.0),
+                //               child: Text(
+                //                 '删除文件夹',
+                //                 style: TextStyle(
+                //                     color: _folderOptionColorForDelete,
+                //                     fontSize: _folderOptionFontSize),
+                //               ),
+                //             )
+                //           ]),
+                //         ),
+                //         Icon(
+                //           Icons.keyboard_arrow_right,
+                //           size: 14.0,
+                //           color: Colors.transparent,
+                //         )
+                //       ],
+                //     ),
+                //   ),
+                //   onTap: () {},
+                // ),
               ],
             ),
           ),
