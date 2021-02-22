@@ -65,7 +65,7 @@ class _NoteListPageState extends State<NoteListPage> {
               }),
         ],
         tailChildren: [
-          IconButton(
+          (GlobalState.isReviewFolderSelected)?IconButton(
             // note list more button // note list page more button
             icon: Icon(
               Icons.more_horiz,
@@ -95,7 +95,7 @@ class _NoteListPageState extends State<NoteListPage> {
                 },
               );
             },
-          ),
+          ):Container(),
         ],
         title: Consumer<AppState>(
           builder: (ctx, appState, child) {
