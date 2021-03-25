@@ -96,3 +96,7 @@ ios/.DS_Store
 ios/Flutter/.last_build_id
 ios/.DS_Store
 ios/Flutter/.last_build_id
+.flutter-plugins-dependencies
+.idea/libraries/Dart_Packages.xml
+.idea/libraries/Dart_Packages2.xml
+ios/Flutter/.last_build_id
