@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:moor/moor.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/ui/authentications/LoginPage.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
 // Import custom files
@@ -14,6 +15,7 @@ import 'data/appstate/ReusablePageChangeNotifier.dart';
 import 'data/appstate/ReusablePageOpenOrCloseNotifier.dart';
 import 'data/appstate/ReusablePageWidthChangeNotifier.dart';
 import 'data/appstate/SelectedNoteModel.dart';
+import 'data/appstate/ViewAgreementPageChangeNotifier.dart';
 import 'data/database/database.dart';
 import 'data/database/dbHelper/shared.dart';
 
@@ -50,6 +52,10 @@ void main() {
       ChangeNotifierProvider<AlertDialogHeightChangeNotifier>(
         create: (context) => AlertDialogHeightChangeNotifier(),
       ),
+      ChangeNotifierProvider<ViewAgreementPageChangeNotifier>(
+        create: (context) => ViewAgreementPageChangeNotifier(),
+      ),
+
     ],
     child: MyApp(),
   ));
@@ -235,12 +241,16 @@ class _MyAppState extends State<MyApp> {
       home: MasterDetailPage(
         key: GlobalState.masterDetailPageState,
       ),
+      // home: LoginPage(),
     );
   }
 
   // Private methods
   void _initConsumerNotifier() {
     // init notifier // init consumer notifier
+
+    GlobalState.viewAgreementPageChangeNotifier =
+        Provider.of<ViewAgreementPageChangeNotifier>(context, listen: false);
 
     GlobalState.appState = Provider.of<AppState>(context, listen: false);
 
@@ -261,5 +271,120 @@ class _MyAppState extends State<MyApp> {
 
     GlobalState.alertDialogHeightChangeNotifier =
         Provider.of<AlertDialogHeightChangeNotifier>(context, listen: false);
+
+
   }
 }
+
+
+
+
+// import 'dart:async';
+//
+// import 'package:flutter/material.dart';
+// import 'package:flutter/cupertino.dart';
+// import 'package:seal_note/ui/common/checkboxs/RoundCheckBoxWidget.dart';
+// // import 'package:webview_flutter/webview_flutter.dart';
+//
+// void main() => runApp(MyApp());
+//
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: Scaffold(
+//         appBar: AppBar(
+//           title: Text('Welcome to Flutter'),
+//         ),
+//         // body: RoundCheckBoxWidget(
+//         //   onChanged: (value) {
+//         //     var v = value;
+//         //   },
+//         // ),
+//
+//         body: ParentWidget(),
+//         // body:Checkbox(value: false,onChanged: (v){},),
+//       ),
+//     );
+//   }
+// }
+//
+// class ParentWidget extends StatefulWidget {
+//   @override
+//   State<StatefulWidget> createState() => ParentWidgetState();
+// }
+//
+// class ParentWidgetState extends State<ParentWidget> {
+//   var _first = true;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(color: Colors.red,width: 200,height: 200,);
+//
+//     // return WebBrowser(
+//     //   initialUrl: 'https://flutter.cn/',
+//     //   javascriptEnabled: true,
+//     // );
+//
+//
+//     // final Completer<WebViewController> _webViewController =
+//     // Completer<WebViewController>();
+//     //
+//     // return Scaffold(
+//     //   appBar: AppBar(
+//     //     title: Text('Welcome to Flutter2'),
+//     //   ),
+//     //   body: WebView(
+//     //     initialUrl: 'https://www.xiaoe-tech.com',
+//     //     javascriptMode: JavascriptMode.unrestricted,
+//     //     onWebViewCreated: (webViewController) {
+//     //       _webViewController.complete(webViewController);//>>completer example>>how to use completer
+//     //     },
+//     //   ),
+//     //   floatingActionButton: FutureBuilder<WebViewController>(
+//     //     future: _webViewController.future,
+//     //     builder: (ctx, webViewController) {
+//     //       if (webViewController.hasData) {
+//     //         return FloatingActionButton(
+//     //           child: Icon(Icons.add),
+//     //           onPressed: () {
+//     //             webViewController.data.loadUrl('http://www.baidu.com');
+//     //           },
+//     //         );
+//     //       }
+//     //
+//     //       return Container();
+//     //     },
+//     //   ),
+//     // );
+//
+//     // return Column(children: [
+//     //   CupertinoButton(
+//     //     child: Text('Click Me'),
+//     //     color: Colors.blue,
+//     //     onPressed: () {
+//     //       setState(() {
+//     //         if (_first) {
+//     //           _first = false;
+//     //         } else {
+//     //           _first = true;
+//     //         }
+//     //       });
+//     //     },
+//     //   ),
+//     //   Container(
+//     //     child: AnimatedCrossFade(
+//     //       crossFadeState:
+//     //           _first ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+//     //       duration: const Duration(milliseconds: 500),
+//     //       firstChild: Container(
+//     //         child: Text('I am first'),
+//     //       ),
+//     //       secondChild: Container(
+//     //         child: Text('I am second'),
+//     //       ),
+//     //     ),
+//     //   ),
+//     // ]);
+//   }
+// }

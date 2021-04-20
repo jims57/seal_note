@@ -927,7 +927,11 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
       GlobalState.shouldHideWebView = false;
     }
 
-    GlobalState.flutterWebviewPlugin.show();
+    if (GlobalState.isLoggedIn) {
+      GlobalState.flutterWebviewPlugin.show();
+    } else {
+      GlobalState.flutterWebviewPlugin.hide();
+    }
   }
 
   void hideWebView({

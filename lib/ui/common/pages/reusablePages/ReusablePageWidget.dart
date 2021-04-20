@@ -22,16 +22,17 @@ class ReusablePageWidget extends StatefulWidget {
   final Function(ReusablePageWidget) onBackButtonCallback;
 
   @override
-  _ReusablePageWidgetState createState() => _ReusablePageWidgetState();
+  ReusablePageWidgetState createState() => ReusablePageWidgetState();
 }
 
-class _ReusablePageWidgetState extends State<ReusablePageWidget> {
+class ReusablePageWidgetState extends State<ReusablePageWidget> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ReusablePageWidthChangeNotifier>(
         builder: (cxt, reusablePageWidthChangeNotifier, child) {
       return Container(
         height: double.maxFinite,
+        // width: 1000,
         color: GlobalState.themeGreyColorAtiOSTodoForBackground,
         child: Column(
           children: [
@@ -41,6 +42,7 @@ class _ReusablePageWidgetState extends State<ReusablePageWidget> {
                   alignment: Alignment.centerLeft,
                   height: GlobalState.defaultAppBarHeight,
                   width: GlobalState.currentReusablePageWidth,
+                  // width: GlobalState.screenWidth,
                   color: GlobalState.themeGreyColorAtiOSTodoForBackground,
                   child: GestureDetector(
                     child: SafeArea(
@@ -57,13 +59,15 @@ class _ReusablePageWidgetState extends State<ReusablePageWidget> {
                     ),
                     onTap: () {
                       // reusable page back button // reusable page back event
-                      // reusable page back button event
+                      // reusable page back button event // back reusable page button
+                      // click on reusable page back button // click reusable page back button
 
                       if (widget.onBackButtonCallback != null) {
                         widget.onBackButtonCallback(widget);
                       }
 
-                      _clickOnBackButton(
+                      GlobalState.reusablePageStackWidgetState.currentState
+                          .clickOnReusablePageBackButton(
                         reusablePageIndex: widget.index,
                         refreshFolderListWhenClosingLastReusablePage: true,
                       );
@@ -105,32 +109,32 @@ class _ReusablePageWidgetState extends State<ReusablePageWidget> {
     });
   }
 
-  // Private methods
-  void _clickOnBackButton({
-    @required int reusablePageIndex,
-    bool refreshFolderListWhenClosingLastReusablePage = false,
-  }) {
-    // Only the back button on the reusable page will move the upcoming reusable page to right
-    GlobalState.isUpcomingReusablePageMovingToLeft = false;
-
-    var upcomingReusablePageIndex = reusablePageIndex - 1;
-    GlobalState.reusablePageChangeNotifier.upcomingReusablePageIndex =
-        upcomingReusablePageIndex;
-
-    if (upcomingReusablePageIndex == -1) {
-      // close reusable page // exist reusable page
-
-      GlobalState.masterDetailPageState.currentState
-          .triggerToHideReusablePage();
-
-      // When the reusable page is going to hide, we clear all items from the reusablePageWidgetList variable
-      GlobalState.reusablePageWidgetList.clear();
-
-      // Check if we should refresh the folder page to reflect its up-to-date
-      if (refreshFolderListWhenClosingLastReusablePage) {
-        GlobalState.folderListWidgetState.currentState
-            .triggerSetState(forceToFetchFoldersFromDb: true);
-      }
-    }
-  }
+// Public methods
+// void clickOnBackButton({
+//   @required int reusablePageIndex,
+//   bool refreshFolderListWhenClosingLastReusablePage = false,
+// }) {
+//   // Only the back button on the reusable page will move the upcoming reusable page to right
+//   GlobalState.isUpcomingReusablePageMovingToLeft = false;
+//
+//   var upcomingReusablePageIndex = reusablePageIndex - 1;
+//   GlobalState.reusablePageChangeNotifier.upcomingReusablePageIndex =
+//       upcomingReusablePageIndex;
+//
+//   if (upcomingReusablePageIndex == -1) {
+//     // close reusable page // exist reusable page
+//
+//     GlobalState.masterDetailPageState.currentState
+//         .triggerToHideReusablePage();
+//
+//     // When the reusable page is going to hide, we clear all items from the reusablePageWidgetList variable
+//     GlobalState.reusablePageWidgetList.clear();
+//
+//     // Check if we should refresh the folder page to reflect its up-to-date
+//     if (refreshFolderListWhenClosingLastReusablePage) {
+//       GlobalState.folderListWidgetState.currentState
+//           .triggerSetState(forceToFetchFoldersFromDb: true);
+//     }
+//   }
+// }
 }

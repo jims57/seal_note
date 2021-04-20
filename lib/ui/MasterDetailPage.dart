@@ -15,6 +15,7 @@ import 'package:seal_note/mixin/check_device.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/NoteListPage.dart';
 import 'package:after_layout/after_layout.dart';
+import 'package:seal_note/ui/authentications/LoginPage.dart';
 import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageStackWidget.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
 
@@ -38,6 +39,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
   double folderPageToDx = 0.0;
   double noteDetailPageFromDx = -1.0;
   double noteDetailPageToDx = 0.0;
+  double loginPageFromDx = 0.0;
+  double loginPageToDx = 0.0;
 
   double folderPageWidth = GlobalState.folderPageDefaultWidth;
   double noteListPageWidth = GlobalState.noteListPageDefaultWidth;
@@ -112,6 +115,9 @@ class MasterDetailPageState extends State<MasterDetailPage>
           );
         }
       }
+
+      // Reset the View Agreement Note to load for the first time, avoiding trigger transition effect during rotation
+      GlobalState.viewAgreementPageChangeNotifier.shouldAvoidTransitionEffect = true;
 
       Timer(const Duration(milliseconds: 700), () {
         // Update the app bar's height on the folder list page
@@ -258,6 +264,16 @@ class MasterDetailPageState extends State<MasterDetailPage>
                   key: GlobalState.noteDetailWidgetState,
                 )),
           ),
+
+          // Login page
+          // Container(
+          //   width: (!GlobalState.isLoggedIn) ? double.infinity : 0.0,
+          //   // width: (!GlobalState.isLoggedIn) ? 150 : 0.0,
+          //   child: LoginPage(
+          //     key: GlobalState.loginPageState,
+          //   ),
+          // ),
+          LoginPage(key: GlobalState.loginPageState),
         ],
       ),
     );
@@ -491,6 +507,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
   Animation<Offset> getAnimation(
       {double fromDx = -1.0,
       double toDx = 0.0,
+      double fromDy = 0.0,
+      double toDy = 0.0,
       int durationMilliseconds =
           GlobalState.pageTransitionAnimationDurationMilliseconds}) {
     AnimationController _controller = AnimationController(
@@ -503,8 +521,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
     if (!GlobalState.shouldTriggerPageTransitionAnimation) fromDx = toDx;
 
     Animation<Offset> _animation = Tween<Offset>(
-      begin: Offset(fromDx, 0.0),
-      end: Offset(toDx, 0.0),
+      begin: Offset(fromDx, fromDy),
+      end: Offset(toDx, toDy),
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeInCubic,
@@ -523,9 +541,9 @@ class MasterDetailPageState extends State<MasterDetailPage>
   Future<void> showReviewPlanPage({@required int folderId}) async {
     // Get the review plan for the current folder
     GetFolderReviewPlanByFolderIdResult getFolderReviewPlanByFolderIdResult =
-    await GlobalState.database
-        .getFolderReviewPlanByFolderId(folderId)
-        .getSingle();
+        await GlobalState.database
+            .getFolderReviewPlanByFolderId(folderId)
+            .getSingle();
 
     GlobalState.masterDetailPageState.currentState.triggerToShowReusablePage(
       title: '选择复习计划',
@@ -533,7 +551,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
         key: GlobalState.reviewPlanWidgetState,
         folderId: folderId,
         getFolderReviewPlanByFolderIdResult:
-        getFolderReviewPlanByFolderIdResult,
+            getFolderReviewPlanByFolderIdResult,
       ),
     );
   }

@@ -302,7 +302,8 @@ class _UserFolderListListenerWidgetState
                                     // delete folder button
 
                                     buttonText: '删除文件夹',
-                                    buttonThemeColor: Colors.red,
+                                    buttonTextColor: Colors.red,
+                                    buttonBorderColor: Colors.red,
                                     topMargin: 25.0,
                                     buttonCallback: () async {
                                       // delete folder event

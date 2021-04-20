@@ -54,6 +54,8 @@ class ReusablePageStackWidgetState extends State<ReusablePageStackWidget> {
       color: GlobalState.themeGreyColorAtiOSTodoForBackground,
       height: GlobalState.screenHeight,
       width: getReusablePageWidth(),
+      // width: double.infinity,
+      // width: 1500,
       child: Stack(
         children: _reusablePageChangeNotifierList,
       ),
@@ -215,5 +217,38 @@ class ReusablePageStackWidgetState extends State<ReusablePageStackWidget> {
       shouldTriggerSetState: shouldTriggerSetState,
       upcomingReusablePageIndex: upcomingReusablePageIndex,
     );
+  }
+
+  void clickOnReusablePageBackButton({
+    @required int reusablePageIndex,
+    bool refreshFolderListWhenClosingLastReusablePage = false,
+  }) {
+    // Only the back button on the reusable page will move the upcoming reusable page to right
+    GlobalState.isUpcomingReusablePageMovingToLeft = false;
+
+    var upcomingReusablePageIndex = reusablePageIndex - 1;
+    GlobalState.reusablePageChangeNotifier.upcomingReusablePageIndex =
+        upcomingReusablePageIndex;
+
+    if (upcomingReusablePageIndex == -1) {
+      // close reusable page // exist reusable page
+
+      GlobalState.masterDetailPageState.currentState
+          .triggerToHideReusablePage();
+
+      // When the reusable page is going to hide, we clear all items from the reusablePageWidgetList variable
+      GlobalState.reusablePageWidgetList.clear();
+
+      // Check if we should refresh the folder page to reflect its up-to-date
+      if (refreshFolderListWhenClosingLastReusablePage) {
+        GlobalState.folderListWidgetState.currentState
+            .triggerSetState(forceToFetchFoldersFromDb: true);
+      }
+    }
+
+    // If the user doesn't login, and show Login Page forcibly
+    if (!GlobalState.isLoggedIn) {
+      GlobalState.loginPageState.currentState.showLoginPage();
+    }
   }
 }

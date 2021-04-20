@@ -9,9 +9,11 @@ import 'package:seal_note/ui/FolderListWidget.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
 import 'package:seal_note/ui/NoteDetailWidget.dart';
 import 'package:seal_note/ui/NoteListWidgetForToday.dart';
+import 'package:seal_note/ui/authentications/LoginPage.dart';
 import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageStackWidget.dart';
 import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:seal_note/ui/common/SelectFolderWidget.dart';
+import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageWidget.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanSecondSubPage.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
 import 'package:stack/stack.dart' as stackData show Stack;
@@ -23,6 +25,7 @@ import 'ReusablePageChangeNotifier.dart';
 import 'ReusablePageOpenOrCloseNotifier.dart';
 import 'ReusablePageWidthChangeNotifier.dart';
 import 'SelectedNoteModel.dart';
+import 'ViewAgreementPageChangeNotifier.dart';
 
 class GlobalState with ChangeNotifier {
   static final GlobalState _singleton = GlobalState._internal();
@@ -50,6 +53,7 @@ class GlobalState with ChangeNotifier {
 
   // App current info
   static bool isAppFirstTimeToLaunch = false;
+  static bool isLoggedIn = false;
 
   // db // database
   static String dbNameForMobilePlatform = 'sealMobile.sqlite';
@@ -63,10 +67,12 @@ class GlobalState with ChangeNotifier {
   static const Color themeBlueColorForSelectedItemBackground =
       Color(0xffb4d8fd);
   static const Color themeGreenColorAtiOSTodo = Color(0xff67d844);
+  static const Color themeGreenColorAtWeChat = Color(0xff20bf64);
   static const Color themeLightBlueColor07 = Color.fromRGBO(43, 152, 240, 0.7);
   static const Color themeLightBlueColor02 = Color.fromRGBO(43, 152, 240, 0.2);
   static const Color themeGreyColor = Color(0xffecedee);
   static const Color themeGreyColorAtiOSTodo = Color(0xffbbbbc0);
+  static const Color themeGreyColorForDisabled = themeGreyColorAtiOSTodo;
   static const Color themeGreyColorAtiOSTodoForFolderGroupBackground =
       Color(0xff898a8e);
   static const Color themeGreyColorAtiOSTodoForBackground = Color(0xfff1f2f6);
@@ -108,9 +114,9 @@ class GlobalState with ChangeNotifier {
 
   // Borders
   static const double defaultBorderRadius = 10.0;
-  static double borderRadius10 = 10.0;
-  static double borderRadius15 = 15.0;
-  static double borderRadius40 = 40.0;
+  static const double borderRadius10 = 10.0;
+  static const double borderRadius15 = 15.0;
+  static const double borderRadius40 = 40.0;
 
   // Database
   static Database database;
@@ -218,10 +224,14 @@ class GlobalState with ChangeNotifier {
       GlobalKey<NoteDetailWidgetState>();
   static GlobalKey<ReusablePageStackWidgetState> reusablePageStackWidgetState =
       GlobalKey<ReusablePageStackWidgetState>();
+
+  // static GlobalKey<ReusablePageWidgetState> reusablePageWidgetState =
+  //     GlobalKey<ReusablePageWidgetState>();
   static GlobalKey<ReviewPlanWidgetState> reviewPlanWidgetState =
       GlobalKey<ReviewPlanWidgetState>();
   static GlobalKey<ReviewPlanSecondSubPageState> reviewPlanSecondSubPageState =
       GlobalKey<ReviewPlanSecondSubPageState>();
+  static GlobalKey<LoginPageState> loginPageState = GlobalKey<LoginPageState>();
 
   // Dialog // Alert dialog
   static bool shouldContinueActionForShowDialog = false;
@@ -244,6 +254,7 @@ class GlobalState with ChangeNotifier {
   static ReusablePageChangeNotifier reusablePageChangeNotifier;
   static ReusablePageWidthChangeNotifier reusablePageWidthChangeNotifier;
   static AlertDialogHeightChangeNotifier alertDialogHeightChangeNotifier;
+  static ViewAgreementPageChangeNotifier viewAgreementPageChangeNotifier;
 
   // Folder related
   static bool isDefaultFolderSelected = false; // For default folder
@@ -274,6 +285,8 @@ class GlobalState with ChangeNotifier {
   // Folder Options
   static double folderOptionItemHeight = 40.0;
 
+  // Setting page
+
   // User info
   static final int adminUserId = 1;
   static int currentUserId = 1;
@@ -302,6 +315,9 @@ class GlobalState with ChangeNotifier {
 
   // Photo Views
   static List<ImageSyncItem> imageSyncItemList = <ImageSyncItem>[];
+
+  // Check Box
+  static double defaultCheckBoxWidth = 50.0;
 
   // Testing
   static int hitTimes = 0;

@@ -18,6 +18,7 @@ class ItemContentWidget extends StatefulWidget {
     this.showSwitch = false,
     this.showInfoIcon = false,
     this.showRightGreyArrow = false,
+    this.centerContent = false,
     this.onSwitchChanged,
     this.onInfoIconClicked,
   }) : super(key: key);
@@ -28,6 +29,7 @@ class ItemContentWidget extends StatefulWidget {
   final Color itemTitleForeColor;
   final String itemContent;
   final Color itemContentForeColor;
+  final bool centerContent;
   final bool showSwitch;
   final bool showInfoIcon;
 
@@ -49,6 +51,9 @@ class _ItemContentWidgetState extends State<ItemContentWidget> {
         children: [
           Expanded(
             child: Row(
+              mainAxisAlignment: (widget.centerContent)
+                  ? MainAxisAlignment.center
+                  : MainAxisAlignment.start,
               children: [
                 if (widget.icon != null)
                   Container(
@@ -63,6 +68,7 @@ class _ItemContentWidgetState extends State<ItemContentWidget> {
                 if (widget.itemTitle != null)
                   Container(
                     // color: Colors.green,
+                    // alignment: Alignment.center,
                     margin: EdgeInsets.only(
                       right: GlobalState.defaultHorizontalMarginBetweenItems,
                     ),
@@ -76,20 +82,23 @@ class _ItemContentWidgetState extends State<ItemContentWidget> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.only(
-                        right: GlobalState.defaultHorizontalMarginBetweenItems),
-                    child: Text(
-                      (widget.itemContent != null) ? widget.itemContent : '',
-                      style: TextStyle(
-                        fontSize: GlobalState.defaultNormalFontSizeForItem,
-                        color: widget.itemContentForeColor,
+                if (widget.itemContent != null)
+                  Expanded(
+                    child: Container(
+                      // color: Colors.orange,
+                      margin: EdgeInsets.only(
+                          right:
+                              GlobalState.defaultHorizontalMarginBetweenItems),
+                      child: Text(
+                        (widget.itemContent != null) ? widget.itemContent : '',
+                        style: TextStyle(
+                          fontSize: GlobalState.defaultNormalFontSizeForItem,
+                          color: widget.itemContentForeColor,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                ),
               ],
             ),
           ),

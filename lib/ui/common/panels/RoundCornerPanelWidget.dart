@@ -12,7 +12,7 @@ class RoundCornerPanelWidget extends StatefulWidget {
     Key key,
     this.caption,
     @required this.child,
-    @required this.height,
+    this.height = GlobalState.defaultItemHeight,
     this.isTopLeftAndTopRightCornerRound = true,
     this.isBottomLeftAndBottomRightCornerRound = true,
     this.backgroundColor = Colors.white,
