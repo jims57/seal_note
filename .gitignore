@@ -103,3 +103,6 @@ ios/Flutter/.last_build_id
 lib/generated_plugin_registrant.dart
 .idea/libraries/Flutter_Plugins.xml
 .idea/libraries/Dart_Packages2.xml
+.flutter-plugins
+.flutter-plugins-dependencies
+ios/Podfile.lock

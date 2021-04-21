@@ -90,7 +90,7 @@ class _ViewAgreementPageState extends State<ViewAgreementPage> {
     // close agreement page method // close view agreement page method
 
     GlobalState.viewAgreementPageChangeNotifier.shouldAvoidTransitionEffect =
-        true;
+        false;
     GlobalState.viewAgreementPageChangeNotifier.hideViewAgreementPage();
 
     GlobalState.loginPageState.currentState

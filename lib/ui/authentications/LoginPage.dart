@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
@@ -53,9 +54,42 @@ class LoginPageState extends State<LoginPage> {
             child: Column(
               children: [
                 Expanded(
-                    child: Container(
-                        // color: Colors.orange,
-                        )),
+                  child: Container(
+                    // color: Colors.green,
+                    alignment: Alignment.center,
+                    child: SingleChildScrollView(
+                      // physics: AlwaysScrollableScrollPhysics(),
+                      physics: ClampingScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      child: Container(
+                        // color: Colors.red,
+
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/appImages/flutter-icon.png',
+                              width: 200,
+                              height: 200,
+                            ),
+                            Container(
+                              alignment: Alignment.center,
+                              // color: Colors.red,
+                              height: 50,
+                              child: Text(
+                                '让学习不再遗忘',
+                                style: TextStyle(
+                                    fontSize: 20.0, fontFamily: '微软雅黑'),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                // Container(color: Colors.yellow,width: 200,height: 50,),
                 AnimatedCrossFade(
                   crossFadeState: _shouldShowErrorPanel
                       ? CrossFadeState.showSecond
@@ -81,7 +115,10 @@ class LoginPageState extends State<LoginPage> {
                     ),
                     // color: GlobalState.themeLightBlueColorAtiOSTodo,
                     child: Text(
-                      '请选择同意『海豚笔记』许可和服务协议',
+                      // show login error info // login error label
+                      // login error info // login error widget
+
+                      '请选择同意协议',
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: _fontSizeForErrorPanel,
@@ -119,6 +156,9 @@ class LoginPageState extends State<LoginPage> {
                         '微信登录成功！',
                       );
                     } else {
+                      GlobalState.viewAgreementPageChangeNotifier
+                          .shouldAvoidTransitionEffect = true;
+
                       showErrorPanel(shouldTriggerSetState: true);
 
                       print('请选择协议');
@@ -133,6 +173,7 @@ class LoginPageState extends State<LoginPage> {
                       right: GlobalState
                           .defaultLeftAndRightMarginBetweenParentBoarderAndPanel),
                   height: 50,
+                  // width: 200,
                   // color: Colors.red,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -150,6 +191,7 @@ class LoginPageState extends State<LoginPage> {
 
                       // agreement info // agreement label
                       Container(
+                        // color: Colors.yellow,
                         width: GlobalState.screenWidth -
                             GlobalState
                                     .defaultLeftAndRightMarginBetweenParentBoarderAndPanel *
@@ -157,12 +199,30 @@ class LoginPageState extends State<LoginPage> {
                             GlobalState.defaultCheckBoxWidth,
                         child: Row(
                           children: [
-                            _getAgreementTitle(
-                                title: '已阅读并同意 ', clickable: false),
-                            _getAgreementTitle(
-                                title: '『海豚笔记』软件许可', clickable: true),
-                            _getAgreementTitle(title: ' 和 ', clickable: false),
-                            _getAgreementTitle(title: '服务协议', clickable: true),
+                            Container(
+                              child: _getAgreementTitle(
+                                  title: '已阅并同意 ', clickable: false),
+                              // width: 50,
+                            ),
+                            Container(
+                              // color: Colors.green,
+                              child: Row(
+                                children: [
+                                  _getAgreementTitle(
+                                      // title: '软件许可', clickable: true),
+                                      title: '软件许可',
+                                      clickable: true),
+                                  _getAgreementTitle(
+                                      title: ' 和 ', clickable: false),
+                                  _getAgreementTitle(
+                                      title: '服务协议', clickable: true),
+                                ],
+                              ),
+                            ),
+                            // _getAgreementTitle(
+                            //     title: '『海豚笔记』软件许可', clickable: true),
+                            // _getAgreementTitle(title: ' 和 ', clickable: false),
+                            // _getAgreementTitle(title: '服务协议', clickable: true),
                           ],
                         ),
                       )

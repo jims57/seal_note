@@ -1,9 +1,14 @@
 PODS:
+  - Aspects (1.4.1)
   - BSGridCollectionViewLayout (1.2.5)
   - BSImagePicker (2.10.3):
     - BSGridCollectionViewLayout (= 1.2.5)
     - BSImageView (= 1.0.3)
   - BSImageView (1.0.3)
+  - cloudbase_auth (0.0.1):
+    - Aspects
+    - Flutter
+    - WechatOpenSDK
   - Flutter (1.0.0)
   - flutter_image_compress (0.0.1):
     - Flutter
@@ -25,8 +30,10 @@ PODS:
   - Mantle (2.1.1):
     - Mantle/extobjc (= 2.1.1)
   - Mantle/extobjc (2.1.1)
-  - multi_image_picker (4.7.14):
+  - multi_image_picker (4.7.15):
     - BSImagePicker (~> 2.10.3)
+    - Flutter
+  - package_info (0.0.1):
     - Flutter
   - path_provider (0.0.1):
     - Flutter
@@ -34,6 +41,8 @@ PODS:
   - SDWebImageWebPCoder (0.6.1):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.7)
+  - shared_preferences (0.0.1):
+    - Flutter
   - sqlite3 (3.32.3):
     - sqlite3/common (= 3.32.3)
   - sqlite3/common (3.32.3)
@@ -52,18 +61,23 @@ PODS:
     - sqlite3/json1
     - sqlite3/perf-threadsafe
     - sqlite3/rtree
+  - WechatOpenSDK (1.8.7.1)
 
 DEPENDENCIES:
+  - cloudbase_auth (from `.symlinks/plugins/cloudbase_auth/ios`)
   - Flutter (from `Flutter`)
   - flutter_image_compress (from `.symlinks/plugins/flutter_image_compress/ios`)
   - flutter_webview_plugin (from `.symlinks/plugins/flutter_webview_plugin/ios`)
   - keyboard_utils (from `.symlinks/plugins/keyboard_utils/ios`)
   - multi_image_picker (from `.symlinks/plugins/multi_image_picker/ios`)
+  - package_info (from `.symlinks/plugins/package_info/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
+  - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sqlite3_flutter_libs (from `.symlinks/plugins/sqlite3_flutter_libs/ios`)
 
 SPEC REPOS:
   trunk:
+    - Aspects
     - BSGridCollectionViewLayout
     - BSImagePicker
     - BSImageView
@@ -72,8 +86,11 @@ SPEC REPOS:
     - SDWebImage
     - SDWebImageWebPCoder
     - sqlite3
+    - WechatOpenSDK
 
 EXTERNAL SOURCES:
+  cloudbase_auth:
+    :path: ".symlinks/plugins/cloudbase_auth/ios"
   Flutter:
     :path: Flutter
   flutter_image_compress:
@@ -84,27 +101,36 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/keyboard_utils/ios"
   multi_image_picker:
     :path: ".symlinks/plugins/multi_image_picker/ios"
+  package_info:
+    :path: ".symlinks/plugins/package_info/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
+  shared_preferences:
+    :path: ".symlinks/plugins/shared_preferences/ios"
   sqlite3_flutter_libs:
     :path: ".symlinks/plugins/sqlite3_flutter_libs/ios"
 
 SPEC CHECKSUMS:
+  Aspects: 7595ba96a6727a58ebcbfc954497fc5d2fdde546
   BSGridCollectionViewLayout: 333dcb457a5a3bdd9212607ab5756553dcfe06cb
   BSImagePicker: 07404254f2fcdaf5a2eb403c0f8c337267ce8738
   BSImageView: a149459433a2687157d034c78e059d30ac7f2544
-  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  cloudbase_auth: 95061f2b1e6422ad3def02dfeef6682a5e487a4a
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   flutter_image_compress: 082f8daaf6c1b0c9fe798251c750ef0ecd98d7ae
   flutter_webview_plugin: ed9e8a6a96baf0c867e90e1bce2673913eeac694
   keyboard_utils: ab24bc711be9e91a5937c20489056b8dd650fecc
   libwebp: 946cb3063cea9236285f7e9a8505d806d30e07f3
   Mantle: 35238ae6f2e2b2d474fa7b67fee82a59fea71915
-  multi_image_picker: c068931d08240565e0615fb01437d16984909183
+  multi_image_picker: 58577ab96d99b35c82d626db7d81906d14c2b667
+  package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   SDWebImage: 62ae4a18473520c67b79e9724c31a63599cc9423
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
+  shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   sqlite3: 8f7d2078ae27778699a622a94b853285793422a2
   sqlite3_flutter_libs: 5651f8ff48e3b44d910863c4ea5916085b1b245f
+  WechatOpenSDK: 6a4d1436c15b3b5fe2a0bd383f3046010186da44
 
 PODFILE CHECKSUM: a75497545d4391e2d394c3668e20cfb1c2bbd4aa
 
