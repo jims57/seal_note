@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
@@ -52,6 +53,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
   @override
   void initState() {
+
+
     GlobalState.flutterWebviewPlugin = FlutterWebviewPlugin();
 
     GlobalState.masterDetailPageContext = context;
@@ -117,7 +120,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
       }
 
       // Reset the View Agreement Note to load for the first time, avoiding trigger transition effect during rotation
-      GlobalState.viewAgreementPageChangeNotifier.shouldAvoidTransitionEffect = true;
+      GlobalState.viewAgreementPageChangeNotifier.shouldAvoidTransitionEffect =
+          true;
 
       Timer(const Duration(milliseconds: 700), () {
         // Update the app bar's height on the folder list page

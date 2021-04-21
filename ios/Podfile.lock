@@ -9,6 +9,9 @@ PODS:
     - Aspects
     - Flutter
     - WechatOpenSDK
+  - connectivity (0.0.1):
+    - Flutter
+    - Reachability
   - Flutter (1.0.0)
   - flutter_image_compress (0.0.1):
     - Flutter
@@ -37,6 +40,7 @@ PODS:
     - Flutter
   - path_provider (0.0.1):
     - Flutter
+  - Reachability (3.2)
   - SDWebImage/Core (5.9.0)
   - SDWebImageWebPCoder (0.6.1):
     - libwebp (~> 1.0)
@@ -65,6 +69,7 @@ PODS:
 
 DEPENDENCIES:
   - cloudbase_auth (from `.symlinks/plugins/cloudbase_auth/ios`)
+  - connectivity (from `.symlinks/plugins/connectivity/ios`)
   - Flutter (from `Flutter`)
   - flutter_image_compress (from `.symlinks/plugins/flutter_image_compress/ios`)
   - flutter_webview_plugin (from `.symlinks/plugins/flutter_webview_plugin/ios`)
@@ -83,6 +88,7 @@ SPEC REPOS:
     - BSImageView
     - libwebp
     - Mantle
+    - Reachability
     - SDWebImage
     - SDWebImageWebPCoder
     - sqlite3
@@ -91,6 +97,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   cloudbase_auth:
     :path: ".symlinks/plugins/cloudbase_auth/ios"
+  connectivity:
+    :path: ".symlinks/plugins/connectivity/ios"
   Flutter:
     :path: Flutter
   flutter_image_compress:
@@ -116,6 +124,7 @@ SPEC CHECKSUMS:
   BSImagePicker: 07404254f2fcdaf5a2eb403c0f8c337267ce8738
   BSImageView: a149459433a2687157d034c78e059d30ac7f2544
   cloudbase_auth: 95061f2b1e6422ad3def02dfeef6682a5e487a4a
+  connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   flutter_image_compress: 082f8daaf6c1b0c9fe798251c750ef0ecd98d7ae
   flutter_webview_plugin: ed9e8a6a96baf0c867e90e1bce2673913eeac694
@@ -125,6 +134,7 @@ SPEC CHECKSUMS:
   multi_image_picker: 58577ab96d99b35c82d626db7d81906d14c2b667
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
+  Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   SDWebImage: 62ae4a18473520c67b79e9724c31a63599cc9423
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:moor/moor.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/ui/authentications/LoginPage.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
 // Import custom files
@@ -55,7 +54,6 @@ void main() {
       ChangeNotifierProvider<ViewAgreementPageChangeNotifier>(
         create: (context) => ViewAgreementPageChangeNotifier(),
       ),
-
     ],
     child: MyApp(),
   ));
@@ -271,11 +269,8 @@ class _MyAppState extends State<MyApp> {
 
     GlobalState.alertDialogHeightChangeNotifier =
         Provider.of<AlertDialogHeightChangeNotifier>(context, listen: false);
-
-
   }
 }
-
 
 
 
@@ -283,8 +278,9 @@ class _MyAppState extends State<MyApp> {
 //
 // import 'package:flutter/material.dart';
 // import 'package:flutter/cupertino.dart';
-// import 'package:seal_note/ui/common/checkboxs/RoundCheckBoxWidget.dart';
-// // import 'package:webview_flutter/webview_flutter.dart';
+// import 'package:flutter/services.dart';
+// import 'package:seal_note/util/networks/NetworkHandler.dart';
+// import 'package:connectivity/connectivity.dart';
 //
 // void main() => runApp(MyApp());
 //
@@ -296,14 +292,7 @@ class _MyAppState extends State<MyApp> {
 //         appBar: AppBar(
 //           title: Text('Welcome to Flutter'),
 //         ),
-//         // body: RoundCheckBoxWidget(
-//         //   onChanged: (value) {
-//         //     var v = value;
-//         //   },
-//         // ),
-//
 //         body: ParentWidget(),
-//         // body:Checkbox(value: false,onChanged: (v){},),
 //       ),
 //     );
 //   }
@@ -315,76 +304,79 @@ class _MyAppState extends State<MyApp> {
 // }
 //
 // class ParentWidgetState extends State<ParentWidget> {
-//   var _first = true;
+//   String _connectionStatus = 'Unknown';
+//   final Connectivity _connectivity = Connectivity();
+//   StreamSubscription<ConnectivityResult> _connectivitySubscription;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//
+//     initConnectivity();
+//     _connectivitySubscription =
+//         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+//   }
+//
+//   @override
+//   void dispose() {
+//     _connectivitySubscription.cancel();
+//     super.dispose();
+//
+//   }
 //
 //   @override
 //   Widget build(BuildContext context) {
-//     return Container(color: Colors.red,width: 200,height: 200,);
+//     return Column(children: [
+//       CupertinoButton(
+//         child: Text('Click Me3'),
+//         color: Colors.blue,
+//         onPressed: () async {
+//           // var connectivityResult = await (Connectivity().checkConnectivity());
 //
-//     // return WebBrowser(
-//     //   initialUrl: 'https://flutter.cn/',
-//     //   javascriptEnabled: true,
-//     // );
+//           ConnectivityResult type =
+//               await NetworkHandler.getNetworkConnectivityType();
 //
+//           var hasNetwork = await NetworkHandler.hasNetworkConnection();
 //
-//     // final Completer<WebViewController> _webViewController =
-//     // Completer<WebViewController>();
-//     //
-//     // return Scaffold(
-//     //   appBar: AppBar(
-//     //     title: Text('Welcome to Flutter2'),
-//     //   ),
-//     //   body: WebView(
-//     //     initialUrl: 'https://www.xiaoe-tech.com',
-//     //     javascriptMode: JavascriptMode.unrestricted,
-//     //     onWebViewCreated: (webViewController) {
-//     //       _webViewController.complete(webViewController);//>>completer example>>how to use completer
-//     //     },
-//     //   ),
-//     //   floatingActionButton: FutureBuilder<WebViewController>(
-//     //     future: _webViewController.future,
-//     //     builder: (ctx, webViewController) {
-//     //       if (webViewController.hasData) {
-//     //         return FloatingActionButton(
-//     //           child: Icon(Icons.add),
-//     //           onPressed: () {
-//     //             webViewController.data.loadUrl('http://www.baidu.com');
-//     //           },
-//     //         );
-//     //       }
-//     //
-//     //       return Container();
-//     //     },
-//     //   ),
-//     // );
+//           var name = type.toString();
+//           var s = 's';
+//         },
+//       )
+//     ]);
+//   }
 //
-//     // return Column(children: [
-//     //   CupertinoButton(
-//     //     child: Text('Click Me'),
-//     //     color: Colors.blue,
-//     //     onPressed: () {
-//     //       setState(() {
-//     //         if (_first) {
-//     //           _first = false;
-//     //         } else {
-//     //           _first = true;
-//     //         }
-//     //       });
-//     //     },
-//     //   ),
-//     //   Container(
-//     //     child: AnimatedCrossFade(
-//     //       crossFadeState:
-//     //           _first ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-//     //       duration: const Duration(milliseconds: 500),
-//     //       firstChild: Container(
-//     //         child: Text('I am first'),
-//     //       ),
-//     //       secondChild: Container(
-//     //         child: Text('I am second'),
-//     //       ),
-//     //     ),
-//     //   ),
-//     // ]);
+//   // Platform messages are asynchronous, so we initialize in an async method.
+//   Future<void> initConnectivity() async {
+//     ConnectivityResult result = ConnectivityResult.none;
+//     // Platform messages may fail, so we use a try/catch PlatformException.
+//     try {
+//       result = await _connectivity.checkConnectivity();
+//     } on PlatformException catch (e) {
+//       print(e.toString());
+//     }
+//
+//     // If the widget was removed from the tree while the asynchronous platform
+//     // message was in flight, we want to discard the reply rather than calling
+//     // setState to update our non-existent appearance.
+//     if (!mounted) {
+//       return Future.value(null);
+//     }
+//
+//     return _updateConnectionStatus(result);
+//   }
+//
+//   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
+//     print(result.toString());
+//
+//     switch (result) {
+//       case ConnectivityResult.wifi:
+//       case ConnectivityResult.mobile:
+//       case ConnectivityResult.none:
+//         setState(() => _connectionStatus = result.toString());
+//         break;
+//       default:
+//         setState(() => _connectionStatus = 'Failed to get connectivity.');
+//         break;
+//     }
 //   }
 // }

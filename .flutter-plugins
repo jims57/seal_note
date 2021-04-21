@@ -1,5 +1,8 @@
 # This is a generated file; do not edit or check into version control.
 cloudbase_auth=/Users/mac/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/cloudbase_auth-0.0.14/
+connectivity=/Users/mac/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/connectivity-3.0.3/
+connectivity_for_web=/Users/mac/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/connectivity_for_web-0.4.0/
+connectivity_macos=/Users/mac/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/connectivity_macos-0.2.0/
 flutter_image_compress=/Users/mac/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/flutter_image_compress-0.7.0/
 flutter_webview_plugin=/Users/mac/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/flutter_webview_plugin-0.3.11/
 keyboard_utils=/Users/mac/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/keyboard_utils-1.2.4/

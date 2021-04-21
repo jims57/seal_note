@@ -14,6 +14,7 @@ import 'package:seal_note/ui/common/RoundCornerButtonWidget.dart';
 import 'package:seal_note/ui/common/checkboxs/CheckBoxWidget.dart';
 import 'package:seal_note/ui/common/checkboxs/RoundCheckBoxWidget.dart';
 import 'package:seal_note/util/dialog/FlushBarHandler.dart';
+import 'package:seal_note/util/networks/NetworkHandler.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({
@@ -33,6 +34,8 @@ class LoginPageState extends State<LoginPage> {
   double _fontSizeForErrorPanel = 14.0;
   double _defaultLoginPageWidth = double.infinity;
   int _durationMillisecondsToShowViewAgreementPage = 250;
+
+  String _errorInfo = '';
 
   @override
   void initState() {
@@ -78,7 +81,7 @@ class LoginPageState extends State<LoginPage> {
                               // color: Colors.red,
                               height: 50,
                               child: Text(
-                                '让学习不再遗忘',
+                                '让学习不遗忘',
                                 style: TextStyle(
                                     fontSize: 20.0, fontFamily: '微软雅黑'),
                               ),
@@ -118,7 +121,7 @@ class LoginPageState extends State<LoginPage> {
                       // show login error info // login error label
                       // login error info // login error widget
 
-                      '请选择同意协议',
+                      _errorInfo,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: _fontSizeForErrorPanel,
@@ -141,9 +144,28 @@ class LoginPageState extends State<LoginPage> {
                   isDisabled: _isLoginButtonDisabled,
                   buttonCallback: () async {
                     // click on login button // click wx login button
-                    // click on wx login button
+                    // click on wx login button // click login button
 
-                    if (_hasCheckedAgreement) {
+                    // Check network connection
+                    var _hasNetwork =
+                        await NetworkHandler.hasNetworkConnection();
+
+                    if (!_hasCheckedAgreement) {
+
+                      showErrorPanel(
+                        errorInfo: '请选择同意协议',
+                        shouldTriggerSetState: true,
+                      );
+
+                      // print('请选择协议');
+                    } else if (!_hasNetwork) {
+                      // Check if it has network // has network or not
+                      showErrorPanel(
+                        errorInfo: '未连接网络',
+                        shouldTriggerSetState: true,
+                      );
+                    } else {
+                      // Login check pass
                       hideLoginPage(forceToShowWebView: true);
 
                       _shouldShowErrorPanel = false;
@@ -155,13 +177,6 @@ class LoginPageState extends State<LoginPage> {
                       print(
                         '微信登录成功！',
                       );
-                    } else {
-                      GlobalState.viewAgreementPageChangeNotifier
-                          .shouldAvoidTransitionEffect = true;
-
-                      showErrorPanel(shouldTriggerSetState: true);
-
-                      print('请选择协议');
                     }
                   },
                 ),
@@ -268,18 +283,6 @@ class LoginPageState extends State<LoginPage> {
               ),
             );
           }),
-
-          // ViewAgreementPage(),
-          // login page webview
-          // ViewAgreementPage(),
-          // Container(
-          //   color: Colors.green,
-          //   width: 500,
-          //   height: 500,
-          //   // child: WebView(
-          //   //   initialUrl: 'https://www.baidu.com',
-          //   // ),
-          // ),
         ],
       ),
     );
@@ -326,9 +329,14 @@ class LoginPageState extends State<LoginPage> {
 
   void showErrorPanel({
     int millisecondToHide = 2000,
+    @required String errorInfo,
     bool shouldTriggerSetState = true,
   }) {
     _shouldShowErrorPanel = true;
+    _errorInfo = errorInfo;
+
+    GlobalState.viewAgreementPageChangeNotifier
+        .shouldAvoidTransitionEffect = true;
 
     Timer(Duration(milliseconds: millisecondToHide), () {
       // Don't trigger the method to hide error panel when View Agreement Page is being shown
