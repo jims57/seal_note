@@ -51,9 +51,10 @@ class GlobalState with ChangeNotifier {
       15.0;
   static const double defaultRoundCornerPanelBottomMargin = 15.0;
 
-  // App current info
+  // App current info // app status
   static bool isAppFirstTimeToLaunch = false;
   static bool isLoggedIn = false;
+  static bool hasNetwork = true;
 
   // db // database
   static String dbNameForMobilePlatform = 'sealMobile.sqlite';

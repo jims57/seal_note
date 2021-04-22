@@ -3,18 +3,15 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:provider/provider.dart';
-import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/appstate/ViewAgreementPageChangeNotifier.dart';
-import 'package:seal_note/ui/NoteDetailPage.dart';
 import 'package:seal_note/ui/authentications/ViewAgreementPage.dart';
 import 'package:seal_note/ui/common/RoundCornerButtonWidget.dart';
-import 'package:seal_note/ui/common/checkboxs/CheckBoxWidget.dart';
 import 'package:seal_note/ui/common/checkboxs/RoundCheckBoxWidget.dart';
-import 'package:seal_note/util/dialog/FlushBarHandler.dart';
 import 'package:seal_note/util/networks/NetworkHandler.dart';
+
+typedef void HideErrorPanel({bool shouldTriggerSetState});
 
 class LoginPage extends StatefulWidget {
   LoginPage({
@@ -35,12 +32,22 @@ class LoginPageState extends State<LoginPage> {
   double _defaultLoginPageWidth = double.infinity;
   int _durationMillisecondsToShowViewAgreementPage = 250;
 
+  // bool _hasNetwork = true;
   String _errorInfo = '';
+  bool _isWaitingNetworkToBecomeNormal = false;
+
+  // Timer _timer;
 
   @override
   void initState() {
     _loginPageWidth = _defaultLoginPageWidth;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -120,6 +127,7 @@ class LoginPageState extends State<LoginPage> {
                     child: Text(
                       // show login error info // login error label
                       // login error info // login error widget
+                      // show error info // show wx login info
 
                       _errorInfo,
                       overflow: TextOverflow.ellipsis,
@@ -151,19 +159,31 @@ class LoginPageState extends State<LoginPage> {
                         await NetworkHandler.hasNetworkConnection();
 
                     if (!_hasCheckedAgreement) {
-
                       showErrorPanel(
                         errorInfo: '请选择同意协议',
+                        autoHide: true,
                         shouldTriggerSetState: true,
                       );
 
                       // print('请选择协议');
                     } else if (!_hasNetwork) {
                       // Check if it has network // has network or not
-                      showErrorPanel(
-                        errorInfo: '未连接网络',
-                        shouldTriggerSetState: true,
-                      );
+
+                      if (!_isWaitingNetworkToBecomeNormal) {
+                        _isWaitingNetworkToBecomeNormal = true;
+
+                        showErrorPanel(
+                          errorInfo: '未连接网络',
+                          autoHide: false,
+                          shouldTriggerSetState: true,
+                        );
+
+                        NetworkHandler.checkNetworkPeriodically(
+                            callbackWhenHasNetwork: () async {
+                          _isWaitingNetworkToBecomeNormal = false;
+                          hideErrorPanel();
+                        });
+                      }
                     } else {
                       // Login check pass
                       hideLoginPage(forceToShowWebView: true);
@@ -244,6 +264,16 @@ class LoginPageState extends State<LoginPage> {
                     ],
                   ),
                 ),
+                // GestureDetector(
+                //   child: Container(
+                //     color: Colors.red,
+                //     width: 50,
+                //     height: 50,
+                //   ),
+                //   onTap: () async {
+                //     hideErrorPanel();
+                //   },
+                // ),
               ],
             ),
           ),
@@ -316,11 +346,6 @@ class LoginPageState extends State<LoginPage> {
         GlobalState.noteDetailWidgetState.currentState
             .showWebView(forceToSyncWithShouldHideWebViewVar: true);
       } else {
-        // Timer(const Duration(seconds: 3), () {
-        //   GlobalState.noteDetailWidgetState.currentState
-        //       .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
-        // });
-
         GlobalState.noteDetailWidgetState.currentState
             .hideWebView(forceToSyncWithShouldHideWebViewVar: true);
       }
@@ -328,24 +353,26 @@ class LoginPageState extends State<LoginPage> {
   }
 
   void showErrorPanel({
-    int millisecondToHide = 2000,
     @required String errorInfo,
+    bool autoHide = true,
     bool shouldTriggerSetState = true,
   }) {
     _shouldShowErrorPanel = true;
     _errorInfo = errorInfo;
 
-    GlobalState.viewAgreementPageChangeNotifier
-        .shouldAvoidTransitionEffect = true;
+    GlobalState.viewAgreementPageChangeNotifier.shouldAvoidTransitionEffect =
+        true;
 
-    Timer(Duration(milliseconds: millisecondToHide), () {
-      // Don't trigger the method to hide error panel when View Agreement Page is being shown
-      // So that no duplicate calls are made
-      if (!GlobalState
-          .viewAgreementPageChangeNotifier.shouldShowViewAgreementPage) {
-        hideErrorPanel(shouldTriggerSetState: shouldTriggerSetState);
-      }
-    });
+    if (autoHide) {
+      Timer(Duration(milliseconds: 2000), () {
+        // Don't trigger the method to hide error panel when View Agreement Page is being shown
+        // So that no duplicate calls are made
+        if (!GlobalState
+            .viewAgreementPageChangeNotifier.shouldShowViewAgreementPage) {
+          hideErrorPanel(shouldTriggerSetState: shouldTriggerSetState);
+        }
+      });
+    }
 
     if (shouldTriggerSetState) {
       setState(() {});
@@ -422,4 +449,22 @@ class LoginPageState extends State<LoginPage> {
       return theText;
     }
   }
+
+// void _checkNetworkPeriodicallyAndHideErrorPanel(
+//     {@required VoidCallback callbackWhenHasNetwork,
+//     int intervalMillisecond = 1000}) {
+//   Timer _timer;
+//
+//   _timer?.cancel();
+//
+//   _timer = Timer.periodic(Duration(milliseconds: intervalMillisecond),
+//       (timer) async {
+//     GlobalState.hasNetwork = await NetworkHandler.hasNetworkConnection();
+//     if (GlobalState.hasNetwork) {
+//       callbackWhenHasNetwork();
+//
+//       _timer.cancel();
+//     }
+//   });
+// }
 }

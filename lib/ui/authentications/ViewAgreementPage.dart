@@ -93,7 +93,10 @@ class _ViewAgreementPageState extends State<ViewAgreementPage> {
         false;
     GlobalState.viewAgreementPageChangeNotifier.hideViewAgreementPage();
 
-    GlobalState.loginPageState.currentState
-        .hideErrorPanel(shouldTriggerSetState: true);
+    // Don't hide error panel, if it has network problem
+    if (GlobalState.hasNetwork) {
+      GlobalState.loginPageState.currentState
+          .hideErrorPanel(shouldTriggerSetState: true);
+    }
   }
 }

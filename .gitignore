@@ -222,3 +222,5 @@ ios/Flutter/App 2.framework/App
 .idea/libraries/Dart_Packages2.xml
 .flutter-plugins-dependencies
 .flutter-plugins
+.flutter-plugins-dependencies
+.idea/dictionaries/mac.xml

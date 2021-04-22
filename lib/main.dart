@@ -270,6 +270,11 @@ class _MyAppState extends State<MyApp> {
     GlobalState.alertDialogHeightChangeNotifier =
         Provider.of<AlertDialogHeightChangeNotifier>(context, listen: false);
   }
+
+  // TODO: To be implemented
+  bool _isAppInitialized(){
+    return true;
+  }
 }
 
 
