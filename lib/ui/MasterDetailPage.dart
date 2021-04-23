@@ -19,6 +19,7 @@ import 'package:after_layout/after_layout.dart';
 import 'package:seal_note/ui/authentications/LoginPage.dart';
 import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageStackWidget.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
+import 'package:seal_note/util/networks/NetworkHandler.dart';
 
 import 'NoteDetailWidget.dart';
 
@@ -50,10 +51,19 @@ class MasterDetailPageState extends State<MasterDetailPage>
   // Reusable page related
   var reusablePageFromDx = 1.0;
   var reusablePageToDx = 0.0;
+  Future<bool> loginPageFutureBuilder;
 
   @override
   void initState() {
-
+    // Check network
+    // loginPageFutureBuilder = NetworkHandler.hasNetworkConnection();
+    // loginPageFutureBuilder = Future<bool>.delayed(
+    //   const Duration(seconds: 5),
+    //   () {
+    //     return true;
+    //   },
+    // );
+    loginPageFutureBuilder = _checkIfShowLoginPageOrNot();
 
     GlobalState.flutterWebviewPlugin = FlutterWebviewPlugin();
 
@@ -270,14 +280,33 @@ class MasterDetailPageState extends State<MasterDetailPage>
           ),
 
           // Login page
-          // Container(
-          //   width: (!GlobalState.isLoggedIn) ? double.infinity : 0.0,
-          //   // width: (!GlobalState.isLoggedIn) ? 150 : 0.0,
-          //   child: LoginPage(
-          //     key: GlobalState.loginPageState,
-          //   ),
-          // ),
-          LoginPage(key: GlobalState.loginPageState),
+          FutureBuilder<bool>(
+              future: loginPageFutureBuilder,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (!snapshot.data) {
+                    // Shouldn't show the login page
+                    var s = 's;';
+                    return Text('has net:OK');
+                  } else {
+                    // Should show the login page
+
+                    // Timer(const Duration(seconds: 5), () {
+                    //   GlobalState.loginPageState.currentState.showErrorPanel(
+                    //     errorInfo: '网络',
+                    //     autoHide: false,
+                    //   );
+                    // });
+                    return LoginPage(
+                      key: GlobalState.loginPageState,
+                      // hasNetwork: false,
+                    );
+                  }
+                } else {
+                  return Text('initializing....');
+                }
+              }),
+          // LoginPage(key: GlobalState.loginPageState),
         ],
       ),
     );
@@ -486,6 +515,19 @@ class MasterDetailPageState extends State<MasterDetailPage>
       reusablePageFromDx = 0.0;
       reusablePageToDx = 1.0;
     }
+  }
+
+  Future<bool> _checkIfShowLoginPageOrNot() async {
+    bool shouldShowLoginPage = false;
+
+    GlobalState.hasNetwork = await NetworkHandler.hasNetworkConnection();
+    if (!GlobalState.hasNetwork) {
+      shouldShowLoginPage = true;
+    }
+
+    shouldShowLoginPage = true;
+
+    return shouldShowLoginPage;
   }
 
   // Public methods

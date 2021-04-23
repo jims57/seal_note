@@ -41,6 +41,14 @@ class GlobalState with ChangeNotifier {
   static int incrementalStepToUseRegex = 100;
   static const int minLengthToTriggerRefreshForNoteListPage = 0;
 
+  // app current info // app status // app status info
+  static bool isAppFirstTimeToLaunch = false;
+  static bool isAppInitialized = false;
+  static bool isLoggedIn = false;
+  static bool hasNetwork = true;
+  // static bool canLogin = false;
+  static bool isReviewApp = false; // Tell the current version of app is under view by Apple
+
   // Default variables
   static const double defaultItemCaptionHeight = 25.0;
   static const double defaultItemHeight = 60.0;
@@ -51,10 +59,8 @@ class GlobalState with ChangeNotifier {
       15.0;
   static const double defaultRoundCornerPanelBottomMargin = 15.0;
 
-  // App current info // app status
-  static bool isAppFirstTimeToLaunch = false;
-  static bool isLoggedIn = false;
-  static bool hasNetwork = true;
+  // Future // Future builder // FutureBuilder
+  // final Future<bool> loginPageFutureBuilder;
 
   // db // database
   static String dbNameForMobilePlatform = 'sealMobile.sqlite';

@@ -11,18 +11,21 @@ import 'package:seal_note/ui/common/RoundCornerButtonWidget.dart';
 import 'package:seal_note/ui/common/checkboxs/RoundCheckBoxWidget.dart';
 import 'package:seal_note/util/networks/NetworkHandler.dart';
 
-typedef void HideErrorPanel({bool shouldTriggerSetState});
+import 'package:after_layout/after_layout.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({
     Key key,
+    // @required this.hasNetwork,
   }) : super(key: key);
+
+  // final bool hasNetwork;
 
   @override
   LoginPageState createState() => LoginPageState();
 }
 
-class LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
   bool _isLoginButtonDisabled = false;
   bool _hasCheckedAgreement = true;
   bool _shouldShowErrorPanel = false;
@@ -32,14 +35,27 @@ class LoginPageState extends State<LoginPage> {
   double _defaultLoginPageWidth = double.infinity;
   int _durationMillisecondsToShowViewAgreementPage = 250;
 
-  // bool _hasNetwork = true;
+  // bool _hasNetwork;
   String _errorInfo = '';
+  String _errorInfoForNotSelectAgreement = '请选择同意协议';
+  String _errorInfoForNetworkProblem = '请打开网络';
   bool _isWaitingNetworkToBecomeNormal = false;
+
+  bool _isLoginPageReady = false;
 
   // Timer _timer;
 
   @override
   void initState() {
+    // _hasNetwork = widget.hasNetwork;
+
+    // Timer(const Duration(seconds: 5), () {
+    //   GlobalState.loginPageState.currentState.showErrorPanel(
+    //     errorInfo: '网络',
+    //     autoHide: false,
+    //   );
+    // });
+
     _loginPageWidth = _defaultLoginPageWidth;
     super.initState();
   }
@@ -48,6 +64,23 @@ class LoginPageState extends State<LoginPage> {
   void dispose() {
     // _timer?.cancel();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(covariant LoginPage oldWidget) {
+    // TODO: implement didUpdateWidget
+    if (_isLoginPageReady && !GlobalState.isLoggedIn) {
+      var s = 'd';
+      showErrorPanelWhenNetworkProblem();
+    }
+
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -155,35 +188,40 @@ class LoginPageState extends State<LoginPage> {
                     // click on wx login button // click login button
 
                     // Check network connection
-                    var _hasNetwork =
+                    // var _hasNetwork =
+                    GlobalState.hasNetwork =
                         await NetworkHandler.hasNetworkConnection();
 
                     if (!_hasCheckedAgreement) {
                       showErrorPanel(
-                        errorInfo: '请选择同意协议',
+                        errorInfo: _errorInfoForNotSelectAgreement,
                         autoHide: true,
                         shouldTriggerSetState: true,
                       );
 
                       // print('请选择协议');
-                    } else if (!_hasNetwork) {
+                    } else if (!GlobalState.hasNetwork) {
                       // Check if it has network // has network or not
 
-                      if (!_isWaitingNetworkToBecomeNormal) {
-                        _isWaitingNetworkToBecomeNormal = true;
+                      // showErrorPanelForNetworkProblemAndCheckNetworkPeriodically();
+                      await showErrorPanelWhenNetworkProblem(
+                          forceToCheckNetwork: false);
 
-                        showErrorPanel(
-                          errorInfo: '未连接网络',
-                          autoHide: false,
-                          shouldTriggerSetState: true,
-                        );
-
-                        NetworkHandler.checkNetworkPeriodically(
-                            callbackWhenHasNetwork: () async {
-                          _isWaitingNetworkToBecomeNormal = false;
-                          hideErrorPanel();
-                        });
-                      }
+                      // if (!_isWaitingNetworkToBecomeNormal) {
+                      //   _isWaitingNetworkToBecomeNormal = true;
+                      //
+                      //   showErrorPanel(
+                      //     errorInfo: _errorInfoForNetworkProblem,
+                      //     autoHide: false,
+                      //     shouldTriggerSetState: true,
+                      //   );
+                      //
+                      //   NetworkHandler.checkNetworkPeriodically(
+                      //       callbackWhenHasNetwork: () async {
+                      //     _isWaitingNetworkToBecomeNormal = false;
+                      //     hideErrorPanel();
+                      //   });
+                      // }
                     } else {
                       // Login check pass
                       hideLoginPage(forceToShowWebView: true);
@@ -379,6 +417,54 @@ class LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<void> showErrorPanelWhenNetworkProblem({
+    bool forceToCheckNetwork = true,
+    bool checkNetworkPeriodically = true,
+  }) async {
+    if (forceToCheckNetwork) {
+      GlobalState.hasNetwork = await NetworkHandler.hasNetworkConnection();
+    }
+
+    var s = 's';
+
+    if (!GlobalState.hasNetwork) {
+      showErrorPanel(
+        errorInfo: _errorInfoForNetworkProblem,
+        autoHide: false,
+        shouldTriggerSetState: true,
+      );
+
+      if (!_isWaitingNetworkToBecomeNormal) {
+        _isWaitingNetworkToBecomeNormal = true;
+
+        if (checkNetworkPeriodically) {
+          NetworkHandler.checkNetworkPeriodically(
+              callbackWhenHasNetwork: () async {
+            _isWaitingNetworkToBecomeNormal = false;
+            hideErrorPanel();
+          });
+        }
+      }
+    }
+  }
+
+  // void showErrorPanelForNetworkProblemAndCheckNetworkPeriodically() {
+  //   if (!_isWaitingNetworkToBecomeNormal) {
+  //     _isWaitingNetworkToBecomeNormal = true;
+  //
+  //     showErrorPanel(
+  //       errorInfo: _errorInfoForNetworkProblem,
+  //       autoHide: false,
+  //       shouldTriggerSetState: true,
+  //     );
+  //
+  //     NetworkHandler.checkNetworkPeriodically(callbackWhenHasNetwork: () async {
+  //       _isWaitingNetworkToBecomeNormal = false;
+  //       hideErrorPanel();
+  //     });
+  //   }
+  // }
+
   void hideErrorPanel({
     bool shouldTriggerSetState = true,
   }) {
@@ -448,6 +534,22 @@ class LoginPageState extends State<LoginPage> {
     } else {
       return theText;
     }
+  }
+
+  @override
+  void afterFirstLayout(BuildContext context) {
+    _isLoginPageReady = true;
+
+    var s = 'ss';
+
+    // showErrorPanelWhenNetworkProblem();
+
+    // if (!GlobalState.hasNetwork) {
+    //   showErrorPanelForNetworkProblemAndCheckNetworkPeriodically();
+    // }
+
+    // var s = 's';
+    // TODO: implement afterFirstLayout
   }
 
 // void _checkNetworkPeriodicallyAndHideErrorPanel(
