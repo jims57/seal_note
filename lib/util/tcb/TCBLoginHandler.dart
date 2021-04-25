@@ -42,7 +42,7 @@ class TCBLoginHandler {
   }
 
   static Future<bool> _loginWXAnonymously() async {
-    GlobalState.errorMsg = 'anonymous-abc';
+    GlobalState.errorMsg = '';
     var auth = getCloudBaseAuth();
 
     await auth.signInAnonymously().then((success) {
@@ -59,10 +59,8 @@ class TCBLoginHandler {
   }
 
   static Future<bool> _loginWX() async {
-    GlobalState.errorMsg = 'wxlogin-abc';
+    GlobalState.errorMsg = '';
     var auth = getCloudBaseAuth();
-
-    // auth.
 
     await auth
         .signInByWx(
@@ -70,9 +68,8 @@ class TCBLoginHandler {
         .then((success) {
       GlobalState.isLoggedIn = true;
       GlobalState.isAnonymousLogin = false;
-      GlobalState.errorMsg = 'success';
     }).catchError((err) {
-      GlobalState.errorMsg = 'err$err';
+      GlobalState.errorMsg = err;
       GlobalState.isLoggedIn = false;
     });
 
@@ -102,12 +99,20 @@ class TCBLoginHandler {
     return GlobalState.isLoggedIn;
   }
 
+  static Future<bool> isLoginExpired() async {
+    var auth = getCloudBaseAuth();
+
+    return await auth.hasExpiredAuthState();
+  }
+
   static Future<bool> login({
     bool autoUseAnonymousWayToLoginInSimulator = true,
   }) async {
     var isSimulator = await SimulatorHandler.isSimulatorOrEmulator();
 
-    if (isSimulator && autoUseAnonymousWayToLoginInSimulator) {
+    // If this is a review app, use anonymous way to login
+    if (GlobalState.isReviewApp ||
+        (isSimulator && autoUseAnonymousWayToLoginInSimulator)) {
       GlobalState.isLoggedIn = await _loginWXAnonymously();
     } else {
       GlobalState.isLoggedIn = await _loginWX();

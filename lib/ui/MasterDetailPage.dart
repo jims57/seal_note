@@ -1,14 +1,10 @@
 import 'dart:async';
 
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:provider/provider.dart';
-import 'package:seal_note/data/appstate/AppState.dart';
-import 'package:seal_note/data/appstate/DetailPageState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/data/appstate/ReusablePageChangeNotifier.dart';
 import 'package:seal_note/data/appstate/ReusablePageOpenOrCloseNotifier.dart';
 import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 import 'package:seal_note/data/database/database.dart';
@@ -20,7 +16,7 @@ import 'package:seal_note/ui/authentications/LoginPage.dart';
 import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageStackWidget.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
 import 'package:seal_note/util/networks/NetworkHandler.dart';
-import 'package:seal_note/util/tcb/TCBUserHandler.dart';
+import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
 
 import 'NoteDetailWidget.dart';
 
@@ -56,14 +52,6 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
   @override
   void initState() {
-    // Check network
-    // loginPageFutureBuilder = NetworkHandler.hasNetworkConnection();
-    // loginPageFutureBuilder = Future<bool>.delayed(
-    //   const Duration(seconds: 5),
-    //   () {
-    //     return true;
-    //   },
-    // );
     loginPageFutureBuilder = _checkIfShowLoginPageOrNot();
 
     GlobalState.flutterWebviewPlugin = FlutterWebviewPlugin();
@@ -79,9 +67,6 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
     // Load file for Quill according to the release or debug mode
     var quillEditorHtmlFile = 'assets/QuillEditor.html';
-    if (GlobalState.forRelease) {
-      quillEditorHtmlFile = 'assets/QuillEditor(Release)2.html';
-    }
 
     rootBundle.loadString(quillEditorHtmlFile).then((htmlString) {
       GlobalState.htmlString = htmlString;
@@ -287,24 +272,16 @@ class MasterDetailPageState extends State<MasterDetailPage>
                 if (snapshot.hasData) {
                   if (!snapshot.data) {
                     // Shouldn't show the login page
-                    var s = 's;';
-                    return Text('has net:OK');
+                    return Text('');
                   } else {
-                    // Should show the login page
+                    // Should show the login page // show login page
 
-                    // Timer(const Duration(seconds: 5), () {
-                    //   GlobalState.loginPageState.currentState.showErrorPanel(
-                    //     errorInfo: '网络',
-                    //     autoHide: false,
-                    //   );
-                    // });
                     return LoginPage(
                       key: GlobalState.loginPageState,
-                      // hasNetwork: false,
                     );
                   }
                 } else {
-                  return Text('initializing....');
+                  return Text('init');
                 }
               }),
           // LoginPage(key: GlobalState.loginPageState),
@@ -526,12 +503,25 @@ class MasterDetailPageState extends State<MasterDetailPage>
   Future<bool> _checkIfShowLoginPageOrNot() async {
     bool shouldShowLoginPage = false;
 
+    // Check if network is ok
     GlobalState.hasNetwork = await NetworkHandler.hasNetworkConnection();
     if (!GlobalState.hasNetwork) {
       shouldShowLoginPage = true;
     }
 
-    shouldShowLoginPage = true;
+    // Check has once login WeChat
+    var hasLoginTCB = await TCBLoginHandler.hasLoginTCB();
+    if (!hasLoginTCB) {
+      shouldShowLoginPage = true;
+    }
+
+    // Check if login is expired
+    var isLoginExpired = await TCBLoginHandler.isLoginExpired();
+    if (isLoginExpired) {
+      shouldShowLoginPage = true;
+    }
+
+    // shouldShowLoginPage = true;
 
     return shouldShowLoginPage;
   }

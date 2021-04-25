@@ -15,7 +15,6 @@ class TCBUserHandler {
     }
 
     await auth.getUserInfo().then((userInfo) {
-      // 获取用户信息成功
       GlobalState.cloudBaseUserInfo = userInfo;
     }).catchError((err) {
       // 获取用户信息失败

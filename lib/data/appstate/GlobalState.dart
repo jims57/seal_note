@@ -37,7 +37,6 @@ class GlobalState with ChangeNotifier {
   GlobalState._internal();
 
   // For configuration
-  static bool forRelease = false;
   static int noteListTitleMaxLength = 50;
   static int noteListAbstractMaxLength = 50;
   static int incrementalStepToUseRegex = 100;
@@ -45,7 +44,6 @@ class GlobalState with ChangeNotifier {
 
   // TCB configuration
   static String tcbEnvironment = 'seal-note-app-env-8ei8de6728d969';
-  // static String tcbAppAccessKey = 'a20825658ec31142f31c91ee7d18f5ad';
   static String tcbAppAccessKey = 'a20825658ec31142f31c91ee7d18f5ad';
   static String tcbAppAccessVersion = '1';
 
@@ -64,15 +62,13 @@ class GlobalState with ChangeNotifier {
   static String wxUniLink = 'https://t.zcoo.net/sealsite/';
 
   // Common variables
-  static String errorMsg = 'init';
+  static String errorMsg = '';
 
   // app current info // app status // app status info
   static bool isAppFirstTimeToLaunch = false;
   static bool isAppInitialized = false;
   static bool isLoggedIn = false;
   static bool hasNetwork = true;
-
-  // static bool canLogin = false;
   static bool isReviewApp =
       false; // Tell the current version of app is under view by Apple
 

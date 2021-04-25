@@ -18,10 +18,7 @@ import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
 class LoginPage extends StatefulWidget {
   LoginPage({
     Key key,
-    // @required this.hasNetwork,
   }) : super(key: key);
-
-  // final bool hasNetwork;
 
   @override
   LoginPageState createState() => LoginPageState();
@@ -88,7 +85,6 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // constraints: BoxConstraints.expand(),
       width: _loginPageWidth,
       color: GlobalState.themeGreyColorAtiOSTodoForBackground,
       child: Stack(
@@ -223,16 +219,8 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                         GlobalState.masterDetailPageState.currentState
                             .triggerSetState();
                       } else {
-                        AlertDialogHandler().showAlertDialog(
-                          parentContext: context,
-                          captionText: 'error',
-                          remark: GlobalState.errorMsg,
-                          remarkMaxLines: 100,
-                          expandRemarkToMaxFinite: true,
-                        );
-
                         showErrorPanel(
-                          errorInfo: '[${GlobalState.errorMsg}]',
+                          errorInfo: GlobalState.errorMsg,
                           autoHide: true,
                         );
                       }
