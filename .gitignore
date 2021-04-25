@@ -232,3 +232,7 @@ ios/Flutter/App 2.framework/App
 .flutter-plugins
 ios/Runner/Runner.entitlements
 .flutter-plugins-dependencies
+.flutter-plugins-dependencies
+.idea/libraries/Dart_Packages.xml
+.idea/libraries/Dart_Packages2.xml
+.idea/libraries/Flutter_Plugins.xml

@@ -9,6 +9,7 @@ import 'package:seal_note/data/appstate/ViewAgreementPageChangeNotifier.dart';
 import 'package:seal_note/ui/authentications/ViewAgreementPage.dart';
 import 'package:seal_note/ui/common/RoundCornerButtonWidget.dart';
 import 'package:seal_note/ui/common/checkboxs/RoundCheckBoxWidget.dart';
+import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/util/networks/NetworkHandler.dart';
 
 import 'package:after_layout/after_layout.dart';
@@ -222,8 +223,16 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                         GlobalState.masterDetailPageState.currentState
                             .triggerSetState();
                       } else {
+                        AlertDialogHandler().showAlertDialog(
+                          parentContext: context,
+                          captionText: 'error',
+                          remark: GlobalState.errorMsg,
+                          remarkMaxLines: 100,
+                          expandRemarkToMaxFinite: true,
+                        );
+
                         showErrorPanel(
-                          errorInfo: _errorInfoForLoginFailure,
+                          errorInfo: '[${GlobalState.errorMsg}]',
                           autoHide: true,
                         );
                       }

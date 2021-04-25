@@ -42,6 +42,7 @@ class TCBLoginHandler {
   }
 
   static Future<bool> _loginWXAnonymously() async {
+    GlobalState.errorMsg = 'anonymous-abc';
     var auth = getCloudBaseAuth();
 
     await auth.signInAnonymously().then((success) {
@@ -50,6 +51,7 @@ class TCBLoginHandler {
       GlobalState.isLoggedIn = true;
       GlobalState.isAnonymousLogin = true;
     }).catchError((err) {
+      GlobalState.errorMsg = err;
       GlobalState.isLoggedIn = false;
     });
 
@@ -57,7 +59,10 @@ class TCBLoginHandler {
   }
 
   static Future<bool> _loginWX() async {
+    GlobalState.errorMsg = 'wxlogin-abc';
     var auth = getCloudBaseAuth();
+
+    // auth.
 
     await auth
         .signInByWx(
@@ -65,7 +70,9 @@ class TCBLoginHandler {
         .then((success) {
       GlobalState.isLoggedIn = true;
       GlobalState.isAnonymousLogin = false;
+      GlobalState.errorMsg = 'success';
     }).catchError((err) {
+      GlobalState.errorMsg = 'err$err';
       GlobalState.isLoggedIn = false;
     });
 
@@ -114,9 +121,9 @@ class TCBLoginHandler {
       var auth = getCloudBaseAuth();
 
       await auth.signOut();
-
-      GlobalState.isLoggedIn = false;
     }
+
+    GlobalState.isLoggedIn = false;
 
     return true;
   }

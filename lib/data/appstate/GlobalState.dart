@@ -45,6 +45,7 @@ class GlobalState with ChangeNotifier {
 
   // TCB configuration
   static String tcbEnvironment = 'seal-note-app-env-8ei8de6728d969';
+  // static String tcbAppAccessKey = 'a20825658ec31142f31c91ee7d18f5ad';
   static String tcbAppAccessKey = 'a20825658ec31142f31c91ee7d18f5ad';
   static String tcbAppAccessVersion = '1';
 
@@ -58,9 +59,12 @@ class GlobalState with ChangeNotifier {
   static bool isAnonymousLogin =
       false; // false = Anonymous login, true = WX login
 
-  // WX variable
+  // WX variables
   static String wxAppId = 'wx559b1bda805a875b';
   static String wxUniLink = 'https://t.zcoo.net/sealsite/';
+
+  // Common variables
+  static String errorMsg = 'init';
 
   // app current info // app status // app status info
   static bool isAppFirstTimeToLaunch = false;
