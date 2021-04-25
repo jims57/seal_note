@@ -1,3 +1,5 @@
+import 'package:cloudbase_auth/cloudbase_auth.dart';
+import 'package:cloudbase_core/cloudbase_core.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:seal_note/data/database/database.dart';
 import 'package:flutter/material.dart';
@@ -36,18 +38,38 @@ class GlobalState with ChangeNotifier {
 
   // For configuration
   static bool forRelease = false;
+  // static bool isEmulatorOrASimulator = false;
   static int noteListTitleMaxLength = 50;
   static int noteListAbstractMaxLength = 50;
   static int incrementalStepToUseRegex = 100;
   static const int minLengthToTriggerRefreshForNoteListPage = 0;
+
+  // TCB configuration
+  static String tcbEnvironment = 'seal-note-app-env-8ei8de6728d969';
+  static String tcbAppAccessKey = 'a20825658ec31142f31c91ee7d18f5ad';
+  static String tcbAppAccessVersion = '1';
+
+  // TCB variables
+  static CloudBaseCore tcbCloudBaseCore;
+  static CloudBaseAuth tcbCloudBaseAuth;
+  static CloudBaseAuthState tcbCloudBaseAuthState;
+  static String tcbAccessToken;
+  static String tcbRefreshToken;
+  static CloudBaseUserInfo cloudBaseUserInfo;
+
+  // WX variable
+  static String wxAppId = 'wx559b1bda805a875b';
+  static String wxUniLink = 'https://t.zcoo.net/sealsite/';
 
   // app current info // app status // app status info
   static bool isAppFirstTimeToLaunch = false;
   static bool isAppInitialized = false;
   static bool isLoggedIn = false;
   static bool hasNetwork = true;
+
   // static bool canLogin = false;
-  static bool isReviewApp = false; // Tell the current version of app is under view by Apple
+  static bool isReviewApp =
+      false; // Tell the current version of app is under view by Apple
 
   // Default variables
   static const double defaultItemCaptionHeight = 25.0;

@@ -317,6 +317,13 @@
             </list>
           </value>
         </entry>
+        <entry key="flutter_is_emulator">
+          <value>
+            <list>
+              <option value="$USER_HOME$/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/flutter_is_emulator-1.0.0/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="flutter_slidable">
           <value>
             <list>
@@ -910,6 +917,7 @@
       <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/flushbar-1.10.4/lib" />
       <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/flutter_device_type-0.3.2/lib" />
       <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/flutter_image_compress-0.7.0/lib" />
+      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/flutter_is_emulator-1.0.0/lib" />
       <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/flutter_slidable-0.5.7/lib" />
       <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/flutter_webview_plugin-0.3.11/lib" />
       <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.flutter-io.cn/glob-1.2.0/lib" />

@@ -12,6 +12,7 @@ import 'package:seal_note/ui/common/checkboxs/RoundCheckBoxWidget.dart';
 import 'package:seal_note/util/networks/NetworkHandler.dart';
 
 import 'package:after_layout/after_layout.dart';
+import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({
@@ -186,6 +187,10 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                   buttonCallback: () async {
                     // click on login button // click wx login button
                     // click on wx login button // click login button
+
+                    // var login = await TCBLoginHandler.loginWXAnonymously();
+                    // var login = await TCBLoginHandler.loginWX();
+                    var login = await TCBLoginHandler.login();
 
                     // Check network connection
                     // var _hasNetwork =

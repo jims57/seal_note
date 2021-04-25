@@ -20,6 +20,7 @@ import 'package:seal_note/ui/authentications/LoginPage.dart';
 import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageStackWidget.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
 import 'package:seal_note/util/networks/NetworkHandler.dart';
+import 'package:seal_note/util/tcb/TCBUserHandler.dart';
 
 import 'NoteDetailWidget.dart';
 
@@ -475,6 +476,11 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
   @override
   void afterFirstLayout(BuildContext context) {
+    // TODO: TCB tests
+    TCBUserHandler.getUserInfo().then((value) {
+      var v = value;
+    });
+
     print('Screen height:${GlobalState.screenHeight}');
     print('Screen width:${GlobalState.screenWidth}');
   }

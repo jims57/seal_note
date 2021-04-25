@@ -225,3 +225,10 @@ ios/Flutter/App 2.framework/App
 .flutter-plugins-dependencies
 .idea/dictionaries/mac.xml
 .flutter-plugins-dependencies
+.idea/libraries/Flutter_Plugins.xml
+.idea/libraries/Dart_Packages2.xml
+.idea/dictionaries/mac.xml
+.flutter-plugins-dependencies
+.flutter-plugins
+ios/Runner/Runner.entitlements
+.flutter-plugins-dependencies

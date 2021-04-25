@@ -5,6 +5,8 @@ import 'package:moor/moor.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/util/networks/NetworkHandler.dart';
+import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
+import 'package:seal_note/util/tcb/TCBUserHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
 // Import custom files
@@ -68,7 +70,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
-
     _initConsumerNotifier();
 
     GlobalState.database = Provider.of<Database>(context, listen: false);
@@ -274,11 +275,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   // TODO: To be implemented
-  bool _isAppInitialized(){
+  bool _isAppInitialized() {
     return true;
   }
 }
-
 
 // // Test main
 // import 'package:flutter/material.dart';

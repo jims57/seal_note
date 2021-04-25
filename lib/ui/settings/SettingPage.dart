@@ -3,6 +3,7 @@ import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/ui/common/items/ItemContentWidget.dart';
 import 'package:seal_note/ui/common/panels/RoundCornerPanelWidget.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
+import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
 
 class SettingPage extends StatefulWidget {
   @override
@@ -35,6 +36,8 @@ class _SettingPageState extends State<SettingPage> {
         );
 
         if (shouldSignOut) {
+          await TCBLoginHandler.signOutWX();
+
           GlobalState.isLoggedIn = false;
           GlobalState.viewAgreementPageChangeNotifier.shouldAvoidTransitionEffect = true;
           GlobalState.reusablePageStackWidgetState.currentState
