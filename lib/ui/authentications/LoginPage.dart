@@ -36,10 +36,10 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
   double _defaultLoginPageWidth = double.infinity;
   int _durationMillisecondsToShowViewAgreementPage = 250;
 
-  // bool _hasNetwork;
   String _errorInfo = '';
   String _errorInfoForNotSelectAgreement = '请选择同意协议';
   String _errorInfoForNetworkProblem = '请打开网络';
+  String _errorInfoForLoginFailure = '登录失败，请重试';
   bool _isWaitingNetworkToBecomeNormal = false;
 
   bool _isLoginPageReady = false;
@@ -188,12 +188,9 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                     // click on login button // click wx login button
                     // click on wx login button // click login button
 
-                    // var login = await TCBLoginHandler.loginWXAnonymously();
-                    // var login = await TCBLoginHandler.loginWX();
-                    var login = await TCBLoginHandler.login();
+                    // var login = await TCBLoginHandler.login();
 
                     // Check network connection
-                    // var _hasNetwork =
                     GlobalState.hasNetwork =
                         await NetworkHandler.hasNetworkConnection();
 
@@ -203,43 +200,33 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                         autoHide: true,
                         shouldTriggerSetState: true,
                       );
-
-                      // print('请选择协议');
                     } else if (!GlobalState.hasNetwork) {
                       // Check if it has network // has network or not
 
-                      // showErrorPanelForNetworkProblemAndCheckNetworkPeriodically();
                       await showErrorPanelWhenNetworkProblem(
                           forceToCheckNetwork: false);
-
-                      // if (!_isWaitingNetworkToBecomeNormal) {
-                      //   _isWaitingNetworkToBecomeNormal = true;
-                      //
-                      //   showErrorPanel(
-                      //     errorInfo: _errorInfoForNetworkProblem,
-                      //     autoHide: false,
-                      //     shouldTriggerSetState: true,
-                      //   );
-                      //
-                      //   NetworkHandler.checkNetworkPeriodically(
-                      //       callbackWhenHasNetwork: () async {
-                      //     _isWaitingNetworkToBecomeNormal = false;
-                      //     hideErrorPanel();
-                      //   });
-                      // }
                     } else {
                       // Login check pass
-                      hideLoginPage(forceToShowWebView: true);
 
-                      _shouldShowErrorPanel = false;
-
-                      GlobalState.isLoggedIn = true;
-
-                      GlobalState.masterDetailPageState.currentState
-                          .triggerSetState();
-                      print(
-                        '微信登录成功！',
+                      GlobalState.isLoggedIn = await TCBLoginHandler.login(
+                        autoUseAnonymousWayToLoginInSimulator: true,
                       );
+
+                      if (GlobalState.isLoggedIn) {
+                        hideLoginPage(forceToShowWebView: true);
+
+                        _shouldShowErrorPanel = false;
+
+                        GlobalState.isLoggedIn = true;
+
+                        GlobalState.masterDetailPageState.currentState
+                            .triggerSetState();
+                      } else {
+                        showErrorPanel(
+                          errorInfo: _errorInfoForLoginFailure,
+                          autoHide: true,
+                        );
+                      }
                     }
                   },
                 ),
@@ -251,8 +238,6 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                       right: GlobalState
                           .defaultLeftAndRightMarginBetweenParentBoarderAndPanel),
                   height: 50,
-                  // width: 200,
-                  // color: Colors.red,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -526,14 +511,6 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
           GlobalState.viewAgreementPageChangeNotifier.title = title;
 
           GlobalState.viewAgreementPageChangeNotifier.showViewAgreementPage();
-
-          // GlobalState.masterDetailPageState.currentState
-          //     .triggerToShowReusablePage(
-          //   title: '用户协议',
-          //   child: ViewAgreementPage(),
-          // );
-          //
-          // hideLoginPage(forceToShowWebView: false);
         },
       );
     } else {
@@ -544,34 +521,5 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
   @override
   void afterFirstLayout(BuildContext context) {
     _isLoginPageReady = true;
-
-    var s = 'ss';
-
-    // showErrorPanelWhenNetworkProblem();
-
-    // if (!GlobalState.hasNetwork) {
-    //   showErrorPanelForNetworkProblemAndCheckNetworkPeriodically();
-    // }
-
-    // var s = 's';
-    // TODO: implement afterFirstLayout
   }
-
-// void _checkNetworkPeriodicallyAndHideErrorPanel(
-//     {@required VoidCallback callbackWhenHasNetwork,
-//     int intervalMillisecond = 1000}) {
-//   Timer _timer;
-//
-//   _timer?.cancel();
-//
-//   _timer = Timer.periodic(Duration(milliseconds: intervalMillisecond),
-//       (timer) async {
-//     GlobalState.hasNetwork = await NetworkHandler.hasNetworkConnection();
-//     if (GlobalState.hasNetwork) {
-//       callbackWhenHasNetwork();
-//
-//       _timer.cancel();
-//     }
-//   });
-// }
 }

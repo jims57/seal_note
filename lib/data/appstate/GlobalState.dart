@@ -38,7 +38,6 @@ class GlobalState with ChangeNotifier {
 
   // For configuration
   static bool forRelease = false;
-  // static bool isEmulatorOrASimulator = false;
   static int noteListTitleMaxLength = 50;
   static int noteListAbstractMaxLength = 50;
   static int incrementalStepToUseRegex = 100;
@@ -56,6 +55,8 @@ class GlobalState with ChangeNotifier {
   static String tcbAccessToken;
   static String tcbRefreshToken;
   static CloudBaseUserInfo cloudBaseUserInfo;
+  static bool isAnonymousLogin =
+      false; // false = Anonymous login, true = WX login
 
   // WX variable
   static String wxAppId = 'wx559b1bda805a875b';
@@ -82,7 +83,6 @@ class GlobalState with ChangeNotifier {
   static const double defaultRoundCornerPanelBottomMargin = 15.0;
 
   // Future // Future builder // FutureBuilder
-  // final Future<bool> loginPageFutureBuilder;
 
   // db // database
   static String dbNameForMobilePlatform = 'sealMobile.sqlite';

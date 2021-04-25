@@ -42,46 +42,34 @@ class TCBLoginHandler {
   }
 
   static Future<bool> _loginWXAnonymously() async {
-    var isLoginSuccessful = false;
     var auth = getCloudBaseAuth();
 
-    // GlobalState.tcbCloudBaseAuthState = await auth.signInAnonymously();
     await auth.signInAnonymously().then((success) {
-      // 登录成功
       GlobalState.tcbAccessToken = success.accessToken ?? null;
       GlobalState.tcbRefreshToken = success.refreshToken ?? null;
       GlobalState.isLoggedIn = true;
-
-      isLoginSuccessful = true;
+      GlobalState.isAnonymousLogin = true;
     }).catchError((err) {
-      // 登录失败
       GlobalState.isLoggedIn = false;
-      isLoginSuccessful = false;
     });
 
-    return isLoginSuccessful;
+    return GlobalState.isLoggedIn;
   }
 
   static Future<bool> _loginWX() async {
-    var isLoginSuccessful = false;
-
     var auth = getCloudBaseAuth();
 
     await auth
         .signInByWx(
             wxAppId: GlobalState.wxAppId, wxUniLink: GlobalState.wxUniLink)
         .then((success) {
-      var s = success;
-
-      isLoginSuccessful = true;
-      // 登录成功
+      GlobalState.isLoggedIn = true;
+      GlobalState.isAnonymousLogin = false;
     }).catchError((err) {
-      // 登录失败
-      var e = err;
-      isLoginSuccessful = false;
+      GlobalState.isLoggedIn = false;
     });
 
-    return isLoginSuccessful;
+    return GlobalState.isLoggedIn;
   }
 
   // Public methods
@@ -95,7 +83,7 @@ class TCBLoginHandler {
     return GlobalState.tcbCloudBaseAuth;
   }
 
-  static Future<bool> hasLoginWX() async {
+  static Future<bool> hasLoginTCB() async {
     var authState = await _getCloudBaseAuthState();
 
     if (authState != null) {
@@ -110,22 +98,25 @@ class TCBLoginHandler {
   static Future<bool> login({
     bool autoUseAnonymousWayToLoginInSimulator = true,
   }) async {
-    var isLoginSuccessful = false;
     var isSimulator = await SimulatorHandler.isSimulatorOrEmulator();
 
     if (isSimulator && autoUseAnonymousWayToLoginInSimulator) {
-      isLoginSuccessful = await _loginWXAnonymously();
+      GlobalState.isLoggedIn = await _loginWXAnonymously();
     } else {
-      isLoginSuccessful = await _loginWX();
+      GlobalState.isLoggedIn = await _loginWX();
     }
 
-    return isLoginSuccessful;
+    return GlobalState.isLoggedIn;
   }
 
   static Future<bool> signOutWX() async {
-    var auth = getCloudBaseAuth();
+    if (!GlobalState.isAnonymousLogin) {
+      var auth = getCloudBaseAuth();
 
-    await auth.signOut();
+      await auth.signOut();
+
+      GlobalState.isLoggedIn = false;
+    }
 
     return true;
   }

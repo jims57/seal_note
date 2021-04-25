@@ -38,7 +38,7 @@ class _SettingPageState extends State<SettingPage> {
         if (shouldSignOut) {
           await TCBLoginHandler.signOutWX();
 
-          GlobalState.isLoggedIn = false;
+          // GlobalState.isLoggedIn = false;
           GlobalState.viewAgreementPageChangeNotifier.shouldAvoidTransitionEffect = true;
           GlobalState.reusablePageStackWidgetState.currentState
               .clickOnReusablePageBackButton(

@@ -477,9 +477,9 @@ class MasterDetailPageState extends State<MasterDetailPage>
   @override
   void afterFirstLayout(BuildContext context) {
     // TODO: TCB tests
-    TCBUserHandler.getUserInfo().then((value) {
-      var v = value;
-    });
+    // TCBUserHandler.getUserInfo().then((value) {
+    //   var v = value;
+    // });
 
     print('Screen height:${GlobalState.screenHeight}');
     print('Screen width:${GlobalState.screenWidth}');
