@@ -8,6 +8,7 @@ import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:seal_note/ui/settings/SettingPage.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
+import 'package:seal_note/util/tcb/TCBUserHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
 import 'FolderListItemWidget.dart';
@@ -241,12 +242,15 @@ class FolderListPageState extends State<FolderListPage>
                               // setting button // setting button event
                               // test button // test button event
 
-                              var s = await GlobalState.database
-                                  .setNoteToNextReviewPhrase(14);
+                             var res =  await TCBUserHandler.getUserInfo();
+                             var s = 's';
 
-                              // var s = await GlobalState.database.getNextReviewPlanConfigIdByNoteId(14).get();
-
-                              var s1 = 's';
+                              // var s = await GlobalState.database
+                              //     .setNoteToNextReviewPhrase(14);
+                              //
+                              // // var s = await GlobalState.database.getNextReviewPlanConfigIdByNoteId(14).get();
+                              //
+                              // var s1 = 's';
                               // GlobalState.noteDetailWidgetState.currentState
                               //     .setEditorHeightWithNewWebViewScreenHeight(
                               //         newWebViewScreenHeight: 150.0);

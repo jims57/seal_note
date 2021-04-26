@@ -1,12 +1,16 @@
 import 'package:cloudbase_auth/cloudbase_auth.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/model/common/ResponseModel.dart';
+import 'package:seal_note/model/errorCodes/ErrorCodeModel.dart';
 import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
 
 class TCBUserHandler {
-  static Future<CloudBaseUserInfo> getUserInfo({
+  // Public methods
+  static Future<ResponseModel<CloudBaseUserInfo>> getUserInfo({
     bool forceToLoginWhenNotLoggedIn = false,
+    bool forceToFetchUserInfoFromTCB = false,
   }) async {
-    var auth = TCBLoginHandler.getCloudBaseAuth();
+    var response;
 
     if (!GlobalState.isLoggedIn && forceToLoginWhenNotLoggedIn) {
       GlobalState.isLoggedIn = await TCBLoginHandler.login(
@@ -14,13 +18,33 @@ class TCBUserHandler {
       );
     }
 
+    if (GlobalState.cloudBaseUserInfo == null) {
+      response = await _getUserInfoFromTCB();
+    } else {
+      if (forceToFetchUserInfoFromTCB) {
+        response = await _getUserInfoFromTCB();
+      } else {
+        response = ResponseModel.getResponseModelForSuccess<CloudBaseUserInfo>(
+            result: GlobalState.cloudBaseUserInfo);
+      }
+    }
+
+    return response;
+  }
+
+  // Private methods
+  static Future<ResponseModel<CloudBaseUserInfo>> _getUserInfoFromTCB() async {
+    var response;
+
+    var auth = TCBLoginHandler.getCloudBaseAuth();
+
     await auth.getUserInfo().then((userInfo) {
-      GlobalState.cloudBaseUserInfo = userInfo;
+      response = ResponseModel.getResponseModelForSuccess<CloudBaseUserInfo>(
+          result: userInfo);
     }).catchError((err) {
-      // 获取用户信息失败
-      var e = err;
+      response = ResponseModel.getResponseModelForTCBError(err: err);
     });
 
-    return GlobalState.cloudBaseUserInfo;
+    return response;
   }
 }

@@ -236,3 +236,6 @@ ios/Runner/Runner.entitlements
 .idea/libraries/Dart_Packages.xml
 .idea/libraries/Dart_Packages2.xml
 .idea/libraries/Flutter_Plugins.xml
+.idea/dictionaries/mac.xml
+.flutter-plugins-dependencies
+.idea/dictionaries/mac.xml
