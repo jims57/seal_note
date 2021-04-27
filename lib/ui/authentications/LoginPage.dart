@@ -364,9 +364,15 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
     });
   }
 
-  void showLoginPage() {
+  Future<void> showLoginPage() async {
     setState(() {
-      _loginPageWidth = _defaultLoginPageWidth;
+      // If it is a review app, don't show login page any way
+      if (GlobalState.isReviewApp) {
+        _loginPageWidth = 0.0;
+      } else {
+        _loginPageWidth = _defaultLoginPageWidth;
+      }
+
       GlobalState.noteDetailWidgetState.currentState
           .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
     });

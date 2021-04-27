@@ -15,38 +15,44 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return RoundCornerPanelWidget(
-      child: ItemContentWidget(
-        itemTitle: '退出登录',
-        itemTitleForeColor: Colors.red,
-        centerContent: true,
-      ),
-      onTap: () async {
-        // click on sign out // sign out wx account
-        // sign out event // exit wx account
-        // exit account event // signout event
+    return Column(
+      children: [
+        if (!GlobalState.isReviewApp)
+          RoundCornerPanelWidget(
+            child: ItemContentWidget(
+              itemTitle: '退出登录',
+              itemTitleForeColor: Colors.red,
+              centerContent: true,
+            ),
+            onTap: () async {
+              // click on sign out // sign out wx account
+              // sign out event // exit wx account
+              // exit account event // signout event
 
-        GlobalState.noteDetailWidgetState.currentState
-            .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
+              GlobalState.noteDetailWidgetState.currentState
+                  .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
 
-        var shouldSignOut = await AlertDialogHandler().showAlertDialog(
-          parentContext: context,
-          captionText: '确定退出登录？',
-          restoreWebViewToShowIfNeeded: true,
-        );
+              var shouldSignOut = await AlertDialogHandler().showAlertDialog(
+                parentContext: context,
+                captionText: '确定退出登录？',
+                restoreWebViewToShowIfNeeded: true,
+              );
 
-        if (shouldSignOut) {
-          await TCBLoginHandler.signOutWX();
+              if (shouldSignOut) {
+                await TCBLoginHandler.signOutWX();
 
-          GlobalState.viewAgreementPageChangeNotifier
-              .shouldAvoidTransitionEffect = true;
-          GlobalState.reusablePageStackWidgetState.currentState
-              .clickOnReusablePageBackButton(
-                  reusablePageIndex: _reusablePageIndex);
-          GlobalState.masterDetailPageState.currentState.triggerSetState();
-          GlobalState.loginPageState.currentState.showLoginPage();
-        }
-      },
+                GlobalState.viewAgreementPageChangeNotifier
+                    .shouldAvoidTransitionEffect = true;
+                GlobalState.reusablePageStackWidgetState.currentState
+                    .clickOnReusablePageBackButton(
+                        reusablePageIndex: _reusablePageIndex);
+                GlobalState.masterDetailPageState.currentState
+                    .triggerSetState();
+                // GlobalState.loginPageState.currentState.showLoginPage();
+              }
+            },
+          ),
+      ],
     );
   }
 }

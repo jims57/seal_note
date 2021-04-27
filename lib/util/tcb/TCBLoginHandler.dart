@@ -109,7 +109,9 @@ class TCBLoginHandler {
     bool autoUseAnonymousWayToLoginInSimulator = true,
   }) async {
     var isSimulator = await SimulatorHandler.isSimulatorOrEmulator();
-    var isReviewApp = await GlobalState.isReviewApp();
+    var isReviewApp = await GlobalState.checkIfReviewApp(
+      forceToSetIsReviewAppVar: true,
+    );
 
     // If this is a review app, use anonymous way to login
     if (isReviewApp || (isSimulator && autoUseAnonymousWayToLoginInSimulator)) {

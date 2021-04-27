@@ -509,7 +509,9 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
     bool shouldShowLoginPage;
 
-    if (await GlobalState.isReviewApp()) {
+    if (await GlobalState.checkIfReviewApp(
+      forceToSetIsReviewAppVar: true,
+    )) {
       // Review app
       shouldShowLoginPage = false;
     } else {
