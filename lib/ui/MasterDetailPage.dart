@@ -274,25 +274,18 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
                   if (!snapshot.data) {
                     // Shouldn't show the login page
-                    // return Text('');
-
                     shouldShow = false;
                   } else {
-                    // Should show the login page // show login page
-
-                    // return LoginPage(
-                    //   key: GlobalState.loginPageState,
-                    // );
-
                     shouldShow = true;
                   }
 
+                  // Should show the login page // show login page
                   return LoginPage(
                     key: GlobalState.loginPageState,
                     shouldShow: shouldShow,
                   );
                 } else {
-                  return Text('init');
+                  return Container();
                 }
               }),
           // LoginPage(key: GlobalState.loginPageState),
@@ -512,27 +505,26 @@ class MasterDetailPageState extends State<MasterDetailPage>
   }
 
   Future<bool> _checkIfShowLoginPageOrNot() async {
-    bool shouldShowLoginPage = false;
+    // show login page or not
 
-    // Check if network is ok
-    GlobalState.hasNetwork = await NetworkHandler.hasNetworkConnection();
-    if (!GlobalState.hasNetwork) {
-      shouldShowLoginPage = true;
+    bool shouldShowLoginPage;
+
+    if (await GlobalState.isReviewApp()) {
+      // Review app
+      shouldShowLoginPage = false;
+    } else {
+      // Not review app
+
+      if (!await NetworkHandler.hasNetworkConnection()) {
+        shouldShowLoginPage = true;
+      } else if (!await TCBLoginHandler.hasLoginTCB()) {
+        shouldShowLoginPage = true;
+      } else if (await TCBLoginHandler.isLoginExpired()) {
+        shouldShowLoginPage = true;
+      } else {
+        shouldShowLoginPage = false;
+      }
     }
-
-    // Check has once login WeChat
-    var hasLoginTCB = await TCBLoginHandler.hasLoginTCB();
-    if (!hasLoginTCB) {
-      shouldShowLoginPage = true;
-    }
-
-    // Check if login is expired
-    var isLoginExpired = await TCBLoginHandler.isLoginExpired();
-    if (isLoginExpired) {
-      shouldShowLoginPage = true;
-    }
-
-    // shouldShowLoginPage = true;
 
     return shouldShowLoginPage;
   }
@@ -591,7 +583,9 @@ class MasterDetailPageState extends State<MasterDetailPage>
     GlobalState.folderListPageState.currentState.triggerSetState();
   }
 
-  Future<void> showReviewPlanPage({@required int folderId}) async {
+  Future<void> showReviewPlanPage({
+    @required int folderId,
+  }) async {
     // Get the review plan for the current folder
     GetFolderReviewPlanByFolderIdResult getFolderReviewPlanByFolderIdResult =
         await GlobalState.database

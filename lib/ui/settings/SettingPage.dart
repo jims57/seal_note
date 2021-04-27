@@ -38,14 +38,13 @@ class _SettingPageState extends State<SettingPage> {
         if (shouldSignOut) {
           await TCBLoginHandler.signOutWX();
 
-          // GlobalState.isLoggedIn = false;
-          GlobalState.viewAgreementPageChangeNotifier.shouldAvoidTransitionEffect = true;
+          GlobalState.viewAgreementPageChangeNotifier
+              .shouldAvoidTransitionEffect = true;
           GlobalState.reusablePageStackWidgetState.currentState
               .clickOnReusablePageBackButton(
                   reusablePageIndex: _reusablePageIndex);
           GlobalState.masterDetailPageState.currentState.triggerSetState();
           GlobalState.loginPageState.currentState.showLoginPage();
-          var s ='s';
         }
       },
     );

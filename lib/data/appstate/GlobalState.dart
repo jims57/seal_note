@@ -69,8 +69,13 @@ class GlobalState with ChangeNotifier {
   static bool isAppInitialized = false;
   static bool isLoggedIn = false;
   static bool hasNetwork = true;
-  static bool isReviewApp =
-      false; // Tell the current version of app is under view by Apple
+
+  static Future<bool> isReviewApp() async {
+    return true;
+  }
+
+  // static bool isReviewApp =
+  //     false; // Tell the current version of app is under view by Apple
 
   // Default variables
   static const double defaultItemCaptionHeight = 25.0;

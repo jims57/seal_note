@@ -109,10 +109,10 @@ class TCBLoginHandler {
     bool autoUseAnonymousWayToLoginInSimulator = true,
   }) async {
     var isSimulator = await SimulatorHandler.isSimulatorOrEmulator();
+    var isReviewApp = await GlobalState.isReviewApp();
 
     // If this is a review app, use anonymous way to login
-    if (GlobalState.isReviewApp ||
-        (isSimulator && autoUseAnonymousWayToLoginInSimulator)) {
+    if (isReviewApp || (isSimulator && autoUseAnonymousWayToLoginInSimulator)) {
       GlobalState.isLoggedIn = await _loginWXAnonymously();
     } else {
       GlobalState.isLoggedIn = await _loginWX();
