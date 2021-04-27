@@ -18,7 +18,10 @@ import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
 class LoginPage extends StatefulWidget {
   LoginPage({
     Key key,
+    this.shouldShow,
   }) : super(key: key);
+
+  final bool shouldShow;
 
   @override
   LoginPageState createState() => LoginPageState();
@@ -55,7 +58,13 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
     //   );
     // });
 
-    _loginPageWidth = _defaultLoginPageWidth;
+    if (widget.shouldShow) {
+      _loginPageWidth = _defaultLoginPageWidth;
+    } else {
+      _loginPageWidth = 0.0;
+    }
+
+    // _loginPageWidth = _defaultLoginPageWidth;
     super.initState();
   }
 
@@ -86,6 +95,7 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
   Widget build(BuildContext context) {
     return Container(
       width: _loginPageWidth,
+      // width: 0.0,
       color: GlobalState.themeGreyColorAtiOSTodoForBackground,
       child: Stack(
         children: [

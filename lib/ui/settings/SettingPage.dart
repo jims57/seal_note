@@ -24,7 +24,7 @@ class _SettingPageState extends State<SettingPage> {
       onTap: () async {
         // click on sign out // sign out wx account
         // sign out event // exit wx account
-        // exit account event
+        // exit account event // signout event
 
         GlobalState.noteDetailWidgetState.currentState
             .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
@@ -45,6 +45,7 @@ class _SettingPageState extends State<SettingPage> {
                   reusablePageIndex: _reusablePageIndex);
           GlobalState.masterDetailPageState.currentState.triggerSetState();
           GlobalState.loginPageState.currentState.showLoginPage();
+          var s ='s';
         }
       },
     );

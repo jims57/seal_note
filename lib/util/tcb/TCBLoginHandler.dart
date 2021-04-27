@@ -122,7 +122,11 @@ class TCBLoginHandler {
   }
 
   static Future<bool> signOutWX() async {
-    if (!GlobalState.isAnonymousLogin) {
+    // Id doesn't need to execute sign out method of tcb if on simulator
+    var isSimulator = await SimulatorHandler.isSimulatorOrEmulator();
+    var hasLogin = await TCBLoginHandler.hasLoginTCB();
+
+    if (!isSimulator && hasLogin) {
       var auth = getCloudBaseAuth();
 
       await auth.signOut();
@@ -133,5 +137,3 @@ class TCBLoginHandler {
     return true;
   }
 }
-
-

@@ -270,16 +270,27 @@ class MasterDetailPageState extends State<MasterDetailPage>
               future: loginPageFutureBuilder,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
+                  var shouldShow = false;
+
                   if (!snapshot.data) {
                     // Shouldn't show the login page
-                    return Text('');
+                    // return Text('');
+
+                    shouldShow = false;
                   } else {
                     // Should show the login page // show login page
 
-                    return LoginPage(
-                      key: GlobalState.loginPageState,
-                    );
+                    // return LoginPage(
+                    //   key: GlobalState.loginPageState,
+                    // );
+
+                    shouldShow = true;
                   }
+
+                  return LoginPage(
+                    key: GlobalState.loginPageState,
+                    shouldShow: shouldShow,
+                  );
                 } else {
                   return Text('init');
                 }
