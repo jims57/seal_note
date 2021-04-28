@@ -197,6 +197,8 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
 
                     // var login = await TCBLoginHandler.login();
 
+                    await Future.delayed(Duration(seconds: 3));
+
                     // Check network connection
                     GlobalState.hasNetwork =
                         await NetworkHandler.hasNetworkConnection();
@@ -365,9 +367,11 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
   }
 
   Future<void> showLoginPage() async {
+    var isReviewApp = await GlobalState.checkIfReviewApp();
+
     setState(() {
       // If it is a review app, don't show login page any way
-      if (GlobalState.isReviewApp) {
+      if (isReviewApp) {
         _loginPageWidth = 0.0;
       } else {
         _loginPageWidth = _defaultLoginPageWidth;

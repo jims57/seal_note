@@ -69,9 +69,8 @@ class GlobalState with ChangeNotifier {
   static bool isAppInitialized = false;
   static bool isLoggedIn = false;
   static bool hasNetwork = true;
-
   static bool isReviewApp =
-  false; // Tell the current version of app is under view by Apple
+      false; // Tell the current version of app is under view by Apple
 
   static Future<bool> checkIfReviewApp({
     bool forceToSetIsReviewAppVar = true,

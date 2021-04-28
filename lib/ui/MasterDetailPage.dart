@@ -505,7 +505,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
   }
 
   Future<bool> _checkIfShowLoginPageOrNot() async {
-    // show login page or not
+    // show login page or not // check if show login page or not
+    // check show login page or not
 
     bool shouldShowLoginPage;
 
