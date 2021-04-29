@@ -1,6 +1,7 @@
 import 'package:cloudbase_auth/cloudbase_auth.dart';
 import 'package:cloudbase_core/cloudbase_core.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:seal_note/data/appstate/LoadingWidgetChangeNotifier.dart';
 import 'package:seal_note/data/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:seal_note/model/ImageSyncItem.dart';
@@ -296,6 +297,7 @@ class GlobalState with ChangeNotifier {
   static ReusablePageWidthChangeNotifier reusablePageWidthChangeNotifier;
   static AlertDialogHeightChangeNotifier alertDialogHeightChangeNotifier;
   static ViewAgreementPageChangeNotifier viewAgreementPageChangeNotifier;
+  static LoadingWidgetChangeNotifier loadingWidgetChangeNotifier;
 
   // Folder related
   static bool isDefaultFolderSelected = false; // For default folder

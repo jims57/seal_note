@@ -66,7 +66,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _enableAlertDialogOKButton = false;
+  bool _enableAlertDialogOKButton = true;
 
   // ignore: unnecessary_getters_setters
   bool get enableAlertDialogOKButton => _enableAlertDialogOKButton;

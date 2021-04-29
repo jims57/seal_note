@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/ui/common/items/ItemContentWidget.dart';
+
+// import 'package:seal_note/ui/common/loadings/LoadingWidget.dart';
 import 'package:seal_note/ui/common/panels/RoundCornerPanelWidget.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/util/networks/NetworkHandler.dart';
@@ -37,10 +41,19 @@ class _SettingPageState extends State<SettingPage> {
                 GlobalState.noteDetailWidgetState.currentState
                     .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
 
+                // Always to show OK button
+                GlobalState.appState.enableAlertDialogOKButton = true;
+
+                // var shouldSignOut = await AlertDialogHandler().(
                 var shouldSignOut = await AlertDialogHandler().showAlertDialog(
                   parentContext: context,
                   captionText: '确定退出登录？',
+                  centerRemark: true,
                   restoreWebViewToShowIfNeeded: true,
+                  textForLoadingWidget: '退出并同步数据中...\n（请勿关闭App）',
+                  showLoadingAfterClickingOK: true,
+                  alwaysEnableOKButton: false,
+                  callbackWhenExecutingLoading: _executeSyncDataWhenSignOut,
                 );
 
                 if (shouldSignOut) {
@@ -55,6 +68,7 @@ class _SettingPageState extends State<SettingPage> {
                       .triggerSetState();
                   GlobalState.loginPageState.currentState.showLoginPage();
                 }
+
               } else {
                 // When there isn't network
 
@@ -70,5 +84,12 @@ class _SettingPageState extends State<SettingPage> {
           ),
       ],
     );
+  }
+
+  // Private methods
+  Future<void> _executeSyncDataWhenSignOut() async {
+    await Future.delayed(Duration(seconds: 5), () {
+      var sp = 'ss';
+    });
   }
 }

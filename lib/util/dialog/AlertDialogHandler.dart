@@ -1,9 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AlertDialogHeightChangeNotifier.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/data/appstate/LoadingWidgetChangeNotifier.dart';
 import 'package:seal_note/util/html/HtmlHandler.dart';
+
+// ignore: camel_case_types
+typedef Future<void> callbackWhenExecutingLoadingType();
 
 class AlertDialogHandler {
   Future<bool> showAlertDialog({
@@ -31,6 +37,11 @@ class AlertDialogHandler {
     bool restoreWebViewToShowIfNeeded = false,
     bool expandRemarkToMaxFinite = false,
     bool centerRemark = true,
+    String textForLoadingWidget,
+    bool showLoadingAfterClickingOK = false,
+    // VoidCallback callbackWhenExecutingLoading,
+    // Future<void> callbackWhenExecutingLoading,
+    callbackWhenExecutingLoadingType callbackWhenExecutingLoading,
   }) async {
     var shouldContinueAction = false;
     var theRemark = '';
@@ -68,6 +79,7 @@ class AlertDialogHandler {
                       overflow: TextOverflow.ellipsis,
                     ),
             ),
+
           if (child != null)
             Container(
               margin: EdgeInsets.only(
@@ -76,6 +88,41 @@ class AlertDialogHandler {
                       (showButtonForCancel || showButtonForOK) ? 0.0 : 20.0),
               child: child,
             ),
+
+          // loading widget
+          if (showLoadingAfterClickingOK)
+            Consumer<LoadingWidgetChangeNotifier>(
+                builder: (cxt, loadingWidgetChangeNotifier, child) {
+              var shouldShowLoading =
+                  loadingWidgetChangeNotifier.shouldShowLoadingWidget;
+
+              if (shouldShowLoading) {
+                return Container(
+                  // color: Colors.green,
+                  // width: 50,
+                  // height: 50,
+                  margin: EdgeInsets.only(
+                    top: GlobalState.defaultVerticalMarginBetweenItems,
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        textForLoadingWidget,
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: GlobalState.defaultVerticalMarginBetweenItems,
+                        ),
+                        child: CircularProgressIndicator(),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                return Container();
+              }
+            }),
         ],
       ),
     );
@@ -224,10 +271,28 @@ class AlertDialogHandler {
                                             ? buttonColorForOK
                                             : GlobalState.themeGrey350Color),
                                   ),
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    // click on ok button // click ok button
+
                                     if (enableOKButton) {
-                                      Navigator.of(context).pop();
-                                      shouldContinueAction = true;
+                                      GlobalState.appState
+                                          .enableAlertDialogOKButton = false;
+
+                                      GlobalState.loadingWidgetChangeNotifier
+                                          .shouldShowLoadingWidget = true;
+
+                                      if (callbackWhenExecutingLoading !=
+                                          null) {
+                                        await callbackWhenExecutingLoading();
+                                      }
+
+                                      GlobalState.loadingWidgetChangeNotifier
+                                          .shouldShowLoadingWidget = false;
+
+                                      if (enableOKButton) {
+                                        Navigator.of(context).pop();
+                                        shouldContinueAction = true;
+                                      }
                                     }
                                   },
                                 );

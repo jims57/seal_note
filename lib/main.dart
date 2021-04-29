@@ -13,6 +13,7 @@ import 'package:seal_note/util/time/TimeHandler.dart';
 import 'data/appstate/AlertDialogHeightChangeNotifier.dart';
 import 'data/appstate/AppState.dart';
 import 'data/appstate/DetailPageState.dart';
+import 'data/appstate/LoadingWidgetChangeNotifier.dart';
 import 'data/appstate/ReusablePageChangeNotifier.dart';
 import 'data/appstate/ReusablePageOpenOrCloseNotifier.dart';
 import 'data/appstate/ReusablePageWidthChangeNotifier.dart';
@@ -56,6 +57,9 @@ void main() {
       ),
       ChangeNotifierProvider<ViewAgreementPageChangeNotifier>(
         create: (context) => ViewAgreementPageChangeNotifier(),
+      ),
+      ChangeNotifierProvider<LoadingWidgetChangeNotifier>(
+        create: (context) => LoadingWidgetChangeNotifier(),
       ),
     ],
     child: MyApp(),
@@ -272,6 +276,9 @@ class _MyAppState extends State<MyApp> {
 
     GlobalState.alertDialogHeightChangeNotifier =
         Provider.of<AlertDialogHeightChangeNotifier>(context, listen: false);
+
+    GlobalState.loadingWidgetChangeNotifier =
+        Provider.of<LoadingWidgetChangeNotifier>(context, listen: false);
   }
 
   // TODO: To be implemented
