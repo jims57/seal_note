@@ -24,6 +24,7 @@ class _SettingPageState extends State<SettingPage> {
       children: [
         if (!GlobalState.isReviewApp)
           RoundCornerPanelWidget(
+            // sign out button
             child: ItemContentWidget(
               itemTitle: '退出登录',
               itemTitleForeColor: Colors.red,
@@ -88,7 +89,7 @@ class _SettingPageState extends State<SettingPage> {
 
   // Private methods
   Future<void> _executeSyncDataWhenSignOut() async {
-    await Future.delayed(Duration(seconds: 5), () {
+    await Future.delayed(Duration(seconds: 2), () {
       var sp = 'ss';
     });
   }

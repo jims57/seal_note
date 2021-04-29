@@ -1,6 +1,8 @@
 import 'package:cloudbase_core/cloudbase_core.dart';
 import 'package:cloudbase_auth/cloudbase_auth.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/model/common/ResponseModel.dart';
+import 'package:seal_note/model/errorCodes/ErrorCodeModel.dart';
 import 'package:seal_note/util/simulators/SimulatorHandler.dart';
 
 class TCBLoginHandler {
@@ -58,8 +60,9 @@ class TCBLoginHandler {
     return GlobalState.isLoggedIn;
   }
 
-  static Future<bool> _loginWX() async {
+  static Future<ResponseModel> _loginWX() async {
     GlobalState.errorMsg = '';
+    var responseModel = ResponseModel();
     var auth = getCloudBaseAuth();
 
     await auth
@@ -68,13 +71,41 @@ class TCBLoginHandler {
         .then((success) {
       GlobalState.isLoggedIn = true;
       GlobalState.isAnonymousLogin = false;
+
+      responseModel =
+          ResponseModel.getResponseModelForSuccess<CloudBaseAuthState>(
+        result: success,
+      );
     }).catchError((err) {
-      GlobalState.errorMsg = err;
+      responseModel = ResponseModel.getResponseModelForError(
+        message: err?.message,
+        code: ErrorCodeModel.WX_AUTH_LOGIN_FAILED,
+      );
       GlobalState.isLoggedIn = false;
+      GlobalState.loadingWidgetChangeNotifier.shouldShowLoadingWidget = false;
     });
 
-    return GlobalState.isLoggedIn;
+    return responseModel;
   }
+
+  // static Future<bool> _loginWX() async {
+  //   GlobalState.errorMsg = '';
+  //   var auth = getCloudBaseAuth();
+  //
+  //   await auth
+  //       .signInByWx(
+  //           wxAppId: GlobalState.wxAppId, wxUniLink: GlobalState.wxUniLink)
+  //       .then((success) {
+  //     GlobalState.isLoggedIn = true;
+  //     GlobalState.isAnonymousLogin = false;
+  //   }).catchError((err) {
+  //     GlobalState.errorMsg = err;
+  //     GlobalState.isLoggedIn = false;
+  //     GlobalState.loadingWidgetChangeNotifier.shouldShowLoadingWidget = false;
+  //   });
+  //
+  //   return GlobalState.isLoggedIn;
+  // }
 
   // Public methods
   static CloudBaseAuth getCloudBaseAuth() {
@@ -105,9 +136,13 @@ class TCBLoginHandler {
     return await auth.hasExpiredAuthState();
   }
 
-  static Future<bool> login({
+  static Future<ResponseModel> login({
     bool autoUseAnonymousWayToLoginInSimulator = true,
   }) async {
+    await Future.delayed(Duration(seconds: 3));
+
+    var responseModel = ResponseModel();
+
     var isSimulator = await SimulatorHandler.isSimulatorOrEmulator();
     var isReviewApp = await GlobalState.checkIfReviewApp(
       forceToSetIsReviewAppVar: true,
@@ -117,11 +152,31 @@ class TCBLoginHandler {
     if (isReviewApp || (isSimulator && autoUseAnonymousWayToLoginInSimulator)) {
       GlobalState.isLoggedIn = await _loginWXAnonymously();
     } else {
-      GlobalState.isLoggedIn = await _loginWX();
+      responseModel = await _loginWX();
     }
 
-    return GlobalState.isLoggedIn;
+    return responseModel;
   }
+
+  // static Future<bool> login({
+  //   bool autoUseAnonymousWayToLoginInSimulator = true,
+  // }) async {
+  //   await Future.delayed(Duration(seconds: 3));
+  //
+  //   var isSimulator = await SimulatorHandler.isSimulatorOrEmulator();
+  //   var isReviewApp = await GlobalState.checkIfReviewApp(
+  //     forceToSetIsReviewAppVar: true,
+  //   );
+  //
+  //   // If this is a review app, use anonymous way to login
+  //   if (isReviewApp || (isSimulator && autoUseAnonymousWayToLoginInSimulator)) {
+  //     GlobalState.isLoggedIn = await _loginWXAnonymously();
+  //   } else {
+  //     GlobalState.isLoggedIn = await _loginWX();
+  //   }
+  //
+  //   return GlobalState.isLoggedIn;
+  // }
 
   static Future<bool> signOutWX() async {
     // Id doesn't need to execute sign out method of tcb if on simulator

@@ -10,26 +10,30 @@ class TCBUserHandler {
     bool forceToLoginWhenNotLoggedIn = false,
     bool forceToFetchUserInfoFromTCB = false,
   }) async {
-    var response;
+    var responseModelForCloudBaseUserInfo;
+    ResponseModel responseModelForLogin;
 
     if (!GlobalState.isLoggedIn && forceToLoginWhenNotLoggedIn) {
-      GlobalState.isLoggedIn = await TCBLoginHandler.login(
+      responseModelForLogin = await TCBLoginHandler.login(
         autoUseAnonymousWayToLoginInSimulator: true,
       );
     }
 
-    if (GlobalState.cloudBaseUserInfo == null) {
-      response = await _getUserInfoFromTCB();
-    } else {
-      if (forceToFetchUserInfoFromTCB) {
-        response = await _getUserInfoFromTCB();
+    if (responseModelForLogin.code == 0) {
+      if (GlobalState.cloudBaseUserInfo == null) {
+        responseModelForCloudBaseUserInfo = await _getUserInfoFromTCB();
       } else {
-        response = ResponseModel.getResponseModelForSuccess<CloudBaseUserInfo>(
-            result: GlobalState.cloudBaseUserInfo);
+        if (forceToFetchUserInfoFromTCB) {
+          responseModelForCloudBaseUserInfo = await _getUserInfoFromTCB();
+        } else {
+          responseModelForCloudBaseUserInfo =
+              ResponseModel.getResponseModelForSuccess<CloudBaseUserInfo>(
+                  result: GlobalState.cloudBaseUserInfo);
+        }
       }
     }
 
-    return response;
+    return responseModelForCloudBaseUserInfo;
   }
 
   // Private methods
@@ -42,7 +46,11 @@ class TCBUserHandler {
       response = ResponseModel.getResponseModelForSuccess<CloudBaseUserInfo>(
           result: userInfo);
     }).catchError((err) {
-      response = ResponseModel.getResponseModelForTCBError(err: err);
+      // response = ResponseModel.getResponseModelForTCBError(err: err);
+      response = ResponseModel.getResponseModelForError(
+        code: ErrorCodeModel.GET_TCB_USER_INFO_FAIL_CODE,
+        message: err?.message,
+      );
     });
 
     return response;

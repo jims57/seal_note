@@ -37,9 +37,9 @@ class ResponseModel<T> {
     return response;
   }
 
-  static ResponseModel<T> getResponseModelForTCBError<T>({
-    @required dynamic err,
-  }) {
-    return getResponseModelForError(code: err?.code, message: err?.message);
-  }
+  // static ResponseModel<T> getResponseModelForTCBError<T>({
+  //   @required dynamic err,
+  // }) {
+  //   return getResponseModelForError(code: err?.code, message: err?.message);
+  // }
 }

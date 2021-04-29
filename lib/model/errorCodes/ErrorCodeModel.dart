@@ -10,9 +10,11 @@ class ErrorCodeModel {
   // Service level [2xxxx]
 
   // Login [3xxxx]
+  static const int WX_AUTH_LOGIN_FAILED = 3000;
+  // static const String SUCCESS_MESSAGE = '成功';
 
   // User [4xxxx]
-  // static const int Success_Code = 0;
+  static const int GET_TCB_USER_INFO_FAIL_CODE = 4000;
   // static const String Success_Message = '成功';
 
   // Public methods

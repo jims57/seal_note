@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/data/appstate/LoadingWidgetChangeNotifier.dart';
 import 'package:seal_note/data/appstate/ViewAgreementPageChangeNotifier.dart';
 import 'package:seal_note/ui/authentications/ViewAgreementPage.dart';
 import 'package:seal_note/ui/common/RoundCornerButtonWidget.dart';
@@ -180,6 +181,25 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                   ),
                 ),
 
+                // login loading widget // loading widget
+                // Container(color: Colors.red,width: 50,height: 50,),
+                Consumer<LoadingWidgetChangeNotifier>(
+                    builder: (cxt, loadingWidgetChangeNotifier, child) {
+                  var shouldShowLoading =
+                      loadingWidgetChangeNotifier.shouldShowLoadingWidget;
+
+                  if (shouldShowLoading) {
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: GlobalState.defaultVerticalMarginBetweenItems,
+                      ),
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    return Container();
+                  }
+                }),
+
                 // login wx button // login WeChat button
                 // wx login button // login button
                 RoundCornerButtonWidget(
@@ -194,10 +214,11 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                   buttonCallback: () async {
                     // click on login button // click wx login button
                     // click on wx login button // click login button
+                    // click on wx button // click wx button
 
                     // var login = await TCBLoginHandler.login();
 
-                    await Future.delayed(Duration(seconds: 3));
+                    // await Future.delayed(Duration(seconds: 3));
 
                     // Check network connection
                     GlobalState.hasNetwork =
@@ -215,13 +236,19 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                       await showErrorPanelWhenNetworkProblem(
                           forceToCheckNetwork: false);
                     } else {
-                      // Login check pass
+                      // All login checks pass
 
-                      GlobalState.isLoggedIn = await TCBLoginHandler.login(
+                      GlobalState.loadingWidgetChangeNotifier
+                          .shouldShowLoadingWidget = true;
+
+                      var responseModel = await TCBLoginHandler.login(
                         autoUseAnonymousWayToLoginInSimulator: true,
                       );
 
-                      if (GlobalState.isLoggedIn) {
+                      if (responseModel.code == 0) {
+                        GlobalState.loadingWidgetChangeNotifier
+                            .shouldShowLoadingWidget = false;
+
                         hideLoginPage(forceToShowWebView: true);
 
                         _shouldShowErrorPanel = false;
@@ -232,10 +259,29 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                             .triggerSetState();
                       } else {
                         showErrorPanel(
-                          errorInfo: GlobalState.errorMsg,
+                          errorInfo: _errorInfoForLoginFailure,
                           autoHide: true,
                         );
                       }
+
+                      // if (GlobalState.isLoggedIn) {
+                      //   // GlobalState.loadingWidgetChangeNotifier
+                      //   //     .shouldShowLoadingWidget = false;
+                      //   //
+                      //   // hideLoginPage(forceToShowWebView: true);
+                      //   //
+                      //   // _shouldShowErrorPanel = false;
+                      //   //
+                      //   // GlobalState.isLoggedIn = true;
+                      //   //
+                      //   // GlobalState.masterDetailPageState.currentState
+                      //   //     .triggerSetState();
+                      // } else {
+                      //   showErrorPanel(
+                      //     errorInfo: GlobalState.errorMsg,
+                      //     autoHide: true,
+                      //   );
+                      // }
                     }
                   },
                 ),
@@ -534,6 +580,12 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
       return theText;
     }
   }
+
+  // Future<void> _executeLogin()async{
+  //   await Future.delayed(Duration(seconds: 3));
+  //
+  //   var s ='s';
+  // }
 
   @override
   void afterFirstLayout(BuildContext context) {
