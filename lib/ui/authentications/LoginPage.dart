@@ -41,7 +41,8 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
   String _errorInfo = '';
   String _errorInfoForNotSelectAgreement = '请选择同意协议';
   String _errorInfoForNetworkProblem = '请打开网络';
-  String _errorInfoForLoginFailure = '登录失败，请重试';
+
+  // String _errorInfoForLoginFailure = '登录失败，请重试';
   bool _isWaitingNetworkToBecomeNormal = false;
 
   bool _isLoginPageReady = false;
@@ -50,15 +51,6 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
 
   @override
   void initState() {
-    // _hasNetwork = widget.hasNetwork;
-
-    // Timer(const Duration(seconds: 5), () {
-    //   GlobalState.loginPageState.currentState.showErrorPanel(
-    //     errorInfo: '网络',
-    //     autoHide: false,
-    //   );
-    // });
-
     if (widget.shouldShow) {
       _loginPageWidth = _defaultLoginPageWidth;
     } else {
@@ -85,7 +77,6 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
   void didUpdateWidget(covariant LoginPage oldWidget) {
     // TODO: implement didUpdateWidget
     if (_isLoginPageReady && !GlobalState.isLoggedIn) {
-      var s = 'd';
       showErrorPanelWhenNetworkProblem();
     }
 
@@ -151,9 +142,6 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                   secondChild: Container(
                     decoration: BoxDecoration(
                       color: GlobalState.themeLightBlueColorAtiOSTodo,
-                      // color: Colors.red,
-                      // borderRadius:
-                      //     const BorderRadius.all(const Radius.circular(GlobalState.borderRadius15)),
                     ),
                     alignment: Alignment.center,
                     height: 30,
@@ -216,10 +204,6 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                     // click on wx login button // click login button
                     // click on wx button // click wx button
 
-                    // var login = await TCBLoginHandler.login();
-
-                    // await Future.delayed(Duration(seconds: 3));
-
                     // Check network connection
                     GlobalState.hasNetwork =
                         await NetworkHandler.hasNetworkConnection();
@@ -259,29 +243,11 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                             .triggerSetState();
                       } else {
                         showErrorPanel(
-                          errorInfo: _errorInfoForLoginFailure,
+                          // errorInfo: _errorInfoForLoginFailure,
+                          errorInfo: responseModel.message,
                           autoHide: true,
                         );
                       }
-
-                      // if (GlobalState.isLoggedIn) {
-                      //   // GlobalState.loadingWidgetChangeNotifier
-                      //   //     .shouldShowLoadingWidget = false;
-                      //   //
-                      //   // hideLoginPage(forceToShowWebView: true);
-                      //   //
-                      //   // _shouldShowErrorPanel = false;
-                      //   //
-                      //   // GlobalState.isLoggedIn = true;
-                      //   //
-                      //   // GlobalState.masterDetailPageState.currentState
-                      //   //     .triggerSetState();
-                      // } else {
-                      //   showErrorPanel(
-                      //     errorInfo: GlobalState.errorMsg,
-                      //     autoHide: true,
-                      //   );
-                      // }
                     }
                   },
                 ),
@@ -478,8 +444,6 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
       GlobalState.hasNetwork = await NetworkHandler.hasNetworkConnection();
     }
 
-    var s = 's';
-
     if (!GlobalState.hasNetwork) {
       showErrorPanel(
         errorInfo: _errorInfoForNetworkProblem,
@@ -500,23 +464,6 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
       }
     }
   }
-
-  // void showErrorPanelForNetworkProblemAndCheckNetworkPeriodically() {
-  //   if (!_isWaitingNetworkToBecomeNormal) {
-  //     _isWaitingNetworkToBecomeNormal = true;
-  //
-  //     showErrorPanel(
-  //       errorInfo: _errorInfoForNetworkProblem,
-  //       autoHide: false,
-  //       shouldTriggerSetState: true,
-  //     );
-  //
-  //     NetworkHandler.checkNetworkPeriodically(callbackWhenHasNetwork: () async {
-  //       _isWaitingNetworkToBecomeNormal = false;
-  //       hideErrorPanel();
-  //     });
-  //   }
-  // }
 
   void hideErrorPanel({
     bool shouldTriggerSetState = true,
@@ -580,12 +527,6 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
       return theText;
     }
   }
-
-  // Future<void> _executeLogin()async{
-  //   await Future.delayed(Duration(seconds: 3));
-  //
-  //   var s ='s';
-  // }
 
   @override
   void afterFirstLayout(BuildContext context) {

@@ -63,7 +63,7 @@ class GlobalState with ChangeNotifier {
   static String wxUniLink = 'https://t.zcoo.net/sealsite/';
 
   // Common variables
-  static String errorMsg = '';
+  // static String errorMsg = '';
 
   // app current info // app status // app status info
   static bool isAppFirstTimeToLaunch = false;

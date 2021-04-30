@@ -506,7 +506,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
   Future<bool> _checkIfShowLoginPageOrNot() async {
     // show login page or not // check if show login page or not
-    // check show login page or not
+    // check show login page or not // check show login page or not
 
     bool shouldShowLoginPage;
 
@@ -518,12 +518,15 @@ class MasterDetailPageState extends State<MasterDetailPage>
     } else {
       // Not review app
 
+      // test
+      var s = await TCBLoginHandler.hasLoginTCB();
+
       if (!await NetworkHandler.hasNetworkConnection()) {
         shouldShowLoginPage = true;
       } else if (!await TCBLoginHandler.hasLoginTCB()) {
         shouldShowLoginPage = true;
-      } else if (await TCBLoginHandler.isLoginExpired()) {
-        shouldShowLoginPage = true;
+      // } else if (await TCBLoginHandler.isLoginExpired()) {
+      //   shouldShowLoginPage = true;
       } else {
         shouldShowLoginPage = false;
       }

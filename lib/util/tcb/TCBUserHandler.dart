@@ -1,4 +1,5 @@
 import 'package:cloudbase_auth/cloudbase_auth.dart';
+import 'package:cloudbase_core/cloudbase_core.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/model/common/ResponseModel.dart';
 import 'package:seal_note/model/errorCodes/ErrorCodeModel.dart';
@@ -44,11 +45,12 @@ class TCBUserHandler {
 
     await auth.getUserInfo().then((userInfo) {
       response = ResponseModel.getResponseModelForSuccess<CloudBaseUserInfo>(
-          result: userInfo);
+        result: userInfo,
+      );
     }).catchError((err) {
-      // response = ResponseModel.getResponseModelForTCBError(err: err);
-      response = ResponseModel.getResponseModelForError(
-        code: ErrorCodeModel.GET_TCB_USER_INFO_FAIL_CODE,
+      response = ResponseModel.getResponseModelForError<CloudBaseException>(
+        result: err,
+        code: ErrorCodeModel.GET_TCB_USER_INFO_FAILED_CODE,
         message: err?.message,
       );
     });

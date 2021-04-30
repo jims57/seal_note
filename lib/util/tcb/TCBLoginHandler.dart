@@ -43,8 +43,8 @@ class TCBLoginHandler {
     return GlobalState.tcbCloudBaseAuthState;
   }
 
-  static Future<bool> _loginWXAnonymously() async {
-    GlobalState.errorMsg = '';
+  static Future<ResponseModel> _loginWXAnonymously() async {
+    ResponseModel responseModel;
     var auth = getCloudBaseAuth();
 
     await auth.signInAnonymously().then((success) {
@@ -52,16 +52,43 @@ class TCBLoginHandler {
       GlobalState.tcbRefreshToken = success.refreshToken ?? null;
       GlobalState.isLoggedIn = true;
       GlobalState.isAnonymousLogin = true;
+
+      responseModel =
+          ResponseModel.getResponseModelForSuccess<CloudBaseAuthState>(
+        result: success,
+      );
     }).catchError((err) {
-      GlobalState.errorMsg = err;
       GlobalState.isLoggedIn = false;
+
+      responseModel =
+          ResponseModel.getResponseModelForError<CloudBaseException>(
+        result: err,
+        code: ErrorCodeModel.WX_AUTH_ANONYMOUS_LOGIN_FAILED_CODE,
+        message: ErrorCodeModel.WX_AUTH_ANONYMOUS_LOGIN_FAILED_MESSAGE,
+      );
     });
 
-    return GlobalState.isLoggedIn;
+    return responseModel;
   }
 
+  // static Future<bool> _loginWXAnonymously() async {
+  //   // GlobalState.errorMsg = '';
+  //   var auth = getCloudBaseAuth();
+  //
+  //   await auth.signInAnonymously().then((success) {
+  //     GlobalState.tcbAccessToken = success.accessToken ?? null;
+  //     GlobalState.tcbRefreshToken = success.refreshToken ?? null;
+  //     GlobalState.isLoggedIn = true;
+  //     GlobalState.isAnonymousLogin = true;
+  //   }).catchError((err) {
+  //     GlobalState.errorMsg = err;
+  //     GlobalState.isLoggedIn = false;
+  //   });
+  //
+  //   return GlobalState.isLoggedIn;
+  // }
+
   static Future<ResponseModel> _loginWX() async {
-    GlobalState.errorMsg = '';
     var responseModel = ResponseModel();
     var auth = getCloudBaseAuth();
 
@@ -76,10 +103,14 @@ class TCBLoginHandler {
           ResponseModel.getResponseModelForSuccess<CloudBaseAuthState>(
         result: success,
       );
+
+      var s = 's';
     }).catchError((err) {
-      responseModel = ResponseModel.getResponseModelForError(
-        message: err?.message,
-        code: ErrorCodeModel.WX_AUTH_LOGIN_FAILED,
+      responseModel =
+          ResponseModel.getResponseModelForError<CloudBaseException>(
+        result: err,
+        message: ErrorCodeModel.WX_AUTH_LOGIN_FAILED_MESSAGE,
+        code: ErrorCodeModel.WX_AUTH_LOGIN_FAILED_CODE,
       );
       GlobalState.isLoggedIn = false;
       GlobalState.loadingWidgetChangeNotifier.shouldShowLoadingWidget = false;
@@ -150,7 +181,8 @@ class TCBLoginHandler {
 
     // If this is a review app, use anonymous way to login
     if (isReviewApp || (isSimulator && autoUseAnonymousWayToLoginInSimulator)) {
-      GlobalState.isLoggedIn = await _loginWXAnonymously();
+      // GlobalState.isLoggedIn = await _loginWXAnonymously();
+      responseModel = await _loginWXAnonymously();
     } else {
       responseModel = await _loginWX();
     }
