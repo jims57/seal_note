@@ -58,18 +58,28 @@ class _SettingPageState extends State<SettingPage> {
                 );
 
                 if (shouldSignOut) {
-                  await TCBLoginHandler.signOutWX();
+                  var response = await TCBLoginHandler.signOutWX();
 
-                  GlobalState.viewAgreementPageChangeNotifier
-                      .shouldAvoidTransitionEffect = true;
-                  GlobalState.reusablePageStackWidgetState.currentState
-                      .clickOnReusablePageBackButton(
-                          reusablePageIndex: _reusablePageIndex);
-                  GlobalState.masterDetailPageState.currentState
-                      .triggerSetState();
-                  GlobalState.loginPageState.currentState.showLoginPage();
+                  if (response.code == 0) {
+                    // When succeeded
+                    GlobalState.viewAgreementPageChangeNotifier
+                        .shouldAvoidTransitionEffect = true;
+                    GlobalState.reusablePageStackWidgetState.currentState
+                        .clickOnReusablePageBackButton(
+                            reusablePageIndex: _reusablePageIndex);
+                    GlobalState.masterDetailPageState.currentState
+                        .triggerSetState();
+                    GlobalState.loginPageState.currentState.showLoginPage();
+                  } else {
+                    // When failed
+                    await AlertDialogHandler().showAlertDialog(
+                      parentContext: context,
+                      captionText: '退出登录',
+                      remark: response.message,
+                      showButtonForCancel: false,
+                    );
+                  }
                 }
-
               } else {
                 // When there isn't network
 

@@ -6,21 +6,24 @@ class ErrorCodeModel {
   static const int SUCCESS_CODE = 0;
   static const String SUCCESS_MESSAGE = '成功';
 
-  // System level [1xxxx]
-  // Service level [2xxxx]
+  // System level [1xxx]
+  // Service level [2xxx]
 
-  // Login [3xxxx]
+  // Login [3xxx]
   static const int WX_AUTH_LOGIN_FAILED_CODE = 3000;
   static const String WX_AUTH_LOGIN_FAILED_MESSAGE = '微信授权登录失败';
 
   static const int WX_AUTH_ANONYMOUS_LOGIN_FAILED_CODE = 3001;
   static const String WX_AUTH_ANONYMOUS_LOGIN_FAILED_MESSAGE = '微信匿名登录失败';
 
-  // User [4xxxx]
-  static const int GET_TCB_USER_INFO_FAILED_CODE = 4000;
-  static const String GET_TCB_USER_INFO_FAILED_Message = '获取TCB用户信息失败';
-  // static const String Success_Message = '成功';
+  // Sign out [4xxx]
+  static const int WX_SIGN_OUT_FAILED_CODE = 4001;
+  static const String WX_SIGN_OUT_FAILED_MESSAGE = '退出登录失败，请重试';
 
-  // Public methods
+  // User [5xxx]
+  static const int GET_TCB_USER_INFO_FAILED_CODE = 5000;
+  static const String GET_TCB_USER_INFO_FAILED_Message = '获取TCB用户信息失败';
+
+// Public methods
 
 }

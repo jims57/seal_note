@@ -14,7 +14,7 @@ class ResponseModel<T> {
 
   // Public methods
   static ResponseModel<T> getResponseModelForSuccess<T>({
-    @required T result,
+    T result,
   }) {
     ResponseModel<T> response = ResponseModel<T>();
 

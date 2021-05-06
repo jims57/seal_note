@@ -210,19 +210,30 @@ class TCBLoginHandler {
   //   return GlobalState.isLoggedIn;
   // }
 
-  static Future<bool> signOutWX() async {
+  static Future<ResponseModel> signOutWX() async {
     // Id doesn't need to execute sign out method of tcb if on simulator
     var isSimulator = await SimulatorHandler.isSimulatorOrEmulator();
     var hasLogin = await TCBLoginHandler.hasLoginTCB();
+    var response;
+
+    // By default, it responses as a success one
+    GlobalState.isLoggedIn = false;
+    response = ResponseModel.getResponseModelForSuccess();
 
     if (!isSimulator && hasLogin) {
       var auth = getCloudBaseAuth();
 
-      await auth.signOut();
+      await auth.signOut().catchError((err) {
+        GlobalState.isLoggedIn = true; // If failed, we set it back to login status
+
+        response = ResponseModel.getResponseModelForError(
+          result: err,
+          code: ErrorCodeModel.WX_SIGN_OUT_FAILED_CODE,
+          message: ErrorCodeModel.WX_SIGN_OUT_FAILED_MESSAGE,
+        );
+      });
     }
 
-    GlobalState.isLoggedIn = false;
-
-    return true;
+    return response;
   }
 }
