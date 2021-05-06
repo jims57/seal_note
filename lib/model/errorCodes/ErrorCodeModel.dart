@@ -24,6 +24,10 @@ class ErrorCodeModel {
   static const int GET_TCB_USER_INFO_FAILED_CODE = 5000;
   static const String GET_TCB_USER_INFO_FAILED_Message = '获取TCB用户信息失败';
 
+  // Synchronization [6xxx]
+  static const int SYNC_DATA_TO_SERVER_FAILED_CODE = 6000;
+  static const String SYNC_DATA_TO_SERVER_FAILED_MESSAGE = '同步数据失败，请重试';
+
 // Public methods
 
 }

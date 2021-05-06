@@ -2,9 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/model/common/ResponseModel.dart';
 import 'package:seal_note/ui/common/items/ItemContentWidget.dart';
-
-// import 'package:seal_note/ui/common/loadings/LoadingWidget.dart';
 import 'package:seal_note/ui/common/panels/RoundCornerPanelWidget.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/util/networks/NetworkHandler.dart';
@@ -57,6 +56,8 @@ class _SettingPageState extends State<SettingPage> {
                   callbackWhenExecutingLoading: _executeSyncDataWhenSignOut,
                 );
 
+                var s = 's';
+
                 if (shouldSignOut) {
                   var response = await TCBLoginHandler.signOutWX();
 
@@ -98,9 +99,19 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   // Private methods
-  Future<void> _executeSyncDataWhenSignOut() async {
+  Future<ResponseModel> _executeSyncDataWhenSignOut() async {
+    var response = ResponseModel.getResponseModelForSuccess();
+
     await Future.delayed(Duration(seconds: 2), () {
-      var sp = 'ss';
+      // var sp = 'ss';
+
+      // response = ResponseModel.getResponseModelForError(
+      //   result: 'result err',
+      //   code: ErrorCodeModel.SYNC_DATA_TO_SERVER_FAILED_CODE,
+      //   message: ErrorCodeModel.SYNC_DATA_TO_SERVER_FAILED_MESSAGE,
+      // );
     });
+
+    return response;
   }
 }

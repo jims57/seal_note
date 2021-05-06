@@ -6,10 +6,11 @@ import 'package:seal_note/data/appstate/AlertDialogHeightChangeNotifier.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/appstate/LoadingWidgetChangeNotifier.dart';
+import 'package:seal_note/model/common/ResponseModel.dart';
 import 'package:seal_note/util/html/HtmlHandler.dart';
 
 // ignore: camel_case_types
-typedef Future<void> callbackWhenExecutingLoadingType();
+typedef Future<ResponseModel> callbackWhenExecutingLoadingType();
 
 class AlertDialogHandler {
   Future<bool> showAlertDialog({
@@ -278,21 +279,49 @@ class AlertDialogHandler {
                                       GlobalState.appState
                                           .enableAlertDialogOKButton = false;
 
-                                      GlobalState.loadingWidgetChangeNotifier
-                                          .shouldShowLoadingWidget = true;
+                                      if (showLoadingAfterClickingOK) {
+                                        GlobalState.loadingWidgetChangeNotifier
+                                            .shouldShowLoadingWidget = true;
+                                      }
+
+                                      var response = ResponseModel
+                                          .getResponseModelForSuccess();
 
                                       if (callbackWhenExecutingLoading !=
                                           null) {
-                                        await callbackWhenExecutingLoading();
+                                        response =
+                                            await callbackWhenExecutingLoading();
                                       }
 
-                                      GlobalState.loadingWidgetChangeNotifier
-                                          .shouldShowLoadingWidget = false;
-
-                                      if (enableOKButton) {
-                                        Navigator.of(context).pop();
-                                        shouldContinueAction = true;
+                                      if (showLoadingAfterClickingOK) {
+                                        GlobalState.loadingWidgetChangeNotifier
+                                            .shouldShowLoadingWidget = false;
                                       }
+
+                                      if (response.code == 0) {
+                                        if (enableOKButton) {
+                                          Navigator.of(context).pop();
+                                          shouldContinueAction = true;
+                                        }
+                                      } else {
+                                        // When failed, we show show another alert dialog to tell the user what is happening
+                                        if (enableOKButton) {
+                                          Navigator.of(context).pop();
+                                          shouldContinueAction = false;
+
+                                          await AlertDialogHandler()
+                                              .showAlertDialog(
+                                            parentContext: parentContext,
+                                            captionText: '执行结果',
+                                            remark: response.message,
+                                            showButtonForCancel: false,
+                                          );
+                                        }
+                                      }
+
+                                      // if (response.code != 0) {
+                                      //
+                                      // }
                                     }
                                   },
                                 );
