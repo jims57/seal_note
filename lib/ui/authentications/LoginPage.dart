@@ -450,6 +450,12 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
               callbackWhenHasNetwork: () async {
             _isWaitingNetworkToBecomeNormal = false;
             hideErrorPanel();
+
+            // If the user has logged in, going to the note list page automatically
+            if (GlobalState.isLoggedIn) {
+              // GlobalState.masterDetailPageState.currentState.triggerSetState();
+              GlobalState.loginPageState.currentState.hideLoginPage();
+            }
           });
         }
       }
