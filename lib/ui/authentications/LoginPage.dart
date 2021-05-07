@@ -75,7 +75,6 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
 
   @override
   void didUpdateWidget(covariant LoginPage oldWidget) {
-    // TODO: implement didUpdateWidget
     if (_isLoginPageReady && !GlobalState.isLoggedIn) {
       showErrorPanelWhenNetworkProblem();
     }
@@ -87,7 +86,6 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
   Widget build(BuildContext context) {
     return Container(
       width: _loginPageWidth,
-      // width: 0.0,
       color: GlobalState.themeGreyColorAtiOSTodoForBackground,
       child: Stack(
         children: [
@@ -313,16 +311,6 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                     ],
                   ),
                 ),
-                // GestureDetector(
-                //   child: Container(
-                //     color: Colors.red,
-                //     width: 50,
-                //     height: 50,
-                //   ),
-                //   onTap: () async {
-                //     hideErrorPanel();
-                //   },
-                // ),
               ],
             ),
           ),
@@ -440,6 +428,9 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
     bool forceToCheckNetwork = true,
     bool checkNetworkPeriodically = true,
   }) async {
+    // show network error info // show network problem label
+    // show network error label
+
     if (forceToCheckNetwork) {
       GlobalState.hasNetwork = await NetworkHandler.hasNetworkConnection();
     }
@@ -530,6 +521,12 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
 
   @override
   void afterFirstLayout(BuildContext context) {
+    // Check if the network is available when the first load
+    showErrorPanelWhenNetworkProblem(
+      forceToCheckNetwork: true,
+      checkNetworkPeriodically: true,
+    );
+
     _isLoginPageReady = true;
   }
 }
