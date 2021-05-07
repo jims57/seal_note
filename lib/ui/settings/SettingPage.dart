@@ -75,7 +75,7 @@ class _SettingPageState extends State<SettingPage> {
                     // When failed
                     await AlertDialogHandler().showAlertDialog(
                       parentContext: context,
-                      captionText: '退出登录',
+                      captionText: '执行结果',
                       remark: response.message,
                       showButtonForCancel: false,
                     );

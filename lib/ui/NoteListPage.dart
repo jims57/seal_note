@@ -65,8 +65,10 @@ class _NoteListPageState extends State<NoteListPage> {
               }),
         ],
         tailChildren: [
-          (GlobalState.isReviewFolderSelected)?IconButton(
+          // (GlobalState.isReviewFolderSelected)?IconButton(
+          (!GlobalState.isDefaultFolderSelected)?IconButton(
             // note list more button // note list page more button
+            // note list top right button // note list page top right button
             icon: Icon(
               Icons.more_horiz,
               color: GlobalState.themeBlueColor,

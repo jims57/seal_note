@@ -18,7 +18,8 @@ class _FolderOptionSliverChildListDelegateState
   double _folderOptionCaptionTitleHeight = 40.0;
 
   Color _folderOptionColor = Colors.black;
-  Color _folderOptionColorForDelete = Colors.red;
+
+  // Color _folderOptionColorForDelete = Colors.red;
 
   @override
   void initState() {
@@ -187,12 +188,15 @@ class _FolderOptionSliverChildListDelegateState
                       ),
                     ),
                     onTap: () {
-                      // note list page review plan event
+                      // note list page review plan event // show review plan from folder option
+                      // folder option show review plan
                       Navigator.pop(GlobalState.noteListPageContext);
 
                       GlobalState.masterDetailPageState.currentState
                           .showReviewPlanPage(
-                              folderId: GlobalState.selectedFolderIdCurrently);
+                        folderId: GlobalState.selectedFolderIdCurrently,
+                        triggeredByFolderOption: true,
+                      );
                     },
                   ),
                 // // Order option

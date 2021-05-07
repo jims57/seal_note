@@ -204,6 +204,7 @@ class GlobalState with ChangeNotifier {
 
   // Review plan
   static double reviewPlanItemHeight = defaultItemHeight;
+  static bool isReviewPlanPageTriggeredByFolderOption = false;
 
   // Title String
   static final String defaultFolderNameForToday = '今天';

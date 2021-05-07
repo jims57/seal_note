@@ -206,7 +206,10 @@ class _UserFolderListListenerWidgetState
                         // swipe to review plan event // click on review plan button
 
                         await GlobalState.masterDetailPageState.currentState
-                            .showReviewPlanPage(folderId: widget.folderId);
+                            .showReviewPlanPage(
+                          folderId: widget.folderId,
+                          triggeredByFolderOption: false,
+                        );
                       },
                     ),
                     IconSlideAction(

@@ -528,8 +528,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
       } else if (!await TCBLoginHandler.hasLoginTCB()) {
         // shouldShowLoginPage = true;
         GlobalState.shouldShowLoginPage = true;
-      // } else if (await TCBLoginHandler.isLoginExpired()) {
-      //   shouldShowLoginPage = true;
+        // } else if (await TCBLoginHandler.isLoginExpired()) {
+        //   shouldShowLoginPage = true;
       } else {
         // shouldShowLoginPage = false;
         GlobalState.shouldShowLoginPage = false;
@@ -596,7 +596,11 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
   Future<void> showReviewPlanPage({
     @required int folderId,
+    bool triggeredByFolderOption = false,
   }) async {
+    GlobalState.isReviewPlanPageTriggeredByFolderOption =
+        triggeredByFolderOption;
+
     // Get the review plan for the current folder
     GetFolderReviewPlanByFolderIdResult getFolderReviewPlanByFolderIdResult =
         await GlobalState.database

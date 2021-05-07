@@ -80,6 +80,15 @@ class ReviewPlanWidgetState extends State<ReviewPlanWidget> {
 
       _buildReviewPlanSelectionItemWidgetList(triggerSetState: false);
 
+      // If the user has selected a review plan, set the current folder as review one forcibly
+      if (newReviewPlanId == 0) {
+        // Changed to a non-review folder
+        GlobalState.isReviewFolderSelected = false;
+      } else {
+        // Changed to a review folder
+        GlobalState.isReviewFolderSelected = true;
+      }
+
       setState(() {});
     }
 

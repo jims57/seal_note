@@ -221,7 +221,8 @@ class ReusablePageStackWidgetState extends State<ReusablePageStackWidget> {
 
   void clickOnReusablePageBackButton({
     @required int reusablePageIndex,
-    bool refreshFolderListWhenClosingLastReusablePage = false,
+    bool refreshFolderListPageWhenClosingLastReusablePage = false,
+    bool refreshNoteListPageWhenClosingLastReusablePage = false,
   }) {
     // Only the back button on the reusable page will move the upcoming reusable page to right
     GlobalState.isUpcomingReusablePageMovingToLeft = false;
@@ -240,9 +241,16 @@ class ReusablePageStackWidgetState extends State<ReusablePageStackWidget> {
       GlobalState.reusablePageWidgetList.clear();
 
       // Check if we should refresh the folder page to reflect its up-to-date
-      if (refreshFolderListWhenClosingLastReusablePage) {
+      if (refreshFolderListPageWhenClosingLastReusablePage) {
         GlobalState.folderListWidgetState.currentState
             .triggerSetState(forceToFetchFoldersFromDb: true);
+      }
+
+      // Check if we should refresh the note list page to reflect its changes
+      if (refreshNoteListPageWhenClosingLastReusablePage) {
+        GlobalState.noteListWidgetForTodayState.currentState.triggerSetState(
+          forceToRefreshNoteListByDb: true,
+        );
       }
     }
 

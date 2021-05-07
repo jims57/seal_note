@@ -69,7 +69,8 @@ class ReusablePageWidgetState extends State<ReusablePageWidget> {
                       GlobalState.reusablePageStackWidgetState.currentState
                           .clickOnReusablePageBackButton(
                         reusablePageIndex: widget.index,
-                        refreshFolderListWhenClosingLastReusablePage: true,
+                        refreshFolderListPageWhenClosingLastReusablePage: true,
+                        refreshNoteListPageWhenClosingLastReusablePage: true,
                       );
                     },
                   ),
