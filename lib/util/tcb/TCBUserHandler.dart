@@ -11,8 +11,8 @@ class TCBUserHandler {
     bool forceToLoginWhenNotLoggedIn = false,
     bool forceToFetchUserInfoFromTCB = false,
   }) async {
-    var responseModelForCloudBaseUserInfo;
-    ResponseModel responseModelForLogin;
+    var responseModelForCloudBaseUserInfo = ResponseModel.getResponseModelForSuccess();
+    var responseModelForLogin = ResponseModel.getResponseModelForSuccess();
 
     if (!GlobalState.isLoggedIn && forceToLoginWhenNotLoggedIn) {
       responseModelForLogin = await TCBLoginHandler.login(
