@@ -69,6 +69,9 @@ class GlobalState with ChangeNotifier {
   static bool isAppFirstTimeToLaunch = false;
   static bool isAppInitialized = false;
   static bool isLoggedIn = false;
+  // static bool isLoginPageShown = false;
+  static bool shouldShowLoginPage = false;
+
   static bool hasNetwork = true;
   static bool isReviewApp =
       false; // Tell the current version of app is under view by Apple

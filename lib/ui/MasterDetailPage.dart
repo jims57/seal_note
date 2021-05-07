@@ -508,13 +508,14 @@ class MasterDetailPageState extends State<MasterDetailPage>
     // show login page or not // check if show login page or not
     // check show login page or not // check show login page or not
 
-    bool shouldShowLoginPage;
+    // bool shouldShowLoginPage;
 
     if (await GlobalState.checkIfReviewApp(
       forceToSetIsReviewAppVar: true,
     )) {
       // Review app
-      shouldShowLoginPage = false;
+      // shouldShowLoginPage = false;
+      GlobalState.shouldShowLoginPage = false;
     } else {
       // Not review app
 
@@ -522,17 +523,21 @@ class MasterDetailPageState extends State<MasterDetailPage>
       var s = await TCBLoginHandler.hasLoginTCB();
 
       if (!await NetworkHandler.hasNetworkConnection()) {
-        shouldShowLoginPage = true;
+        // shouldShowLoginPage = true;
+        GlobalState.shouldShowLoginPage = true;
       } else if (!await TCBLoginHandler.hasLoginTCB()) {
-        shouldShowLoginPage = true;
+        // shouldShowLoginPage = true;
+        GlobalState.shouldShowLoginPage = true;
       // } else if (await TCBLoginHandler.isLoginExpired()) {
       //   shouldShowLoginPage = true;
       } else {
-        shouldShowLoginPage = false;
+        // shouldShowLoginPage = false;
+        GlobalState.shouldShowLoginPage = false;
       }
     }
 
-    return shouldShowLoginPage;
+    // return shouldShowLoginPage;
+    return GlobalState.shouldShowLoginPage;
   }
 
   // Public methods

@@ -10,11 +10,11 @@ import 'package:seal_note/data/appstate/ViewAgreementPageChangeNotifier.dart';
 import 'package:seal_note/ui/authentications/ViewAgreementPage.dart';
 import 'package:seal_note/ui/common/RoundCornerButtonWidget.dart';
 import 'package:seal_note/ui/common/checkboxs/RoundCheckBoxWidget.dart';
-import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/util/networks/NetworkHandler.dart';
 
 import 'package:after_layout/after_layout.dart';
 import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
+import 'package:connectivity/connectivity.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({
@@ -47,7 +47,8 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
 
   bool _isLoginPageReady = false;
 
-  // Timer _timer;
+  // Network
+  var networkSubscription;
 
   @override
   void initState() {
@@ -57,14 +58,33 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
       _loginPageWidth = 0.0;
     }
 
-    // _loginPageWidth = _defaultLoginPageWidth;
     super.initState();
+
+    networkSubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      // Got a new connectivity status!
+      if (!_isWaitingNetworkToBecomeNormal && GlobalState.shouldShowLoginPage) {
+        if (result.index == 2) {
+          // When there is no network
+          showErrorPanelWhenNetworkProblem(
+            forceToCheckNetwork: true,
+            checkNetworkPeriodically: false,
+            forceToSetIsWaitingNetworkToBecomeNormalVar: false,
+          );
+        } else {
+          // When there is network
+          hideErrorPanel();
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
-    // _timer?.cancel();
     super.dispose();
+
+    networkSubscription.cancel();
   }
 
   @override
@@ -373,8 +393,12 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
       // If it is a review app, don't show login page any way
       if (isReviewApp) {
         _loginPageWidth = 0.0;
+        // GlobalState.isLoginPageShown = false;
+        GlobalState.shouldShowLoginPage = false;
       } else {
         _loginPageWidth = _defaultLoginPageWidth;
+        // GlobalState.isLoginPageShown = true;
+        GlobalState.shouldShowLoginPage = true;
       }
 
       GlobalState.noteDetailWidgetState.currentState
@@ -387,6 +411,9 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
   }) {
     setState(() {
       _loginPageWidth = 0.0;
+      // GlobalState.isLoginPageShown = false;
+      GlobalState.shouldShowLoginPage = false;
+
       if (forceToShowWebView) {
         GlobalState.noteDetailWidgetState.currentState
             .showWebView(forceToSyncWithShouldHideWebViewVar: true);
@@ -427,6 +454,7 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
   Future<void> showErrorPanelWhenNetworkProblem({
     bool forceToCheckNetwork = true,
     bool checkNetworkPeriodically = true,
+    bool forceToSetIsWaitingNetworkToBecomeNormalVar = true,
   }) async {
     // show network error info // show network problem label
     // show network error label
@@ -443,12 +471,16 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
       );
 
       if (!_isWaitingNetworkToBecomeNormal) {
-        _isWaitingNetworkToBecomeNormal = true;
+        if (forceToSetIsWaitingNetworkToBecomeNormalVar) {
+          _isWaitingNetworkToBecomeNormal = true;
+        }
 
         if (checkNetworkPeriodically) {
           NetworkHandler.checkNetworkPeriodically(
               callbackWhenHasNetwork: () async {
-            _isWaitingNetworkToBecomeNormal = false;
+            if (forceToSetIsWaitingNetworkToBecomeNormalVar) {
+              _isWaitingNetworkToBecomeNormal = false;
+            }
             hideErrorPanel();
 
             // If the user has logged in, going to the note list page automatically
@@ -472,7 +504,7 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
     }
   }
 
-  // Private methods
+// Private methods
   void _checkLoginCheckBox({
     @required bool hasCheckedAgreement,
   }) {
