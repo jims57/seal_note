@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/database/database.dart';
-import 'package:seal_note/ui/reviewPlans/ChosenReviewPlanWidget.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanRemarkWidget.dart';
 
 import 'ReviewPlanSelectionItemWidget.dart';

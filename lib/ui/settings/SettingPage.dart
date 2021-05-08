@@ -87,7 +87,7 @@ class _SettingPageState extends State<SettingPage> {
                 await AlertDialogHandler().showAlertDialog(
                   parentContext: context,
                   captionText: '网络未连接',
-                  remark: '请先连接网络，以便同步数据！',
+                  remark: '请先连接网络，以便同步数据',
                   restoreWebViewToShowIfNeeded: true,
                   showButtonForCancel: false,
                 );

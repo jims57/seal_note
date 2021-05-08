@@ -1,11 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/appstate/ReusablePageChangeNotifier.dart';
-import 'package:seal_note/data/appstate/ReusablePageWidthChangeNotifier.dart';
 import 'package:seal_note/model/ReusablePage/ReusablePageModel.dart';
 import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageWidget.dart';
 
