@@ -4,6 +4,7 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:seal_note/data/appstate/LoadingWidgetChangeNotifier.dart';
 import 'package:seal_note/data/database/database.dart';
 import 'package:flutter/material.dart';
+import 'package:seal_note/event/webView/WebViewLoadedEventHandler.dart';
 import 'package:seal_note/model/ImageSyncItem.dart';
 import 'package:seal_note/model/NoteWithProgressTotal.dart';
 import 'package:seal_note/model/ReusablePage/ReusablePageModel.dart';
@@ -37,7 +38,10 @@ class GlobalState with ChangeNotifier {
 
   GlobalState._internal();
 
-  // For configuration
+  // Variable for deployment // deployment variable
+  static double appVersion = 1.0;
+
+  // For configuration // app basic info // app basic variable info
   static int noteListTitleMaxLength = 50;
   static int noteListAbstractMaxLength = 50;
   static int incrementalStepToUseRegex = 100;
@@ -66,12 +70,13 @@ class GlobalState with ChangeNotifier {
   // static String errorMsg = '';
 
   // app current info // app status // app status info
+  // app info variable
   static bool isAppFirstTimeToLaunch = false;
   static bool isAppInitialized = false;
   static bool isLoggedIn = false;
+
   // static bool isLoginPageShown = false;
   static bool shouldShowLoginPage = false;
-
   static bool hasNetwork = true;
   static bool isReviewApp =
       false; // Tell the current version of app is under view by Apple
@@ -302,6 +307,10 @@ class GlobalState with ChangeNotifier {
   static AlertDialogHeightChangeNotifier alertDialogHeightChangeNotifier;
   static ViewAgreementPageChangeNotifier viewAgreementPageChangeNotifier;
   static LoadingWidgetChangeNotifier loadingWidgetChangeNotifier;
+
+  // Event // Listener
+  static WebViewLoadedEventHandler webViewLoadedEventHandler =
+      WebViewLoadedEventHandler();
 
   // Folder related
   static bool isDefaultFolderSelected = false; // For default folder

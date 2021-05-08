@@ -152,6 +152,13 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
           // Record the status of whether the WebView is loaded or note in dart
           GlobalState.hasWebViewLoaded = true;
+
+          // Broadcasting webView loaded event to subscribers
+          Timer(const Duration(milliseconds: 2000), () { // Delay 2 seconds to notify subscribers, making sure that the webView loaded completely
+            GlobalState.webViewLoadedEventHandler
+                .notifySubscribersWebViewHasLoaded(
+                    GlobalState.hasWebViewLoaded);
+          });
         }), // NotifyDartWebViewHasLoaded
     JavascriptChannel(
         name: 'CheckIfOldNote',

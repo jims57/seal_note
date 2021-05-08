@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:moor/moor.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/util/networks/NetworkHandler.dart';
-import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
-import 'package:seal_note/util/tcb/TCBUserHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
 // Import custom files
@@ -288,8 +285,10 @@ class _MyAppState extends State<MyApp> {
 }
 
 // // Test main
+// import 'dart:async';
 // import 'package:flutter/material.dart';
 // import 'package:flutter/cupertino.dart';
+// import 'package:seal_note/model/common/ResponseModel.dart';
 //
 // void main() => runApp(MyApp());
 //
@@ -313,37 +312,46 @@ class _MyAppState extends State<MyApp> {
 // }
 //
 // class ParentWidgetState extends State<ParentWidget> {
-//   final Future<Text> _calculation = Future<Text>.delayed(
-//     const Duration(seconds: 5),
-//     () => Text('Data Loaded'),
-//   );
+//   var model = new BaseModel();
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     model.fetchDone.listen((_) {
+//       var s = _;
+//     });
+//   }
 //
 //   @override
 //   Widget build(BuildContext context) {
 //     return Column(children: [
-//       FutureBuilder<Text>(
-//           future: _calculation,
-//           builder: (context, snapshot) {
-//             if (snapshot.hasError) {
-//               return Text('error: ${snapshot.error}');
-//               // return Text('error: ${snapshot.error}');
-//             } else if (snapshot.hasData) {
-//               // return Text('new data: ${snapshot.data}');
-//               return snapshot.data;
-//             } else {
-//               return Text('waiting for Future...');
-//             }
-//           }),
-//       Container(
-//         color: Colors.green,
-//         width: 50,
-//         height: 50,
-//       ),
 //       CupertinoButton(
 //         child: Text('Click Me'),
 //         color: Colors.blue,
-//         onPressed: () {},
+//         onPressed: () {
+//           model.fetch();
+//         },
 //       )
 //     ]);
+//   }
+// }
+//
+// class BaseModel {
+//   Map objects;
+//   StreamController fetchDoneController = new StreamController.broadcast();
+//
+//   // define constructor here
+//
+//   fetch() {
+//     // fetch json from server and then load it to objects
+//     // emits an event here
+//     // fetchDoneController.add("all done"); // send an arbitrary event
+//     fetchDoneController.add(
+//         ResponseModel.getResponseModelForSuccess()); // send an arbitrary event
+//   }
+//
+//   // Stream get fetchDone => fetchDoneController.stream;
+//   Stream get fetchDone {
+//     return fetchDoneController.stream;
 //   }
 // }

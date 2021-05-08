@@ -15,6 +15,7 @@ import 'package:after_layout/after_layout.dart';
 import 'package:seal_note/ui/authentications/LoginPage.dart';
 import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageStackWidget.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
+import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/util/networks/NetworkHandler.dart';
 import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
 
@@ -56,6 +57,16 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
     GlobalState.flutterWebviewPlugin = FlutterWebviewPlugin();
 
+    // GlobalState.flutterWebviewPlugin.onStateChanged.listen((event) {
+    //
+    //   var s ='s';
+    //   if(event.type == WebViewState.finishLoad){
+    //     var e=event;
+    //
+    //     GlobalState.noteDetailWidgetState.currentState.hideWebView(forceToSyncWithShouldHideWebViewVar: false);
+    //   }
+    // });
+
     GlobalState.masterDetailPageContext = context;
 
     // Models
@@ -75,6 +86,67 @@ class MasterDetailPageState extends State<MasterDetailPage>
     });
 
     super.initState();
+
+    // Subscribe WebView loaded event
+    GlobalState.webViewLoadedEventHandler.onWebViewLoaded
+        .listen((hasWebViewLoaded) {
+      var e = hasWebViewLoaded;
+
+      // Hide the webView first before showing update dialog, prevent it from being blocked
+      if (GlobalState.screenType != 1) {
+        GlobalState.noteDetailWidgetState.currentState
+            .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
+      }
+
+      AlertDialogHandler().showAlertDialog(
+        parentContext: context,
+        captionText: '发现新版本',
+        remark: '1、修改大量bugs；\n'
+            '2、用户能自主创建复习计划；\n'
+            '2、用户能自主创建复习计划；\n'
+            // '2、用户能自主创建复习计划；\n'
+            // '2、用户能自主创建复习计划；\n'
+            // '2、用户能自主创建复习计划；\n'
+            // '2、用户能自主创建复习计划；\n'
+            // '2、用户能自主创建复习计划；\n'
+            // '2、用户能自主创建复习计划；\n'
+            // '2、用户能自主创建复习计划；\n'
+            // '2、用户能自主创建复习计划；\n'
+            // '2、用户能自主创建复习计划；\n'
+            // '2、用户能自主创建复习计划；\n'
+            // '2、用户能自主创建复习计划；\n'
+            '3、其他重大更新。',
+        buttonTextForOK: '马上更新',
+        buttonTextForCancel: '暂不更新',
+        buttonColorForCancel: GlobalState.themeGreyColorAtiOSTodo,
+        restoreWebViewToShowIfNeeded: true,
+        expandRemarkToMaxFinite: false,
+
+      );
+
+      // Timer(const Duration(milliseconds: 100), () {
+      // GlobalState.noteDetailWidgetState.currentState
+      //     .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
+      //
+      // AlertDialogHandler().showAlertDialog(
+      //   parentContext: context,
+      //   captionText: '发现新版本',
+      //   remark: '1、修改大量bugs；\n'
+      //       '2、用户能自主创建复习计划；\n'
+      //       // '2、用户能自主创建复习计划；\n'
+      //       // '2、用户能自主创建复习计划；\n'
+      //       // '2、用户能自主创建复习计划；\n'
+      //       // '2、用户能自主创建复习计划；\n'
+      //       // '2、用户能自主创建复习计划；\n'
+      //       // '2、用户能自主创建复习计划；\n'
+      //       '3、其他重大更新。',
+      //   buttonTextForOK: '马上更新',
+      //   buttonTextForCancel: '暂不更新',
+      //   buttonColorForCancel: GlobalState.themeGreyColorAtiOSTodo,
+      //   restoreWebViewToShowIfNeeded: true,
+      // );
+      // });
+    });
   }
 
   @override
@@ -464,6 +536,11 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
     print('Screen height:${GlobalState.screenHeight}');
     print('Screen width:${GlobalState.screenWidth}');
+
+    // Timer(const Duration(seconds: 5), () {
+    //   GlobalState.noteDetailWidgetState.currentState
+    //       .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
+    // });
   }
 
   // Private methods

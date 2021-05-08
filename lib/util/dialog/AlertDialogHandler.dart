@@ -22,6 +22,7 @@ class AlertDialogHandler {
     Widget child,
     bool showButtonForCancel = true,
     String buttonTextForCancel = '取消',
+    Color buttonColorForCancel = GlobalState.themeBlueColor,
     bool showButtonForOK = true,
     String buttonTextForOK = '确定',
     bool alwaysEnableOKButton = true,
@@ -40,8 +41,6 @@ class AlertDialogHandler {
     bool centerRemark = true,
     String textForLoadingWidget,
     bool showLoadingAfterClickingOK = false,
-    // VoidCallback callbackWhenExecutingLoading,
-    // Future<void> callbackWhenExecutingLoading,
     callbackWhenExecutingLoadingType callbackWhenExecutingLoading,
   }) async {
     var shouldContinueAction = false;
@@ -245,7 +244,11 @@ class AlertDialogHandler {
                                 child: Text(
                                   buttonTextForCancel,
                                   style: TextStyle(
-                                      color: GlobalState.themeBlueColor),
+                                    // color: GlobalState.themeBlueColor),
+                                    color: buttonColorForCancel == null
+                                        ? GlobalState.themeBlueColor
+                                        : buttonColorForCancel,
+                                  ),
                                 ),
                                 onPressed: () {
                                   Navigator.of(context).pop();
