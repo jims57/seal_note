@@ -652,14 +652,23 @@ class MasterDetailPageState extends State<MasterDetailPage>
     // check show update dialog or not // show update dialog or not
     // whether to show update dialog
 
-    var shouldSowUpdateDialog =
-        await AppUpdateHandler.shouldShowUpdateDialogIfNeeded();
+    // var updateAppOption = await AppUpdateHandler.getUpdateAppOption();
+    GlobalState.updateAppOption = await AppUpdateHandler.getUpdateAppOption();
 
-    if (shouldSowUpdateDialog) {
+    if (GlobalState.updateAppOption != UpdateAppOption.NoUpdate) {
       // Hide the webView first before showing update dialog, prevent it from being blocked
       if (GlobalState.screenType != 1) {
         GlobalState.noteDetailWidgetState.currentState
             .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
+      }
+
+      // Variable for alert dialog
+      var buttonTextForCancel = '下次提醒';
+      var updateTipForImportant = '这是重大更新，请升级';
+
+      // When it is compulsory update, we need to change the cancel button's appearance
+      if (GlobalState.updateAppOption == UpdateAppOption.CompulsoryUpdate) {
+        buttonTextForCancel = '不想升级';
       }
 
       var shouldGoToUpdateApp = await AlertDialogHandler().showAlertDialog(
@@ -669,8 +678,21 @@ class MasterDetailPageState extends State<MasterDetailPage>
         remark: '1、修改大量bugs；\n'
             '2、用户能自主创建复习计划；\n'
             '3、其他重大更新。',
-        buttonTextForOK: '马上更新',
-        buttonTextForCancel: '暂不更新',
+        child: Container(
+          padding: EdgeInsets.only(
+            left: GlobalState.defaultLeftAndRightPadding,
+            right: GlobalState.defaultLeftAndRightPadding,
+          ),
+          child: Text(
+            '注：$updateTipForImportant!',
+            style: TextStyle(
+              fontSize: 14.0,
+              color: Colors.red,
+            ),
+          ),
+        ),
+        buttonTextForOK: '马上升级',
+        buttonTextForCancel: buttonTextForCancel,
         buttonColorForCancel: GlobalState.themeGreyColorAtiOSTodo,
         restoreWebViewToShowIfNeeded: true,
         expandRemarkToMaxFinite: false,
@@ -696,6 +718,20 @@ class MasterDetailPageState extends State<MasterDetailPage>
       } else {
         // Don't update the app
         var ss = 's';
+      }
+
+      // If it is a compulsory update, navigating to the login page anyway
+      if(GlobalState.updateAppOption == UpdateAppOption.CompulsoryUpdate){
+        var errorInfoForLoginPage = updateTipForImportant;
+
+        if(shouldGoToUpdateApp){
+          errorInfoForLoginPage = '请升级后，再继续使用';
+        }
+
+        GlobalState.loginPageState.currentState.showLoginPage(
+          errorInfo: errorInfoForLoginPage,
+          autoHideErrorInfo: false,
+        );
       }
     }
   }

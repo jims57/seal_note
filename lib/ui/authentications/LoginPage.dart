@@ -150,7 +150,26 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                     ),
                   ),
                 ),
-                // Container(color: Colors.yellow,width: 200,height: 50,),
+
+                // login loading widget // loading widget
+                // login page loading widget
+                Consumer<LoadingWidgetChangeNotifier>(
+                    builder: (cxt, loadingWidgetChangeNotifier, child) {
+                  var shouldShowLoading =
+                      loadingWidgetChangeNotifier.shouldShowLoadingWidget;
+
+                  if (shouldShowLoading) {
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: GlobalState.defaultVerticalMarginBetweenItems,
+                      ),
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    return Container();
+                  }
+                }),
+
                 AnimatedCrossFade(
                   crossFadeState: _shouldShowErrorPanel
                       ? CrossFadeState.showSecond
@@ -187,25 +206,6 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                   ),
                 ),
 
-                // login loading widget // loading widget
-                // Container(color: Colors.red,width: 50,height: 50,),
-                Consumer<LoadingWidgetChangeNotifier>(
-                    builder: (cxt, loadingWidgetChangeNotifier, child) {
-                  var shouldShowLoading =
-                      loadingWidgetChangeNotifier.shouldShowLoadingWidget;
-
-                  if (shouldShowLoading) {
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: GlobalState.defaultVerticalMarginBetweenItems,
-                      ),
-                      child: CircularProgressIndicator(),
-                    );
-                  } else {
-                    return Container();
-                  }
-                }),
-
                 // login wx button // login WeChat button
                 // wx login button // login button
                 RoundCornerButtonWidget(
@@ -221,6 +221,9 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                     // click on login button // click wx login button
                     // click on wx login button // click login button
                     // click on wx button // click wx button
+
+                    // Hide error info panel anyway
+                    hideErrorPanel(shouldTriggerSetState: true);
 
                     // Check network connection
                     GlobalState.hasNetwork =
@@ -390,7 +393,11 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
     });
   }
 
-  Future<void> showLoginPage() async {
+  Future<void> showLoginPage({
+    // errorInfo: if empty, don't show error info panel, or it will show the error panel accordingly
+    String errorInfo,
+    bool autoHideErrorInfo = true,
+  }) async {
     var isReviewApp = await GlobalState.checkIfReviewApp();
 
     setState(() {
@@ -401,12 +408,19 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
         GlobalState.shouldShowLoginPage = false;
       } else {
         _loginPageWidth = _defaultLoginPageWidth;
-        // GlobalState.isLoginPageShown = true;
         GlobalState.shouldShowLoginPage = true;
       }
 
       GlobalState.noteDetailWidgetState.currentState
           .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
+
+      // Show error info if needed
+      if (errorInfo != null) {
+        showErrorPanel(
+          errorInfo: errorInfo,
+          autoHide: autoHideErrorInfo,
+        );
+      }
     });
   }
 

@@ -20,6 +20,7 @@ import 'package:seal_note/ui/common/SelectFolderWidget.dart';
 import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageWidget.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanSecondSubPage.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
+import 'package:seal_note/util/updates/AppUpdateHandler.dart';
 import 'package:stack/stack.dart' as stackData show Stack;
 
 import 'AlertDialogHeightChangeNotifier.dart';
@@ -48,8 +49,10 @@ class GlobalState with ChangeNotifier {
   static const int minLengthToTriggerRefreshForNoteListPage = 0;
   static String iOSAppId = '1371947588';
   static String androidAppId = 'zcootong.zcoonet.com.gpb';
-  static String downloadLinkForIOS = 'https://itunes.apple.com/cn/app/yuan-zhang-tou-tiao/id$iOSAppId';
-  static String downloadLinkForAndroid = 'http://a.app.qq.com/o/simple.jsp?pkgname=$androidAppId';
+  static String downloadLinkForIOS =
+      'https://itunes.apple.com/cn/app/yuan-zhang-tou-tiao/id$iOSAppId';
+  static String downloadLinkForAndroid =
+      'http://a.app.qq.com/o/simple.jsp?pkgname=$androidAppId';
 
   // TCB configuration
   static String tcbEnvironment = 'seal-note-app-env-8ei8de6728d969';
@@ -76,6 +79,7 @@ class GlobalState with ChangeNotifier {
   // app info variable
   static bool isAppFirstTimeToLaunch = false;
   static bool isAppInitialized = false;
+
   // Notice: Before invoke hasLoginTCB() method, isLoggedIn variable will be false.
   // Please make sure to call hasLoginTCB() method, before using isLoggedIn variable to check the user's login status
   static bool isLoggedIn = false;
@@ -146,6 +150,9 @@ class GlobalState with ChangeNotifier {
   static const double appBarTitleDefaultFontSize = 18.0;
   static Color greyFontColor = Colors.grey[600];
   static FontWeight defaultBoldFontWeightForItem = FontWeight.w400;
+
+  // Update dialog // Update
+  static UpdateAppOption updateAppOption = UpdateAppOption.NoUpdate;
 
   // FlushBar
   static const int defaultFlushBarDuration = 2500;
