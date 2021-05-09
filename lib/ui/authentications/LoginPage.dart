@@ -243,11 +243,11 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                       GlobalState.loadingWidgetChangeNotifier
                           .shouldShowLoadingWidget = true;
 
-                      var responseModel = await TCBLoginHandler.login(
+                      var responseForLogin = await TCBLoginHandler.login(
                         autoUseAnonymousWayToLoginInSimulator: true,
                       );
 
-                      if (responseModel.code == 0) {
+                      if (responseForLogin.code == 0) {
                         GlobalState.loadingWidgetChangeNotifier
                             .shouldShowLoadingWidget = false;
 
@@ -259,10 +259,14 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
 
                         GlobalState.masterDetailPageState.currentState
                             .triggerSetState();
+
+                        // Check if it should show the update dialog or not
+                        GlobalState.masterDetailPageState.currentState
+                            .checkIfShowUpdateDialogOrNot();
                       } else {
                         showErrorPanel(
                           // errorInfo: _errorInfoForLoginFailure,
-                          errorInfo: responseModel.message,
+                          errorInfo: responseForLogin.message,
                           autoHide: true,
                         );
                       }

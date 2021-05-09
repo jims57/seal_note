@@ -18,8 +18,10 @@ import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/util/networks/NetworkHandler.dart';
 import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
+import 'package:seal_note/util/updates/AppUpdateHandler.dart';
 import 'dart:io' show Platform;
 import 'package:store_redirect/store_redirect.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'NoteDetailWidget.dart';
 
@@ -55,7 +57,10 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
   @override
   void initState() {
+    // _executeAllAsyncMethodsForInitState();
     loginPageFutureBuilder = _checkIfShowLoginPageOrNot();
+
+    // _checkIfShowLoginPageOrNot();
 
     GlobalState.flutterWebviewPlugin = FlutterWebviewPlugin();
 
@@ -89,85 +94,21 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
     super.initState();
 
-    // Subscribe WebView loaded event
-    GlobalState.webViewLoadedEventHandler.onWebViewLoaded
-        .listen((hasWebViewLoaded) {
-      var e = hasWebViewLoaded;
+    // Show update dialog if the user has logged in
+    TCBLoginHandler.hasLoginTCB().then((hasLoginTCB) {
+      // Check if the user has logged in, we only show the update dialog after logging in
+      // show update dialog
 
-      // Hide the webView first before showing update dialog, prevent it from being blocked
-      if (GlobalState.screenType != 1) {
-        GlobalState.noteDetailWidgetState.currentState
-            .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
-      }
-
-      AlertDialogHandler()
-          .showAlertDialog(
-        // update dialog // update app tip
-        parentContext: context,
-        captionText: '发现新版本',
-        remark: '1、修改大量bugs；\n'
-            '2、用户能自主创建复习计划；\n'
-            // '2、用户能自主创建复习计划；\n'
-            // '2、用户能自主创建复习计划；\n'
-            // '2、用户能自主创建复习计划；\n'
-            // '2、用户能自主创建复习计划；\n'
-            // '2、用户能自主创建复习计划；\n'
-            // '2、用户能自主创建复习计划；\n'
-            // '2、用户能自主创建复习计划；\n'
-            // '2、用户能自主创建复习计划；\n'
-            // '2、用户能自主创建复习计划；\n'
-            // '2、用户能自主创建复习计划；\n'
-            // '2、用户能自主创建复习计划；\n'
-            // '2、用户能自主创建复习计划；\n'
-            '3、其他重大更新。',
-        buttonTextForOK: '马上更新',
-        buttonTextForCancel: '暂不更新',
-        buttonColorForCancel: GlobalState.themeGreyColorAtiOSTodo,
-        restoreWebViewToShowIfNeeded: true,
-        expandRemarkToMaxFinite: false,
-      )
-          .then((shouldGoToUpdateApp) async {
-        if (shouldGoToUpdateApp) {
-          // Update the app
-
-          if (Platform.isIOS) {
-            // go to app store // go to ios app store
-            await StoreRedirect.redirect(
-                androidAppId: GlobalState.androidAppId,
-                iOSAppId: GlobalState.iOSAppId);
-          } else if (Platform.isAndroid) {
-            var a = 's';
-          } else {
-            var s ='s';
+      // Subscribe WebView loaded event
+      if (hasLoginTCB) {
+        // Don't show update dialog before login
+        GlobalState.webViewLoadedEventHandler.onWebViewLoaded
+            .listen((hasWebViewLoaded) async {
+          if (hasWebViewLoaded) {
+            await checkIfShowUpdateDialogOrNot();
           }
-        } else {
-          // Don't update the app
-          var ss = 's';
-        }
-      });
-
-      // Timer(const Duration(milliseconds: 100), () {
-      // GlobalState.noteDetailWidgetState.currentState
-      //     .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
-      //
-      // AlertDialogHandler().showAlertDialog(
-      //   parentContext: context,
-      //   captionText: '发现新版本',
-      //   remark: '1、修改大量bugs；\n'
-      //       '2、用户能自主创建复习计划；\n'
-      //       // '2、用户能自主创建复习计划；\n'
-      //       // '2、用户能自主创建复习计划；\n'
-      //       // '2、用户能自主创建复习计划；\n'
-      //       // '2、用户能自主创建复习计划；\n'
-      //       // '2、用户能自主创建复习计划；\n'
-      //       // '2、用户能自主创建复习计划；\n'
-      //       '3、其他重大更新。',
-      //   buttonTextForOK: '马上更新',
-      //   buttonTextForCancel: '暂不更新',
-      //   buttonColorForCancel: GlobalState.themeGreyColorAtiOSTodo,
-      //   restoreWebViewToShowIfNeeded: true,
-      // );
-      // });
+        });
+      }
     });
   }
 
@@ -370,6 +311,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
                     // Shouldn't show the login page
                     shouldShow = false;
                   } else {
+                    // Should show the login page
                     shouldShow = true;
                   }
 
@@ -551,18 +493,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
   @override
   void afterFirstLayout(BuildContext context) {
-    // TODO: TCB tests
-    // TCBUserHandler.getUserInfo().then((value) {
-    //   var v = value;
-    // });
-
     print('Screen height:${GlobalState.screenHeight}');
     print('Screen width:${GlobalState.screenWidth}');
-
-    // Timer(const Duration(seconds: 5), () {
-    //   GlobalState.noteDetailWidgetState.currentState
-    //       .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
-    // });
   }
 
   // Private methods
@@ -613,13 +545,12 @@ class MasterDetailPageState extends State<MasterDetailPage>
       forceToSetIsReviewAppVar: true,
     )) {
       // Review app
-      // shouldShowLoginPage = false;
       GlobalState.shouldShowLoginPage = false;
     } else {
       // Not review app
 
       // test
-      var s = await TCBLoginHandler.hasLoginTCB();
+      // var s = await TCBLoginHandler.hasLoginTCB();
 
       if (!await NetworkHandler.hasNetworkConnection()) {
         // shouldShowLoginPage = true;
@@ -715,5 +646,57 @@ class MasterDetailPageState extends State<MasterDetailPage>
             getFolderReviewPlanByFolderIdResult,
       ),
     );
+  }
+
+  Future<void> checkIfShowUpdateDialogOrNot() async {
+    // check show update dialog or not // show update dialog or not
+    // whether to show update dialog
+
+    var shouldSowUpdateDialog =
+        await AppUpdateHandler.shouldShowUpdateDialogIfNeeded();
+
+    if (shouldSowUpdateDialog) {
+      // Hide the webView first before showing update dialog, prevent it from being blocked
+      if (GlobalState.screenType != 1) {
+        GlobalState.noteDetailWidgetState.currentState
+            .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
+      }
+
+      var shouldGoToUpdateApp = await AlertDialogHandler().showAlertDialog(
+        // update dialog // update app tip // show update dialog
+        parentContext: context,
+        captionText: '发现新版本',
+        remark: '1、修改大量bugs；\n'
+            '2、用户能自主创建复习计划；\n'
+            '3、其他重大更新。',
+        buttonTextForOK: '马上更新',
+        buttonTextForCancel: '暂不更新',
+        buttonColorForCancel: GlobalState.themeGreyColorAtiOSTodo,
+        restoreWebViewToShowIfNeeded: true,
+        expandRemarkToMaxFinite: false,
+        barrierDismissible: false,
+      );
+
+      if (shouldGoToUpdateApp) {
+        // Update the app
+
+        if (Platform.isIOS) {
+          // go to app store // go to ios app store
+          await StoreRedirect.redirect(
+              androidAppId: GlobalState.androidAppId,
+              iOSAppId: GlobalState.iOSAppId);
+        } else if (Platform.isAndroid) {
+          var url = GlobalState.downloadLinkForAndroid;
+          await canLaunch(url)
+              ? await launch(url)
+              : throw 'Could not launch $url';
+        } else {
+          var s = 's';
+        }
+      } else {
+        // Don't update the app
+        var ss = 's';
+      }
+    }
   }
 }

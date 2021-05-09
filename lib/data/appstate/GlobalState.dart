@@ -71,15 +71,15 @@ class GlobalState with ChangeNotifier {
   static String wxUniLink = 'https://t.zcoo.net/sealsite/';
 
   // Common variables
-  // static String errorMsg = '';
 
   // app current info // app status // app status info
   // app info variable
   static bool isAppFirstTimeToLaunch = false;
   static bool isAppInitialized = false;
+  // Notice: Before invoke hasLoginTCB() method, isLoggedIn variable will be false.
+  // Please make sure to call hasLoginTCB() method, before using isLoggedIn variable to check the user's login status
   static bool isLoggedIn = false;
 
-  // static bool isLoginPageShown = false;
   static bool shouldShowLoginPage = false;
   static bool hasNetwork = true;
   static bool isReviewApp =

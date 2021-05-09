@@ -140,6 +140,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         name: 'NotifyDartWebViewHasLoaded',
         onMessageReceived: (JavascriptMessage message) {
           // notify web view load // when web view load successfully
+          // webview loaded event
 
           GlobalState.isClickingNoteListItem = false;
 
@@ -156,7 +157,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           // Broadcasting webView loaded event to subscribers
           Timer(const Duration(milliseconds: 2000), () { // Delay 2 seconds to notify subscribers, making sure that the webView loaded completely
             GlobalState.webViewLoadedEventHandler
-                .notifySubscribersWebViewHasLoaded(
+                .notifySubscribersThatWebViewHasLoaded(
                     GlobalState.hasWebViewLoaded);
           });
         }), // NotifyDartWebViewHasLoaded

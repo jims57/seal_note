@@ -13,7 +13,7 @@ class WebViewLoadedEventHandler {
   //   webViewLoadedController.add(response); // send an arbitrary event
   // }
 
-  void notifySubscribersWebViewHasLoaded(bool hasWebViewLoaded) {
+  void notifySubscribersThatWebViewHasLoaded(bool hasWebViewLoaded) {
     webViewLoadedController.add(hasWebViewLoaded); // send an arbitrary event
   }
 }
