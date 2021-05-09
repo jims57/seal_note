@@ -284,11 +284,11 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+
+
 // // Test main
-// import 'dart:async';
 // import 'package:flutter/material.dart';
 // import 'package:flutter/cupertino.dart';
-// import 'package:seal_note/model/common/ResponseModel.dart';
 //
 // void main() => runApp(MyApp());
 //
@@ -312,46 +312,19 @@ class _MyAppState extends State<MyApp> {
 // }
 //
 // class ParentWidgetState extends State<ParentWidget> {
-//   var model = new BaseModel();
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     model.fetchDone.listen((_) {
-//       var s = _;
-//     });
-//   }
-//
 //   @override
 //   Widget build(BuildContext context) {
 //     return Column(children: [
 //       CupertinoButton(
 //         child: Text('Click Me'),
 //         color: Colors.blue,
-//         onPressed: () {
-//           model.fetch();
-//         },
+//         onPressed: () {},
 //       )
 //     ]);
 //   }
 // }
-//
-// class BaseModel {
-//   Map objects;
-//   StreamController fetchDoneController = new StreamController.broadcast();
-//
-//   // define constructor here
-//
-//   fetch() {
-//     // fetch json from server and then load it to objects
-//     // emits an event here
-//     // fetchDoneController.add("all done"); // send an arbitrary event
-//     fetchDoneController.add(
-//         ResponseModel.getResponseModelForSuccess()); // send an arbitrary event
-//   }
-//
-//   // Stream get fetchDone => fetchDoneController.stream;
-//   Stream get fetchDone {
-//     return fetchDoneController.stream;
-//   }
-// }
+
+
+
+
+

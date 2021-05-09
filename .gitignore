@@ -240,3 +240,6 @@ ios/Runner/Runner.entitlements
 .flutter-plugins-dependencies
 .idea/dictionaries/mac.xml
 .idea/dictionaries/mac.xml
+.idea/dictionaries/mac.xml
+.idea/libraries/Flutter_Plugins.xml
+macos/Flutter/GeneratedPluginRegistrant.swift

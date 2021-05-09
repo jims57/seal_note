@@ -10,6 +10,7 @@ import 'package:seal_note/ui/settings/SettingPage.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/util/tcb/TCBUserHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
+// import 'package:url_launcher/url_launcher.dart';
 
 import 'FolderListItemWidget.dart';
 import 'FolderListWidget.dart';
@@ -242,7 +243,13 @@ class FolderListPageState extends State<FolderListPage>
                               // setting button // setting button event
                               // test button // test button event
 
-                             var res =  await TCBUserHandler.getUserInfo();
+                             // var res =  await TCBUserHandler.getUserInfo();
+
+                             //  const _url = 'https://flutter.dev';
+                             //  const _url = 'http://a.app.qq.com/o/simple.jsp?pkgname=zcootong.zcoonet.com.gpb';
+                              const _url = 'https://itunes.apple.com/cn/app/yuan-zhang-tou-tiao/id1371947588';
+                              // await canLaunch(_url) ? await launch(_url) : throw 'Could not launch $_url';
+
                              var s = 's';
 
                               // var s = await GlobalState.database

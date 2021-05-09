@@ -46,6 +46,10 @@ class GlobalState with ChangeNotifier {
   static int noteListAbstractMaxLength = 50;
   static int incrementalStepToUseRegex = 100;
   static const int minLengthToTriggerRefreshForNoteListPage = 0;
+  static String iOSAppId = '1371947588';
+  static String androidAppId = 'zcootong.zcoonet.com.gpb';
+  static String downloadLinkForIOS = 'https://itunes.apple.com/cn/app/yuan-zhang-tou-tiao/id$iOSAppId';
+  static String downloadLinkForAndroid = 'http://a.app.qq.com/o/simple.jsp?pkgname=$androidAppId';
 
   // TCB configuration
   static String tcbEnvironment = 'seal-note-app-env-8ei8de6728d969';

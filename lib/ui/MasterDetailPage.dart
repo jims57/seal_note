@@ -18,6 +18,8 @@ import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/util/networks/NetworkHandler.dart';
 import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
+import 'dart:io' show Platform;
+import 'package:store_redirect/store_redirect.dart';
 
 import 'NoteDetailWidget.dart';
 
@@ -98,12 +100,14 @@ class MasterDetailPageState extends State<MasterDetailPage>
             .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
       }
 
-      AlertDialogHandler().showAlertDialog(
+      AlertDialogHandler()
+          .showAlertDialog(
+        // update dialog // update app tip
         parentContext: context,
         captionText: '发现新版本',
         remark: '1、修改大量bugs；\n'
             '2、用户能自主创建复习计划；\n'
-            '2、用户能自主创建复习计划；\n'
+            // '2、用户能自主创建复习计划；\n'
             // '2、用户能自主创建复习计划；\n'
             // '2、用户能自主创建复习计划；\n'
             // '2、用户能自主创建复习计划；\n'
@@ -121,8 +125,26 @@ class MasterDetailPageState extends State<MasterDetailPage>
         buttonColorForCancel: GlobalState.themeGreyColorAtiOSTodo,
         restoreWebViewToShowIfNeeded: true,
         expandRemarkToMaxFinite: false,
+      )
+          .then((shouldGoToUpdateApp) async {
+        if (shouldGoToUpdateApp) {
+          // Update the app
 
-      );
+          if (Platform.isIOS) {
+            // go to app store // go to ios app store
+            await StoreRedirect.redirect(
+                androidAppId: GlobalState.androidAppId,
+                iOSAppId: GlobalState.iOSAppId);
+          } else if (Platform.isAndroid) {
+            var a = 's';
+          } else {
+            var s ='s';
+          }
+        } else {
+          // Don't update the app
+          var ss = 's';
+        }
+      });
 
       // Timer(const Duration(milliseconds: 100), () {
       // GlobalState.noteDetailWidgetState.currentState
