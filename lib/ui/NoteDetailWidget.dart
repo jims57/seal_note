@@ -95,7 +95,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
 

@@ -245,3 +245,9 @@ ios/Runner/Runner.entitlements
 macos/Flutter/GeneratedPluginRegistrant.swift
 .flutter-plugins-dependencies
 .idea/libraries/Flutter_Plugins.xml
+.flutter-plugins 7
+.flutter-plugins-dependencies 7
+.packages 2
+ios/Flutter/Flutter 6.podspec
+ios/Flutter/flutter_export_environment 9.sh
+ios/Flutter/Generated 9.xcconfig

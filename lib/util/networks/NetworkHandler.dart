@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
@@ -12,16 +11,19 @@ class NetworkHandler {
   }
 
   static Future<bool> hasNetworkConnection() async {
-    bool _hasNetwork = true;
+    // hasNetwork: please keep using this local variable rather than GlobalState.hasNetwork,
+    // because it will effect the auto login from the login page if the user has logged in,
+    // if you use GlobalState.hasNetwork to replace this local variable
+    var hasNetwork = true;
 
     ConnectivityResult connectivityResult = await getNetworkConnectivityType();
 
     // When it is none(index = 2), no network connection
     if (connectivityResult.index == 2) {
-      _hasNetwork = false;
+      hasNetwork = false;
     }
 
-    return _hasNetwork;
+    return hasNetwork;
   }
 
   static void checkNetworkPeriodically(

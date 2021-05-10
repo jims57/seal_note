@@ -10,9 +10,13 @@ enum UpdateAppOption {
 
 class AppUpdateHandler {
   static Future<UpdateAppOption> getUpdateAppOption() async {
+    // get update option method
+
     var updateAppOption = UpdateAppOption.NoUpdate;
 
-    if ((Platform.isIOS || Platform.isAndroid) && GlobalState.isLoggedIn) {
+    // if ((Platform.isIOS || Platform.isAndroid) && GlobalState.isLoggedIn) {
+    // if ((Platform.isIOS || Platform.isAndroid) && !GlobalState.shouldShowLoginPage) {
+    if ((Platform.isIOS || Platform.isAndroid)) {
       // Currently, only iOS and Android need to show update dialog,
       // and making sure the user has logged in, don't show update dialog before login
 

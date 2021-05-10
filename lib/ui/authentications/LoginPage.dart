@@ -15,6 +15,7 @@ import 'package:seal_note/util/networks/NetworkHandler.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:seal_note/util/updates/AppUpdateHandler.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({
@@ -89,7 +90,6 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
 
@@ -243,35 +243,51 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                     } else {
                       // All login checks pass
 
-                      GlobalState.loadingWidgetChangeNotifier
-                          .shouldShowLoadingWidget = true;
+                      // Don't execute wx login again, if it is under a compulsory update status
+                      if (GlobalState.updateAppOption ==
+                          UpdateAppOption.CompulsoryUpdate) {
+                        // Compulsory update status
 
-                      var responseForLogin = await TCBLoginHandler.login(
-                        autoUseAnonymousWayToLoginInSimulator: true,
-                      );
-
-                      if (responseForLogin.code == 0) {
-                        GlobalState.loadingWidgetChangeNotifier
-                            .shouldShowLoadingWidget = false;
-
-                        hideLoginPage(forceToShowWebView: true);
-
-                        _shouldShowErrorPanel = false;
-
-                        GlobalState.isLoggedIn = true;
+                        hideLoginPage();
 
                         GlobalState.masterDetailPageState.currentState
-                            .triggerSetState();
-
-                        // Check if it should show the update dialog or not
-                        GlobalState.masterDetailPageState.currentState
-                            .checkIfShowUpdateDialogOrNot();
-                      } else {
-                        showErrorPanel(
-                          // errorInfo: _errorInfoForLoginFailure,
-                          errorInfo: responseForLogin.message,
-                          autoHide: true,
+                            .checkIfShowUpdateDialogOrNot(
+                          forceToGetUpdateAppOption: false,
                         );
+                      } else {
+                        // Isn't compulsory update status
+                        GlobalState.loadingWidgetChangeNotifier
+                            .shouldShowLoadingWidget = true;
+
+                        var responseForLogin = await TCBLoginHandler.login(
+                          autoUseAnonymousWayToLoginInSimulator: true,
+                        );
+
+                        if (responseForLogin.code == 0) {
+                          GlobalState.loadingWidgetChangeNotifier
+                              .shouldShowLoadingWidget = false;
+
+                          hideLoginPage(forceToShowWebView: true);
+
+                          _shouldShowErrorPanel = false;
+
+                          GlobalState.isLoggedIn = true;
+
+                          GlobalState.masterDetailPageState.currentState
+                              .triggerSetState();
+
+                          // Check if it should show the update dialog or not
+                          GlobalState.masterDetailPageState.currentState
+                              .checkIfShowUpdateDialogOrNot(
+                            forceToGetUpdateAppOption: false,
+                          );
+                        } else {
+                          showErrorPanel(
+                            // errorInfo: _errorInfoForLoginFailure,
+                            errorInfo: responseForLogin.message,
+                            autoHide: true,
+                          );
+                        }
                       }
                     }
                   },
@@ -426,18 +442,27 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
 
   void hideLoginPage({
     bool forceToShowWebView = true,
+    bool shouldShowUpdateAppDialogIfNeeded = false,
   }) {
     setState(() {
       _loginPageWidth = 0.0;
-      // GlobalState.isLoginPageShown = false;
       GlobalState.shouldShowLoginPage = false;
 
+      // Show WebView or not
       if (forceToShowWebView) {
         GlobalState.noteDetailWidgetState.currentState
             .showWebView(forceToSyncWithShouldHideWebViewVar: true);
       } else {
         GlobalState.noteDetailWidgetState.currentState
             .hideWebView(forceToSyncWithShouldHideWebViewVar: true);
+      }
+
+      // Show update app dialog or not
+      if (shouldShowUpdateAppDialogIfNeeded) {
+        GlobalState.masterDetailPageState.currentState
+            .checkIfShowUpdateDialogOrNot(
+          forceToGetUpdateAppOption: true,
+        );
       }
     });
   }
@@ -504,7 +529,9 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
             // If the user has logged in, going to the note list page automatically
             if (GlobalState.isLoggedIn) {
               // GlobalState.masterDetailPageState.currentState.triggerSetState();
-              GlobalState.loginPageState.currentState.hideLoginPage();
+              GlobalState.loginPageState.currentState.hideLoginPage(
+                shouldShowUpdateAppDialogIfNeeded: true,
+              );
             }
           });
         }

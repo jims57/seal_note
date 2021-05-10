@@ -95,17 +95,21 @@ class MasterDetailPageState extends State<MasterDetailPage>
     super.initState();
 
     // Show update dialog if the user has logged in
-    TCBLoginHandler.hasLoginTCB().then((hasLoginTCB) {
+    TCBLoginHandler.hasLoginTCB().then((hasLoginTCB) async {
       // Check if the user has logged in, we only show the update dialog after logging in
       // show update dialog
 
       // Subscribe WebView loaded event
-      if (hasLoginTCB) {
+
+      // Make sure has network
+      var hasNetwork = await NetworkHandler.hasNetworkConnection();
+
+      if (hasLoginTCB && hasNetwork) {
         // Don't show update dialog before login
         GlobalState.webViewLoadedEventHandler.onWebViewLoaded
             .listen((hasWebViewLoaded) async {
           if (hasWebViewLoaded) {
-            await checkIfShowUpdateDialogOrNot();
+            await checkIfShowUpdateDialogOrNot(forceToGetUpdateAppOption: true);
           }
         });
       }
@@ -538,6 +542,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
   Future<bool> _checkIfShowLoginPageOrNot() async {
     // show login page or not // check if show login page or not
     // check show login page or not // check show login page or not
+    // whether to show login page
 
     // bool shouldShowLoginPage;
 
@@ -549,8 +554,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
     } else {
       // Not review app
 
-      // test
-      // var s = await TCBLoginHandler.hasLoginTCB();
+      var s = 's';
 
       if (!await NetworkHandler.hasNetworkConnection()) {
         // shouldShowLoginPage = true;
@@ -648,12 +652,17 @@ class MasterDetailPageState extends State<MasterDetailPage>
     );
   }
 
-  Future<void> checkIfShowUpdateDialogOrNot() async {
+  Future<void> checkIfShowUpdateDialogOrNot({
+    // forceToGetUpdateAppOption: if true, we will set GlobalState.updateAppOption forcibly again,
+    // rather than keep using the one in memory.
+    bool forceToGetUpdateAppOption = true,
+  }) async {
     // check show update dialog or not // show update dialog or not
     // whether to show update dialog
 
-    // var updateAppOption = await AppUpdateHandler.getUpdateAppOption();
-    GlobalState.updateAppOption = await AppUpdateHandler.getUpdateAppOption();
+    if (forceToGetUpdateAppOption) {
+      GlobalState.updateAppOption = await AppUpdateHandler.getUpdateAppOption();
+    }
 
     if (GlobalState.updateAppOption != UpdateAppOption.NoUpdate) {
       // Hide the webView first before showing update dialog, prevent it from being blocked
@@ -664,11 +673,11 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
       // Variable for alert dialog
       var buttonTextForCancel = '下次提醒';
-      var updateTipForImportant = '这是重大更新，请升级';
+      var updateTipForImportant = '这是重大更新，请更新';
 
       // When it is compulsory update, we need to change the cancel button's appearance
       if (GlobalState.updateAppOption == UpdateAppOption.CompulsoryUpdate) {
-        buttonTextForCancel = '不想升级';
+        buttonTextForCancel = '不想更新';
       }
 
       var shouldGoToUpdateApp = await AlertDialogHandler().showAlertDialog(
@@ -691,7 +700,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
             ),
           ),
         ),
-        buttonTextForOK: '马上升级',
+        buttonTextForOK: '马上更新',
         buttonTextForCancel: buttonTextForCancel,
         buttonColorForCancel: GlobalState.themeGreyColorAtiOSTodo,
         restoreWebViewToShowIfNeeded: true,
@@ -721,11 +730,11 @@ class MasterDetailPageState extends State<MasterDetailPage>
       }
 
       // If it is a compulsory update, navigating to the login page anyway
-      if(GlobalState.updateAppOption == UpdateAppOption.CompulsoryUpdate){
+      if (GlobalState.updateAppOption == UpdateAppOption.CompulsoryUpdate) {
         var errorInfoForLoginPage = updateTipForImportant;
 
-        if(shouldGoToUpdateApp){
-          errorInfoForLoginPage = '请升级后，再继续使用';
+        if (shouldGoToUpdateApp) {
+          errorInfoForLoginPage = '请更新后，再继续使用';
         }
 
         GlobalState.loginPageState.currentState.showLoginPage(
