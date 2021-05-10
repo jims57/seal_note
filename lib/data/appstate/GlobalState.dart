@@ -1,5 +1,6 @@
 import 'package:cloudbase_auth/cloudbase_auth.dart';
 import 'package:cloudbase_core/cloudbase_core.dart';
+import 'package:cloudbase_database/cloudbase_database.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:seal_note/data/appstate/LoadingWidgetChangeNotifier.dart';
 import 'package:seal_note/data/database/database.dart';
@@ -17,7 +18,6 @@ import 'package:seal_note/ui/authentications/LoginPage.dart';
 import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageStackWidget.dart';
 import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:seal_note/ui/common/SelectFolderWidget.dart';
-import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageWidget.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanSecondSubPage.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
 import 'package:seal_note/util/updates/AppUpdateHandler.dart';
@@ -41,6 +41,7 @@ class GlobalState with ChangeNotifier {
 
   // Variable for deployment // deployment variable
   static double appVersion = 1.0;
+  static String systemInfosDocId = '28ee4e3e6098a3361763365f76c12ad7';
 
   // For configuration // app basic info // app basic variable info
   static int noteListTitleMaxLength = 50;
@@ -63,6 +64,8 @@ class GlobalState with ChangeNotifier {
   static CloudBaseCore tcbCloudBaseCore;
   static CloudBaseAuth tcbCloudBaseAuth;
   static CloudBaseAuthState tcbCloudBaseAuthState;
+  static CloudBaseDatabase tcbCloudBaseDatabase;
+  static Command tcbCommand;
   static String tcbAccessToken;
   static String tcbRefreshToken;
   static CloudBaseUserInfo cloudBaseUserInfo;
@@ -287,8 +290,6 @@ class GlobalState with ChangeNotifier {
   static GlobalKey<ReusablePageStackWidgetState> reusablePageStackWidgetState =
       GlobalKey<ReusablePageStackWidgetState>();
 
-  // static GlobalKey<ReusablePageWidgetState> reusablePageWidgetState =
-  //     GlobalKey<ReusablePageWidgetState>();
   static GlobalKey<ReviewPlanWidgetState> reviewPlanWidgetState =
       GlobalKey<ReviewPlanWidgetState>();
   static GlobalKey<ReviewPlanSecondSubPageState> reviewPlanSecondSubPageState =

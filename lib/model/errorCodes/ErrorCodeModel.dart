@@ -22,11 +22,13 @@ class ErrorCodeModel {
 
   // User [5xxx]
   static const int GET_TCB_USER_INFO_FAILED_CODE = 5000;
-  static const String GET_TCB_USER_INFO_FAILED_Message = '获取TCB用户信息失败';
+  static const String GET_TCB_USER_INFO_FAILED_Message = '从服务器获取用户信息失败';
+
+  // SystemInfos [6xxx]
+  static const int GET_TCB_SYSTEM_INFOS_FAILED_CODE = 6000;
+  static const String GET_TCB_SYSTEM_INFOS_FAILED_MESSAGE = '从服务器获取系统信息失败';
 
   // Synchronization [6xxx]
-  static const int SYNC_DATA_TO_SERVER_FAILED_CODE = 6000;
-  static const String SYNC_DATA_TO_SERVER_FAILED_MESSAGE = '同步数据失败，请重试';
 
 // Public methods
 

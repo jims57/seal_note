@@ -251,3 +251,5 @@ macos/Flutter/GeneratedPluginRegistrant.swift
 ios/Flutter/Flutter 6.podspec
 ios/Flutter/flutter_export_environment 9.sh
 ios/Flutter/Generated 9.xcconfig
+.idea/dictionaries/mac.xml
+.flutter-plugins-dependencies

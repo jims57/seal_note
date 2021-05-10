@@ -3,6 +3,7 @@ import 'package:cloudbase_core/cloudbase_core.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/model/common/ResponseModel.dart';
 import 'package:seal_note/model/errorCodes/ErrorCodeModel.dart';
+import 'package:seal_note/util/tcb/TCBInitHandler.dart';
 import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
 
 class TCBUserHandler {
@@ -41,7 +42,7 @@ class TCBUserHandler {
   static Future<ResponseModel<CloudBaseUserInfo>> _getUserInfoFromTCB() async {
     var response;
 
-    var auth = TCBLoginHandler.getCloudBaseAuth();
+    var auth = TCBInitHandler.getCloudBaseAuth();
 
     await auth.getUserInfo().then((userInfo) {
       response = ResponseModel.getResponseModelForSuccess<CloudBaseUserInfo>(
