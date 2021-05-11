@@ -41,7 +41,8 @@ class GlobalState with ChangeNotifier {
 
   // Variable for deployment // deployment variable
   static double appVersion = 1.0;
-  static String systemInfosDocId = '28ee4e3e6098a3361763365f76c12ad7';
+  static int systemInfoVersion = 1; // See: systemInfoVersion.json
+  // static String systemInfosDocId = '28ee4e3e6098a3361763365f76c12ad7';
 
   // For configuration // app basic info // app basic variable info
   static int noteListTitleMaxLength = 50;

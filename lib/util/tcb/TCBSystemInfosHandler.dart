@@ -9,8 +9,9 @@ class TCBSystemInfosHandler {
 
     await TCBInitHandler.getTCBCollection(collectionName: 'systemInfos')
         .where({
-          '_id': GlobalState.tcbCommand.eq(GlobalState.systemInfosDocId),
-          'systemInfoVersion': GlobalState.tcbCommand.eq(1),
+          // '_id': GlobalState.tcbCommand.eq(GlobalState.systemInfosDocId),
+          'systemInfoVersion':
+              GlobalState.tcbCommand.eq(GlobalState.systemInfoVersion),
         })
         .get()
         .then((result) {
