@@ -56,8 +56,6 @@ class _SettingPageState extends State<SettingPage> {
                   callbackWhenExecutingLoading: _executeSyncDataWhenSignOut,
                 );
 
-                var s = 's';
-
                 if (shouldSignOut) {
                   var response = await TCBLoginHandler.signOutWX();
 

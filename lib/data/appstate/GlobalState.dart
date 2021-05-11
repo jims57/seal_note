@@ -9,6 +9,7 @@ import 'package:seal_note/event/webView/WebViewLoadedEventHandler.dart';
 import 'package:seal_note/model/ImageSyncItem.dart';
 import 'package:seal_note/model/NoteWithProgressTotal.dart';
 import 'package:seal_note/model/ReusablePage/ReusablePageModel.dart';
+import 'package:seal_note/model/tcbModels/TCBSystemInfoModel.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/FolderListWidget.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
@@ -42,7 +43,6 @@ class GlobalState with ChangeNotifier {
   // Variable for deployment // deployment variable
   static double appVersion = 1.0;
   static int systemInfoVersion = 1; // See: systemInfoVersion.json
-  // static String systemInfosDocId = '28ee4e3e6098a3361763365f76c12ad7';
 
   // For configuration // app basic info // app basic variable info
   static int noteListTitleMaxLength = 50;
@@ -78,9 +78,14 @@ class GlobalState with ChangeNotifier {
   static String wxUniLink = 'https://t.zcoo.net/sealsite/';
 
   // TCB collection data
-  static dynamic tcbSystemInfosData;
-
-  // Common variables
+  static TCBSystemInfoModel tcbSystemInfo;
+  // static TCBSystemInfoModel _tcbSystemInfo;
+  //
+  // static Future<TCBSystemInfoModel> getTCBSystemInfo() async {
+  //   if(_tcbSystemInfo==null){
+  //
+  //   }
+  // }
 
   // app current info // app status // app status info
   // app info variable

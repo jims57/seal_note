@@ -284,8 +284,6 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-
-
 // // Test main
 // import 'package:flutter/material.dart';
 // import 'package:flutter/cupertino.dart';
@@ -323,8 +321,3 @@ class _MyAppState extends State<MyApp> {
 //     ]);
 //   }
 // }
-
-
-
-
-

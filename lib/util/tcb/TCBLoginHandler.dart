@@ -87,8 +87,6 @@ class TCBLoginHandler {
           ResponseModel.getResponseModelForSuccess<CloudBaseAuthState>(
         result: success,
       );
-
-      var s = 's';
     }).catchError((err) {
       responseModel =
           ResponseModel.getResponseModelForError<CloudBaseException>(

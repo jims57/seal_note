@@ -789,19 +789,6 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
   @override
   void afterFirstLayout(BuildContext context) {
-    // Listen to the WebView event
-    // GlobalState.flutterWebviewPlugin.onScrollXChanged.listen((event) {
-    //   var e = event;
-    // });
-    //
-    // GlobalState.flutterWebviewPlugin.onScrollYChanged.listen((event) {
-    //   var e = event;
-    // });
-    //
-    // GlobalState.flutterWebviewPlugin.onStateChanged.listen((event) {
-    //   var e = event;
-    // });
-
     if (GlobalState.screenType != 1) {
       Timer(
           const Duration(

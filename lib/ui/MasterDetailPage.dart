@@ -58,22 +58,9 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
   @override
   void initState() {
-    // _executeAllAsyncMethodsForInitState();
     loginPageFutureBuilder = _checkIfShowLoginPageOrNot();
 
-    // _checkIfShowLoginPageOrNot();
-
     GlobalState.flutterWebviewPlugin = FlutterWebviewPlugin();
-
-    // GlobalState.flutterWebviewPlugin.onStateChanged.listen((event) {
-    //
-    //   var s ='s';
-    //   if(event.type == WebViewState.finishLoad){
-    //     var e=event;
-    //
-    //     GlobalState.noteDetailWidgetState.currentState.hideWebView(forceToSyncWithShouldHideWebViewVar: false);
-    //   }
-    // });
 
     GlobalState.masterDetailPageContext = context;
 
@@ -99,8 +86,6 @@ class MasterDetailPageState extends State<MasterDetailPage>
     TCBLoginHandler.hasLoginTCB().then((hasLoginTCB) async {
       // Check if the user has logged in, we only show the update dialog after logging in
       // show update dialog
-
-      // Subscribe WebView loaded event
 
       // Make sure has network
       var hasNetwork = await NetworkHandler.hasNetworkConnection();
@@ -189,7 +174,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
         // Refresh the note list page after rotation
         if (GlobalState.screenType != 1) {
-          // Specific logics for the small screen, considering the WebView
+          // Specific logic for the small screen, considering the WebView
           // When it isn't the small screen, the WebView will show by default,
           // So we need to take further action to handle it in order to avoid the WebView to block any widget,
           // such as Alert Dialog
@@ -577,8 +562,6 @@ class MasterDetailPageState extends State<MasterDetailPage>
       GlobalState.shouldShowLoginPage = false;
     } else {
       // Not review app
-
-      var s = 's';
 
       if (!await NetworkHandler.hasNetworkConnection()) {
         // shouldShowLoginPage = true;

@@ -243,14 +243,13 @@ class FolderListPageState extends State<FolderListPage>
                               // setting button // setting button event
                               // test button // test button event // click test button
 
-                             // var res =  await TCBUserHandler.getUserInfo();
+                              // var res =  await TCBUserHandler.getUserInfo();
 
-                             //  const _url = 'https://flutter.dev';
-                             //  const _url = 'http://a.app.qq.com/o/simple.jsp?pkgname=zcootong.zcoonet.com.gpb';
-                              const _url = 'https://itunes.apple.com/cn/app/yuan-zhang-tou-tiao/id1371947588';
+                              //  const _url = 'https://flutter.dev';
+                              //  const _url = 'http://a.app.qq.com/o/simple.jsp?pkgname=zcootong.zcoonet.com.gpb';
+                              const _url =
+                                  'https://itunes.apple.com/cn/app/yuan-zhang-tou-tiao/id1371947588';
                               // await canLaunch(_url) ? await launch(_url) : throw 'Could not launch $_url';
-
-                             var s = 's';
 
                               // var s = await GlobalState.database
                               //     .setNoteToNextReviewPhrase(14);

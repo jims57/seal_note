@@ -4,12 +4,11 @@ import 'package:seal_note/model/errorCodes/ErrorCodeModel.dart';
 import 'package:seal_note/util/tcb/TCBInitHandler.dart';
 
 class TCBSystemInfosHandler {
-  static Future<ResponseModel> getSystemInfos() async {
+  static Future<ResponseModel> getSystemInfo() async {
     var response;
 
     await TCBInitHandler.getTCBCollection(collectionName: 'systemInfos')
         .where({
-          // '_id': GlobalState.tcbCommand.eq(GlobalState.systemInfosDocId),
           'systemInfoVersion':
               GlobalState.tcbCommand.eq(GlobalState.systemInfoVersion),
         })
