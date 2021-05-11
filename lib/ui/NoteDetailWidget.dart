@@ -1100,6 +1100,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   }
 
   void executionCallbackToAvoidBeingBlockedByWebView(
+      // This method able to make sure that the WebView won't black widget, such as Alert Dialog
       {@required VoidCallback callback}) {
     hideWebView(forceToSyncWithShouldHideWebViewVar: false);
 
