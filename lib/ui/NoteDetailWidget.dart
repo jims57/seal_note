@@ -25,6 +25,7 @@ import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/util/dialog/FlushBarHandler.dart';
 import 'package:seal_note/util/file/FileHandler.dart';
 import 'package:seal_note/util/html/HtmlHandler.dart';
+import 'package:seal_note/util/robustness/RetryHandler.dart';
 import 'package:seal_note/util/route/ScaleRoute.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
@@ -154,7 +155,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           GlobalState.hasWebViewLoaded = true;
 
           // Broadcasting webView loaded event to subscribers
-          Timer(const Duration(milliseconds: 2000), () { // Delay 2 seconds to notify subscribers, making sure that the webView loaded completely
+          Timer(const Duration(milliseconds: 2000), () {
+            // Delay 2 seconds to notify subscribers, making sure that the webView loaded completely
             GlobalState.webViewLoadedEventHandler
                 .notifySubscribersThatWebViewHasLoaded(
                     GlobalState.hasWebViewLoaded);
@@ -787,6 +789,19 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
   @override
   void afterFirstLayout(BuildContext context) {
+    // Listen to the WebView event
+    // GlobalState.flutterWebviewPlugin.onScrollXChanged.listen((event) {
+    //   var e = event;
+    // });
+    //
+    // GlobalState.flutterWebviewPlugin.onScrollYChanged.listen((event) {
+    //   var e = event;
+    // });
+    //
+    // GlobalState.flutterWebviewPlugin.onStateChanged.listen((event) {
+    //   var e = event;
+    // });
+
     if (GlobalState.screenType != 1) {
       Timer(
           const Duration(
@@ -943,12 +958,19 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
   void hideWebView({
     bool forceToSyncWithShouldHideWebViewVar = true,
+    int retryTimes = 1,
   }) {
     if (forceToSyncWithShouldHideWebViewVar) {
       GlobalState.shouldHideWebView = true;
     }
 
-    GlobalState.flutterWebviewPlugin.hide();
+    RetryHandler.retryExecutionWithTimerDelay(
+      retryTimes: retryTimes,
+      millisecondsToDelay: 100,
+      callback: () {
+        GlobalState.flutterWebviewPlugin.hide();
+      },
+    );
   }
 
   void restoreWebViewToShowIfNeeded() {
@@ -1102,7 +1124,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   void executionCallbackToAvoidBeingBlockedByWebView(
       // This method able to make sure that the WebView won't black widget, such as Alert Dialog
       {@required VoidCallback callback}) {
-    hideWebView(forceToSyncWithShouldHideWebViewVar: false);
+    hideWebView(
+      forceToSyncWithShouldHideWebViewVar: false,
+      retryTimes: 10,
+    );
 
     callback();
   }

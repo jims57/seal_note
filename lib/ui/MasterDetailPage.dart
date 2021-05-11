@@ -17,6 +17,7 @@ import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageStackWidget.
 import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/util/networks/NetworkHandler.dart';
+import 'package:seal_note/util/robustness/RetryHandler.dart';
 import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
 import 'package:seal_note/util/updates/AppUpdateHandler.dart';
 import 'dart:io' show Platform;
@@ -108,6 +109,9 @@ class MasterDetailPageState extends State<MasterDetailPage>
         // Don't show update dialog before login
         GlobalState.webViewLoadedEventHandler.onWebViewLoaded
             .listen((hasWebViewLoaded) async {
+          // listen webview loaded event // listen to webview loaded event
+          // listen webview load event // listen to webview load event
+
           if (hasWebViewLoaded) {
             await checkIfShowUpdateDialogOrNot(forceToGetUpdateAppOption: true);
           }
@@ -133,10 +137,17 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
     // Check if it is the first load, sometimes, the subsequent performance will be omitted
     if (isFirstLoad) {
+      // When the app's first launch
       // first load // it is first load
+      // app launch event // app start event
+      // start app event // launc app event
 
       isFirstLoad = false;
     } else {
+      // When not the app's first launch
+      // rotation event // rotate device event
+      // device rotation
+
       // Get app bar height after rotation
 
       // Check if it is handling the reusable page
@@ -158,6 +169,14 @@ class MasterDetailPageState extends State<MasterDetailPage>
       GlobalState.viewAgreementPageChangeNotifier.shouldAvoidTransitionEffect =
           true;
 
+      // If Login Page is being shown, hide the WebView forcibly
+      if (GlobalState.shouldShowLoginPage) {
+        GlobalState.noteDetailWidgetState.currentState.hideWebView(
+          forceToSyncWithShouldHideWebViewVar: false,
+          retryTimes: 10,
+        );
+      }
+
       Timer(const Duration(milliseconds: 700), () {
         // Update the app bar's height on the folder list page
         refreshFolderListPageAppBarHeight();
@@ -170,6 +189,11 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
         // Refresh the note list page after rotation
         if (GlobalState.screenType != 1) {
+          // Specific logics for the small screen, considering the WebView
+          // When it isn't the small screen, the WebView will show by default,
+          // So we need to take further action to handle it in order to avoid the WebView to block any widget,
+          // such as Alert Dialog
+
           if (GlobalState.selectedNoteModel.id == null) {
             GlobalState.noteListWidgetForTodayState.currentState
                 .triggerToClickOnNoteListItem(
