@@ -21,8 +21,8 @@ class AppUpdateHandler {
       var response = await TCBAppUpdateHandler.getLatestAppVersionReleased();
 
       if (response.code == 0 && GlobalState.appVersion < response.result) {
-        // updateAppOption = UpdateAppOption.OptionalUpdate;
-        updateAppOption = UpdateAppOption.CompulsoryUpdate;
+        updateAppOption = UpdateAppOption.OptionalUpdate;
+        // updateAppOption = UpdateAppOption.CompulsoryUpdate;
       }
     }
 

@@ -281,7 +281,7 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                           // Check if it should show the update dialog or not
                           GlobalState.masterDetailPageState.currentState
                               .checkIfShowUpdateDialogOrNot(
-                            forceToGetUpdateAppOption: false,
+                            forceToGetUpdateAppOption: true,
                           );
                         } else {
                           showErrorPanel(
