@@ -18,14 +18,6 @@ class AppUpdateHandler {
       // Currently, only iOS and Android need to show update dialog,
       // and making sure the user has logged in, don't show update dialog before login
 
-      // var maxAppVersionReleased =
-      //     await TCBAppUpdateHandler.getLatestAppVersionReleased();
-      //
-      // if (GlobalState.appVersion < maxAppVersionReleased) {
-      //   // updateAppOption = UpdateAppOption.OptionalUpdate;
-      //   updateAppOption = UpdateAppOption.CompulsoryUpdate;
-      // }
-
       var response = await TCBAppUpdateHandler.getLatestAppVersionReleased();
 
       if (response.code == 0 && GlobalState.appVersion < response.result) {

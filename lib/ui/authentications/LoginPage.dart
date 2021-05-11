@@ -64,13 +64,15 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
     networkSubscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
-      // Got a new connectivity status!
+          // network listener // listen to network status
+          // listen network switching status
+
       if (!_isWaitingNetworkToBecomeNormal && GlobalState.shouldShowLoginPage) {
         if (result.index == 2) {
           // When there is no network
           showErrorPanelWhenNetworkProblem(
             forceToCheckNetwork: true,
-            checkNetworkPeriodically: false,
+            checkNetworkPeriodically: true,
             forceToSetIsWaitingNetworkToBecomeNormalVar: false,
           );
         } else {
