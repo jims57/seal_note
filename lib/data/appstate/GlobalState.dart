@@ -76,6 +76,9 @@ class GlobalState with ChangeNotifier {
   static String wxAppId = 'wx559b1bda805a875b';
   static String wxUniLink = 'https://t.zcoo.net/sealsite/';
 
+  // TCB collection data
+  static dynamic tcbSystemInfosData;
+
   // Common variables
 
   // app current info // app status // app status info
