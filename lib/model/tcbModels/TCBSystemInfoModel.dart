@@ -9,8 +9,10 @@ class TCBSystemInfoModel {
 
   factory TCBSystemInfoModel.fromJson(Map<dynamic, dynamic> tcbSystemInfoJson) {
     return TCBSystemInfoModel(
-      latestAppVersionReleased: tcbSystemInfoJson['latestAppVersionReleased'],
-      minSupportedAppVersion: tcbSystemInfoJson['minSupportedAppVersion'],
+      latestAppVersionReleased:
+          double.parse(tcbSystemInfoJson['latestAppVersionReleased']),
+      minSupportedAppVersion:
+          double.parse(tcbSystemInfoJson['minSupportedAppVersion']),
     );
   }
 }
