@@ -671,87 +671,103 @@ class MasterDetailPageState extends State<MasterDetailPage>
       GlobalState.updateAppOption = await AppUpdateHandler.getUpdateAppOption();
     }
 
-    if (GlobalState.updateAppOption != UpdateAppOption.NoUpdate) {
-      // Hide the webView first before showing update dialog, prevent it from being blocked
-      if (GlobalState.screenType != 1) {
-        GlobalState.noteDetailWidgetState.currentState
-            .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
-      }
+    if (GlobalState.updateAppOption == UpdateAppOption.HasError) {
+      // When it has error, when fetching update app option
 
-      GlobalState.noteDetailWidgetState.currentState
-          .executionCallbackToAvoidBeingBlockedByWebView(callback: () async {
-        // Variable for alert dialog
-        var buttonTextForCancel = '下次提醒';
-        var updateTipForImportant = '这是重大更新，请更新';
+      GlobalState.loginPageState.currentState.showLoginPage(
+        errorInfo: '获取更新信息时失败，请检查网络',
+        autoHideErrorInfo: false,
+      );
+    } else {
+      if (GlobalState.updateAppOption == UpdateAppOption.NoUpdate) {
+        // When no error, and it has no update
 
-        // When it is compulsory update, we need to change the cancel button's appearance
-        if (GlobalState.updateAppOption == UpdateAppOption.CompulsoryUpdate) {
-          buttonTextForCancel = '不想更新';
+        // Do nothing currently, if no update for now
+        var s = 's';
+      } else {
+        // When no error, and it has update found
+
+        // Hide the webView first before showing update dialog, prevent it from being blocked
+        if (GlobalState.screenType != 1) {
+          GlobalState.noteDetailWidgetState.currentState
+              .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
         }
 
-        var shouldGoToUpdateApp = await AlertDialogHandler().showAlertDialog(
-          // update dialog // update app tip // show update dialog
-          parentContext: context,
-          captionText: '发现新版本',
-          remark: '1、修改大量bugs；\n'
-              '2、用户能自主创建复习计划；\n'
-              '3、其他重大更新。',
-          child: Container(
-            padding: EdgeInsets.only(
-              left: GlobalState.defaultLeftAndRightPadding,
-              right: GlobalState.defaultLeftAndRightPadding,
-            ),
-            child: Text(
-              '注：$updateTipForImportant!',
-              style: TextStyle(
-                fontSize: 14.0,
-                color: Colors.red,
+        GlobalState.noteDetailWidgetState.currentState
+            .executionCallbackToAvoidBeingBlockedByWebView(callback: () async {
+          // Variable for alert dialog
+          var buttonTextForCancel = '下次提醒';
+          var updateTipForImportant = '这是重大更新，请更新';
+
+          // When it is compulsory update, we need to change the cancel button's appearance
+          if (GlobalState.updateAppOption == UpdateAppOption.CompulsoryUpdate) {
+            buttonTextForCancel = '不想更新';
+          }
+
+          var shouldGoToUpdateApp = await AlertDialogHandler().showAlertDialog(
+            // update dialog // update app tip // show update dialog
+            parentContext: context,
+            captionText: '发现新版本',
+            remark: '1、修改大量bugs；\n'
+                '2、用户能自主创建复习计划；\n'
+                '3、其他重大更新。',
+            child: Container(
+              padding: EdgeInsets.only(
+                left: GlobalState.defaultLeftAndRightPadding,
+                right: GlobalState.defaultLeftAndRightPadding,
+              ),
+              child: Text(
+                '注：$updateTipForImportant!',
+                style: TextStyle(
+                  fontSize: 14.0,
+                  color: Colors.red,
+                ),
               ),
             ),
-          ),
-          buttonTextForOK: '马上更新',
-          buttonTextForCancel: buttonTextForCancel,
-          buttonColorForCancel: GlobalState.themeGreyColorAtiOSTodo,
-          restoreWebViewToShowIfNeeded: true,
-          expandRemarkToMaxFinite: false,
-          barrierDismissible: false,
-        );
-
-        if (shouldGoToUpdateApp) {
-          // Update the app
-
-          if (Platform.isIOS) {
-            // go to app store // go to ios app store
-            await StoreRedirect.redirect(
-                androidAppId: GlobalState.androidAppId,
-                iOSAppId: GlobalState.iOSAppId);
-          } else if (Platform.isAndroid) {
-            var url = GlobalState.downloadLinkForAndroid;
-            await canLaunch(url)
-                ? await launch(url)
-                : throw 'Could not launch $url';
-          } else {
-            var s = 's';
-          }
-        } else {
-          // Don't update the app
-          var ss = 's';
-        }
-
-        // If it is a compulsory update, navigating to the login page anyway
-        if (GlobalState.updateAppOption == UpdateAppOption.CompulsoryUpdate) {
-          var errorInfoForLoginPage = updateTipForImportant;
+            buttonTextForOK: '马上更新',
+            buttonTextForCancel: buttonTextForCancel,
+            buttonColorForCancel: GlobalState.themeGreyColorAtiOSTodo,
+            restoreWebViewToShowIfNeeded: true,
+            expandRemarkToMaxFinite: false,
+            barrierDismissible: false,
+          );
 
           if (shouldGoToUpdateApp) {
-            errorInfoForLoginPage = '请更新后，再继续使用';
+            // Update the app
+
+            if (Platform.isIOS) {
+              // go to app store // go to ios app store
+              await StoreRedirect.redirect(
+                  androidAppId: GlobalState.androidAppId,
+                  iOSAppId: GlobalState.iOSAppId);
+            } else if (Platform.isAndroid) {
+              var url = GlobalState.downloadLinkForAndroid;
+              await canLaunch(url)
+                  ? await launch(url)
+                  : throw 'Could not launch $url';
+            } else {
+              var s = 's';
+            }
+          } else {
+            // Don't update the app
+            var ss = 's';
           }
 
-          GlobalState.loginPageState.currentState.showLoginPage(
-            errorInfo: errorInfoForLoginPage,
-            autoHideErrorInfo: false,
-          );
-        }
-      });
+          // If it is a compulsory update, navigating to the login page anyway
+          if (GlobalState.updateAppOption == UpdateAppOption.CompulsoryUpdate) {
+            var errorInfoForLoginPage = updateTipForImportant;
+
+            if (shouldGoToUpdateApp) {
+              errorInfoForLoginPage = '请更新后，再继续使用';
+            }
+
+            GlobalState.loginPageState.currentState.showLoginPage(
+              errorInfo: errorInfoForLoginPage,
+              autoHideErrorInfo: false,
+            );
+          }
+        });
+      }
     }
   }
 }

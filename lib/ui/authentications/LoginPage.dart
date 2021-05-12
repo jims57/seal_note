@@ -64,8 +64,8 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
     networkSubscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
-          // network listener // listen to network status
-          // listen network switching status
+      // network listener // listen to network status
+      // listen network switching status
 
       if (!_isWaitingNetworkToBecomeNormal && GlobalState.shouldShowLoginPage) {
         if (result.index == 2) {
@@ -247,17 +247,28 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
 
                       // Don't execute wx login again, if it is under a compulsory update status
                       if (GlobalState.updateAppOption ==
-                          UpdateAppOption.CompulsoryUpdate) {
+                              UpdateAppOption.CompulsoryUpdate ||
+                          GlobalState.updateAppOption ==
+                              UpdateAppOption.HasError) {
                         // Compulsory update status
+
+                        // We should get update app option forcibly from TCB again if it has error,
+                        // because it is probably caused by network problem, we should try it again.
+                        var forceToGetUpdateAppOption = false;
+                        if (GlobalState.updateAppOption ==
+                            UpdateAppOption.HasError) {
+                          forceToGetUpdateAppOption = true;
+                        }
 
                         hideLoginPage();
 
                         GlobalState.masterDetailPageState.currentState
                             .checkIfShowUpdateDialogOrNot(
-                          forceToGetUpdateAppOption: false,
+                          forceToGetUpdateAppOption: forceToGetUpdateAppOption,
                         );
                       } else {
                         // Isn't compulsory update status
+
                         GlobalState.loadingWidgetChangeNotifier
                             .shouldShowLoadingWidget = true;
 
@@ -422,15 +433,16 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
       // If it is a review app, don't show login page any way
       if (isReviewApp) {
         _loginPageWidth = 0.0;
-        // GlobalState.isLoginPageShown = false;
         GlobalState.shouldShowLoginPage = false;
       } else {
         _loginPageWidth = _defaultLoginPageWidth;
         GlobalState.shouldShowLoginPage = true;
       }
 
-      GlobalState.noteDetailWidgetState.currentState
-          .hideWebView(forceToSyncWithShouldHideWebViewVar: false);
+      GlobalState.noteDetailWidgetState.currentState.hideWebView(
+        forceToSyncWithShouldHideWebViewVar: false,
+        retryTimes: 10,
+      );
 
       // Show error info if needed
       if (errorInfo != null) {

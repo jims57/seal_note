@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/util/tcb/TCBAppUpdateHandler.dart';
 import 'dart:io' show Platform;
@@ -6,6 +8,7 @@ enum UpdateAppOption {
   NoUpdate,
   OptionalUpdate,
   CompulsoryUpdate,
+  HasError,
 }
 
 class AppUpdateHandler {
@@ -29,6 +32,7 @@ class AppUpdateHandler {
           // When there is a update
 
           updateAppOption = UpdateAppOption.OptionalUpdate;
+
           // updateAppOption = UpdateAppOption.CompulsoryUpdate;
         } else {
           // When no update
@@ -37,6 +41,8 @@ class AppUpdateHandler {
         }
       } else {
         // Fail to get latest app version released
+
+        updateAppOption = UpdateAppOption.HasError;
 
         var s = 's';
       }
