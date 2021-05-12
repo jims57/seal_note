@@ -25,8 +25,11 @@ class ErrorCodeModel {
   static const String GET_TCB_USER_INFO_FAILED_Message = '从服务器获取用户信息失败';
 
   // SystemInfos [6xxx]
-  static const int GET_TCB_SYSTEM_INFOS_FAILED_CODE = 6000;
-  static const String GET_TCB_SYSTEM_INFOS_FAILED_MESSAGE = '从服务器获取系统信息失败';
+  static const int GET_TCB_SYSTEM_INFO_FAILED_CODE = 6000;
+  static const String GET_TCB_SYSTEM_INFO_FAILED_MESSAGE = '从服务器获取系统信息失败';
+
+  static const int GET_TCB_LATEST_APP_VERSION_RELEASED_FAILED_CODE = 6001;
+  static const String GET_TCB_LATEST_APP_VERSION_RELEASED_FAILED_MESSAGE = '从服务器获取已发布应用最新版本失败';
 
   // Synchronization [6xxx]
 

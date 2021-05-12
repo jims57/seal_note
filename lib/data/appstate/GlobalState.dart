@@ -79,13 +79,6 @@ class GlobalState with ChangeNotifier {
 
   // TCB collection data
   static TCBSystemInfoModel tcbSystemInfo;
-  // static TCBSystemInfoModel _tcbSystemInfo;
-  //
-  // static Future<TCBSystemInfoModel> getTCBSystemInfo() async {
-  //   if(_tcbSystemInfo==null){
-  //
-  //   }
-  // }
 
   // app current info // app status // app status info
   // app info variable

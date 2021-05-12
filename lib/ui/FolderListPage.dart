@@ -8,13 +8,12 @@ import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:seal_note/ui/settings/SettingPage.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
-import 'package:seal_note/util/tcb/TCBUserHandler.dart';
+import 'package:seal_note/util/tcb/TCBSystemInfoHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
-// import 'package:url_launcher/url_launcher.dart';
-
 import 'FolderListItemWidget.dart';
 import 'FolderListWidget.dart';
 import 'common/TextFieldWithClearButtonWidget.dart';
+import 'package:seal_note/model/tcbModels/TCBSystemInfoModel.dart';
 
 class FolderListPage extends StatefulWidget {
   FolderListPage({Key key}) : super(key: key);
@@ -243,23 +242,12 @@ class FolderListPageState extends State<FolderListPage>
                               // setting button // setting button event
                               // test button // test button event // click test button
 
-                              // var res =  await TCBUserHandler.getUserInfo();
+                              var responseForSystemInfos = await TCBSystemInfoHandler.getSystemInfo(
+                                forceToGetSystemInfoFromTCB: false,
+                              );
 
-                              //  const _url = 'https://flutter.dev';
-                              //  const _url = 'http://a.app.qq.com/o/simple.jsp?pkgname=zcootong.zcoonet.com.gpb';
-                              const _url =
-                                  'https://itunes.apple.com/cn/app/yuan-zhang-tou-tiao/id1371947588';
-                              // await canLaunch(_url) ? await launch(_url) : throw 'Could not launch $_url';
+                              var s= 's';
 
-                              // var s = await GlobalState.database
-                              //     .setNoteToNextReviewPhrase(14);
-                              //
-                              // // var s = await GlobalState.database.getNextReviewPlanConfigIdByNoteId(14).get();
-                              //
-                              // var s1 = 's';
-                              // GlobalState.noteDetailWidgetState.currentState
-                              //     .setEditorHeightWithNewWebViewScreenHeight(
-                              //         newWebViewScreenHeight: 150.0);
                             },
                           )
                         ],

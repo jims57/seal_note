@@ -23,8 +23,8 @@ class AppUpdateHandler {
       );
 
       if (response.code == 0 && GlobalState.appVersion < response.result) {
-        // updateAppOption = UpdateAppOption.OptionalUpdate;
-        updateAppOption = UpdateAppOption.CompulsoryUpdate;
+        updateAppOption = UpdateAppOption.OptionalUpdate;
+        // updateAppOption = UpdateAppOption.CompulsoryUpdate;
       }
     }
 
