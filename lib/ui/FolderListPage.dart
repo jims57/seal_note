@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:moor/moor.dart' show Value;
 import 'package:seal_note/data/appstate/GlobalState.dart';
@@ -13,7 +12,6 @@ import 'package:seal_note/util/time/TimeHandler.dart';
 import 'FolderListItemWidget.dart';
 import 'FolderListWidget.dart';
 import 'common/TextFieldWithClearButtonWidget.dart';
-import 'package:seal_note/model/tcbModels/TCBSystemInfoModel.dart';
 
 class FolderListPage extends StatefulWidget {
   FolderListPage({Key key}) : super(key: key);
@@ -242,12 +240,12 @@ class FolderListPageState extends State<FolderListPage>
                               // setting button // setting button event
                               // test button // test button event // click test button
 
-                              var responseForSystemInfos = await TCBSystemInfoHandler.getSystemInfo(
-                                forceToGetSystemInfoFromTCB: false,
+                              var responseForSystemInfos =
+                                  await TCBSystemInfoHandler.getSystemInfo(
+                                forceToGetSystemInfoFromTCB: true,
                               );
 
-                              var s= 's';
-
+                              var s = 's';
                             },
                           )
                         ],

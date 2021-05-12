@@ -1,5 +1,4 @@
 import 'package:cloudbase_auth/cloudbase_auth.dart';
-import 'package:cloudbase_core/cloudbase_core.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/model/common/ResponseModel.dart';
 import 'package:seal_note/model/errorCodes/ErrorCodeModel.dart';
@@ -12,7 +11,8 @@ class TCBUserHandler {
     bool forceToLoginWhenNotLoggedIn = false,
     bool forceToFetchUserInfoFromTCB = false,
   }) async {
-    var responseModelForCloudBaseUserInfo = ResponseModel.getResponseModelForSuccess();
+    var responseModelForCloudBaseUserInfo =
+        ResponseModel.getResponseModelForSuccess<CloudBaseUserInfo>();
     var responseModelForLogin = ResponseModel.getResponseModelForSuccess();
 
     if (!GlobalState.isLoggedIn && forceToLoginWhenNotLoggedIn) {
@@ -49,8 +49,7 @@ class TCBUserHandler {
         result: userInfo,
       );
     }).catchError((err) {
-      response = ResponseModel.getResponseModelForError<CloudBaseException>(
-        result: err,
+      response = ResponseModel.getResponseModelForError<CloudBaseUserInfo>(
         code: ErrorCodeModel.GET_TCB_USER_INFO_FAILED_CODE,
         message: err?.message,
       );

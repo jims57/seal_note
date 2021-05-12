@@ -63,7 +63,7 @@ class TCBLoginHandler {
 
       responseModel =
           ResponseModel.getResponseModelForError<CloudBaseException>(
-        result: err,
+        // result: err,
         code: ErrorCodeModel.WX_AUTH_ANONYMOUS_LOGIN_FAILED_CODE,
         message: ErrorCodeModel.WX_AUTH_ANONYMOUS_LOGIN_FAILED_MESSAGE,
       );
@@ -90,7 +90,7 @@ class TCBLoginHandler {
     }).catchError((err) {
       responseModel =
           ResponseModel.getResponseModelForError<CloudBaseException>(
-        result: err,
+        // result: err,
         message: ErrorCodeModel.WX_AUTH_LOGIN_FAILED_MESSAGE,
         code: ErrorCodeModel.WX_AUTH_LOGIN_FAILED_CODE,
       );
@@ -172,7 +172,7 @@ class TCBLoginHandler {
             true; // If failed, we set it back to login status
 
         response = ResponseModel.getResponseModelForError(
-          result: err,
+          // result: err,
           code: ErrorCodeModel.WX_SIGN_OUT_FAILED_CODE,
           message: ErrorCodeModel.WX_SIGN_OUT_FAILED_MESSAGE,
         );

@@ -22,9 +22,23 @@ class AppUpdateHandler {
         forceToFetchLatestAppVersionReleasedFromTCB: false,
       );
 
-      if (response.code == 0 && GlobalState.appVersion < response.result) {
-        updateAppOption = UpdateAppOption.OptionalUpdate;
-        // updateAppOption = UpdateAppOption.CompulsoryUpdate;
+      if (response.code == 0) {
+        // Succeed to get latest app version released
+
+        if (GlobalState.appVersion < response.result) {
+          // When there is a update
+
+          updateAppOption = UpdateAppOption.OptionalUpdate;
+          // updateAppOption = UpdateAppOption.CompulsoryUpdate;
+        } else {
+          // When no update
+
+          updateAppOption = UpdateAppOption.NoUpdate;
+        }
+      } else {
+        // Fail to get latest app version released
+
+        var s = 's';
       }
     }
 

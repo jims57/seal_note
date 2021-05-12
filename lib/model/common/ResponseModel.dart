@@ -26,22 +26,16 @@ class ResponseModel<T> {
   }
 
   static ResponseModel<T> getResponseModelForError<T>({
-    @required T result,
+    // T result,
     @required int code,
     @required String message,
   }) {
     ResponseModel<T> response = ResponseModel<T>();
 
-    response.result = result;
+    // response.result = result;
     response.code = code;
     response.message = message;
 
     return response;
   }
-
-// static ResponseModel<T> getResponseModelForTCBError<T>({
-//   @required dynamic err,
-// }) {
-//   return getResponseModelForError(code: err?.code, message: err?.message);
-// }
 }

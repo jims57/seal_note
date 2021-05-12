@@ -5,7 +5,7 @@ import 'package:seal_note/model/tcbModels/TCBSystemInfoModel.dart';
 import 'package:seal_note/util/tcb/TCBInitHandler.dart';
 
 class TCBSystemInfoHandler {
-  static Future<ResponseModel> getSystemInfo({
+  static Future<ResponseModel<TCBSystemInfoModel>> getSystemInfo({
     bool forceToGetSystemInfoFromTCB = true,
   }) async {
     var response;
@@ -19,7 +19,7 @@ class TCBSystemInfoHandler {
       // Try to get the system info from GlobalState first
 
       if (GlobalState.tcbSystemInfo != null) {
-        response = ResponseModel.getResponseModelForSuccess(
+        response = ResponseModel.getResponseModelForSuccess<TCBSystemInfoModel>(
             result: GlobalState.tcbSystemInfo);
       } else {
         response = await _getSystemInfoFromTCB();
@@ -30,7 +30,8 @@ class TCBSystemInfoHandler {
   }
 
   // Private methods
-  static Future<ResponseModel> _getSystemInfoFromTCB() async {
+  static Future<ResponseModel<TCBSystemInfoModel>>
+      _getSystemInfoFromTCB() async {
     var response;
 
     await TCBInitHandler.getTCBCollection(collectionName: 'systemInfos')
@@ -46,12 +47,12 @@ class TCBSystemInfoHandler {
           GlobalState.tcbSystemInfo =
               TCBSystemInfoModel.fromJson(systemInfoHashMap);
 
-          response = ResponseModel.getResponseModelForSuccess(
-              result: GlobalState.tcbSystemInfo);
+          response =
+              ResponseModel.getResponseModelForSuccess<TCBSystemInfoModel>(
+                  result: GlobalState.tcbSystemInfo);
         })
         .catchError((err) {
-          response = ResponseModel.getResponseModelForError(
-            result: err,
+          response = ResponseModel.getResponseModelForError<TCBSystemInfoModel>(
             code: ErrorCodeModel.GET_TCB_SYSTEM_INFO_FAILED_CODE,
             message: ErrorCodeModel.GET_TCB_SYSTEM_INFO_FAILED_MESSAGE,
           );
