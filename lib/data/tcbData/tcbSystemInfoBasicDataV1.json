@@ -1,0 +1,41 @@
+{
+  "_id": "17453ede609cec7c096b20a664f315c6",
+  "structureVersion": 1,
+  "dataVersion": 2,
+  "folders": [
+    {
+      "id": 1,
+      "name": "今日",
+      "order": 1,
+      "isDefaultFolder": true,
+      "created": {
+        "$date": "2021-05-13T09:08:28.122Z"
+      },
+      "isDeleted": false,
+      "createdBy": 1
+    },
+    {
+      "id": 2,
+      "name": "全部笔记",
+      "order": 2,
+      "isDefaultFolder": true,
+      "created": {
+        "$date": "2021-05-13T09:08:28.122Z"
+      },
+      "isDeleted": false,
+      "createdBy": 1
+    }
+  ],
+  "reviewPlans": [
+    {
+      "id": 1,
+      "name": "五段式",
+      "introduction": "五段式简介"
+    },
+    {
+      "id": 2,
+      "name": "艾宾浩斯",
+      "introduction": "艾宾浩斯简介"
+    }
+  ]
+}

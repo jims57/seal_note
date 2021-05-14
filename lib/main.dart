@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:moor/moor.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/model/Note.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
 // Import custom files
@@ -95,7 +96,7 @@ class _MyAppState extends State<MyApp> {
         // Initialize folders // init folders
         var folderEntryList = <FolderEntry>[];
         folderEntryList.add(FolderEntry(
-            id: null,
+            id: 1,
             name: '今天',
             order: 1,
             isDefaultFolder: true,
@@ -103,7 +104,7 @@ class _MyAppState extends State<MyApp> {
             isDeleted: false,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
-            id: null,
+            id: 2,
             name: '全部笔记',
             order: 2,
             isDefaultFolder: true,
@@ -111,7 +112,15 @@ class _MyAppState extends State<MyApp> {
             isDeleted: false,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
-            id: null,
+            id: 3,
+            name: '删除笔记',
+            order: 7,
+            isDefaultFolder: true,
+            created: now,
+            isDeleted: false,
+            createdBy: GlobalState.adminUserId));
+        folderEntryList.add(FolderEntry(
+            id: 4,
             name: '我的笔记',
             order: 3,
             isDefaultFolder: false,
@@ -119,46 +128,50 @@ class _MyAppState extends State<MyApp> {
             isDeleted: false,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
-            id: null,
+            id: 5,
             name: '英语知识',
-            order: 5,
-            isDefaultFolder: false,
-            created: now,
-            isDeleted: false,
-            createdBy: GlobalState.adminUserId));
-        folderEntryList.add(FolderEntry(
-            id: null,
-            name: '编程知识',
             order: 4,
             isDefaultFolder: false,
             created: now,
             isDeleted: false,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
-            id: null,
+            id: 6,
+            name: '编程知识',
+            order: 5,
+            isDefaultFolder: false,
+            created: now,
+            isDeleted: false,
+            createdBy: GlobalState.adminUserId));
+        folderEntryList.add(FolderEntry(
+            id: 7,
             name: '健身知识',
             order: 6,
             isDefaultFolder: false,
             created: now,
             isDeleted: false,
             createdBy: GlobalState.adminUserId));
-        folderEntryList.add(FolderEntry(
-            id: null,
-            name: '删除笔记',
-            order: 7,
-            isDefaultFolder: true,
-            created: now,
-            isDeleted: false,
-            createdBy: GlobalState.adminUserId));
         GlobalState.database.upsertFoldersInBatch(folderEntryList);
+
+        // Initialize notes // init notes
+        // var now = TimeHandler.getNowForLocal();
+        var noteEntryList = <NotesCompanion>[];
+        noteEntryList.add(NotesCompanion(
+          id: Value(1),
+          folderId: Value(4),
+          content: Value('笔记1正文'),
+          created: Value(now),
+          updated: Value(now),
+        ));
 
         // Initialize review plans // init review plans
         var reviewPlanEntryList = <ReviewPlanEntry>[];
         reviewPlanEntryList.add(ReviewPlanEntry(
-            id: null,
-            name: '五段式',
-            introduction: '五段式简介',
-            createdBy: GlobalState.adminUserId));
+          id: null,
+          name: '五段式',
+          introduction: '五段式简介',
+          createdBy: GlobalState.adminUserId,
+        ));
         reviewPlanEntryList.add(ReviewPlanEntry(
             id: null,
             name: '艾宾浩斯',

@@ -5,11 +5,15 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:seal_note/data/appstate/LoadingWidgetChangeNotifier.dart';
 import 'package:seal_note/data/database/database.dart';
 import 'package:flutter/material.dart';
+import 'package:seal_note/event/SystemInfo/SystemInfoEventHandler.dart';
 import 'package:seal_note/event/webView/WebViewLoadedEventHandler.dart';
 import 'package:seal_note/model/ImageSyncItem.dart';
 import 'package:seal_note/model/NoteWithProgressTotal.dart';
 import 'package:seal_note/model/ReusablePage/ReusablePageModel.dart';
-import 'package:seal_note/model/tcbModels/TCBSystemInfoModel.dart';
+import 'package:seal_note/model/tcbModels/TCBFolderModel.dart';
+import 'package:seal_note/model/tcbModels/systemInfo/TCBSystemInfoBasicDataModel.dart';
+import 'package:seal_note/model/tcbModels/systemInfo/TCBSystemInfoGlobalDataModel.dart';
+import 'package:seal_note/model/tcbModels/systemInfo/TCBSystemInfoModel.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/FolderListWidget.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
@@ -22,8 +26,6 @@ import 'package:seal_note/ui/common/SelectFolderWidget.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanSecondSubPage.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
 import 'package:seal_note/util/updates/AppUpdateHandler.dart';
-import 'package:stack/stack.dart' as stackData show Stack;
-
 import 'AlertDialogHeightChangeNotifier.dart';
 import 'AppState.dart';
 import 'DetailPageState.dart';
@@ -42,7 +44,8 @@ class GlobalState with ChangeNotifier {
 
   // Variable for deployment // deployment variable
   static double appVersion = 1.0;
-  static int systemInfoVersion = 1; // See: systemInfoVersion.json
+  static String systemInfoGlobalDataDocId = '28ee4e3e6098a3361763365f76c12ad7';
+  static int systemInfoBasicDataStructureVersion = 1;
 
   // For configuration // app basic info // app basic variable info
   static int noteListTitleMaxLength = 50;
@@ -79,6 +82,10 @@ class GlobalState with ChangeNotifier {
 
   // TCB collection data
   static TCBSystemInfoModel tcbSystemInfo;
+
+  // static TCBSystemInfoGlobalDataModel tcbSystemInfoGlobalData;
+  // static TCBSystemInfoBasicDataModel tcbSystemInfoBasicData;
+  // static List<TCBFolderModel> tcbSystemInfoFolderList;
 
   // app current info // app status // app status info
   // app info variable
@@ -263,7 +270,7 @@ class GlobalState with ChangeNotifier {
   static String emptyNoteEncodedContentWithBr = '&lt;p&gt;&lt;br&gt;&lt;/p&gt;';
   static String emptyNoteEncodedContentWithoutChild = '&lt;p&gt;&lt;/p&gt;';
   static int selectedFolderIdByDefault =
-      3; // The user folder id by default, since default folders can save notes actually, we need a user folder to store notes when creating a new note from a default folder
+      4; // The user folder id by default, since default folders can save notes actually, we need a user folder to store notes when creating a new note from a default folder
   static int selectedFolderIdCurrently =
       selectedFolderIdByDefault; // The current selected folder id the user clicks on folder list page
   static int targetFolderIdNoteIsMovingTo = 0;
@@ -325,6 +332,8 @@ class GlobalState with ChangeNotifier {
   // Event // Listener
   static WebViewLoadedEventHandler webViewLoadedEventHandler =
       WebViewLoadedEventHandler();
+  static SystemInfoEventHandler systemInfoEventHandler =
+      SystemInfoEventHandler();
 
   // Folder related
   static bool isDefaultFolderSelected = false; // For default folder

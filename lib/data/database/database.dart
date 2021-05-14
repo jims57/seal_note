@@ -252,7 +252,7 @@ class Database extends _$Database {
   }
 
   Future updateAllNotesContentByTitles(List<NoteEntry> noteEntryList) async {
-    var newNoteEntryList = List<NoteEntry>();
+    var newNoteEntryList = <NoteEntry>[];
     var countToInsert = 10;
 
     // upsert notes // update notes content
@@ -262,8 +262,7 @@ class Database extends _$Database {
 
       var note = NoteEntry(
           id: null,
-          folderId: null,
-          // title: '标题${noteEntry.id}',
+          folderId: 4,
           content: 'Content:${noteEntry.id}',
           created: now,
           updated: now,
@@ -319,7 +318,7 @@ class Database extends _$Database {
   Future<bool> hasNotesInFolder(
       {@required int folderId, bool includeDeletedNotes = false}) async {
     var hasNotes = false;
-    List<NoteEntry> noteEntryList = List<NoteEntry>();
+    List<NoteEntry> noteEntryList = <NoteEntry>[];
 
     if (includeDeletedNotes) {
       noteEntryList = await (select(notes)

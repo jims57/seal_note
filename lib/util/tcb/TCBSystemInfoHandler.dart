@@ -1,11 +1,12 @@
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/model/common/ResponseModel.dart';
 import 'package:seal_note/model/errorCodes/ErrorCodeModel.dart';
-import 'package:seal_note/model/tcbModels/TCBSystemInfoModel.dart';
+import 'package:seal_note/model/tcbModels/systemInfo/TCBSystemInfoGlobalDataModel.dart';
+import 'package:seal_note/model/tcbModels/systemInfo/TCBSystemInfoModel.dart';
 import 'package:seal_note/util/tcb/TCBInitHandler.dart';
 
 class TCBSystemInfoHandler {
-  static Future<ResponseModel<TCBSystemInfoModel>> getSystemInfo({
+  static Future<ResponseModel<TCBSystemInfoGlobalDataModel>> getSystemInfo({
     bool forceToGetSystemInfoFromTCB = true,
   }) async {
     var response;
@@ -18,9 +19,10 @@ class TCBSystemInfoHandler {
       // When don't fetch system info from TCB forcibly
       // Try to get the system info from GlobalState first
 
-      if (GlobalState.tcbSystemInfo != null) {
-        response = ResponseModel.getResponseModelForSuccess<TCBSystemInfoModel>(
-            result: GlobalState.tcbSystemInfo);
+      if (GlobalState.tcbSystemInfo.tcbSystemInfoGlobalData != null) {
+        response = ResponseModel.getResponseModelForSuccess<
+                TCBSystemInfoGlobalDataModel>(
+            result: GlobalState.tcbSystemInfo.tcbSystemInfoGlobalData);
       } else {
         response = await _getSystemInfoFromTCB();
       }
@@ -30,33 +32,46 @@ class TCBSystemInfoHandler {
   }
 
   // Private methods
-  static Future<ResponseModel<TCBSystemInfoModel>>
+  static Future<ResponseModel<TCBSystemInfoGlobalDataModel>>
       _getSystemInfoFromTCB() async {
     var response;
 
     await TCBInitHandler.getTCBCollection(collectionName: 'systemInfos')
-        .where({
-          'systemInfoVersion':
-              GlobalState.tcbCommand.eq(GlobalState.systemInfoVersion),
-        })
+        .where(GlobalState.tcbCommand.or([
+          {
+            '_id': GlobalState.tcbCommand
+                .eq(GlobalState.systemInfoGlobalDataDocId),
+            'reviewedAppVersion': GlobalState.tcbCommand.eq('1.2'),
+          },
+          {
+            'structureVersion': GlobalState.tcbCommand
+                .eq(GlobalState.systemInfoBasicDataStructureVersion),
+          }
+        ]))
         .get()
         .then((result) {
-          var systemInfoHashMap = result.data[0];
+      GlobalState.tcbSystemInfo = TCBSystemInfoModel.fromHashMap(result);
 
-          // Convert HashMap to model
-          GlobalState.tcbSystemInfo =
-              TCBSystemInfoModel.fromJson(systemInfoHashMap);
+      // Notify system info events
+      GlobalState.systemInfoEventHandler
+          .notifySubscribersThatSystemInfoHasDownloaded(
+              GlobalState.tcbSystemInfo);
+      GlobalState.systemInfoEventHandler
+          .notifySubscribersThatSystemInfoDataVersionHasChanged(
+        GlobalState.tcbSystemInfo.tcbSystemInfoBasicData.dataVersion,
+      );
 
-          response =
-              ResponseModel.getResponseModelForSuccess<TCBSystemInfoModel>(
-                  result: GlobalState.tcbSystemInfo);
-        })
-        .catchError((err) {
-          response = ResponseModel.getResponseModelForError<TCBSystemInfoModel>(
-            code: ErrorCodeModel.GET_TCB_SYSTEM_INFO_FAILED_CODE,
-            message: ErrorCodeModel.GET_TCB_SYSTEM_INFO_FAILED_MESSAGE,
-          );
-        });
+      response = ResponseModel.getResponseModelForSuccess<
+          TCBSystemInfoGlobalDataModel>(
+        result: GlobalState.tcbSystemInfo.tcbSystemInfoGlobalData,
+      );
+    }).catchError((err) {
+      response =
+          ResponseModel.getResponseModelForError<TCBSystemInfoGlobalDataModel>(
+        code: ErrorCodeModel.GET_TCB_SYSTEM_INFO_FAILED_CODE,
+        message: ErrorCodeModel.GET_TCB_SYSTEM_INFO_FAILED_MESSAGE,
+      );
+    });
 
     return response;
   }

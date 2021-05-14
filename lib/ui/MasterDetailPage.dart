@@ -8,6 +8,7 @@ import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/appstate/ReusablePageOpenOrCloseNotifier.dart';
 import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 import 'package:seal_note/data/database/database.dart';
+import 'package:seal_note/event/SystemInfo/SystemInfoEventHandler.dart';
 import 'package:seal_note/mixin/check_device.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/NoteListPage.dart';
@@ -58,6 +59,16 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
   @override
   void initState() {
+    GlobalState.systemInfoEventHandler.onSystemInfoDownloaded
+        .listen((tcbSystemInfo) {
+      var s = 's';
+    });
+
+    GlobalState.systemInfoEventHandler.onSystemInfoDataVersionChanged
+        .listen((tcbSystemInfo) {
+      var s = 's';
+    });
+
     loginPageFutureBuilder = _checkIfShowLoginPageOrNot();
 
     GlobalState.flutterWebviewPlugin = FlutterWebviewPlugin();
