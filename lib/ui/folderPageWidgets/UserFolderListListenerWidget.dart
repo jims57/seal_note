@@ -300,7 +300,7 @@ class _UserFolderListListenerWidgetState
                                   }
                                 },
                               ),
-                              if (folderId != 3)
+                              if (folderId != GlobalState.selectedFolderIdByDefault)
                                 RoundCornerButtonWidget(
                                     // delete folder button
 

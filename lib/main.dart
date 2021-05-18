@@ -128,14 +128,14 @@ class _MyAppState extends State<MyApp> {
             created: now,
             isDeleted: false,
             createdBy: GlobalState.adminUserId));
-        // folderEntryList.add(FolderEntry(
-        //     id: 5,
-        //     name: '英语知识',
-        //     order: 4,
-        //     isDefaultFolder: false,
-        //     created: now,
-        //     isDeleted: false,
-        //     createdBy: GlobalState.adminUserId));
+        folderEntryList.add(FolderEntry(
+            id: 5,
+            name: '英语知识',
+            order: 4,
+            isDefaultFolder: false,
+            created: now,
+            isDeleted: false,
+            createdBy: GlobalState.adminUserId));
         // folderEntryList.add(FolderEntry(
         //     id: 6,
         //     name: '编程知识',
