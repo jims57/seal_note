@@ -220,7 +220,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
                 // Check if the image already exists or not
                 bool isFileExisting =
-                    await FileHandler.checkIfFileExistsOrNot(fileName);
+                    await FileHandler.hasFileAtDocumentDirectory(fileName);
                 if (!isFileExisting) {
                   // When the image isn't existing in Document Directory
                   FileHandler.writeUint8ListToFile(imageUint8List, fileName);

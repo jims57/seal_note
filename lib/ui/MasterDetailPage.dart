@@ -136,7 +136,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
       // When the app's first launch
       // first load // it is first load
       // app launch event // app start event
-      // start app event // launc app event
+      // start app event // launch app event
+      // first launch // first time to launch app
 
       isFirstLoad = false;
     } else {
@@ -676,7 +677,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
     bool forceToGetUpdateAppOption = true,
   }) async {
     // check show update dialog or not // show update dialog or not
-    // whether to show update dialog
+    // whether to show update dialog // check update dialog
 
     if (forceToGetUpdateAppOption) {
       GlobalState.updateAppOption = await AppUpdateHandler.getUpdateAppOption();

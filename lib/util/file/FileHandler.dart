@@ -6,7 +6,7 @@ import 'package:moor/moor.dart';
 import 'package:path_provider/path_provider.dart';
 
 class FileHandler {
-  static Future<String> get _localPath async {
+  static Future<String> get _documentDirectoryPath async {
     final directory = await getApplicationDocumentsDirectory();
 
     print(directory.path);
@@ -14,16 +14,54 @@ class FileHandler {
     return directory.path;
   }
 
-  static Future<File> _getLocalFile(String fileName) async {
-    final path = await _localPath;
+  static Future<String> _getFullFileNameAtDocumentDirectory(
+      String fileName) async {
+    final path = await _documentDirectoryPath;
 
     String fullFileName = '$path/$fileName';
-    print(fullFileName);
+
+    return fullFileName;
+  }
+
+  static Future<File> _getFileObjectAtDocumentDirectory(String fileName) async {
+    // final path = await _documentDirectoryPath;
+    // String fullFileName = '$path/$fileName';
+
+    var fullFileName = await _getFullFileNameAtDocumentDirectory(fileName);
+
+    // print(fullFileName);
     return File(fullFileName);
   }
 
-  static Future<bool> checkIfFileExistsOrNot(String fileName) async {
-    var file = await _getLocalFile(fileName);
+  static Future<bool> deleteFileFromDocumentDirectory({String fileName}) async {
+    var isSuccessful;
+    var fileObject = await _getFileObjectAtDocumentDirectory(fileName);
+
+    if (fileObject.existsSync()) {
+      // delete file
+      await fileObject
+          .delete(
+        recursive: true,
+      )
+          .then((fileSystemEntity) {
+        isSuccessful = true;
+      }).catchError((err) {
+        isSuccessful = false;
+      });
+    }
+
+    return isSuccessful;
+
+    // var hasFile = await hasFileAtDocumentDirectory(fileName);
+    // if(hasFile){
+    //   var fileObject = await _getFileObjectAtDocumentDirectory(fileName);
+    //   var fileSystemEntity = await fileObject.delete(recursive: true,);
+    //   fileSystemEntity.
+    // }
+  }
+
+  static Future<bool> hasFileAtDocumentDirectory(String fileName) async {
+    var file = await _getFileObjectAtDocumentDirectory(fileName);
     var filePath = file.path;
     var existOrNot = File(filePath).exists();
     return existOrNot;
@@ -31,7 +69,7 @@ class FileHandler {
 
   static Future<String> readFileContentAsString(String fileName) async {
     try {
-      final file = await _getLocalFile(fileName);
+      final file = await _getFileObjectAtDocumentDirectory(fileName);
 
       // Read the file
       String contents = await file.readAsString();
@@ -44,7 +82,7 @@ class FileHandler {
 
   static Future<Uint8List> readFileAsUint8List(String fileName) async {
     try {
-      final file = await _getLocalFile(fileName);
+      final file = await _getFileObjectAtDocumentDirectory(fileName);
 
       // Read the file
       Uint8List contents = await file.readAsBytes();
@@ -57,7 +95,7 @@ class FileHandler {
 
   static Future<File> writeStringToFile(
       String stringContentToWrite, String fileName) async {
-    final file = await _getLocalFile(fileName);
+    final file = await _getFileObjectAtDocumentDirectory(fileName);
 
     // Write the file
     return file.writeAsString('$stringContentToWrite');
@@ -65,7 +103,7 @@ class FileHandler {
 
   static Future<File> writeUint8ListToFile(
       Uint8List uint8list, String fileName) async {
-    final file = await _getLocalFile(fileName);
+    final file = await _getFileObjectAtDocumentDirectory(fileName);
 
     // Write the file
     return file.writeAsBytes(uint8list);
