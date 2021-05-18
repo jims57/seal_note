@@ -66,38 +66,40 @@ class _NoteListPageState extends State<NoteListPage> {
         ],
         tailChildren: [
           // (GlobalState.isReviewFolderSelected)?IconButton(
-          (!GlobalState.isDefaultFolderSelected)?IconButton(
-            // note list more button // note list page more button
-            // note list top right button // note list page top right button
-            icon: Icon(
-              Icons.more_horiz,
-              color: GlobalState.themeBlueColor,
-            ),
-            onPressed: () {
-              GlobalState.appState.isInFolderOptionSubPanel = false;
+          (!GlobalState.isDefaultFolderSelected)
+              ? IconButton(
+                  // note list more button // note list page more button
+                  // note list top right button // note list page top right button
+                  icon: Icon(
+                    Icons.more_horiz,
+                    color: GlobalState.themeBlueColor,
+                  ),
+                  onPressed: () {
+                    GlobalState.appState.isInFolderOptionSubPanel = false;
 
-              showModalBottomSheet<void>(
-                barrierColor: Colors.black12,
-                backgroundColor: Colors.transparent,
-                context: context,
-                isScrollControlled: true,
-                builder: (BuildContext context) {
-                  return SafeArea(
-                    child: Container(
-                      height: GlobalState.folderOptionItemHeight * 9,
-                      child: MaterialApp(
-                        debugShowCheckedModeBanner: false,
-                        home: Scaffold(
-                          backgroundColor: Colors.transparent,
-                          body: FolderOptionListWidget(),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
-          ):Container(),
+                    showModalBottomSheet<void>(
+                      barrierColor: Colors.black12,
+                      backgroundColor: Colors.transparent,
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (BuildContext context) {
+                        return SafeArea(
+                          child: Container(
+                            height: GlobalState.folderOptionItemHeight * 9,
+                            child: MaterialApp(
+                              debugShowCheckedModeBanner: false,
+                              home: Scaffold(
+                                backgroundColor: Colors.transparent,
+                                body: FolderOptionListWidget(),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                )
+              : Container(),
         ],
         title: Consumer<AppState>(
           builder: (ctx, appState, child) {
@@ -150,6 +152,11 @@ class _NoteListPageState extends State<NoteListPage> {
           GlobalState.isEditingOrCreatingNote = true;
           GlobalState.isHandlingNoteDetailPage = true;
           GlobalState.isInNoteDetailPage = true;
+
+          // Show the webView forcibly
+          GlobalState.noteDetailWidgetState.currentState.showWebView(
+            forceToSyncWithShouldHideWebViewVar: true,
+          );
 
           // Get note related variables
           var folderId = GlobalState.selectedFolderIdCurrently;

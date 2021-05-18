@@ -752,46 +752,46 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     _hasMore = true;
 
     // If it is the first load, by the way to fetch data from the server
-    if (_isFirstLoad) {
-      _isFirstLoad = false;
-
-      // Check if the Db has been initialized or not
-      var isDbInitialized = await GlobalState.database.isDbInitialized();
-
-      if (!isDbInitialized) {
-        // Mark the app is the first time to launch
-        GlobalState.isAppFirstTimeToLaunch = true;
-
-        // If the notes table hasn't data, insert the dummy data
-        fetchPhotos(client: http.Client()).then((fetchedPhotoList) {
-          // initialize notes // init notes
-          // note initialization // note init
-          GlobalState.database
-              .updateAllNotesContentByTitles(fetchedPhotoList)
-              .whenComplete(() {
-            GlobalState.isAppFirstTimeToLaunch = false;
-
-            GlobalState
-                .noteModelForConsumer.noteListWidgetForTodayState.currentState
-                .resetLoadingConfigsAfterUpdatingSqlite();
-
-            _refreshNoteListPageCaptionAndHideSyncStatus(
-                shouldHideSyncStatus: false);
-
-            if (GlobalState.screenType == 3) {
-              // Refresh the folder page by the data from db, so that unread number can be shown properly
-              // See: https://github.com/jims57/seal_note/issues/335
-              GlobalState.folderListWidgetState.currentState.triggerSetState(
-                forceToFetchFoldersFromDb: true,
-              );
-            }
-          });
-        }).catchError((e) {});
-      }
-
-      GlobalState.noteModelForConsumer.noteListWidgetForTodayState.currentState
-          .resetLoadingConfigsAfterUpdatingSqlite();
-    }
+    // if (_isFirstLoad) {
+    //   _isFirstLoad = false;
+    //
+    //   // Check if the Db has been initialized or not
+    //   var isDbInitialized = await GlobalState.database.isDbInitialized();
+    //
+    //   if (!isDbInitialized) {
+    //     // Mark the app is the first time to launch
+    //     GlobalState.isAppFirstTimeToLaunch = true;
+    //
+    //     // If the notes table hasn't data, insert the dummy data
+    //     fetchPhotos(client: http.Client()).then((fetchedPhotoList) {
+    //       // initialize notes // init notes
+    //       // note initialization // note init
+    //       GlobalState.database
+    //           .updateAllNotesContentByTitles(fetchedPhotoList)
+    //           .whenComplete(() {
+    //         GlobalState.isAppFirstTimeToLaunch = false;
+    //
+    //         GlobalState
+    //             .noteModelForConsumer.noteListWidgetForTodayState.currentState
+    //             .resetLoadingConfigsAfterUpdatingSqlite();
+    //
+    //         _refreshNoteListPageCaptionAndHideSyncStatus(
+    //             shouldHideSyncStatus: false);
+    //
+    //         if (GlobalState.screenType == 3) {
+    //           // Refresh the folder page by the data from db, so that unread number can be shown properly
+    //           // See: https://github.com/jims57/seal_note/issues/335
+    //           GlobalState.folderListWidgetState.currentState.triggerSetState(
+    //             forceToFetchFoldersFromDb: true,
+    //           );
+    //         }
+    //       });
+    //     }).catchError((e) {});
+    //   }
+    //
+    //   GlobalState.noteModelForConsumer.noteListWidgetForTodayState.currentState
+    //       .resetLoadingConfigsAfterUpdatingSqlite();
+    // }
 
     var noteList = await GlobalState.database
         .getNotesByPageSize(pageNo: _pageNo, pageSize: _pageSize);

@@ -236,6 +236,13 @@ class Database extends _$Database {
   @override
   int get schemaVersion => 1;
 
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+      onCreate: (Migrator m) {
+        return m.createAll();
+      },
+      onUpgrade: (Migrator m, int from, int to) async {});
+
   // Initialization related
   Future<bool> isDbInitialized() async {
     // Whether the db has been initialized, the logic of it is based on whether Today folder which is a default folder is inserted or not

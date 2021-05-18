@@ -88,6 +88,7 @@ class _MyAppState extends State<MyApp> {
 
         // Initialize users // init users
         var usersCompanion = UsersCompanion(
+            id: Value(1),
             userName: Value('admin'),
             password: Value('123456'),
             created: Value(now));
@@ -127,42 +128,63 @@ class _MyAppState extends State<MyApp> {
             created: now,
             isDeleted: false,
             createdBy: GlobalState.adminUserId));
-        folderEntryList.add(FolderEntry(
-            id: 5,
-            name: '英语知识',
-            order: 4,
-            isDefaultFolder: false,
-            created: now,
-            isDeleted: false,
-            createdBy: GlobalState.adminUserId));
-        folderEntryList.add(FolderEntry(
-            id: 6,
-            name: '编程知识',
-            order: 5,
-            isDefaultFolder: false,
-            created: now,
-            isDeleted: false,
-            createdBy: GlobalState.adminUserId));
-        folderEntryList.add(FolderEntry(
-            id: 7,
-            name: '健身知识',
-            order: 6,
-            isDefaultFolder: false,
-            created: now,
-            isDeleted: false,
-            createdBy: GlobalState.adminUserId));
+        // folderEntryList.add(FolderEntry(
+        //     id: 5,
+        //     name: '英语知识',
+        //     order: 4,
+        //     isDefaultFolder: false,
+        //     created: now,
+        //     isDeleted: false,
+        //     createdBy: GlobalState.adminUserId));
+        // folderEntryList.add(FolderEntry(
+        //     id: 6,
+        //     name: '编程知识',
+        //     order: 5,
+        //     isDefaultFolder: false,
+        //     created: now,
+        //     isDeleted: false,
+        //     createdBy: GlobalState.adminUserId));
+        // folderEntryList.add(FolderEntry(
+        //     id: 7,
+        //     name: '健身知识',
+        //     order: 6,
+        //     isDefaultFolder: false,
+        //     created: now,
+        //     isDeleted: false,
+        //     createdBy: GlobalState.adminUserId));
         GlobalState.database.upsertFoldersInBatch(folderEntryList);
 
         // Initialize notes // init notes
-        // var now = TimeHandler.getNowForLocal();
-        var noteEntryList = <NotesCompanion>[];
-        noteEntryList.add(NotesCompanion(
-          id: Value(1),
-          folderId: Value(4),
-          content: Value('笔记1正文'),
-          created: Value(now),
-          updated: Value(now),
+        var noteEntryList = <NoteEntry>[];
+        noteEntryList.add(NoteEntry(
+          id: 100,
+          folderId: 4,
+          content:
+              '&lt;p&gt;【海豚笔记介绍和使用方法】&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-5bf3d-001&quot; image-index=&quot;0&quot; style=&quot;width: 90%;&quot;&gt;&lt;/p&gt;',
+          created: now,
+          updated: now,
+          nextReviewTime: null,
+          oldNextReviewTime: null,
+          reviewProgressNo: null,
+          isReviewFinished: false,
+          isDeleted: false,
+          createdBy: GlobalState.currentUserId,
         ));
+        // noteEntryList.add(NoteEntry(
+        //   id: 2,
+        //   folderId: 4,
+        //   content: '笔记2正文',
+        //   created: now,
+        //   updated: now,
+        //   nextReviewTime: null,
+        //   oldNextReviewTime: null,
+        //   reviewProgressNo: null,
+        //   isReviewFinished: false,
+        //   isDeleted: false,
+        //   createdBy: GlobalState.adminUserId,
+        // ));
+
+        GlobalState.database.insertNotesInBatch(noteEntryList);
 
         // Initialize review plans // init review plans
         var reviewPlanEntryList = <ReviewPlanEntry>[];
@@ -225,8 +247,18 @@ class _MyAppState extends State<MyApp> {
 
         // Trigger folder list page to refresh so that the initialized folder list can be shown properly
         if (GlobalState.isFolderListPageLoaded) {
-          GlobalState.folderListWidgetState.currentState
-              .triggerSetState(forceToFetchFoldersFromDb: true);
+          GlobalState.noteListWidgetForTodayState.currentState.triggerSetState(
+            forceToRefreshNoteListByDb: true,
+          );
+
+          GlobalState.masterDetailPageState.currentState.triggerSetState();
+
+          // GlobalState.folderListWidgetState.currentState
+          //     .triggerSetState(forceToFetchFoldersFromDb: true);
+          //
+          // GlobalState.noteListWidgetForTodayState.currentState.triggerSetState(
+          //   forceToRefreshNoteListByDb: true,
+          // );
         }
       } else {
         // When db is initialized
