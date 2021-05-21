@@ -691,7 +691,6 @@ class MasterDetailPageState extends State<MasterDetailPage>
         // When no error, and it has no update
 
         // Do nothing currently, if no update for now
-        var s = 's';
       } else {
         // When no error, and it has update found
 
@@ -706,10 +705,12 @@ class MasterDetailPageState extends State<MasterDetailPage>
           // Variable for alert dialog
           var buttonTextForCancel = '下次提醒';
           var updateTipForImportant = '这是重大更新，请更新';
+          var shouldShowImportantTipInRed = false;
 
           // When it is compulsory update, we need to change the cancel button's appearance
           if (GlobalState.updateAppOption == UpdateAppOption.CompulsoryUpdate) {
             buttonTextForCancel = '不想更新';
+            shouldShowImportantTipInRed = true;
           }
 
           var shouldGoToUpdateApp = await AlertDialogHandler().showAlertDialog(
@@ -719,19 +720,21 @@ class MasterDetailPageState extends State<MasterDetailPage>
             remark: '1、修改大量bugs；\n'
                 '2、用户能自主创建复习计划；\n'
                 '3、其他重大更新。',
-            child: Container(
-              padding: EdgeInsets.only(
-                left: GlobalState.defaultLeftAndRightPadding,
-                right: GlobalState.defaultLeftAndRightPadding,
-              ),
-              child: Text(
-                '注：$updateTipForImportant!',
-                style: TextStyle(
-                  fontSize: 14.0,
-                  color: Colors.red,
-                ),
-              ),
-            ),
+            child: (shouldShowImportantTipInRed)
+                ? Container(
+                    padding: EdgeInsets.only(
+                      left: GlobalState.defaultLeftAndRightPadding,
+                      right: GlobalState.defaultLeftAndRightPadding,
+                    ),
+                    child: Text(
+                      '注：$updateTipForImportant!',
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: Colors.red,
+                      ),
+                    ),
+                  )
+                : Container(),
             buttonTextForOK: '马上更新',
             buttonTextForCancel: buttonTextForCancel,
             buttonColorForCancel: GlobalState.themeGreyColorAtiOSTodo,
