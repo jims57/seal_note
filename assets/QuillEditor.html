@@ -1907,6 +1907,15 @@
 
 </script>
 
+<!-- Image common method -->
+<script>
+    function getImageExtensionByImageJQueryObject($theImage){
+        var imageExtension = $theImage.attr('image-extension');
+
+        return imageExtension;
+    }
+</script>
+
 <!-- Auto-save related -->
 <script>
     // Timer
@@ -2100,8 +2109,6 @@
     function getAllImagesBase64FromImageFiles() { // Get all base64 data of the images in this html page from image file at the Document Directory of the app
         if (printLogToDartFromJs) Print.postMessage('getAllImagesBase64FromImageFiles()');
 
-        // var $theImages = $('img:not([src])'); // Only get image without src attribute
-        // var $theImages = $('img'); // Debug: Get all images for testing
         var $theImages = $('img:not([src^="data:image"])');// Get images without base64
         if (printLogToDartFromJs) Print.postMessage('$theImages.length = ' + $theImages.length);
         var imageArray = [];
@@ -2109,7 +2116,8 @@
         $.each($theImages, function (index, item) {
             var $theImage = $(item); // Get the current image jquery object
             var imageId = getImageIdByImageJqueryObject($theImage);
-            var theJson = { 'imageId': imageId };
+            var imageExtension = getImageExtensionByImageJQueryObject($theImage);
+            var theJson = { 'imageId': imageId, 'imageExtension': imageExtension };
 
             // var uuid = getImageUuidByImageJqueryObject($theImage);
             // Print.postMessage(uuid);

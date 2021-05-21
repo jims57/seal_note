@@ -21,6 +21,7 @@ import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:seal_note/util/crypto/CryptoHandler.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/util/dialog/FlushBarHandler.dart';
+import 'package:seal_note/util/enums/EnumHandler.dart';
 import 'package:seal_note/util/file/FileHandler.dart';
 import 'package:seal_note/util/html/HtmlHandler.dart';
 import 'package:seal_note/util/robustness/RetryHandler.dart';
@@ -118,7 +119,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     JavascriptChannel(
         name: 'Print',
         onMessageReceived: (JavascriptMessage message) {
-          // print html // trigger print
+          // print html // trigger print // print js log method
 
           print(message.message);
         }), // Print
@@ -362,6 +363,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           // Get the file name of the image
           imageIdMapList.forEach((imageIdMap) async {
             var imageId = imageIdMap['imageId'].toString();
+            var imageExtension = imageIdMap['imageExtension'].toString();
             var imageMd5FileName =
                 ImageHandler.getImageMd5FileNameByImageId(imageId);
             var imageUint8List = await FileHandler
@@ -380,8 +382,14 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
               ImageHandler.updateWebViewToShowLoadingGif(
                   imageMd5FileNameToBeUpdated: imageMd5FileName);
 
+              // Get the right image extension by extension string
+              var imageExtensionType = ImageHandler.getImageExtensionTypeByEnumValueString(
+                  enumValueString: imageExtension);
+
               updateWebViewImageByImageLoadedFromTCBAsync(
-                  imageMd5FileName: imageMd5FileName);
+                imageMd5FileName: imageMd5FileName,
+                imageExtensionType: imageExtensionType,
+              );
             }
           });
         }), // GetAllImagesBase64FromImageFiles
@@ -1251,19 +1259,23 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     return decodedNoteTitle;
   }
 
-  static Future<void> updateWebViewImageByImageLoadedFromTCBAsync(
-      {@required String imageMd5FileName}) async {
+  static Future<void> updateWebViewImageByImageLoadedFromTCBAsync({
+    @required String imageMd5FileName,
+    @required SupportedImageExtensionType imageExtensionType,
+  }) async {
     // Remark: This is a static method, since it will be executed inside JavascriptChannel() of the WebView,
     // which only support static one, so I make this method static
 
     // Try to load the corresponding image at TCB Storage asynchronously
-    var fileNameAtTCBStorage = FileHandler.generateFileNameWithExtension(
-      fileNameWithoutExtension: imageMd5FileName,
-      extensionType: SupportedFileExtensionType.Jpg,
+    var imageExtension = EnumHandler.getEnumValue(
+      enumType: imageExtensionType,
+      forceToLowerCase: true,
     );
+    var imageFileNameAtTCBStorage = '$imageMd5FileName.$imageExtension';
+
     var responseModel =
         await TCBStorageHandler.downloadFileFromTCBToDocumentDirectory(
-      fileName: fileNameAtTCBStorage,
+      fileName: imageFileNameAtTCBStorage,
     );
 
     if (responseModel.code == ErrorCodeModel.SUCCESS_CODE) {

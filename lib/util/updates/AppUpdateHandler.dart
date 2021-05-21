@@ -37,7 +37,7 @@ class AppUpdateHandler {
 
         var systemInfo = response.result;
 
-        if (GlobalState.appVersion <  systemInfo.minSupportedAppVersion) {
+        if (GlobalState.appVersion < systemInfo.minSupportedAppVersion) {
           // When the app version < minSupportedVersion,
           // we need update the app forcibly
 

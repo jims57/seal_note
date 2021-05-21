@@ -137,4 +137,30 @@ class ImageHandler {
       forceToLoadItFromAssetImage: false,
     );
   }
+
+  static SupportedImageExtensionType getImageExtensionTypeByEnumValueString(
+      {@required String enumValueString}) {
+    var imageExtensionType;
+    enumValueString = enumValueString.toLowerCase();
+
+    switch (enumValueString) {
+      case 'jpg':
+        {
+          imageExtensionType = SupportedImageExtensionType.Jpg;
+        }
+        break;
+      case 'png':
+        {
+          imageExtensionType = SupportedImageExtensionType.Png;
+        }
+        break;
+      default:
+        {
+          imageExtensionType = SupportedImageExtensionType.Gif;
+        }
+        break;
+    }
+
+    return imageExtensionType;
+  }
 }
