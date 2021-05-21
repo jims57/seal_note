@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -7,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/util/file/FileHandler.dart';
+import 'package:seal_note/util/images/ImageHandler.dart';
 
 class PhotoViewWidget extends StatefulWidget {
   @override
@@ -85,8 +85,9 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
                     child: Text(
                       '$_currentImageNo/$_imageTotalCount',
                       style: TextStyle(
-                          color:
-                              (_showToolBar ? Colors.white : Colors.transparent),
+                          color: (_showToolBar
+                              ? Colors.white
+                              : Colors.transparent),
                           fontSize: 18),
                     ),
                   ),
@@ -109,11 +110,13 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
                       // photo view finish button event
 
                       setState(() {
-                        GlobalState.noteDetailWidgetState.currentState.showWebView();
+                        GlobalState.noteDetailWidgetState.currentState
+                            .showWebView();
 
                         GlobalState.appState.widgetNo = 2;
 
-                        GlobalState.shouldTriggerPageTransitionAnimation = false;
+                        GlobalState.shouldTriggerPageTransitionAnimation =
+                            false;
                         // GlobalState.masterDetailPageState.currentState.updatePageShowAndHide(shouldTriggerSetState: false, hasAnimation: false);
 
                         Navigator.pop(GlobalState.noteDetailWidgetContext);
@@ -173,9 +176,12 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
       var imageId = GlobalState.imageSyncItemList[newImageIndex].imageId;
 
       // Get the image Uint8List from file directly
-      var fileName = FileHandler.getFileNameByImageId(imageId);
-      fileName = '$fileName.jpg';
-      FileHandler.readFileAsUint8List(fileName).then((imageUint8List) {
+      var imageMd5FileName = ImageHandler.getImageMd5FileNameByImageId(imageId);
+
+      FileHandler
+          .getFileUint8ListFromDocumentDirectoryByFileNameWithoutExtension(
+        fileNameWithoutExtension: imageMd5FileName,
+      ).then((imageUint8List) {
         GlobalState.imageSyncItemList[newImageIndex].byteData = imageUint8List;
         new Timer(const Duration(milliseconds: 500), () {
           GlobalState.appState.firstImageIndex =

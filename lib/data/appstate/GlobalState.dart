@@ -1,6 +1,7 @@
 import 'package:cloudbase_auth/cloudbase_auth.dart';
 import 'package:cloudbase_core/cloudbase_core.dart';
 import 'package:cloudbase_database/cloudbase_database.dart';
+import 'package:cloudbase_storage/cloudbase_storage.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:seal_note/data/appstate/LoadingWidgetChangeNotifier.dart';
 import 'package:seal_note/data/database/database.dart';
@@ -10,9 +11,6 @@ import 'package:seal_note/event/webView/WebViewLoadedEventHandler.dart';
 import 'package:seal_note/model/ImageSyncItem.dart';
 import 'package:seal_note/model/NoteWithProgressTotal.dart';
 import 'package:seal_note/model/ReusablePage/ReusablePageModel.dart';
-import 'package:seal_note/model/tcbModels/TCBFolderModel.dart';
-import 'package:seal_note/model/tcbModels/systemInfo/TCBSystemInfoBasicDataModel.dart';
-import 'package:seal_note/model/tcbModels/systemInfo/TCBSystemInfoGlobalDataModel.dart';
 import 'package:seal_note/model/tcbModels/systemInfo/TCBSystemInfoModel.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/FolderListWidget.dart';
@@ -63,12 +61,16 @@ class GlobalState with ChangeNotifier {
   static String tcbEnvironment = 'seal-note-app-env-8ei8de6728d969';
   static String tcbAppAccessKey = 'a20825658ec31142f31c91ee7d18f5ad';
   static String tcbAppAccessVersion = '1';
+  static String tcbStorageRootPath = 'seal/flutter/';
+  static String tcbStorageCloudUrlPrefix =
+      'cloud://$tcbEnvironment.7365-$tcbEnvironment-1258184445/$tcbStorageRootPath';
 
   // TCB variables
   static CloudBaseCore tcbCloudBaseCore;
   static CloudBaseAuth tcbCloudBaseAuth;
   static CloudBaseAuthState tcbCloudBaseAuthState;
   static CloudBaseDatabase tcbCloudBaseDatabase;
+  static CloudBaseStorage tcbCloudBaseStorage;
   static Command tcbCommand;
   static String tcbAccessToken;
   static String tcbRefreshToken;
@@ -82,10 +84,6 @@ class GlobalState with ChangeNotifier {
 
   // TCB collection data
   static TCBSystemInfoModel tcbSystemInfo;
-
-  // static TCBSystemInfoGlobalDataModel tcbSystemInfoGlobalData;
-  // static TCBSystemInfoBasicDataModel tcbSystemInfoBasicData;
-  // static List<TCBFolderModel> tcbSystemInfoFolderList;
 
   // app current info // app status // app status info
   // app info variable
@@ -112,6 +110,10 @@ class GlobalState with ChangeNotifier {
 
     return isReview;
   }
+
+  // Common variable // app basic variable // basic variable
+  static const String loadingGifFileNameWithoutExtension = 'loading2';
+  static const String loadingGifFileName = '$loadingGifFileNameWithoutExtension.gif';
 
   // Default variables
   static const double defaultItemCaptionHeight = 25.0;

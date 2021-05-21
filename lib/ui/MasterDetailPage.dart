@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
@@ -8,7 +7,6 @@ import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/appstate/ReusablePageOpenOrCloseNotifier.dart';
 import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 import 'package:seal_note/data/database/database.dart';
-import 'package:seal_note/event/SystemInfo/SystemInfoEventHandler.dart';
 import 'package:seal_note/mixin/check_device.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/NoteListPage.dart';
@@ -18,13 +16,11 @@ import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageStackWidget.
 import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/util/networks/NetworkHandler.dart';
-import 'package:seal_note/util/robustness/RetryHandler.dart';
 import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
 import 'package:seal_note/util/updates/AppUpdateHandler.dart';
 import 'dart:io' show Platform;
 import 'package:store_redirect/store_redirect.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import 'NoteDetailWidget.dart';
 
 class MasterDetailPage extends StatefulWidget {

@@ -3,8 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/DetailPageState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 
-import 'NoteDetailWidget.dart';
-
 class NoteDetailPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _NoteDetailPageState();

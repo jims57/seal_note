@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:async';
 
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show ByteData;
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
@@ -11,15 +10,14 @@ import 'package:keyboard_utils/keyboard_utils.dart';
 import 'package:moor/moor.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:seal_note/biz/ReviewHandler.dart';
 import 'package:seal_note/data/appstate/AppState.dart';
 import 'package:seal_note/data/appstate/DetailPageState.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/database/database.dart';
 import 'package:seal_note/model/NoteWithProgressTotal.dart';
+import 'package:seal_note/model/errorCodes/ErrorCodeModel.dart';
 import 'package:seal_note/ui/common/appBars/AppBarBackButtonWidget.dart';
 import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
-import 'package:seal_note/util/converter/ImageConverter.dart';
 import 'package:seal_note/util/crypto/CryptoHandler.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/util/dialog/FlushBarHandler.dart';
@@ -27,8 +25,9 @@ import 'package:seal_note/util/file/FileHandler.dart';
 import 'package:seal_note/util/html/HtmlHandler.dart';
 import 'package:seal_note/util/robustness/RetryHandler.dart';
 import 'package:seal_note/util/route/ScaleRoute.dart';
+import 'package:seal_note/util/tcb/TCBStorageHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
-
+import 'package:seal_note/util/images/ImageHandler.dart';
 import 'common/PhotoViewWidget.dart';
 import 'package:seal_note/model/ImageSyncItem.dart';
 import 'package:after_layout/after_layout.dart';
@@ -119,6 +118,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     JavascriptChannel(
         name: 'Print',
         onMessageReceived: (JavascriptMessage message) {
+          // print html // trigger print
+
           print(message.message);
         }), // Print
     JavascriptChannel(
@@ -235,12 +236,13 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                 GlobalState.imageSyncItemList.add(imageSyncItem);
 
                 // Compressing the image before passing to the WebView for the sake of performance
-                FileHandler.compressUint8List(
+                var compressedImageUint8List =
+                    await FileHandler.compressUint8List(
                   imageUint8List,
-                ).then((compressedImageUint8List) {
-                  GlobalState.flutterWebviewPlugin.evalJavascript(
-                      "javascript:insertImagesByMultiImagePicker($compressedImageUint8List, '$imageId', $assetsCount);");
-                });
+                );
+
+                GlobalState.flutterWebviewPlugin.evalJavascript(
+                    "javascript:insertImagesByMultiImagePicker($compressedImageUint8List, '$imageId', $assetsCount);");
 
                 insertOrder++;
               });
@@ -342,7 +344,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
           if (imageSyncItem.base64.isNotEmpty) {
             imageSyncItem.byteData =
-                ImageConverter.convertBase64ToUint8List(imageSyncItem.base64);
+                ImageHandler.convertBase64ToUint8List(imageSyncItem.base64);
             imageSyncItem.base64 = null;
           }
 
@@ -360,19 +362,50 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           // Get the file name of the image
           imageIdMapList.forEach((imageIdMap) async {
             var imageId = imageIdMap['imageId'].toString();
-            var imageMd5 = imageId.substring(0, 32);
-            var fileName = '$imageMd5.jpg';
-            var imageUint8List =
-                await FileHandler.readFileAsUint8List(fileName);
+            var imageMd5FileName =
+                ImageHandler.getImageMd5FileNameByImageId(imageId);
+            var imageUint8List = await FileHandler
+                .getFileUint8ListFromDocumentDirectoryByFileNameWithoutExtension(
+                    fileNameWithoutExtension: imageMd5FileName);
 
-            // Anyway to compress the image before passing to the WebView
-            var compressedImageUint8List = await FileHandler.compressUint8List(
-                imageUint8List,
-                minWidth: 250,
-                minHeight: 250);
+            if (imageUint8List != null) {
+              // When there is the image at the document directory
+              ImageHandler.updateWebViewImageByImageUint8List(
+                  imageUint8List: imageUint8List, imageId: imageId);
+            } else {
+              // When no image found at the document directory
 
-            await GlobalState.flutterWebviewPlugin.evalJavascript(
-                "javascript:updateImageBase64($compressedImageUint8List,'$imageId');");
+              // Try to load the corresponding image at TCB Storage asynchronously
+              var fileNameAtTCBStorage =
+                  FileHandler.generateFileNameWithExtension(
+                fileNameWithoutExtension: imageMd5FileName,
+                extensionType: SupportedFileExtensionType.Jpg,
+              );
+              TCBStorageHandler.downloadFileFromTCBToDocumentDirectory(
+                      fileName: fileNameAtTCBStorage)
+                  .then((responseModel) async {
+                if (responseModel.code == ErrorCodeModel.SUCCESS_CODE) {
+                  // When it succeeds
+
+                  var imageBase64 = await ImageHandler
+                      .getImageBase64FromImageFileAtDocumentDirectory(
+                    fileNameWithoutExtension: imageMd5FileName,
+                  );
+
+                  ImageHandler.updateWebViewImagesByBase64(
+                      imageMd5FileNameToBeUpdated: imageMd5FileName,
+                      newBase64: imageBase64);
+                }
+              });
+
+              // ImageHandler.updateWebViewImagesByBase64(imageMd5FileName: imageMd5FileName, newBase64: newBase64)
+              await ImageHandler.updateWebViewImagesByAssetImage(
+                imageMd5FileNameToBeUpdated: imageMd5FileName,
+                assetImageFileNameWithoutExtension:
+                    GlobalState.loadingGifFileNameWithoutExtension,
+                imageExtensionType: SupportedImageExtensionType.Gif,
+              );
+            }
           });
         }), // GetAllImagesBase64FromImageFiles
     JavascriptChannel(

@@ -7,7 +7,8 @@ import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:seal_note/ui/settings/SettingPage.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
-import 'package:seal_note/util/tcb/TCBSystemInfoHandler.dart';
+import 'package:seal_note/util/file/FileHandler.dart';
+import 'package:seal_note/util/tcb/TCBStorageHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 import 'FolderListItemWidget.dart';
 import 'FolderListWidget.dart';
@@ -240,12 +241,10 @@ class FolderListPageState extends State<FolderListPage>
                               // setting button // setting button event
                               // test button // test button event // click test button
 
-                              var responseForSystemInfos =
-                                  await TCBSystemInfoHandler.getSystemInfo(
-                                forceToGetSystemInfoFromTCB: true,
-                              );
+                              var res = await GlobalState.flutterWebviewPlugin
+                                  .evalJavascript("javascript:getPageHtml();");
 
-                              var s = 's';
+                              var s2 = 's';
                             },
                           )
                         ],

@@ -234,7 +234,7 @@ class Database extends _$Database {
   Database.connect(DatabaseConnection connection) : super.connect(connection);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => GlobalState.systemInfoBasicDataStructureVersion;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(

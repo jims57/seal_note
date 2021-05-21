@@ -26,6 +26,15 @@
       "createdBy": 1
     }
   ],
+  "notes": [
+    {
+      "id": 1,
+      "folderId": 4,
+      "content": "content100",
+      "isReviewFinished": false,
+      "isDeleted": false
+    }
+  ],
   "reviewPlans": [
     {
       "id": 1,

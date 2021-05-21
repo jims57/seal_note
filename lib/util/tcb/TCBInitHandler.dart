@@ -26,7 +26,7 @@ class TCBInitHandler {
     }
   }
 
-  static CloudBaseCore _getCloudBaseCore() {
+  static CloudBaseCore getCloudBaseCore() {
     if (GlobalState.tcbCloudBaseCore == null) {
       _initCloudBaseCore();
     }
@@ -36,7 +36,7 @@ class TCBInitHandler {
 
   // Public methods
   static CloudBaseAuth getCloudBaseAuth() {
-    var core = _getCloudBaseCore();
+    var core = getCloudBaseCore();
 
     if (GlobalState.tcbCloudBaseAuth == null) {
       GlobalState.tcbCloudBaseAuth = CloudBaseAuth(core);
@@ -55,7 +55,7 @@ class TCBInitHandler {
 
   static CloudBaseDatabase _getCloudBaseDatabase() {
     if (GlobalState.tcbCloudBaseDatabase == null) {
-      var core = _getCloudBaseCore();
+      var core = getCloudBaseCore();
 
       GlobalState.tcbCloudBaseDatabase = CloudBaseDatabase(core);
     }

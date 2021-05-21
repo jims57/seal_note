@@ -1505,6 +1505,7 @@
     // Image related variables
     var imageWidthInEditMode = '90%';
     var imageWidthInReadOnlyMode = '90%';
+    var defaultImageExtension = 'jpg';
 
     // 【debug】
     var interactWithDart = true;
@@ -2257,7 +2258,7 @@
         // Insert image tag to the html page
         // var base64String = bytesToBase64(imageUint8List);
         var base64String = convertUint8ListToBase64(imageUint8List);
-        var scrString = 'data:image/jpg;base64,';
+        var scrString = 'data:image/'+defaultImageExtension+';base64,';
         scrString += base64String;
         quill.insertEmbed(cursorIndex, 'image', scrString);
 
@@ -2321,10 +2322,27 @@
         var base64String = convertUint8ListToBase64(imageUint8List);
 
         // Set the image's src attribute
-        var srcString = 'data:image/jpg;base64,' + base64String;
+        var srcString = 'data:image/'+defaultImageExtension+';base64,' + base64String;
         setTimeout(function () {
             $theImage.attr('src', srcString);
         }, 200);
+    }
+
+    function updateImageBase64ByImageMd5FileName(imageMd5FileName, newBase64, imageExtension = 'jpg'){
+        // Remark: https://github.com/jims57/seal_note/wiki/Methods-explanation#updateimagebase64byimagemd5filenamenewbase64-imagemd5filename
+
+        if(printLogToDartFromJs) Print.postMessage('updateImageBase64ByImageMd5FileName()');
+
+        // Get all images with the same image md5 file name
+        var imageArray = $("img[id^="+imageMd5FileName+"]");
+
+        // Build base64
+        newBase64 = 'data:image/'+imageExtension+';base64,'+newBase64;
+
+        $.each(imageArray, function (index, item) {
+            if(printLogToDartFromJs) Print.postMessage('executing $each() in updateImageBase64ByImageMd5FileName()');
+            $(item).attr('src', newBase64);
+        });
     }
 
     function setQuillToReadOnly(isReadOnly, isNewNote = false) { //Set quill edit mode

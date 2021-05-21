@@ -1,4 +1,6 @@
+import 'package:moor/moor.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/data/database/database.dart';
 import 'package:seal_note/model/common/ResponseModel.dart';
 import 'package:seal_note/model/errorCodes/ErrorCodeModel.dart';
 import 'package:seal_note/model/tcbModels/systemInfo/TCBSystemInfoGlobalDataModel.dart';
@@ -51,6 +53,21 @@ class TCBSystemInfoHandler {
         .get()
         .then((result) {
       GlobalState.tcbSystemInfo = TCBSystemInfoModel.fromHashMap(result);
+
+      // // Update note according to the latest data version
+      // var note = GlobalState.tcbSystemInfo.tcbSystemInfoNoteList[0];
+      // var notesCompanion =
+      //     NotesCompanion(id: Value(note.id), content: Value(note.content));
+      // GlobalState.database
+      //     .updateNote(notesCompanion: notesCompanion)
+      //     .then((value) {
+      //   var v = value;
+      //   var version = GlobalState.database.schemaVersion;
+      //   GlobalState.noteListWidgetForTodayState.currentState
+      //       .triggerSetState(forceToRefreshNoteListByDb: true);
+      // }).catchError((err) {
+      //   var e = err;
+      // });
 
       // Notify system info events
       GlobalState.systemInfoEventHandler
