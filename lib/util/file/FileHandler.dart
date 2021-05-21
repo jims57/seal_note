@@ -173,6 +173,7 @@ class FileHandler {
         return null;
       } else {
         // When the file exist
+
         // Read the file
         Uint8List contents = await fileObject.readAsBytes();
 

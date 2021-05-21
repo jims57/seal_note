@@ -29,7 +29,7 @@ import 'package:seal_note/util/tcb/TCBStorageHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 import 'package:seal_note/util/images/ImageHandler.dart';
 import 'common/PhotoViewWidget.dart';
-import 'package:seal_note/model/ImageSyncItem.dart';
+import 'package:seal_note/model/images/ImageSyncItem.dart';
 import 'package:after_layout/after_layout.dart';
 
 class NoteDetailWidget extends StatefulWidget {
@@ -370,41 +370,18 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
             if (imageUint8List != null) {
               // When there is the image at the document directory
+
               ImageHandler.updateWebViewImageByImageUint8List(
                   imageUint8List: imageUint8List, imageId: imageId);
             } else {
               // When no image found at the document directory
 
-              // Try to load the corresponding image at TCB Storage asynchronously
-              var fileNameAtTCBStorage =
-                  FileHandler.generateFileNameWithExtension(
-                fileNameWithoutExtension: imageMd5FileName,
-                extensionType: SupportedFileExtensionType.Jpg,
-              );
-              TCBStorageHandler.downloadFileFromTCBToDocumentDirectory(
-                      fileName: fileNameAtTCBStorage)
-                  .then((responseModel) async {
-                if (responseModel.code == ErrorCodeModel.SUCCESS_CODE) {
-                  // When it succeeds
+              // Show loading gif in the WebView first when no image found
+              ImageHandler.updateWebViewToShowLoadingGif(
+                  imageMd5FileNameToBeUpdated: imageMd5FileName);
 
-                  var imageBase64 = await ImageHandler
-                      .getImageBase64FromImageFileAtDocumentDirectory(
-                    fileNameWithoutExtension: imageMd5FileName,
-                  );
-
-                  ImageHandler.updateWebViewImagesByBase64(
-                      imageMd5FileNameToBeUpdated: imageMd5FileName,
-                      newBase64: imageBase64);
-                }
-              });
-
-              // ImageHandler.updateWebViewImagesByBase64(imageMd5FileName: imageMd5FileName, newBase64: newBase64)
-              await ImageHandler.updateWebViewImagesByAssetImage(
-                imageMd5FileNameToBeUpdated: imageMd5FileName,
-                assetImageFileNameWithoutExtension:
-                    GlobalState.loadingGifFileNameWithoutExtension,
-                imageExtensionType: SupportedImageExtensionType.Gif,
-              );
+              updateWebViewImageByImageLoadedFromTCBAsync(
+                  imageMd5FileName: imageMd5FileName);
             }
           });
         }), // GetAllImagesBase64FromImageFiles
@@ -1272,5 +1249,36 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     }
 
     return decodedNoteTitle;
+  }
+
+  static Future<void> updateWebViewImageByImageLoadedFromTCBAsync(
+      {@required String imageMd5FileName}) async {
+    // Remark: This is a static method, since it will be executed inside JavascriptChannel() of the WebView,
+    // which only support static one, so I make this method static
+
+    // Try to load the corresponding image at TCB Storage asynchronously
+    var fileNameAtTCBStorage = FileHandler.generateFileNameWithExtension(
+      fileNameWithoutExtension: imageMd5FileName,
+      extensionType: SupportedFileExtensionType.Jpg,
+    );
+    var responseModel =
+        await TCBStorageHandler.downloadFileFromTCBToDocumentDirectory(
+      fileName: fileNameAtTCBStorage,
+    );
+
+    if (responseModel.code == ErrorCodeModel.SUCCESS_CODE) {
+      // When it succeeds
+
+      var imageBase64 =
+          await ImageHandler.getImageBase64FromImageFileAtDocumentDirectory(
+        fileNameWithoutExtension: imageMd5FileName,
+      );
+
+      ImageHandler.updateWebViewImagesByBase64(
+          imageMd5FileNameToBeUpdated: imageMd5FileName,
+          newBase64: imageBase64);
+    } else {
+      // When load failed, do nothing
+    }
   }
 }

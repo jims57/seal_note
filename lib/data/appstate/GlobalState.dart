@@ -8,7 +8,8 @@ import 'package:seal_note/data/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:seal_note/event/SystemInfo/SystemInfoEventHandler.dart';
 import 'package:seal_note/event/webView/WebViewLoadedEventHandler.dart';
-import 'package:seal_note/model/ImageSyncItem.dart';
+import 'package:seal_note/model/images/CachedImageItem.dart';
+import 'package:seal_note/model/images/ImageSyncItem.dart';
 import 'package:seal_note/model/NoteWithProgressTotal.dart';
 import 'package:seal_note/model/ReusablePage/ReusablePageModel.dart';
 import 'package:seal_note/model/tcbModels/systemInfo/TCBSystemInfoModel.dart';
@@ -113,7 +114,8 @@ class GlobalState with ChangeNotifier {
 
   // Common variable // app basic variable // basic variable
   static const String loadingGifFileNameWithoutExtension = 'loading2';
-  static const String loadingGifFileName = '$loadingGifFileNameWithoutExtension.gif';
+  static const String loadingGifFileName =
+      '$loadingGifFileNameWithoutExtension.gif';
 
   // Default variables
   static const double defaultItemCaptionHeight = 25.0;
@@ -131,6 +133,9 @@ class GlobalState with ChangeNotifier {
   static String dbNameForMobilePlatform = 'sealMobile.sqlite';
   static final int retryTimesToSaveDb =
       7; // How many times it will retry if it fails to save data to db
+
+  // Image variables
+  static List<CachedImageItem> cachedImageItemList = <CachedImageItem>[];
 
   // Colors
   static const Color themeBlackColor = Color(0xff000000);

@@ -41,21 +41,6 @@ class TCBStorageHandler {
         });
   }
 
-  // static Future<void> getFileUrlFromTCB() async {
-  //   var storage = _getCloudBaseStorage();
-  //   List<String> fileIds = [
-  //     'cloud://seal-note-app-env-8ei8de6728d969.7365-seal-note-app-env-8ei8de6728d969-1258184445/flutter/abc123.png',
-  //     'cloud://seal-note-app-env-8ei8de6728d969.7365-seal-note-app-env-8ei8de6728d969-1258184445/flutter/img2.png'
-  //   ];
-  //
-  //   CloudBaseStorageRes<List<DownloadMetadata>> res =
-  //       await storage.getFileDownloadURL(fileIds);
-  //
-  //   print(res.data[0]);
-  //
-  //   var s = 's';
-  // }
-
   static Future<ResponseModel> downloadFileFromTCBToDocumentDirectory(
       {@required String fileName}) async {
     // download tcb file // download file from tcb

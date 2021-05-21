@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:moor/moor.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
+import 'package:seal_note/model/images/CachedImageItem.dart';
 import 'package:seal_note/util/enums/EnumHandler.dart';
 import 'package:seal_note/util/file/FileHandler.dart';
 
@@ -74,22 +75,66 @@ class ImageHandler {
     // fileName format: loading2.gif
     @required String assetImageFileNameWithoutExtension,
     @required SupportedImageExtensionType imageExtensionType,
+    // forceToLoadItFromAssetImage = true, it will ignore the cached image in memory and load it again forcibly from the asset folder
+    bool forceToLoadItFromAssetImage = false,
   }) async {
     var imageExtension = EnumHandler.getEnumValue(
       enumType: imageExtensionType,
       forceToLowerCase: true,
     );
     var fileName = '$assetImageFileNameWithoutExtension.$imageExtension';
+    var imageUint8List;
 
-    var imageUint8List = await FileHandler.getFileUint8ListFromAssetsFolder(
-      path: path,
-      fileName: fileName,
-    );
+    // Check if there is the image cached at GlobalState
+    // GlobalState.cachedImageItemList.contains(element)
+    var cachedImageItem = GlobalState.cachedImageItemList.firstWhere(
+        (cachedImageItem) =>
+            cachedImageItem.imageMd5FileName ==
+            assetImageFileNameWithoutExtension, orElse: () {
+      return CachedImageItem(
+          imageMd5FileName: assetImageFileNameWithoutExtension,
+          imageUint8List: null);
+    });
+
+    if (cachedImageItem.imageUint8List == null || forceToLoadItFromAssetImage) {
+      // When the image isn't cached yet, or load it forcibly according to the parameter
+
+      // Load it as Unit8List from the asset folder
+      imageUint8List = await FileHandler.getFileUint8ListFromAssetsFolder(
+        path: path,
+        fileName: fileName,
+      );
+
+      // Cache it to GlobalState
+      if (imageUint8List != null) {
+        GlobalState.cachedImageItemList.add(CachedImageItem(
+          imageMd5FileName: assetImageFileNameWithoutExtension,
+          imageUint8List: imageUint8List,
+        ));
+      }
+    } else {
+      // When the image has been cached
+
+      imageUint8List = cachedImageItem.imageUint8List;
+    }
+
+    var s = 's';
 
     var imageBase64 = convertUint8ListToBase64(imageUint8List);
 
     await updateWebViewImagesByBase64(
         imageMd5FileNameToBeUpdated: imageMd5FileNameToBeUpdated,
         newBase64: imageBase64);
+  }
+
+  static Future<void> updateWebViewToShowLoadingGif(
+      {@required String imageMd5FileNameToBeUpdated}) async {
+    await ImageHandler.updateWebViewImagesByAssetImage(
+      imageMd5FileNameToBeUpdated: imageMd5FileNameToBeUpdated,
+      assetImageFileNameWithoutExtension:
+          GlobalState.loadingGifFileNameWithoutExtension,
+      imageExtensionType: SupportedImageExtensionType.Gif,
+      forceToLoadItFromAssetImage: false,
+    );
   }
 }

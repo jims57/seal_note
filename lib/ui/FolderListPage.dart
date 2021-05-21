@@ -204,19 +204,6 @@ class FolderListPageState extends State<FolderListPage>
                                 title: '设置',
                                 child: SettingPage(),
                               );
-
-                              // GlobalState.hitTimes += 1;
-                              // var color = Colors.red;
-                              // if (GlobalState.hitTimes % 2 == 0) {
-                              //   color = Colors.green;
-                              // }
-
-                              // // Force to save note content to db if there is any change
-                              // await GlobalState
-                              //     .noteDetailWidgetState.currentState
-                              //     .setWebViewToReadOnlyMode(
-                              //         keepNoteDetailPageOpen: true,
-                              //         forceToSaveNoteToDbIfAnyUpdates: true);
                             },
                           ),
                           GestureDetector(
