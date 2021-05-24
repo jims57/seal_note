@@ -57,16 +57,16 @@ class ImageHandler {
   static Future<void> updateWebViewImagesByBase64(
       {@required String imageMd5FileNameToBeUpdated,
       @required String newBase64,
-      SupportedFileExtensionType fileExtensionType}) async {
+      @required SupportedImageExtensionType imageExtensionType}) async {
     // Remark: https://github.com/jims57/seal_note/wiki/Methods-explanation#updateimagebase64byimagemd5filenamenewbase64-imagemd5filename
 
-    var fileExtension = EnumHandler.getEnumValue(
-      enumType: fileExtensionType,
+    var imageExtension = EnumHandler.getEnumValue(
+      enumType: imageExtensionType,
       forceToLowerCase: true,
     );
 
     await GlobalState.flutterWebviewPlugin.evalJavascript(
-        "javascript:updateImageBase64ByImageMd5FileName('$imageMd5FileNameToBeUpdated','$newBase64', '$fileExtension');");
+        "javascript:updateImageBase64ByImageMd5FileName('$imageMd5FileNameToBeUpdated','$newBase64', '$imageExtension');");
   }
 
   static Future<void> updateWebViewImagesByAssetImage({
@@ -123,8 +123,10 @@ class ImageHandler {
     var imageBase64 = convertUint8ListToBase64(imageUint8List);
 
     await updateWebViewImagesByBase64(
-        imageMd5FileNameToBeUpdated: imageMd5FileNameToBeUpdated,
-        newBase64: imageBase64);
+      imageMd5FileNameToBeUpdated: imageMd5FileNameToBeUpdated,
+      newBase64: imageBase64,
+      imageExtensionType: imageExtensionType,
+    );
   }
 
   static Future<void> updateWebViewToShowLoadingGif(

@@ -356,6 +356,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     JavascriptChannel(
         name: 'GetAllImagesBase64FromImageFiles',
         onMessageReceived: (JavascriptMessage message) async {
+          // get image base64 // set webview image base64
+
           var jsonString = message.message;
           var jsonResponse = jsonDecode(jsonString);
           var imageIdMapList = jsonResponse as List;
@@ -363,7 +365,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           // Get the file name of the image
           imageIdMapList.forEach((imageIdMap) async {
             var imageId = imageIdMap['imageId'].toString();
-            var imageExtension = imageIdMap['imageExtension'].toString();
+            var imageExtension = imageIdMap['imageExtension'] ?? 'jpg';
             var imageMd5FileName =
                 ImageHandler.getImageMd5FileNameByImageId(imageId);
             var imageUint8List = await FileHandler
@@ -373,8 +375,20 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
             if (imageUint8List != null) {
               // When there is the image at the document directory
 
-              ImageHandler.updateWebViewImageByImageUint8List(
-                  imageUint8List: imageUint8List, imageId: imageId);
+              var imageBase64 =
+                  ImageHandler.convertUint8ListToBase64(imageUint8List);
+
+              var imageExtensionType =
+                  ImageHandler.getImageExtensionTypeByEnumValueString(
+                      enumValueString: imageExtension);
+
+              ImageHandler.updateWebViewImagesByBase64(
+                  imageMd5FileNameToBeUpdated: imageMd5FileName,
+                  newBase64: imageBase64,
+                  imageExtensionType: imageExtensionType);
+
+              // ImageHandler.updateWebViewImageByImageUint8List(
+              //     imageUint8List: imageUint8List, imageId: imageId);
             } else {
               // When no image found at the document directory
 
@@ -383,8 +397,9 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                   imageMd5FileNameToBeUpdated: imageMd5FileName);
 
               // Get the right image extension by extension string
-              var imageExtensionType = ImageHandler.getImageExtensionTypeByEnumValueString(
-                  enumValueString: imageExtension);
+              var imageExtensionType =
+                  ImageHandler.getImageExtensionTypeByEnumValueString(
+                      enumValueString: imageExtension);
 
               updateWebViewImageByImageLoadedFromTCBAsync(
                 imageMd5FileName: imageMd5FileName,
@@ -1288,7 +1303,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
       ImageHandler.updateWebViewImagesByBase64(
           imageMd5FileNameToBeUpdated: imageMd5FileName,
-          newBase64: imageBase64);
+          newBase64: imageBase64,
+          imageExtensionType: imageExtensionType);
     } else {
       // When load failed, do nothing
     }
