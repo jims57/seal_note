@@ -3,18 +3,16 @@ class TCBFolderModel {
   final String name;
   final int order;
   final bool isDefaultFolder;
-  final DateTime created;
+  final int reviewPlanId;
   final bool isDeleted;
-  final int createdBy;
 
   TCBFolderModel({
     this.id,
     this.name,
     this.order,
     this.isDefaultFolder,
-    this.created,
+    this.reviewPlanId,
     this.isDeleted,
-    this.createdBy,
   });
 
   factory TCBFolderModel.fromHashMap(Map<dynamic, dynamic> tcbFolderHashMap) {
@@ -23,9 +21,8 @@ class TCBFolderModel {
       name: tcbFolderHashMap['name'],
       order: tcbFolderHashMap['order'],
       isDefaultFolder: tcbFolderHashMap['isDefaultFolder'],
-      created: tcbFolderHashMap['created'],
+      reviewPlanId: tcbFolderHashMap['reviewPlanId'],
       isDeleted: tcbFolderHashMap['isDeleted'],
-      createdBy: tcbFolderHashMap['createdBy'],
     );
   }
 

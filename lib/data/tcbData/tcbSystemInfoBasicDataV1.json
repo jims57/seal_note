@@ -8,22 +8,32 @@
       "name": "今日",
       "order": 1,
       "isDefaultFolder": true,
-      "created": {
-        "$date": "2021-05-13T09:08:28.122Z"
-      },
-      "isDeleted": false,
-      "createdBy": 1
+      "reviewPlanId": 0,
+      "isDeleted": false
     },
     {
       "id": 2,
       "name": "全部笔记",
       "order": 2,
       "isDefaultFolder": true,
-      "created": {
-        "$date": "2021-05-13T09:08:28.122Z"
-      },
-      "isDeleted": false,
-      "createdBy": 1
+      "reviewPlanId": 0,
+      "isDeleted": false
+    },
+    {
+      "id": 3,
+      "name": "删除笔记",
+      "order": 4,
+      "isDefaultFolder": true,
+      "reviewPlanId": 0,
+      "isDeleted": false
+    },
+    {
+      "id": 4,
+      "name": "我的笔记",
+      "order": 3,
+      "isDefaultFolder": false,
+      "reviewPlanId": 1,
+      "isDeleted": false
     }
   ],
   "notes": [
@@ -31,7 +41,6 @@
       "id": 1,
       "folderId": 4,
       "content": "content100",
-      "isReviewFinished": false,
       "isDeleted": false
     }
   ],
@@ -45,6 +54,43 @@
       "id": 2,
       "name": "艾宾浩斯",
       "introduction": "艾宾浩斯简介"
+    }
+  ],
+  "reviewPlanConfigs": [
+    {
+      "id": 1,
+      "reviewPlanId": 1,
+      "order": 1,
+      "value": 30,
+      "unit": 1
+    },
+    {
+      "id": 2,
+      "reviewPlanId": 1,
+      "order": 2,
+      "value": 60,
+      "unit": 2
+    },
+    {
+      "id": 3,
+      "reviewPlanId": 1,
+      "order": 3,
+      "value": 15,
+      "unit": 3
+    },
+    {
+      "id": 4,
+      "reviewPlanId": 2,
+      "order": 1,
+      "value": 30,
+      "unit": 1
+    },
+    {
+      "id": 5,
+      "reviewPlanId": 2,
+      "order": 2,
+      "value": 60,
+      "unit": 2
     }
   ]
 }

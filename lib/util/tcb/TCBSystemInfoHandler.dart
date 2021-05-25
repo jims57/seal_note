@@ -1,6 +1,4 @@
-import 'package:moor/moor.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/data/database/database.dart';
 import 'package:seal_note/model/common/ResponseModel.dart';
 import 'package:seal_note/model/errorCodes/ErrorCodeModel.dart';
 import 'package:seal_note/model/tcbModels/systemInfo/TCBSystemInfoGlobalDataModel.dart';
