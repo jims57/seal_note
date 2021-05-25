@@ -174,12 +174,28 @@ class ReviewPlanConfigs extends Table {
       integer().withDefault(const Constant(1)).named('createdBy')();
 }
 
+@DataClassName('SystemInfoEntry')
+class SystemInfos extends Table {
+  @override
+  String get tableName => 'SystemInfos';
+
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get key => text().named('key')();
+
+  TextColumn get value => text().named('value')();
+
+  @override
+  List<String> get customConstraints => ['UNIQUE (key)'];
+}
+
 @UseMoor(tables: [
   Users,
   Folders,
   Notes,
   ReviewPlans,
-  ReviewPlanConfigs
+  ReviewPlanConfigs,
+  SystemInfos
 ], queries: {
   // For folder order
   'increaseUserFoldersOrderByOneExceptNewlyCreatedOne':
@@ -245,15 +261,15 @@ class Database extends _$Database {
 
   // Initialization related
   Future<bool> isDbInitialized() async {
-    // Whether the db has been initialized, the logic of it is based on whether Today folder which is a default folder is inserted or not
+    // Use *dataVersion* key in systemInfos to test if the db has been initialized, since *dataVersion* is the last record to be inserted
 
-    bool isDbInitialized = true;
-    FolderEntry folderEntry = await (select(folders)
-          ..where((f) => f.name.equals(GlobalState.defaultFolderNameForToday))
-          ..where((f) => f.isDefaultFolder.equals(true)))
-        .getSingle();
+    bool isDbInitialized = false;
 
-    if (folderEntry == null) isDbInitialized = false;
+    var systemInfo = await getSystemInfoByKey(
+        key: GlobalState.systemInfoKeyNameForDataVersion);
+    if (systemInfo != null) {
+      isDbInitialized = true;
+    }
 
     return isDbInitialized;
   }
@@ -292,6 +308,14 @@ class Database extends _$Database {
   // Users
   Future<int> insertUser(UsersCompanion usersCompanion) {
     return into(users).insert(usersCompanion);
+  }
+
+  Future<void> upsertUserInBatch(
+      List<UsersCompanion> usersCompanionList) async {
+    await batch((batch) {
+      batch.insertAllOnConflictUpdate(
+          users, usersCompanionList); //>>moor upsert
+    });
   }
 
   // Folders
@@ -857,6 +881,43 @@ class Database extends _$Database {
             (rp) => OrderingTerm(expression: rp.id, mode: OrderingMode.desc),
           ]))
         .get();
+  }
+
+  // System Infos
+  Future<SystemInfoEntry> getSystemInfoByKey({@required String key}) async {
+    return await (select(systemInfos)..where((si) => si.key.equals(key)))
+        .getSingle();
+  }
+
+  Future<int> getSystemInfoDataVersion() async {
+    var dataVersion = 0;
+
+    var systemInfo = await (select(systemInfos)
+          ..where((si) =>
+              si.key.equals(GlobalState.systemInfoKeyNameForDataVersion)))
+        .getSingle();
+
+    if (systemInfo != null) {
+      dataVersion = int.parse(systemInfo.value);
+    }
+
+    return dataVersion;
+  }
+
+  Future<int> upsertSystemInfoDataVersion({@required int newDataVersion}) {
+    var systemInfosCompanion = SystemInfosCompanion(
+      id: Value(1),
+      key: Value(GlobalState.systemInfoKeyNameForDataVersion),
+      value: Value('$newDataVersion'),
+    );
+    return into(systemInfos).insertOnConflictUpdate(systemInfosCompanion);
+  }
+
+  Future<void> upsertSystemInfosInBatch(
+      List<SystemInfoEntry> systemInfoEntryList) async {
+    return await batch((batch) {
+      batch.insertAllOnConflictUpdate(systemInfos, systemInfoEntryList);
+    });
   }
 
 // Other methods

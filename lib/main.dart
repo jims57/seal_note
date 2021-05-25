@@ -87,12 +87,18 @@ class _MyAppState extends State<MyApp> {
         var now = TimeHandler.getNowForLocal();
 
         // Initialize users // init users
-        var usersCompanion = UsersCompanion(
+        // var usersCompanion = UsersCompanion(
+        //     id: Value(1),
+        //     userName: Value('admin'),
+        //     password: Value('123456'),
+        //     created: Value(now));
+        var usersCompanionList = <UsersCompanion>[];
+        usersCompanionList.add(UsersCompanion(
             id: Value(1),
             userName: Value('admin'),
             password: Value('123456'),
-            created: Value(now));
-        GlobalState.database.insertUser(usersCompanion);
+            created: Value(now)));
+        GlobalState.database.upsertUserInBatch(usersCompanionList);
 
         // Initialize folders // init folders
         var folderEntryList = <FolderEntry>[];
@@ -136,22 +142,6 @@ class _MyAppState extends State<MyApp> {
             created: now,
             isDeleted: false,
             createdBy: GlobalState.adminUserId));
-        // folderEntryList.add(FolderEntry(
-        //     id: 6,
-        //     name: '编程知识',
-        //     order: 5,
-        //     isDefaultFolder: false,
-        //     created: now,
-        //     isDeleted: false,
-        //     createdBy: GlobalState.adminUserId));
-        // folderEntryList.add(FolderEntry(
-        //     id: 7,
-        //     name: '健身知识',
-        //     order: 6,
-        //     isDefaultFolder: false,
-        //     created: now,
-        //     isDeleted: false,
-        //     createdBy: GlobalState.adminUserId));
         GlobalState.database.upsertFoldersInBatch(folderEntryList);
 
         // Initialize notes // init notes
@@ -170,21 +160,7 @@ class _MyAppState extends State<MyApp> {
           isDeleted: false,
           createdBy: GlobalState.currentUserId,
         ));
-        // noteEntryList.add(NoteEntry(
-        //   id: 2,
-        //   folderId: 4,
-        //   content: '笔记2正文',
-        //   created: now,
-        //   updated: now,
-        //   nextReviewTime: null,
-        //   oldNextReviewTime: null,
-        //   reviewProgressNo: null,
-        //   isReviewFinished: false,
-        //   isDeleted: false,
-        //   createdBy: GlobalState.adminUserId,
-        // ));
-
-        GlobalState.database.insertNotesInBatch(noteEntryList);
+        GlobalState.database.upsertNotesInBatch(noteEntryList);
 
         // Initialize review plans // init review plans
         var reviewPlanEntryList = <ReviewPlanEntry>[];
@@ -204,7 +180,6 @@ class _MyAppState extends State<MyApp> {
         // Initialize review plan configs // init review plan configs
         var reviewPlanConfigEntryList = <ReviewPlanConfigEntry>[];
         // Unit for the value. { 1 = minute, 2 = hour, 3 = day, 4 = week, 5 = month, 6 = year }
-        // For Five-Part Form
         reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
             id: null,
             reviewPlanId: 1,
@@ -226,8 +201,6 @@ class _MyAppState extends State<MyApp> {
             value: 3,
             unit: 3,
             createdBy: GlobalState.adminUserId));
-
-        // For Ebbinghaus
         reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
             id: null,
             reviewPlanId: 2,
@@ -244,6 +217,16 @@ class _MyAppState extends State<MyApp> {
             createdBy: GlobalState.adminUserId));
         GlobalState.database
             .upsertReviewPlanConfigsInBatch(reviewPlanConfigEntryList);
+
+        // Initialize system infos
+        var systemInfoEntryList = <SystemInfoEntry>[];
+        systemInfoEntryList.add(
+          SystemInfoEntry(
+              id: 1,
+              key: GlobalState.systemInfoKeyNameForDataVersion,
+              value: '0'),
+        );
+        GlobalState.database.upsertSystemInfosInBatch(systemInfoEntryList);
 
         // Trigger folder list page to refresh so that the initialized folder list can be shown properly
         if (GlobalState.isFolderListPageLoaded) {

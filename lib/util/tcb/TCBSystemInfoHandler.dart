@@ -14,7 +14,9 @@ class TCBSystemInfoHandler {
     if (forceToGetSystemInfoFromTCB) {
       // When fetching system info from TCB forcibly
 
-      response = await _getSystemInfoFromTCB();
+      response = await _getSystemInfoFromTCB(
+        updateSystemInfoBasicDataWhenDataVersionIsDifferent: true,
+      );
     } else {
       // When don't fetch system info from TCB forcibly
       // Try to get the system info from GlobalState first
@@ -24,7 +26,9 @@ class TCBSystemInfoHandler {
                 TCBSystemInfoGlobalDataModel>(
             result: GlobalState.tcbSystemInfo.tcbSystemInfoGlobalData);
       } else {
-        response = await _getSystemInfoFromTCB();
+        response = await _getSystemInfoFromTCB(
+          updateSystemInfoBasicDataWhenDataVersionIsDifferent: true,
+        );
       }
     }
 
@@ -33,7 +37,9 @@ class TCBSystemInfoHandler {
 
   // Private methods
   static Future<ResponseModel<TCBSystemInfoGlobalDataModel>>
-      _getSystemInfoFromTCB() async {
+      _getSystemInfoFromTCB({
+    bool updateSystemInfoBasicDataWhenDataVersionIsDifferent = false,
+  }) async {
     var response;
 
     await TCBInitHandler.getTCBCollection(collectionName: 'systemInfos')
@@ -41,7 +47,6 @@ class TCBSystemInfoHandler {
           {
             '_id': GlobalState.tcbCommand
                 .eq(GlobalState.systemInfoGlobalDataDocId),
-            'reviewedAppVersion': GlobalState.tcbCommand.eq('1.2'),
           },
           {
             'structureVersion': GlobalState.tcbCommand
@@ -49,7 +54,7 @@ class TCBSystemInfoHandler {
           }
         ]))
         .get()
-        .then((result) {
+        .then((result) async {
       GlobalState.tcbSystemInfo = TCBSystemInfoModel.fromHashMap(result);
 
       // // Update note according to the latest data version
@@ -71,10 +76,22 @@ class TCBSystemInfoHandler {
       GlobalState.systemInfoEventHandler
           .notifySubscribersThatSystemInfoHasDownloaded(
               GlobalState.tcbSystemInfo);
-      GlobalState.systemInfoEventHandler
-          .notifySubscribersThatSystemInfoDataVersionHasChanged(
-        GlobalState.tcbSystemInfo.tcbSystemInfoBasicData.dataVersion,
-      );
+
+      // If the data version has changed, notify the subscribers
+
+      if (updateSystemInfoBasicDataWhenDataVersionIsDifferent) {
+        GlobalState.systemInfoDataVersion =
+            await GlobalState.database.getSystemInfoDataVersion();
+        var newDataVersion =
+            GlobalState.tcbSystemInfo.tcbSystemInfoBasicData.dataVersion;
+
+        if (newDataVersion != GlobalState.systemInfoDataVersion) {
+          GlobalState.systemInfoEventHandler
+              .notifySubscribersThatSystemInfoDataVersionHasChanged(
+            GlobalState.tcbSystemInfo.tcbSystemInfoBasicData.dataVersion,
+          );
+        }
+      }
 
       response = ResponseModel.getResponseModelForSuccess<
           TCBSystemInfoGlobalDataModel>(

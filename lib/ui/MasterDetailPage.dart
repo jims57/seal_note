@@ -61,8 +61,9 @@ class MasterDetailPageState extends State<MasterDetailPage>
     });
 
     GlobalState.systemInfoEventHandler.onSystemInfoDataVersionChanged
-        .listen((tcbSystemInfo) {
-      var s = 's';
+        .listen((newDataVersion) {
+      GlobalState.database
+          .upsertSystemInfoDataVersion(newDataVersion: newDataVersion);
     });
 
     loginPageFutureBuilder = _checkIfShowLoginPageOrNot();

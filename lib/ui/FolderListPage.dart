@@ -228,9 +228,13 @@ class FolderListPageState extends State<FolderListPage>
                               // setting button // setting button event
                               // test button // test button event // click test button
 
-                              var res = await GlobalState.flutterWebviewPlugin
-                                  .evalJavascript("javascript:getPageHtml();");
+                              var systemInfo = await GlobalState.database
+                                  .upsertSystemInfoDataVersion(
+                                      newDataVersion: 5);
 
+                              // var res = await GlobalState.flutterWebviewPlugin
+                              //     .evalJavascript("javascript:getPageHtml();");
+                              //
                               var s2 = 's';
                             },
                           )

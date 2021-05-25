@@ -2234,6 +2234,241 @@ class $ReviewPlanConfigsTable extends ReviewPlanConfigs
   }
 }
 
+class SystemInfoEntry extends DataClass implements Insertable<SystemInfoEntry> {
+  final int id;
+  final String key;
+  final String value;
+  SystemInfoEntry(
+      {@required this.id, @required this.key, @required this.value});
+  factory SystemInfoEntry.fromData(
+      Map<String, dynamic> data, GeneratedDatabase db,
+      {String prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
+    return SystemInfoEntry(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      key: stringType.mapFromDatabaseResponse(data['${effectivePrefix}key']),
+      value:
+          stringType.mapFromDatabaseResponse(data['${effectivePrefix}value']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || key != null) {
+      map['key'] = Variable<String>(key);
+    }
+    if (!nullToAbsent || value != null) {
+      map['value'] = Variable<String>(value);
+    }
+    return map;
+  }
+
+  SystemInfosCompanion toCompanion(bool nullToAbsent) {
+    return SystemInfosCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      key: key == null && nullToAbsent ? const Value.absent() : Value(key),
+      value:
+          value == null && nullToAbsent ? const Value.absent() : Value(value),
+    );
+  }
+
+  factory SystemInfoEntry.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return SystemInfoEntry(
+      id: serializer.fromJson<int>(json['id']),
+      key: serializer.fromJson<String>(json['key']),
+      value: serializer.fromJson<String>(json['value']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'key': serializer.toJson<String>(key),
+      'value': serializer.toJson<String>(value),
+    };
+  }
+
+  SystemInfoEntry copyWith({int id, String key, String value}) =>
+      SystemInfoEntry(
+        id: id ?? this.id,
+        key: key ?? this.key,
+        value: value ?? this.value,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('SystemInfoEntry(')
+          ..write('id: $id, ')
+          ..write('key: $key, ')
+          ..write('value: $value')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      $mrjf($mrjc(id.hashCode, $mrjc(key.hashCode, value.hashCode)));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is SystemInfoEntry &&
+          other.id == this.id &&
+          other.key == this.key &&
+          other.value == this.value);
+}
+
+class SystemInfosCompanion extends UpdateCompanion<SystemInfoEntry> {
+  final Value<int> id;
+  final Value<String> key;
+  final Value<String> value;
+  const SystemInfosCompanion({
+    this.id = const Value.absent(),
+    this.key = const Value.absent(),
+    this.value = const Value.absent(),
+  });
+  SystemInfosCompanion.insert({
+    this.id = const Value.absent(),
+    @required String key,
+    @required String value,
+  })  : key = Value(key),
+        value = Value(value);
+  static Insertable<SystemInfoEntry> custom({
+    Expression<int> id,
+    Expression<String> key,
+    Expression<String> value,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (key != null) 'key': key,
+      if (value != null) 'value': value,
+    });
+  }
+
+  SystemInfosCompanion copyWith(
+      {Value<int> id, Value<String> key, Value<String> value}) {
+    return SystemInfosCompanion(
+      id: id ?? this.id,
+      key: key ?? this.key,
+      value: value ?? this.value,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (key.present) {
+      map['key'] = Variable<String>(key.value);
+    }
+    if (value.present) {
+      map['value'] = Variable<String>(value.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SystemInfosCompanion(')
+          ..write('id: $id, ')
+          ..write('key: $key, ')
+          ..write('value: $value')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SystemInfosTable extends SystemInfos
+    with TableInfo<$SystemInfosTable, SystemInfoEntry> {
+  final GeneratedDatabase _db;
+  final String _alias;
+  $SystemInfosTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedIntColumn _id;
+  @override
+  GeneratedIntColumn get id => _id ??= _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _keyMeta = const VerificationMeta('key');
+  GeneratedTextColumn _key;
+  @override
+  GeneratedTextColumn get key => _key ??= _constructKey();
+  GeneratedTextColumn _constructKey() {
+    return GeneratedTextColumn(
+      'key',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _valueMeta = const VerificationMeta('value');
+  GeneratedTextColumn _value;
+  @override
+  GeneratedTextColumn get value => _value ??= _constructValue();
+  GeneratedTextColumn _constructValue() {
+    return GeneratedTextColumn(
+      'value',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, key, value];
+  @override
+  $SystemInfosTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'SystemInfos';
+  @override
+  final String actualTableName = 'SystemInfos';
+  @override
+  VerificationContext validateIntegrity(Insertable<SystemInfoEntry> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+    }
+    if (data.containsKey('key')) {
+      context.handle(
+          _keyMeta, key.isAcceptableOrUnknown(data['key'], _keyMeta));
+    } else if (isInserting) {
+      context.missing(_keyMeta);
+    }
+    if (data.containsKey('value')) {
+      context.handle(
+          _valueMeta, value.isAcceptableOrUnknown(data['value'], _valueMeta));
+    } else if (isInserting) {
+      context.missing(_valueMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SystemInfoEntry map(Map<String, dynamic> data, {String tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return SystemInfoEntry.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $SystemInfosTable createAlias(String alias) {
+    return $SystemInfosTable(_db, alias);
+  }
+}
+
 abstract class _$Database extends GeneratedDatabase {
   _$Database(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   _$Database.connect(DatabaseConnection c) : super.connect(c);
@@ -2248,6 +2483,8 @@ abstract class _$Database extends GeneratedDatabase {
   $ReviewPlanConfigsTable _reviewPlanConfigs;
   $ReviewPlanConfigsTable get reviewPlanConfigs =>
       _reviewPlanConfigs ??= $ReviewPlanConfigsTable(this);
+  $SystemInfosTable _systemInfos;
+  $SystemInfosTable get systemInfos => _systemInfos ??= $SystemInfosTable(this);
   Future<int> increaseUserFoldersOrderByOneExceptNewlyCreatedOne(
       int createdFolderId) {
     return customUpdate(
@@ -2529,7 +2766,7 @@ abstract class _$Database extends GeneratedDatabase {
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [users, folders, notes, reviewPlans, reviewPlanConfigs];
+      [users, folders, notes, reviewPlans, reviewPlanConfigs, systemInfos];
 }
 
 class GetFoldersWithUnreadTotalResult {

@@ -241,6 +241,10 @@ class GlobalState with ChangeNotifier {
   static double reviewPlanItemHeight = defaultItemHeight;
   static bool isReviewPlanPageTriggeredByFolderOption = false;
 
+  // System info // SystemInfo
+  static String systemInfoKeyNameForDataVersion = 'dataVersion';
+  static int systemInfoDataVersion;
+
   // Title String
   static final String defaultFolderNameForToday = '今天';
   static final String defaultFolderNameForAllNotes = '全部笔记';
