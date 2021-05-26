@@ -2,6 +2,8 @@ import 'package:moor/moor.dart';
 import 'dart:async';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/model/NoteWithProgressTotal.dart';
+import 'package:seal_note/model/common/ResponseModel.dart';
+import 'package:seal_note/model/errorCodes/ErrorCodeModel.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
 part 'database.g.dart';
@@ -203,7 +205,7 @@ class SystemInfos extends Table {
 
   // For folder list
   'getFoldersWithUnreadTotal':
-      "SELECT f.id, f.name, f.[order], CASE WHEN f.isDefaultFolder = 1 AND f.name = '今天' THEN( SELECT count( *) FROM notes n, folders f WHERE n.folderId = f.id AND f.reviewPlanId IS NOT NULL AND n.isDeleted = 0 AND strftime('%Y-%m-%d %H:%M:%S', n.nextReviewTime) < strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime', 'start of day', '+1 day') AND n.isReviewFinished = 0 AND n.createdBy = :createdBy ) WHEN f.isDefaultFolder = 1 AND f.name = '全部笔记' THEN ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy ) WHEN f.isDefaultFolder = 1 AND f.name = '删除笔记' THEN ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 1 AND n.createdBy = :createdBy ) ELSE ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = f.id AND CASE WHEN f.reviewPlanId IS NOT NULL THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ) END numberToShow, f.isDefaultFolder, f.reviewPlanId, f.created, f.createdBy FROM folders f WHERE f.createdBy = :createdBy AND f.isDeleted = 0 ORDER BY f.[order] ASC, f.created DESC; ",
+      "SELECT f.id, f.name, f.[order], CASE WHEN f.id = 1 THEN( SELECT count( *) FROM notes n, folders f WHERE n.folderId = f.id AND f.reviewPlanId IS NOT NULL AND n.isDeleted = 0 AND strftime('%Y-%m-%d %H:%M:%S', n.nextReviewTime) < strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime', 'start of day', '+1 day') AND n.isReviewFinished = 0 AND n.createdBy = :createdBy ) WHEN f.id = 2 THEN ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy ) WHEN f.id = 3 THEN ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 1 AND n.createdBy = :createdBy ) ELSE ( SELECT count( * ) FROM notes n WHERE n.isDeleted = 0 AND n.createdBy = :createdBy AND n.folderId = f.id AND CASE WHEN f.reviewPlanId IS NOT NULL THEN n.nextReviewTime IS NOT NULL ELSE n.nextReviewTime IS NULL END ) END numberToShow, f.isDefaultFolder, f.reviewPlanId, f.created, f.createdBy FROM folders f WHERE f.createdBy = :createdBy AND f.isDeleted = 0 ORDER BY f.[order] ASC, f.created DESC; ",
 
   // For note list
   'getNoteListForToday':
@@ -419,6 +421,26 @@ class Database extends _$Database {
         .write(foldersCompanion);
   }
 
+  Future<ResponseModel> updateFoldersByTransaction(
+      {@required List<FoldersCompanion> foldersCompanionList}) async {
+    var response = ResponseModel.getResponseModelForSuccess();
+
+    await transaction(() async {
+      for (var foldersCompanion in foldersCompanionList) {
+        await (update(folders)
+              ..where((f) => f.id.equals(foldersCompanion.id.value)))
+            .write(foldersCompanion);
+      }
+    }).catchError((err) {
+      response = ResponseModel.getResponseModelForError(
+        code: ErrorCodeModel.UPDATE_FOLDERS_IN_BATCH_FAILED_CODE,
+        message: ErrorCodeModel.UPDATE_FOLDERS_IN_BATCH_FAILED_MESSAGE,
+      );
+    });
+
+    return response;
+  }
+
   Future<void> upsertFoldersInBatch(List<FolderEntry> folderEntryList) async {
     return await batch((batch) {
       batch.insertAllOnConflictUpdate(folders, folderEntryList);
@@ -435,8 +457,11 @@ class Database extends _$Database {
     return effectedRowCount;
   }
 
-  Future reorderFolders(List<FoldersCompanion> foldersCompanionList) async {
-    var result = await transaction(() async {
+  Future<ResponseModel> reorderFolders(
+      List<FoldersCompanion> foldersCompanionList) async {
+    var response = ResponseModel.getResponseModelForSuccess();
+
+    await transaction(() async {
       for (var foldersCompanion in foldersCompanionList) {
         await (update(folders)
               ..where((f) => f.id.equals(foldersCompanion.id.value)))
@@ -444,9 +469,14 @@ class Database extends _$Database {
           order: Value(foldersCompanion.order.value),
         ));
       }
+    }).catchError((err) {
+      response = ResponseModel.getResponseModelForError(
+        code: ErrorCodeModel.REORDER_FOLDERS_FAILED_CODE,
+        message: ErrorCodeModel.REORDER_FOLDERS_FAILED_MESSAGE,
+      );
     });
 
-    return result;
+    return response;
   }
 
   Future<int> deleteFolder({@required int folderId}) async {
@@ -593,6 +623,26 @@ class Database extends _$Database {
         .write(notesCompanion);
   }
 
+  Future<ResponseModel> updateNotesByTransaction(
+      {@required List<NotesCompanion> notesCompanionList}) async {
+    var response = ResponseModel.getResponseModelForSuccess();
+
+    await transaction(() async {
+      for (var notesCompanion in notesCompanionList) {
+        await (update(notes)
+              ..where((f) => f.id.equals(notesCompanion.id.value)))
+            .write(notesCompanion);
+      }
+    }).catchError((err) {
+      response = ResponseModel.getResponseModelForError(
+        code: ErrorCodeModel.UPDATE_NOTES_IN_BATCH_FAILED_CODE,
+        message: ErrorCodeModel.UPDATE_NOTES_IN_BATCH_FAILED_MESSAGE,
+      );
+    });
+
+    return response;
+  }
+
   Future<int> changeNoteFolderId({
     @required int noteId,
     @required int newFolderId,
@@ -673,8 +723,8 @@ class Database extends _$Database {
     if (GlobalState.isDefaultFolderSelected) {
       // When it is for default
 
-      if (GlobalState.appState.noteListPageTitle ==
-          GlobalState.defaultFolderNameForToday) {
+      if (GlobalState.selectedFolderIdCurrently ==
+          GlobalState.defaultFolderIdForToday) {
         // For Today folder
 
         // get today note list item // get today data from sqlite
@@ -686,9 +736,8 @@ class Database extends _$Database {
                 GlobalState.currentUserId, pageSize, pageNo.toDouble())
             .map((row) => _convertModelToNoteWithProgressTotal(row))
             .get();
-        // } else if (GlobalState.selectedFolderName ==
-      } else if (GlobalState.appState.noteListPageTitle ==
-          GlobalState.defaultFolderNameForAllNotes) {
+      } else if (GlobalState.selectedFolderIdCurrently ==
+          GlobalState.defaultFolderIdForAllNotes) {
         // For All Notes folder
 
         // get all notes note list
@@ -696,7 +745,8 @@ class Database extends _$Database {
                 GlobalState.currentUserId, pageSize, pageNo.toDouble())
             .map((row) => _convertModelToNoteWithProgressTotal(row))
             .get();
-      } else {
+      } else if (GlobalState.selectedFolderIdCurrently ==
+          GlobalState.defaultFolderIdForDeletion) {
         // get deleted note // get deletion notes
 
         // For Deleted Notes folder
@@ -849,6 +899,42 @@ class Database extends _$Database {
   }
 
 // Review plans
+  Future<List<ReviewPlanEntry>> getAllReviewPlans() async {
+    return await (select(reviewPlans)
+          ..orderBy([
+            (rp) => OrderingTerm(expression: rp.id, mode: OrderingMode.desc),
+          ]))
+        .get();
+  }
+
+  Future<int> updateReviewPlan({
+    @required ReviewPlansCompanion reviewPlansCompanion,
+  }) async {
+    return (update(reviewPlans)
+          ..where((rp) => rp.id.equals(reviewPlansCompanion.id.value)))
+        .write(reviewPlansCompanion);
+  }
+
+  Future<ResponseModel> updateReviewPlansByTransaction(
+      {@required List<ReviewPlansCompanion> reviewPlansCompanionList}) async {
+    var response = ResponseModel.getResponseModelForSuccess();
+
+    await transaction(() async {
+      for (var reviewPlansCompanion in reviewPlansCompanionList) {
+        await (update(reviewPlans)
+              ..where((f) => f.id.equals(reviewPlansCompanion.id.value)))
+            .write(reviewPlansCompanion);
+      }
+    }).catchError((err) {
+      response = ResponseModel.getResponseModelForError(
+        code: ErrorCodeModel.UPDATE_REVIEW_PLANS_IN_BATCH_FAILED_CODE,
+        message: ErrorCodeModel.UPDATE_REVIEW_PLANS_IN_BATCH_FAILED_MESSAGE,
+      );
+    });
+
+    return response;
+  }
+
   Future<void> upsertReviewPlansInBatch(
       List<ReviewPlanEntry> reviewPlanEntryList) async {
     return await batch((batch) {
@@ -867,20 +953,43 @@ class Database extends _$Database {
     return progressTotal;
   }
 
+  Future<int> updateReviewPlanConfig({
+    @required ReviewPlanConfigsCompanion reviewPlanConfigsCompanion,
+  }) async {
+    return (update(reviewPlanConfigs)
+          ..where((rpc) => rpc.id.equals(reviewPlanConfigsCompanion.id.value)))
+        .write(reviewPlanConfigsCompanion);
+  }
+
+  Future<ResponseModel> updateReviewPlanConfigsByTransaction(
+      {@required
+          List<ReviewPlanConfigsCompanion>
+              reviewPlanConfigsCompanionList}) async {
+    var response = ResponseModel.getResponseModelForSuccess();
+
+    await transaction(() async {
+      for (var reviewPlanConfigsCompanion in reviewPlanConfigsCompanionList) {
+        await (update(reviewPlanConfigs)
+              ..where((f) => f.id.equals(reviewPlanConfigsCompanion.id.value)))
+            .write(reviewPlanConfigsCompanion);
+      }
+    }).catchError((err) {
+      response = ResponseModel.getResponseModelForError(
+        code: ErrorCodeModel.UPDATE_REVIEW_PLAN_CONFIGS_IN_BATCH_FAILED_CODE,
+        message:
+            ErrorCodeModel.UPDATE_REVIEW_PLAN_CONFIGS_IN_BATCH_FAILED_MESSAGE,
+      );
+    });
+
+    return response;
+  }
+
   Future<void> upsertReviewPlanConfigsInBatch(
       List<ReviewPlanConfigEntry> reviewPlanConfigEntryList) async {
     return await batch((batch) {
       batch.insertAllOnConflictUpdate(
           reviewPlanConfigs, reviewPlanConfigEntryList);
     });
-  }
-
-  Future<List<ReviewPlanEntry>> getAllReviewPlans() async {
-    return await (select(reviewPlans)
-          ..orderBy([
-            (rp) => OrderingTerm(expression: rp.id, mode: OrderingMode.desc),
-          ]))
-        .get();
   }
 
   // System Infos

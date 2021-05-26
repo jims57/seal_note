@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 import 'folderPageWidgets/UserFolderListListenerWidget.dart';
+import 'package:after_layout/after_layout.dart';
 
 class FolderListItemWidget extends StatefulWidget {
   FolderListItemWidget(
@@ -51,15 +52,21 @@ class FolderListItemWidget extends StatefulWidget {
   FolderListItemWidgetState createState() => FolderListItemWidgetState();
 }
 
-class FolderListItemWidgetState extends State<FolderListItemWidget> {
+class FolderListItemWidgetState extends State<FolderListItemWidget>
+    with AfterLayoutMixin<FolderListItemWidget> {
   @override
   Widget build(BuildContext context) {
     // Check if this is a default folder, if yes, we need to add the folder total
     if (widget.isDefaultFolder) {
-      GlobalState.allFolderTotal += 1;
+      // GlobalState.allFolderTotal += 1;
 
-      // Record the default folder index to list
-      GlobalState.defaultFolderIndexList.add(widget.index);
+      var folderIndex = widget.index;
+
+      // When there is no such index, adds it
+      if (!GlobalState.defaultFolderIndexList.contains(folderIndex)) {
+        // Record the default folder index to list
+        GlobalState.defaultFolderIndexList.add(folderIndex);
+      }
     }
 
     return GestureDetector(
@@ -132,13 +139,18 @@ class FolderListItemWidgetState extends State<FolderListItemWidget> {
     );
   }
 
+  @override
+  void afterFirstLayout(BuildContext context) {
+    var s = 's';
+  }
+
   // Private methods
   bool _isDeletedFolderBeingClicked() {
     var isDeletedFolder = false;
 
     if (GlobalState.isDefaultFolderSelected &&
-        GlobalState.selectedFolderNameCurrently ==
-            GlobalState.defaultFolderNameForDeletion) {
+        GlobalState.selectedFolderIdCurrently ==
+            GlobalState.defaultFolderIdForDeletion) {
       isDeletedFolder = true;
     }
 

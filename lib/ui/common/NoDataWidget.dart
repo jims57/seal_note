@@ -54,12 +54,12 @@ class _NoDataWidgetState extends State<NoDataWidget> {
       noDataTitle = 'App初始化...请耐心等待';
     } else if (GlobalState.isDefaultFolderSelected) {
       // Show the right title for no data according to the folder id the user is using currently
-      if (GlobalState.selectedFolderNameCurrently ==
-          GlobalState.defaultFolderNameForToday) {
+      if (GlobalState.selectedFolderIdCurrently ==
+          GlobalState.defaultFolderIdForToday) {
         // For Today folder
         noDataTitle = '暂无复习内容';
-      } else if (GlobalState.selectedFolderNameCurrently ==
-          GlobalState.defaultFolderNameForDeletion) {
+      } else if (GlobalState.selectedFolderIdCurrently ==
+          GlobalState.defaultFolderIdForDeletion) {
         // For Deleted folder
         noDataTitle = '暂无删除的笔记';
       } else {
@@ -79,12 +79,12 @@ class _NoDataWidgetState extends State<NoDataWidget> {
       noDataRemark = '';
     } else if (GlobalState.isDefaultFolderSelected) {
       // Show the right title for no data according to the folder id the user is using currently
-      if (GlobalState.selectedFolderNameCurrently ==
-          GlobalState.defaultFolderNameForToday) {
+      if (GlobalState.selectedFolderIdCurrently ==
+          GlobalState.defaultFolderIdForToday) {
         // For Today folder
         noDataRemark = '说明：所有需要今天复习的笔记，都会出现在此，方便你统一复习。';
-      } else if (GlobalState.selectedFolderNameCurrently ==
-          GlobalState.defaultFolderNameForDeletion) {
+      } else if (GlobalState.selectedFolderIdCurrently ==
+          GlobalState.defaultFolderIdForDeletion) {
         // For Deleted folder
         noDataRemark = '说明：所有删除的笔记会保留在此，默认保留：30天。之后将永久删除。';
       } else {

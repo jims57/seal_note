@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:moor/moor.dart';
+import 'package:seal_note/data/database/database.dart';
+
 class TCBFolderModel {
   final int id;
   final String name;
@@ -35,5 +39,25 @@ class TCBFolderModel {
         .toList();
 
     return folderList;
+  }
+
+  static List<FoldersCompanion>
+      convertTCBFolderModelListToFoldersCompanionList({
+    @required List<TCBFolderModel> tcbFolderModelList,
+  }) {
+    var foldersCompanionList = <FoldersCompanion>[];
+
+    for (var tcbFolderModel in tcbFolderModelList) {
+      foldersCompanionList.add(FoldersCompanion(
+        id: Value(tcbFolderModel.id),
+        name: Value(tcbFolderModel.name),
+        order: Value(tcbFolderModel.order),
+        isDefaultFolder: Value(tcbFolderModel.isDefaultFolder),
+        reviewPlanId: Value(tcbFolderModel.reviewPlanId),
+        isDeleted: Value(tcbFolderModel.isDeleted),
+      ));
+    }
+
+    return foldersCompanionList;
   }
 }

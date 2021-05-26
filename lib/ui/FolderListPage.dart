@@ -162,7 +162,7 @@ class FolderListPageState extends State<FolderListPage>
               child: FolderListWidget(
                 key: GlobalState.folderListWidgetState,
                 // folder count // user folder total // user folder count
-                userFolderTotal: 20,
+                // userFolderTotal: 20,
               ),
             ),
             SafeArea(
@@ -228,9 +228,20 @@ class FolderListPageState extends State<FolderListPage>
                               // setting button // setting button event
                               // test button // test button event // click test button
 
-                              var systemInfo = await GlobalState.database
-                                  .upsertSystemInfoDataVersion(
-                                      newDataVersion: 5);
+                              var s22 = GlobalState.defaultFolderIndexList;
+
+                              GlobalState.folderListPageState.currentState.updateDefaultFolderIndexListsVarAtGlobalState();
+
+                              //
+
+                              // var foldersCompanion = FoldersCompanion(
+                              //     id: Value(10), name: Value('我的笔记2'));
+                              // var r = await GlobalState.database
+                              //     .updateFolder(foldersCompanion);
+
+                              // var systemInfo = await GlobalState.database
+                              //     .upsertSystemInfoDataVersion(
+                              //         newDataVersion: 5);
 
                               // var res = await GlobalState.flutterWebviewPlugin
                               //     .evalJavascript("javascript:getPageHtml();");
@@ -372,6 +383,19 @@ class FolderListPageState extends State<FolderListPage>
       });
     } else {
       callback();
+    }
+  }
+
+  void updateDefaultFolderIndexListsVarAtGlobalState() {
+    GlobalState.defaultFolderIndexList.clear();
+
+    var folderListItemWidgetList =
+        GlobalState.folderListWidgetState.currentState.getFolderListItemList();
+
+    for (var folderListItemWidget in folderListItemWidgetList) {
+      if (folderListItemWidget.isDefaultFolder) {
+        GlobalState.defaultFolderIndexList.add(folderListItemWidget.index);
+      }
     }
   }
 }

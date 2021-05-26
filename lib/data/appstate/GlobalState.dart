@@ -237,6 +237,9 @@ class GlobalState with ChangeNotifier {
       true; // Move left or right, it is moving to left by default
   static List<ReusablePageModel> reusablePageWidgetList = <ReusablePageModel>[];
 
+  // Review note related
+  static String titleForReviewFinished = '复习完成';
+
   // Review plan
   static double reviewPlanItemHeight = defaultItemHeight;
   static bool isReviewPlanPageTriggeredByFolderOption = false;
@@ -245,12 +248,18 @@ class GlobalState with ChangeNotifier {
   static String systemInfoKeyNameForDataVersion = 'dataVersion';
   static int systemInfoDataVersion;
 
-  // Title String
-  static final String defaultFolderNameForToday = '今天';
-  static final String defaultFolderNameForAllNotes = '全部笔记';
-  static final String defaultFolderNameForDeletion = '删除笔记';
-  static final String defaultUserFolderNameForMyNotes = '我的笔记';
-  static final String titleForReviewFinished = '复习完成';
+  // Folders name // folder name
+  // static String defaultFolderNameForToday = '今天';
+  // static String defaultFolderNameForAllNotes = '全部笔记';
+  // static String defaultFolderNameForDeletion = '删除笔记';
+  // static String defaultUserFolderNameForMyNotes = '我的笔记';
+
+  // Folders Id // folder id
+  // [Important] These ids shouldn't be changed since many sql queries and logic in dart use these ids to check true or false
+  static final int defaultFolderIdForToday = 1;
+  static final int defaultFolderIdForAllNotes = 2;
+  static final int defaultFolderIdForDeletion = 3;
+  static final int defaultUserFolderIdForMyNotes = 4;
 
   // Pages' width
   // Note: The following default values for the width are as far as large screen(screenType = 3) is concerned
@@ -366,8 +375,8 @@ class GlobalState with ChangeNotifier {
       false; // Indicate if the folder list page is loaded
 
   // Folder total
-  static int userFolderTotal = 0;
-  static int allFolderTotal = 0; // All folder including default folders
+  // static int userFolderTotal = 0;
+  // static int allFolderTotal = 0; // All folder including default folders
 
   // Default folders
   static List<int> defaultFolderIndexList = <int>[];

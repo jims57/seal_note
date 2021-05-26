@@ -1,21 +1,26 @@
+import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:moor/moor.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/database/database.dart';
+import 'package:seal_note/model/errorCodes/ErrorCodeModel.dart';
 import 'package:seal_note/ui/FolderListItemWidget.dart';
+import 'package:after_layout/after_layout.dart';
 
 class FolderListWidget extends StatefulWidget {
-  FolderListWidget({Key key, @required this.userFolderTotal}) : super(key: key);
+  // FolderListWidget({Key key, @required this.userFolderTotal}) : super(key: key);
+  FolderListWidget({Key key}) : super(key: key);
 
-  final int userFolderTotal;
+  // final int userFolderTotal;
 
   @override
   State<StatefulWidget> createState() => FolderListWidgetState();
 }
 
-class FolderListWidgetState extends State<FolderListWidget> {
+class FolderListWidgetState extends State<FolderListWidget>
+    with AfterLayoutMixin<FolderListWidget> {
   double folderListPanelMarginForTopOrBottom = 5.0;
   List<FolderListItemWidget> folderListItemWidgetList =
       <FolderListItemWidget>[];
@@ -32,6 +37,12 @@ class FolderListWidgetState extends State<FolderListWidget> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant FolderListWidget oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -71,30 +82,54 @@ class FolderListWidgetState extends State<FolderListWidget> {
                   newIndex = folderListItemWidgetList.length;
                 if (oldIndex < newIndex) newIndex--;
 
-                var isDefaultFolder = _checkIfDefaultFolder(index: oldIndex);
+                // If the new index of moving item doesn't belongs to that of the default folders
+                if (!GlobalState.defaultFolderIndexList.contains(newIndex)) {
+                  var isDefaultFolder = _checkIfDefaultFolder(index: oldIndex);
 
-                if (newIndex != oldIndex &&
-                    !isDefaultFolder &&
-                    GlobalState.shouldReorderFolderListItem) {
-                  var oldWidget = folderListItemWidgetList.removeAt(oldIndex);
+                  if (newIndex != oldIndex &&
+                      !isDefaultFolder &&
+                      GlobalState.shouldReorderFolderListItem) {
+                    var oldWidget = folderListItemWidgetList.removeAt(oldIndex);
 
-                  folderListItemWidgetList.insert(newIndex, oldWidget);
+                    folderListItemWidgetList.insert(newIndex, oldWidget);
 
-                  // update folder order // change folder order
-                  // Update the folders' order
-                  var foldersCompanionList = <FoldersCompanion>[];
-                  var order = 1;
+                    // update folder order // change folder order
+                    // Update the folders' order
+                    var foldersCompanionList = <FoldersCompanion>[];
+                    var order = 1;
 
-                  // Get latest folders' order
-                  folderListItemWidgetList.forEach((item) {
-                    foldersCompanionList.add(FoldersCompanion(
-                        id: Value(item.folderId), order: Value(order)));
+                    // Get latest folders' order
+                    folderListItemWidgetList.forEach((item) {
+                      foldersCompanionList.add(FoldersCompanion(
+                          id: Value(item.folderId), order: Value(order)));
 
-                    order++;
-                  });
+                      order++;
+                    });
 
-                  // Save folders' orders into db
-                  GlobalState.database.reorderFolders(foldersCompanionList);
+                    // Save folders' orders into db
+                    GlobalState.database
+                        .reorderFolders(foldersCompanionList)
+                        .then((response) {
+                      if (response.code == ErrorCodeModel.SUCCESS_CODE) {
+                        // When reorder folders operation succeed
+
+                        Timer(const Duration(milliseconds: 500), () {
+                          GlobalState.folderListWidgetState.currentState
+                              .triggerSetState(
+                            forceToFetchFoldersFromDb: true,
+                          );
+                        });
+
+                        // Timer(const Duration(milliseconds: 100), () {
+                        //   // Update default folder index list at GlobalState
+                        //   GlobalState.folderListPageState.currentState
+                        //       .updateDefaultFolderIndexListsVarAtGlobalState();
+                        //
+                        //   var s = 's';
+                        // });
+                      }
+                    });
+                  }
                 }
               });
             },
@@ -102,6 +137,11 @@ class FolderListWidgetState extends State<FolderListWidget> {
         ),
       ),
     );
+  }
+
+  @override
+  void afterFirstLayout(BuildContext context) {
+    var s = 's';
   }
 
   // Private method
@@ -146,8 +186,8 @@ class FolderListWidgetState extends State<FolderListWidget> {
       {@required
           List<GetFoldersWithUnreadTotalResult>
               foldersWithUnreadTotalResultList}) {
-    GlobalState.userFolderTotal = foldersWithUnreadTotalResultList.length;
-    GlobalState.allFolderTotal = GlobalState.userFolderTotal;
+    // GlobalState.userFolderTotal = foldersWithUnreadTotalResultList.length;
+    // GlobalState.allFolderTotal = GlobalState.userFolderTotal;
 
     folderListItemWidgetList.clear(); // Always to clear items in the list
 
@@ -161,12 +201,17 @@ class FolderListWidgetState extends State<FolderListWidget> {
       var reviewPlanId = theFolder.reviewPlanId;
       var numberToShow = theFolder.numberToShow;
       var isReviewFolder = (theFolder.reviewPlanId != null) ? true : false;
-      var isTodayFolder = (isDefaultFolder &&
-          folderName == GlobalState.defaultFolderNameForToday);
-      var isAllNotesFolder = (isDefaultFolder &&
-          folderName == GlobalState.defaultFolderNameForAllNotes);
-      var isDeletionFolder = (isDefaultFolder &&
-          folderName == GlobalState.defaultFolderNameForDeletion);
+      // var isTodayFolder = (isDefaultFolder &&
+      //     folderName == GlobalState.defaultFolderNameForToday);
+      // var isAllNotesFolder = (isDefaultFolder &&
+      //     folderName == GlobalState.defaultFolderNameForAllNotes);
+      // var isDeletionFolder = (isDefaultFolder &&
+      //     folderName == GlobalState.defaultFolderNameForDeletion);
+      var isTodayFolder = (GlobalState.defaultFolderIdForToday == folderId);
+      var isAllNotesFolder =
+          (GlobalState.defaultFolderIdForAllNotes == folderId);
+      var isDeletionFolder =
+          (GlobalState.defaultFolderIdForDeletion == folderId);
       var showZero = true;
 
       // Check if this is an item selected by the user currently
@@ -182,8 +227,11 @@ class FolderListWidgetState extends State<FolderListWidget> {
       }
 
       // If this is Today folder, it doesn't show zero by default
-      if (isDefaultFolder &&
-          folderName == GlobalState.defaultFolderNameForToday) {
+      // if (isDefaultFolder &&
+      //     folderName == GlobalState.defaultFolderNameForToday) {
+      //   showZero = false;
+      // }
+      if (isTodayFolder) {
         showZero = false;
       }
 

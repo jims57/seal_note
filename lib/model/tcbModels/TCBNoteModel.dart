@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:moor/moor.dart';
+import 'package:seal_note/data/database/database.dart';
+
 class TCBNoteModel {
   final int id;
   final int folderId;
@@ -28,5 +32,22 @@ class TCBNoteModel {
         noteHashMapList.map((note) => TCBNoteModel.fromHashMap(note)).toList();
 
     return noteList;
+  }
+
+  static List<NotesCompanion> convertTCBNoteModelListToNotesCompanionList({
+    @required List<TCBNoteModel> tcbNoteModelList,
+  }) {
+    var notesCompanionList = <NotesCompanion>[];
+
+    for (var tcbNoteModel in tcbNoteModelList) {
+      notesCompanionList.add(NotesCompanion(
+        id: Value(tcbNoteModel.id),
+        folderId: Value(tcbNoteModel.folderId),
+        content: Value(tcbNoteModel.content),
+        isDeleted: Value(tcbNoteModel.isDeleted),
+      ));
+    }
+
+    return notesCompanionList;
   }
 }

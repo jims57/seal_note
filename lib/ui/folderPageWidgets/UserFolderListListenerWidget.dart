@@ -526,11 +526,11 @@ class _UserFolderListListenerWidgetState
         var offset = renderBox.localToGlobal(Offset.zero);
         var topBorderDy = offset.dy;
 
-        if (widget.folderName == GlobalState.defaultFolderNameForDeletion) {
+        if (widget.folderId == GlobalState.defaultFolderIdForDeletion) {
           // If it is the deletion folder
           GlobalState.userFolderListItemMaxAvailableDy = topBorderDy;
-        } else if (widget.folderName ==
-            GlobalState.defaultFolderNameForAllNotes) {
+        } else if (widget.folderId ==
+            GlobalState.defaultFolderIdForAllNotes) {
           // When it is All Notes folder
 
           // Other default folders except the deletion folder

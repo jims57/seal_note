@@ -80,30 +80,25 @@ class _MyAppState extends State<MyApp> {
 
     // Check if the db is initialized or not
     // init data // initialization data
-    // init tables // init app data
-    GlobalState.database.isDbInitialized().then((isDbInitialized) {
+    // init tables // init app data // initialize data
+    GlobalState.database.isDbInitialized().then((isDbInitialized) async {
       if (!isDbInitialized) {
         // If the db isn't initialized, we need to insert basic data
         var now = TimeHandler.getNowForLocal();
 
         // Initialize users // init users
-        // var usersCompanion = UsersCompanion(
-        //     id: Value(1),
-        //     userName: Value('admin'),
-        //     password: Value('123456'),
-        //     created: Value(now));
         var usersCompanionList = <UsersCompanion>[];
         usersCompanionList.add(UsersCompanion(
             id: Value(1),
             userName: Value('admin'),
             password: Value('123456'),
             created: Value(now)));
-        GlobalState.database.upsertUserInBatch(usersCompanionList);
+        await GlobalState.database.upsertUserInBatch(usersCompanionList);
 
         // Initialize folders // init folders
         var folderEntryList = <FolderEntry>[];
         folderEntryList.add(FolderEntry(
-            id: 1,
+            id: GlobalState.defaultFolderIdForToday,
             name: '今天',
             order: 1,
             isDefaultFolder: true,
@@ -111,7 +106,7 @@ class _MyAppState extends State<MyApp> {
             isDeleted: false,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
-            id: 2,
+            id: GlobalState.defaultFolderIdForAllNotes,
             name: '全部笔记',
             order: 2,
             isDefaultFolder: true,
@@ -119,35 +114,35 @@ class _MyAppState extends State<MyApp> {
             isDeleted: false,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
-            id: 3,
+            id: GlobalState.defaultFolderIdForDeletion,
             name: '删除笔记',
-            order: 7,
+            order: 4,
             isDefaultFolder: true,
             created: now,
             isDeleted: false,
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
-            id: 4,
+            id: GlobalState.defaultUserFolderIdForMyNotes,
             name: '我的笔记',
             order: 3,
             isDefaultFolder: false,
             created: now,
             isDeleted: false,
             createdBy: GlobalState.adminUserId));
-        folderEntryList.add(FolderEntry(
-            id: 5,
-            name: '英语知识',
-            order: 4,
-            isDefaultFolder: false,
-            created: now,
-            isDeleted: false,
-            createdBy: GlobalState.adminUserId));
-        GlobalState.database.upsertFoldersInBatch(folderEntryList);
+        // folderEntryList.add(FolderEntry(
+        //     id: 5,
+        //     name: '英语知识',
+        //     order: 4,
+        //     isDefaultFolder: false,
+        //     created: now,
+        //     isDeleted: false,
+        //     createdBy: GlobalState.adminUserId));
+        await GlobalState.database.upsertFoldersInBatch(folderEntryList);
 
         // Initialize notes // init notes
         var noteEntryList = <NoteEntry>[];
         noteEntryList.add(NoteEntry(
-          id: 100,
+          id: 1,
           folderId: 4,
           content:
               '&lt;p&gt;【海豚笔记介绍和使用方法】&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-5bf3d-001&quot; image-index=&quot;0&quot; style=&quot;width: 90%;&quot;&gt;&lt;/p&gt;',
@@ -160,62 +155,63 @@ class _MyAppState extends State<MyApp> {
           isDeleted: false,
           createdBy: GlobalState.currentUserId,
         ));
-        GlobalState.database.upsertNotesInBatch(noteEntryList);
+        await GlobalState.database.upsertNotesInBatch(noteEntryList);
 
         // Initialize review plans // init review plans
         var reviewPlanEntryList = <ReviewPlanEntry>[];
         reviewPlanEntryList.add(ReviewPlanEntry(
-          id: null,
+          id: 1,
           name: '五段式',
           introduction: '五段式简介',
           createdBy: GlobalState.adminUserId,
         ));
         reviewPlanEntryList.add(ReviewPlanEntry(
-            id: null,
+            id: 2,
             name: '艾宾浩斯',
             introduction: '艾宾浩斯简介',
             createdBy: GlobalState.adminUserId));
-        GlobalState.database.upsertReviewPlansInBatch(reviewPlanEntryList);
+        await GlobalState.database
+            .upsertReviewPlansInBatch(reviewPlanEntryList);
 
         // Initialize review plan configs // init review plan configs
         var reviewPlanConfigEntryList = <ReviewPlanConfigEntry>[];
         // Unit for the value. { 1 = minute, 2 = hour, 3 = day, 4 = week, 5 = month, 6 = year }
         reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
-            id: null,
+            id: 1,
             reviewPlanId: 1,
             order: 1,
             value: 30,
             unit: 1,
             createdBy: GlobalState.adminUserId));
         reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
-            id: null,
+            id: 2,
             reviewPlanId: 1,
             order: 2,
             value: 12,
             unit: 2,
             createdBy: GlobalState.adminUserId));
         reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
-            id: null,
+            id: 3,
             reviewPlanId: 1,
             order: 3,
             value: 3,
             unit: 3,
             createdBy: GlobalState.adminUserId));
         reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
-            id: null,
+            id: 4,
             reviewPlanId: 2,
             order: 1,
             value: 15,
             unit: 1,
             createdBy: GlobalState.adminUserId));
         reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
-            id: null,
+            id: 5,
             reviewPlanId: 2,
             order: 2,
             value: 3,
             unit: 2,
             createdBy: GlobalState.adminUserId));
-        GlobalState.database
+        await GlobalState.database
             .upsertReviewPlanConfigsInBatch(reviewPlanConfigEntryList);
 
         // Initialize system infos
@@ -226,7 +222,10 @@ class _MyAppState extends State<MyApp> {
               key: GlobalState.systemInfoKeyNameForDataVersion,
               value: '0'),
         );
-        GlobalState.database.upsertSystemInfosInBatch(systemInfoEntryList);
+        await GlobalState.database
+            .upsertSystemInfosInBatch(systemInfoEntryList);
+
+        // Record default folder id
 
         // Trigger folder list page to refresh so that the initialized folder list can be shown properly
         if (GlobalState.isFolderListPageLoaded) {

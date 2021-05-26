@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:moor/moor.dart';
+import 'package:seal_note/data/database/database.dart';
+
 class TCBReviewPlanModel {
   final int id;
   final String name;
@@ -27,5 +31,22 @@ class TCBReviewPlanModel {
         .toList();
 
     return reviewPlanList;
+  }
+
+  static List<ReviewPlansCompanion>
+      convertTCBReviewPlanModelListToReviewPlansCompanionList({
+    @required List<TCBReviewPlanModel> tcbReviewPlanModelList,
+  }) {
+    var reviewPlansCompanionList = <ReviewPlansCompanion>[];
+
+    for (var tcbReviewPlanModel in tcbReviewPlanModelList) {
+      reviewPlansCompanionList.add(ReviewPlansCompanion(
+        id: Value(tcbReviewPlanModel.id),
+        name: Value(tcbReviewPlanModel.name),
+        introduction: Value(tcbReviewPlanModel.introduction),
+      ));
+    }
+
+    return reviewPlansCompanionList;
   }
 }

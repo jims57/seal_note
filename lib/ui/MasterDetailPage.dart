@@ -8,6 +8,9 @@ import 'package:seal_note/data/appstate/ReusablePageOpenOrCloseNotifier.dart';
 import 'package:seal_note/data/appstate/SelectedNoteModel.dart';
 import 'package:seal_note/data/database/database.dart';
 import 'package:seal_note/mixin/check_device.dart';
+import 'package:seal_note/model/common/ResponseModel.dart';
+import 'package:seal_note/model/errorCodes/ErrorCodeModel.dart';
+import 'package:seal_note/model/tcbModels/TCBFolderModel.dart';
 import 'package:seal_note/ui/FolderListPage.dart';
 import 'package:seal_note/ui/NoteListPage.dart';
 import 'package:after_layout/after_layout.dart';
@@ -15,8 +18,10 @@ import 'package:seal_note/ui/authentications/LoginPage.dart';
 import 'package:seal_note/ui/common/pages/reusablePages/ReusablePageStackWidget.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
+import 'package:seal_note/util/folder/FolderHandler.dart';
 import 'package:seal_note/util/networks/NetworkHandler.dart';
 import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
+import 'package:seal_note/util/tcb/TCBSystemInfoHandler.dart';
 import 'package:seal_note/util/updates/AppUpdateHandler.dart';
 import 'dart:io' show Platform;
 import 'package:store_redirect/store_redirect.dart';
@@ -57,13 +62,33 @@ class MasterDetailPageState extends State<MasterDetailPage>
   void initState() {
     GlobalState.systemInfoEventHandler.onSystemInfoDownloaded
         .listen((tcbSystemInfo) {
+      // system info download event
+
       var s = 's';
     });
 
     GlobalState.systemInfoEventHandler.onSystemInfoDataVersionChanged
-        .listen((newDataVersion) {
-      GlobalState.database
-          .upsertSystemInfoDataVersion(newDataVersion: newDataVersion);
+        .listen((newDataVersion) async {
+      // data version change event // data version has changed event
+      // system info data version change event // system info data version has changed event
+
+      // // Update all basic data of system info, since the data version has changed
+      // var response = await TCBSystemInfoHandler.updateSystemInfoBasicData(
+      //   tcbSystemInfoModel: GlobalState.tcbSystemInfo,
+      // );
+      //
+      // if (response.code == ErrorCodeModel.SUCCESS_CODE) {
+      //   // When updated successfully, update the data version in sqlite
+      //
+      //   await GlobalState.database
+      //       .upsertSystemInfoDataVersion(newDataVersion: newDataVersion);
+      //
+      //   // Refresh after data has been updated
+      //   GlobalState.noteListWidgetForTodayState.currentState.triggerSetState(
+      //     forceToRefreshNoteListByDb: true,
+      //     refreshFolderListPageFromDbByTheWay: true,
+      //   );
+      // }
     });
 
     loginPageFutureBuilder = _checkIfShowLoginPageOrNot();

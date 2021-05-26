@@ -614,9 +614,9 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
                                 // Check if it is in Deleted folder
                                 if (GlobalState.isDefaultFolderSelected &&
-                                    GlobalState.appState.noteListPageTitle ==
+                                    GlobalState.selectedFolderIdCurrently ==
                                         GlobalState
-                                            .defaultFolderNameForDeletion) {
+                                            .defaultFolderIdForDeletion) {
                                   // delete note in deleted folder // deleted folder delete note
                                   // delete note from deleted folder
 
@@ -820,8 +820,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     var isInDeletedFolder = false;
 
     if (GlobalState.isDefaultFolderSelected &&
-        GlobalState.appState.noteListPageTitle ==
-            GlobalState.defaultFolderNameForDeletion) {
+        GlobalState.selectedFolderIdCurrently ==
+            GlobalState.defaultFolderIdForDeletion) {
       isInDeletedFolder = true;
     }
 
@@ -840,8 +840,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     var isInTodayFolder = false;
 
     if (GlobalState.isDefaultFolderSelected &&
-        GlobalState.appState.noteListPageTitle ==
-            GlobalState.defaultFolderNameForToday) {
+        GlobalState.selectedFolderIdCurrently ==
+            GlobalState.defaultFolderIdForToday) {
       isInTodayFolder = true;
     }
 
@@ -985,8 +985,8 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
   String getNoteTitleFormatForNoteList(
       {@required String encodedContent,
-        int pageIndex = 0,
-        removeOlTagAndReplaceLiTagByPTag = false}) {
+      int pageIndex = 0,
+      removeOlTagAndReplaceLiTagByPTag = false}) {
     // var noteTitle = GlobalState.defaultTitleWhenNoteHasNoTitle;
     var noteTitle = '';
     var oldEncodedContent = encodedContent;

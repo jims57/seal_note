@@ -25,9 +25,6 @@ class AppUpdateHandler {
       // Currently, only iOS and Android need to show update dialog,
       // and making sure the user has logged in, don't show update dialog before login
 
-      // var response = await TCBAppUpdateHandler.getLatestAppVersionReleased(
-      //   forceToFetchLatestAppVersionReleasedFromTCB: false,
-      // );
       var response = await TCBSystemInfoHandler.getSystemInfo(
         forceToGetSystemInfoFromTCB: forceToGetUpdateAppOptionFromTCB,
       );
