@@ -113,20 +113,8 @@ class FolderListWidgetState extends State<FolderListWidget>
                       if (response.code == ErrorCodeModel.SUCCESS_CODE) {
                         // When reorder folders operation succeed
 
-                        Timer(const Duration(milliseconds: 500), () {
-                          GlobalState.folderListWidgetState.currentState
-                              .triggerSetState(
-                            forceToFetchFoldersFromDb: true,
-                          );
-                        });
-
-                        // Timer(const Duration(milliseconds: 100), () {
-                        //   // Update default folder index list at GlobalState
-                        //   GlobalState.folderListPageState.currentState
-                        //       .updateDefaultFolderIndexListsVarAtGlobalState();
-                        //
-                        //   var s = 's';
-                        // });
+                        // Do nothing currently, since we don't need to rebuild the UI,
+                        // see: https://github.com/jims57/seal_note/issues/381
                       }
                     });
                   }
