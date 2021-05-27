@@ -1445,7 +1445,7 @@
     }
 </script>
 
-<!-- Common functions -->
+<!-- Conversion related functions -->
 <script>
     function convertUint8ListToBase64(uint8List) { // Convert the Uint8List into base64 string
         var base64String = bytesToBase64(uint8List);
@@ -1530,6 +1530,7 @@
     }
 </script>
 
+<!-- Common function[Uncategorized] -->
 <script>
     // function loadDummyHtmlPage() {
     //     shouldAddDummyImagesOnLoad = true;
@@ -2057,6 +2058,22 @@
     }
 </script>
 
+<!-- Html related -->
+<script>
+    function clearAllLiTagsWithBr(){
+        if(printLogToDartFromJs) Print.postMessage('inside: clearAllLiTagsWithBr()');
+
+        var $lis = $('li');
+
+        $.each($lis, function(index, item) {
+            if(printLogToDartFromJs) Print.postMessage('$.each($lis, function('+index+', '+item+') ');
+
+            var theLiHtml = $(item).html();
+            if (theLiHtml == '<br>') $(item).remove();
+        });
+    }
+</script>
+
 <!-- Note Review Button related -->
 <script>
     function showNoteReviewButton(noteReviewButtonText){
@@ -2173,7 +2190,7 @@
         if (printLogToDartFromJs) Print.postMessage('Quill content9:'+getQuillEditorCurrentContent());
     }
 
-    function replaceQuillContentWithOldNoteContent(responseJsonString, goToTopAfterLoading = false) { // *responseJsonString* is the encoded html of a note
+    function replaceQuillContentWithOldNoteContent(responseJsonString, goToTopAfterLoaded = false) { // *responseJsonString* is the encoded html of a note
         if (printLogToDartFromJs) Print.postMessage('replaceQuillContentWithOldNoteContent(' + responseJsonString + ')');
 
         // Convert jsonString to json object
@@ -2235,10 +2252,13 @@
             }
         }
 
-        if(goToTopAfterLoading) {
+        if(goToTopAfterLoaded) {
             if (printLogToDartFromJs) Print.postMessage('goToQuillTopPosition();');
             goToQuillTopPosition();
         }
+
+        // Clear all br tag with empty content
+        clearAllLiTagsWithBr();
 
         if (printLogToDartFromJs) Print.postMessage('syncImageSyncArrayToDart(true);');
         syncImageSyncArrayToDart(true);

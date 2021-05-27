@@ -4,10 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:moor/moor.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/model/Note.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
-
-// Import custom files
 import 'data/appstate/AlertDialogHeightChangeNotifier.dart';
 import 'data/appstate/AppState.dart';
 import 'data/appstate/DetailPageState.dart';
@@ -19,8 +16,6 @@ import 'data/appstate/SelectedNoteModel.dart';
 import 'data/appstate/ViewAgreementPageChangeNotifier.dart';
 import 'data/database/database.dart';
 import 'data/database/dbHelper/shared.dart';
-
-// Import widgets
 import 'package:seal_note/ui/MasterDetailPage.dart';
 
 void main() {
@@ -99,7 +94,7 @@ class _MyAppState extends State<MyApp> {
         var folderEntryList = <FolderEntry>[];
         folderEntryList.add(FolderEntry(
             id: GlobalState.defaultFolderIdForToday,
-            name: '今天',
+            name: '今天2',
             order: 1,
             isDefaultFolder: true,
             created: now,
@@ -107,7 +102,7 @@ class _MyAppState extends State<MyApp> {
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: GlobalState.defaultFolderIdForAllNotes,
-            name: '全部笔记',
+            name: '全部笔记2',
             order: 2,
             isDefaultFolder: true,
             created: now,
@@ -115,7 +110,7 @@ class _MyAppState extends State<MyApp> {
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: GlobalState.defaultFolderIdForDeletion,
-            name: '删除笔记',
+            name: '删除笔记2',
             order: 4,
             isDefaultFolder: true,
             created: now,
@@ -123,7 +118,7 @@ class _MyAppState extends State<MyApp> {
             createdBy: GlobalState.adminUserId));
         folderEntryList.add(FolderEntry(
             id: GlobalState.defaultUserFolderIdForMyNotes,
-            name: '我的笔记',
+            name: '我的笔记2',
             order: 3,
             isDefaultFolder: false,
             created: now,
@@ -145,7 +140,7 @@ class _MyAppState extends State<MyApp> {
           id: 1,
           folderId: 4,
           content:
-              '&lt;p&gt;【海豚笔记介绍和使用方法】&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-5bf3d-001&quot; image-index=&quot;0&quot; style=&quot;width: 90%;&quot;&gt;&lt;/p&gt;',
+              '&lt;p&gt;【海豚笔记介绍和使用方法】&lt;br&gt;主是图1：&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-5bf3d-001&quot; image-index=&quot;0&quot; style=&quot;width: 90%;&quot; image-extension=&quot;png&quot;&gt;&lt;br&gt;这是说明1。&lt;br&gt;这是说明2。&lt;/p&gt;',
           created: now,
           updated: now,
           nextReviewTime: null,
@@ -303,11 +298,6 @@ class _MyAppState extends State<MyApp> {
 
     GlobalState.loadingWidgetChangeNotifier =
         Provider.of<LoadingWidgetChangeNotifier>(context, listen: false);
-  }
-
-  // TODO: To be implemented
-  bool _isAppInitialized() {
-    return true;
   }
 }
 

@@ -71,6 +71,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
         .listen((newDataVersion) async {
       // data version change event // data version has changed event
       // system info data version change event // system info data version has changed event
+      // system info change event
 
       // // Update all basic data of system info, since the data version has changed
       // var response = await TCBSystemInfoHandler.updateSystemInfoBasicData(

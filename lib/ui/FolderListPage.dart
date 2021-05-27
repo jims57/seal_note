@@ -228,11 +228,11 @@ class FolderListPageState extends State<FolderListPage>
                               // setting button // setting button event
                               // test button // test button event // click test button
 
-                              var s22 = GlobalState.defaultFolderIndexList;
+                              // var s22 = GlobalState.defaultFolderIndexList;
 
-                              GlobalState.folderListPageState.currentState.updateDefaultFolderIndexListsVarAtGlobalState();
+                              // GlobalState.folderListPageState.currentState.updateDefaultFolderIndexListsVarAtGlobalState();
 
-                              //
+
 
                               // var foldersCompanion = FoldersCompanion(
                               //     id: Value(10), name: Value('我的笔记2'));
@@ -243,9 +243,9 @@ class FolderListPageState extends State<FolderListPage>
                               //     .upsertSystemInfoDataVersion(
                               //         newDataVersion: 5);
 
-                              // var res = await GlobalState.flutterWebviewPlugin
-                              //     .evalJavascript("javascript:getPageHtml();");
-                              //
+                              var res = await GlobalState.flutterWebviewPlugin
+                                  .evalJavascript("javascript:getPageHtml();");
+
                               var s2 = 's';
                             },
                           )
