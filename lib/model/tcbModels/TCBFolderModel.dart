@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moor/moor.dart';
 import 'package:seal_note/data/database/database.dart';
+import 'package:seal_note/util/time/TimeHandler.dart';
 
 class TCBFolderModel {
   final int id;
@@ -45,6 +46,7 @@ class TCBFolderModel {
       convertTCBFolderModelListToFoldersCompanionList({
     @required List<TCBFolderModel> tcbFolderModelList,
   }) {
+    // var now = TimeHandler.getNowForLocal();
     var foldersCompanionList = <FoldersCompanion>[];
 
     for (var tcbFolderModel in tcbFolderModelList) {
@@ -54,6 +56,7 @@ class TCBFolderModel {
         order: Value(tcbFolderModel.order),
         isDefaultFolder: Value(tcbFolderModel.isDefaultFolder),
         reviewPlanId: Value(tcbFolderModel.reviewPlanId),
+        // created: Value(now),
         isDeleted: Value(tcbFolderModel.isDeleted),
       ));
     }

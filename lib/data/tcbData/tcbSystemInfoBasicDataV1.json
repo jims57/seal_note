@@ -8,7 +8,6 @@
       "name": "今天2",
       "order": 1,
       "isDefaultFolder": true,
-      "reviewPlanId": 0,
       "isDeleted": false
     },
     {
@@ -16,15 +15,13 @@
       "name": "全部笔记2",
       "order": 2,
       "isDefaultFolder": true,
-      "reviewPlanId": 0,
       "isDeleted": false
     },
     {
       "id": 3,
-      "name": "删除笔记2",
-      "order": 4,
+      "name": "删除笔记3",
+      "order": 1000000,
       "isDefaultFolder": true,
-      "reviewPlanId": 0,
       "isDeleted": false
     },
     {
@@ -32,14 +29,21 @@
       "name": "我的笔记2",
       "order": 3,
       "isDefaultFolder": false,
-      "reviewPlanId": 1,
+      "reviewPlanId": 2,
+      "isDeleted": false
+    },
+    {
+      "id": 5,
+      "name": "英语知识2",
+      "order": 4,
+      "isDefaultFolder": false,
       "isDeleted": false
     }
   ],
   "notes": [
     {
       "id": 1,
-      "folderId": 4,
+      "folderId": 5,
       "content": "content1002",
       "isDeleted": false
     }

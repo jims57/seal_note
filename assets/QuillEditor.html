@@ -2066,7 +2066,7 @@
         var $lis = $('li');
 
         $.each($lis, function(index, item) {
-            if(printLogToDartFromJs) Print.postMessage('$.each($lis, function('+index+', '+item+') ');
+            if(printLogToDartFromJs) Print.postMessage('$.each($lis, function(index, item)');
 
             var theLiHtml = $(item).html();
             if (theLiHtml == '<br>') $(item).remove();

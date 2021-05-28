@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:moor/moor.dart';
 import 'package:provider/provider.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
-import 'package:seal_note/util/time/TimeHandler.dart';
+import 'package:seal_note/model/common/ResponseModel.dart';
 import 'data/appstate/AlertDialogHeightChangeNotifier.dart';
 import 'data/appstate/AppState.dart';
 import 'data/appstate/DetailPageState.dart';
@@ -17,6 +17,8 @@ import 'data/appstate/ViewAgreementPageChangeNotifier.dart';
 import 'data/database/database.dart';
 import 'data/database/dbHelper/shared.dart';
 import 'package:seal_note/ui/MasterDetailPage.dart';
+
+import 'model/errorCodes/ErrorCodeModel.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -79,146 +81,165 @@ class _MyAppState extends State<MyApp> {
     GlobalState.database.isDbInitialized().then((isDbInitialized) async {
       if (!isDbInitialized) {
         // If the db isn't initialized, we need to insert basic data
-        var now = TimeHandler.getNowForLocal();
+        // var now = TimeHandler.getNowForLocal();
+        ResponseModel response;
 
         // Initialize users // init users
         var usersCompanionList = <UsersCompanion>[];
-        usersCompanionList.add(UsersCompanion(
-            id: Value(1),
-            userName: Value('admin'),
-            password: Value('123456'),
-            created: Value(now)));
-        await GlobalState.database.upsertUserInBatch(usersCompanionList);
+        usersCompanionList.add(
+          UsersCompanion(
+            id: Value(GlobalState.currentUserId),
+            userName: Value('user'),
+          ),
+        );
+        response = await GlobalState.database
+            .upsertUsersInBatch(usersCompanionList: usersCompanionList);
 
         // Initialize folders // init folders
-        var folderEntryList = <FolderEntry>[];
-        folderEntryList.add(FolderEntry(
-            id: GlobalState.defaultFolderIdForToday,
-            name: '今天2',
-            order: 1,
-            isDefaultFolder: true,
-            created: now,
-            isDeleted: false,
-            createdBy: GlobalState.adminUserId));
-        folderEntryList.add(FolderEntry(
-            id: GlobalState.defaultFolderIdForAllNotes,
-            name: '全部笔记2',
-            order: 2,
-            isDefaultFolder: true,
-            created: now,
-            isDeleted: false,
-            createdBy: GlobalState.adminUserId));
-        folderEntryList.add(FolderEntry(
-            id: GlobalState.defaultFolderIdForDeletion,
-            name: '删除笔记2',
-            order: 4,
-            isDefaultFolder: true,
-            created: now,
-            isDeleted: false,
-            createdBy: GlobalState.adminUserId));
-        folderEntryList.add(FolderEntry(
-            id: GlobalState.defaultUserFolderIdForMyNotes,
-            name: '我的笔记2',
-            order: 3,
-            isDefaultFolder: false,
-            created: now,
-            isDeleted: false,
-            createdBy: GlobalState.adminUserId));
-        // folderEntryList.add(FolderEntry(
-        //     id: 5,
-        //     name: '英语知识',
-        //     order: 4,
-        //     isDefaultFolder: false,
-        //     created: now,
-        //     isDeleted: false,
-        //     createdBy: GlobalState.adminUserId));
-        await GlobalState.database.upsertFoldersInBatch(folderEntryList);
+        if (response.code == ErrorCodeModel.SUCCESS_CODE) {
+          var foldersCompanionList = <FoldersCompanion>[];
+          foldersCompanionList.add(
+            FoldersCompanion(
+              id: Value(GlobalState.defaultFolderIdForToday),
+              name: Value(GlobalState.defaultFolderNameForToday),
+              order: Value(1),
+              isDefaultFolder: Value(true),
+            ),
+          );
+          foldersCompanionList.add(
+            FoldersCompanion(
+              id: Value(GlobalState.defaultFolderIdForAllNotes),
+              name: Value(GlobalState.defaultFolderNameForAllNotes),
+              order: Value(2),
+              isDefaultFolder: Value(true),
+            ),
+          );
+          foldersCompanionList.add(
+            FoldersCompanion(
+              id: Value(GlobalState.defaultFolderIdForDeletedFolder),
+              name: Value(GlobalState.defaultFolderNameForDeletedFolder),
+              order: Value(GlobalState.defaultOrderForDeletedFolder),
+              isDefaultFolder: Value(true),
+            ),
+          );
+          foldersCompanionList.add(
+            FoldersCompanion(
+              id: Value(GlobalState.defaultUserFolderIdForMyNotes),
+              name: Value(GlobalState.defaultUserFolderNameForMyNotes),
+              order: Value(3),
+              isDefaultFolder: Value(false),
+            ),
+          );
+
+          response = await GlobalState.database
+              .upsertFoldersInBatch(foldersCompanionList: foldersCompanionList);
+        }
 
         // Initialize notes // init notes
-        var noteEntryList = <NoteEntry>[];
-        noteEntryList.add(NoteEntry(
-          id: 1,
-          folderId: 4,
-          content:
-              '&lt;p&gt;【海豚笔记介绍和使用方法】&lt;br&gt;主是图1：&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-5bf3d-001&quot; image-index=&quot;0&quot; style=&quot;width: 90%;&quot; image-extension=&quot;png&quot;&gt;&lt;br&gt;这是说明1。&lt;br&gt;这是说明2。&lt;/p&gt;',
-          created: now,
-          updated: now,
-          nextReviewTime: null,
-          oldNextReviewTime: null,
-          reviewProgressNo: null,
-          isReviewFinished: false,
-          isDeleted: false,
-          createdBy: GlobalState.currentUserId,
-        ));
-        await GlobalState.database.upsertNotesInBatch(noteEntryList);
+        if (response.code == ErrorCodeModel.SUCCESS_CODE) {
+          var notesCompanionList = <NotesCompanion>[];
+          notesCompanionList.add(
+            NotesCompanion(
+              id: Value(1),
+              content: Value(
+                  '&lt;p&gt;【海豚笔记介绍和使用方法】&lt;br&gt;主是图1：&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-5bf3d-001&quot; image-index=&quot;0&quot; style=&quot;width: 90%;&quot; image-extension=&quot;png&quot;&gt;&lt;br&gt;这是说明1。&lt;br&gt;这是说明2。&lt;/p&gt;'),
+            ),
+          );
+
+          response = await GlobalState.database
+              .upsertNotesInBatch(notesCompanionList: notesCompanionList);
+        }
 
         // Initialize review plans // init review plans
-        var reviewPlanEntryList = <ReviewPlanEntry>[];
-        reviewPlanEntryList.add(ReviewPlanEntry(
-          id: 1,
-          name: '五段式',
-          introduction: '五段式简介',
-          createdBy: GlobalState.adminUserId,
-        ));
-        reviewPlanEntryList.add(ReviewPlanEntry(
-            id: 2,
-            name: '艾宾浩斯',
-            introduction: '艾宾浩斯简介',
-            createdBy: GlobalState.adminUserId));
-        await GlobalState.database
-            .upsertReviewPlansInBatch(reviewPlanEntryList);
+        if (response.code == ErrorCodeModel.SUCCESS_CODE) {
+          var reviewPlansCompanionList = <ReviewPlansCompanion>[];
+          reviewPlansCompanionList.add(
+            ReviewPlansCompanion(
+              id: Value(1),
+              name: Value('五段式'),
+              introduction: Value('五段式简介'),
+            ),
+          );
+          reviewPlansCompanionList.add(
+            ReviewPlansCompanion(
+              id: Value(2),
+              name: Value('艾宾浩斯'),
+              introduction: Value('艾宾浩斯简介'),
+            ),
+          );
+
+          response = await GlobalState.database.upsertReviewPlansInBatch(
+              reviewPlansCompanionList: reviewPlansCompanionList);
+        }
 
         // Initialize review plan configs // init review plan configs
-        var reviewPlanConfigEntryList = <ReviewPlanConfigEntry>[];
-        // Unit for the value. { 1 = minute, 2 = hour, 3 = day, 4 = week, 5 = month, 6 = year }
-        reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
-            id: 1,
-            reviewPlanId: 1,
-            order: 1,
-            value: 30,
-            unit: 1,
-            createdBy: GlobalState.adminUserId));
-        reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
-            id: 2,
-            reviewPlanId: 1,
-            order: 2,
-            value: 12,
-            unit: 2,
-            createdBy: GlobalState.adminUserId));
-        reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
-            id: 3,
-            reviewPlanId: 1,
-            order: 3,
-            value: 3,
-            unit: 3,
-            createdBy: GlobalState.adminUserId));
-        reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
-            id: 4,
-            reviewPlanId: 2,
-            order: 1,
-            value: 15,
-            unit: 1,
-            createdBy: GlobalState.adminUserId));
-        reviewPlanConfigEntryList.add(ReviewPlanConfigEntry(
-            id: 5,
-            reviewPlanId: 2,
-            order: 2,
-            value: 3,
-            unit: 2,
-            createdBy: GlobalState.adminUserId));
-        await GlobalState.database
-            .upsertReviewPlanConfigsInBatch(reviewPlanConfigEntryList);
+        if (response.code == ErrorCodeModel.SUCCESS_CODE) {
+          var reviewPlanConfigsCompanionList = <ReviewPlanConfigsCompanion>[];
+          // Unit for the value. { 1 = minute, 2 = hour, 3 = day, 4 = week, 5 = month, 6 = year }
+          reviewPlanConfigsCompanionList.add(
+            ReviewPlanConfigsCompanion(
+              id: Value(1),
+              reviewPlanId: Value(1),
+              order: Value(1),
+              value: Value(30),
+              unit: Value(1),
+            ),
+          );
+          reviewPlanConfigsCompanionList.add(
+            ReviewPlanConfigsCompanion(
+              id: Value(2),
+              reviewPlanId: Value(1),
+              order: Value(2),
+              value: Value(12),
+              unit: Value(2),
+            ),
+          );
+          reviewPlanConfigsCompanionList.add(
+            ReviewPlanConfigsCompanion(
+              id: Value(3),
+              reviewPlanId: Value(1),
+              order: Value(3),
+              value: Value(3),
+              unit: Value(3),
+            ),
+          );
+          reviewPlanConfigsCompanionList.add(
+            ReviewPlanConfigsCompanion(
+              id: Value(4),
+              reviewPlanId: Value(2),
+              order: Value(1),
+              value: Value(15),
+              unit: Value(1),
+            ),
+          );
+          reviewPlanConfigsCompanionList.add(
+            ReviewPlanConfigsCompanion(
+              id: Value(5),
+              reviewPlanId: Value(2),
+              order: Value(2),
+              value: Value(3),
+              unit: Value(2),
+            ),
+          );
+
+          response = await GlobalState.database.upsertReviewPlanConfigsInBatch(
+              reviewPlanConfigsCompanionList: reviewPlanConfigsCompanionList);
+        }
 
         // Initialize system infos
-        var systemInfoEntryList = <SystemInfoEntry>[];
-        systemInfoEntryList.add(
-          SystemInfoEntry(
-              id: 1,
-              key: GlobalState.systemInfoKeyNameForDataVersion,
-              value: '0'),
-        );
-        await GlobalState.database
-            .upsertSystemInfosInBatch(systemInfoEntryList);
+        if (response.code == ErrorCodeModel.SUCCESS_CODE) {
+          var systemInfosCompanionList = <SystemInfosCompanion>[];
+          systemInfosCompanionList.add(
+            SystemInfosCompanion(
+              id: Value(1),
+              key: Value(GlobalState.systemInfoKeyNameForDataVersion),
+              value: Value('0'),
+            ),
+          );
+
+          response = await GlobalState.database.upsertSystemInfosInBatch(
+              systemInfosCompanionList: systemInfosCompanionList);
+        }
 
         // Record default folder id
 
@@ -229,13 +250,6 @@ class _MyAppState extends State<MyApp> {
           );
 
           GlobalState.masterDetailPageState.currentState.triggerSetState();
-
-          // GlobalState.folderListWidgetState.currentState
-          //     .triggerSetState(forceToFetchFoldersFromDb: true);
-          //
-          // GlobalState.noteListWidgetForTodayState.currentState.triggerSetState(
-          //   forceToRefreshNoteListByDb: true,
-          // );
         }
       } else {
         // When db is initialized

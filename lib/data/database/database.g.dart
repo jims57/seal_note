@@ -217,15 +217,13 @@ class UsersCompanion extends UpdateCompanion<UserEntry> {
   UsersCompanion.insert({
     this.id = const Value.absent(),
     @required String userName,
-    @required String password,
+    this.password = const Value.absent(),
     this.nickName = const Value.absent(),
     this.portrait = const Value.absent(),
     this.mobile = const Value.absent(),
     this.introduction = const Value.absent(),
-    @required DateTime created,
-  })  : userName = Value(userName),
-        password = Value(password),
-        created = Value(created);
+    this.created = const Value.absent(),
+  }) : userName = Value(userName);
   static Insertable<UserEntry> custom({
     Expression<int> id,
     Expression<String> userName,
@@ -344,7 +342,9 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UserEntry> {
   GeneratedTextColumn get password => _password ??= _constructPassword();
   GeneratedTextColumn _constructPassword() {
     return GeneratedTextColumn('password', $tableName, false,
-        minTextLength: 6, maxTextLength: 200);
+        minTextLength: 6,
+        maxTextLength: 200,
+        defaultValue: const Constant('123456'));
   }
 
   final VerificationMeta _nickNameMeta = const VerificationMeta('nickName');
@@ -400,7 +400,7 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UserEntry> {
       'created',
       $tableName,
       false,
-    );
+    )..clientDefault = _nowForLocal;
   }
 
   @override
@@ -437,8 +437,6 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UserEntry> {
     if (data.containsKey('password')) {
       context.handle(_passwordMeta,
           password.isAcceptableOrUnknown(data['password'], _passwordMeta));
-    } else if (isInserting) {
-      context.missing(_passwordMeta);
     }
     if (data.containsKey('nickName')) {
       context.handle(_nickNameMeta,
@@ -686,15 +684,13 @@ class FoldersCompanion extends UpdateCompanion<FolderEntry> {
   FoldersCompanion.insert({
     this.id = const Value.absent(),
     @required String name,
-    @required int order,
+    this.order = const Value.absent(),
     this.isDefaultFolder = const Value.absent(),
     this.reviewPlanId = const Value.absent(),
-    @required DateTime created,
+    this.created = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
-  })  : name = Value(name),
-        order = Value(order),
-        created = Value(created);
+  }) : name = Value(name);
   static Insertable<FolderEntry> custom({
     Expression<int> id,
     Expression<String> name,
@@ -812,11 +808,8 @@ class $FoldersTable extends Folders with TableInfo<$FoldersTable, FolderEntry> {
   @override
   GeneratedIntColumn get order => _order ??= _constructOrder();
   GeneratedIntColumn _constructOrder() {
-    return GeneratedIntColumn(
-      'order',
-      $tableName,
-      false,
-    );
+    return GeneratedIntColumn('order', $tableName, false,
+        defaultValue: const Constant(3));
   }
 
   final VerificationMeta _isDefaultFolderMeta =
@@ -853,7 +846,7 @@ class $FoldersTable extends Folders with TableInfo<$FoldersTable, FolderEntry> {
       'created',
       $tableName,
       false,
-    );
+    )..clientDefault = _nowForLocal;
   }
 
   final VerificationMeta _isDeletedMeta = const VerificationMeta('isDeleted');
@@ -871,7 +864,7 @@ class $FoldersTable extends Folders with TableInfo<$FoldersTable, FolderEntry> {
   GeneratedIntColumn get createdBy => _createdBy ??= _constructCreatedBy();
   GeneratedIntColumn _constructCreatedBy() {
     return GeneratedIntColumn('createdBy', $tableName, false,
-        defaultValue: const Constant(1));
+        defaultValue: Constant(GlobalState.currentUserId));
   }
 
   @override
@@ -908,8 +901,6 @@ class $FoldersTable extends Folders with TableInfo<$FoldersTable, FolderEntry> {
     if (data.containsKey('order')) {
       context.handle(
           _orderMeta, order.isAcceptableOrUnknown(data['order'], _orderMeta));
-    } else if (isInserting) {
-      context.missing(_orderMeta);
     }
     if (data.containsKey('isDefaultFolder')) {
       context.handle(
@@ -1234,16 +1225,15 @@ class NotesCompanion extends UpdateCompanion<NoteEntry> {
     this.id = const Value.absent(),
     this.folderId = const Value.absent(),
     this.content = const Value.absent(),
-    @required DateTime created,
-    @required DateTime updated,
+    this.created = const Value.absent(),
+    this.updated = const Value.absent(),
     this.nextReviewTime = const Value.absent(),
     this.oldNextReviewTime = const Value.absent(),
     this.reviewProgressNo = const Value.absent(),
     this.isReviewFinished = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
-  })  : created = Value(created),
-        updated = Value(updated);
+  });
   static Insertable<NoteEntry> custom({
     Expression<int> id,
     Expression<int> folderId,
@@ -1382,7 +1372,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
   GeneratedIntColumn get folderId => _folderId ??= _constructFolderId();
   GeneratedIntColumn _constructFolderId() {
     return GeneratedIntColumn('folderId', $tableName, false,
-        defaultValue: const Constant(3));
+        defaultValue: Constant(GlobalState.defaultUserFolderIdForMyNotes));
   }
 
   final VerificationMeta _contentMeta = const VerificationMeta('content');
@@ -1406,7 +1396,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
       'created',
       $tableName,
       false,
-    );
+    )..clientDefault = _nowForLocal;
   }
 
   final VerificationMeta _updatedMeta = const VerificationMeta('updated');
@@ -1418,7 +1408,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
       'updated',
       $tableName,
       false,
-    );
+    )..clientDefault = _nowForLocal;
   }
 
   final VerificationMeta _nextReviewTimeMeta =
@@ -1489,7 +1479,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteEntry> {
   GeneratedIntColumn get createdBy => _createdBy ??= _constructCreatedBy();
   GeneratedIntColumn _constructCreatedBy() {
     return GeneratedIntColumn('createdBy', $tableName, false,
-        defaultValue: const Constant(1));
+        defaultValue: Constant(GlobalState.currentUserId));
   }
 
   @override
@@ -1808,7 +1798,7 @@ class $ReviewPlansTable extends ReviewPlans
   GeneratedIntColumn get createdBy => _createdBy ??= _constructCreatedBy();
   GeneratedIntColumn _constructCreatedBy() {
     return GeneratedIntColumn('createdBy', $tableName, false,
-        defaultValue: const Constant(1));
+        defaultValue: Constant(GlobalState.currentUserId));
   }
 
   @override
@@ -2170,7 +2160,7 @@ class $ReviewPlanConfigsTable extends ReviewPlanConfigs
   GeneratedIntColumn get createdBy => _createdBy ??= _constructCreatedBy();
   GeneratedIntColumn _constructCreatedBy() {
     return GeneratedIntColumn('createdBy', $tableName, false,
-        defaultValue: const Constant(1));
+        defaultValue: Constant(GlobalState.currentUserId));
   }
 
   @override

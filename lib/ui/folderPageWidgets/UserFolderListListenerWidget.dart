@@ -526,7 +526,7 @@ class _UserFolderListListenerWidgetState
         var offset = renderBox.localToGlobal(Offset.zero);
         var topBorderDy = offset.dy;
 
-        if (widget.folderId == GlobalState.defaultFolderIdForDeletion) {
+        if (widget.folderId == GlobalState.defaultFolderIdForDeletedFolder) {
           // If it is the deletion folder
           GlobalState.userFolderListItemMaxAvailableDy = topBorderDy;
         } else if (widget.folderId ==

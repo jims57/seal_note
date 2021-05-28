@@ -43,6 +43,10 @@ extension ParseDateInSql on Expression<String> {
   Expression<int> startOfDayUnix() => _DateTimeToStartOfDay(this);
 }
 
+String _nowForLocal() {
+  return const IsoDateTimeConverter().mapToSql(DateTime.now().toLocal());
+}
+
 @DataClassName('UserEntry')
 class Users extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -50,7 +54,9 @@ class Users extends Table {
   TextColumn get userName =>
       text().withLength(min: 1, max: 200).named('userName')();
 
-  TextColumn get password => text().withLength(min: 6, max: 200)();
+  TextColumn get password => text()
+      .withDefault(const Constant('123456'))
+      .withLength(min: 6, max: 200)();
 
   TextColumn get nickName =>
       text().nullable().withLength(min: 1, max: 200).named('nickName')();
@@ -61,7 +67,8 @@ class Users extends Table {
 
   TextColumn get introduction => text().nullable()();
 
-  TextColumn get created => text().map(const IsoDateTimeConverter())();
+  TextColumn get created =>
+      text().clientDefault(_nowForLocal).map(const IsoDateTimeConverter())();
 }
 
 @DataClassName('FolderEntry')
@@ -70,34 +77,39 @@ class Folders extends Table {
 
   TextColumn get name => text().withLength(min: 1, max: 200)();
 
-  IntColumn get order => integer()();
+  IntColumn get order => integer().withDefault(const Constant(3))();
 
   BoolColumn get isDefaultFolder =>
       boolean().withDefault(const Constant(false)).named('isDefaultFolder')();
 
   IntColumn get reviewPlanId => integer().nullable().named('reviewPlanId')();
 
-  TextColumn get created => text().map(const IsoDateTimeConverter())();
+  TextColumn get created =>
+      text().clientDefault(_nowForLocal).map(const IsoDateTimeConverter())();
 
   BoolColumn get isDeleted =>
       boolean().withDefault(const Constant(false)).named('isDeleted')();
 
-  IntColumn get createdBy =>
-      integer().withDefault(const Constant(1)).named('createdBy')();
+  IntColumn get createdBy => integer()
+      .withDefault(Constant(GlobalState.currentUserId))
+      .named('createdBy')();
 }
 
 @DataClassName('NoteEntry')
 class Notes extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  IntColumn get folderId =>
-      integer().withDefault(const Constant(3)).named('folderId')();
+  IntColumn get folderId => integer()
+      .withDefault(Constant(GlobalState.defaultUserFolderIdForMyNotes))
+      .named('folderId')();
 
   TextColumn get content => text().nullable()();
 
-  TextColumn get created => text().map(const IsoDateTimeConverter())();
+  TextColumn get created =>
+      text().clientDefault(_nowForLocal).map(const IsoDateTimeConverter())();
 
-  TextColumn get updated => text().map(const IsoDateTimeConverter())();
+  TextColumn get updated =>
+      text().clientDefault(_nowForLocal).map(const IsoDateTimeConverter())();
 
   // * [basic]
   //    a. This field has to have value for review note,
@@ -137,8 +149,9 @@ class Notes extends Table {
   BoolColumn get isDeleted =>
       boolean().withDefault(const Constant(false)).named('isDeleted')();
 
-  IntColumn get createdBy =>
-      integer().withDefault(const Constant(1)).named('createdBy')();
+  IntColumn get createdBy => integer()
+      .withDefault(Constant(GlobalState.currentUserId))
+      .named('createdBy')();
 }
 
 @DataClassName('ReviewPlanEntry')
@@ -152,8 +165,9 @@ class ReviewPlans extends Table {
 
   TextColumn get introduction => text()();
 
-  IntColumn get createdBy =>
-      integer().withDefault(const Constant(1)).named('createdBy')();
+  IntColumn get createdBy => integer()
+      .withDefault(Constant(GlobalState.currentUserId))
+      .named('createdBy')();
 }
 
 @DataClassName('ReviewPlanConfigEntry')
@@ -172,8 +186,9 @@ class ReviewPlanConfigs extends Table {
   // Unit for the value. { 1 = minute, 2 = hour, 3 = day, 4 = week, 5 = month, 6 = year }
   IntColumn get unit => integer().withDefault(const Constant(1))();
 
-  IntColumn get createdBy =>
-      integer().withDefault(const Constant(1)).named('createdBy')();
+  IntColumn get createdBy => integer()
+      .withDefault(Constant(GlobalState.currentUserId))
+      .named('createdBy')();
 }
 
 @DataClassName('SystemInfoEntry')
@@ -187,8 +202,8 @@ class SystemInfos extends Table {
 
   TextColumn get value => text().named('value')();
 
-  @override
-  List<String> get customConstraints => ['UNIQUE (key)'];
+  // @override
+  // List<String> get customConstraints => ['UNIQUE (key)'];
 }
 
 @UseMoor(tables: [
@@ -312,12 +327,24 @@ class Database extends _$Database {
     return into(users).insert(usersCompanion);
   }
 
-  Future<void> upsertUserInBatch(
-      List<UsersCompanion> usersCompanionList) async {
+  Future<ResponseModel> upsertUsersInBatch({
+    @required List<UsersCompanion> usersCompanionList,
+  }) async {
+    var response;
+
     await batch((batch) {
       batch.insertAllOnConflictUpdate(
           users, usersCompanionList); //>>moor upsert
+    }).then((value) {
+      response = ResponseModel.getResponseModelForSuccess();
+    }).catchError((err) {
+      response = ResponseModel.getResponseModelForError(
+        code: ErrorCodeModel.UPSERT_USERS_IN_BATCH_FAILED_CODE,
+        message: ErrorCodeModel.UPSERT_USERS_IN_BATCH_FAILED_MESSAGE,
+      );
     });
+
+    return response;
   }
 
   // Folders
@@ -441,10 +468,33 @@ class Database extends _$Database {
     return response;
   }
 
-  Future<void> upsertFoldersInBatch(List<FolderEntry> folderEntryList) async {
-    return await batch((batch) {
-      batch.insertAllOnConflictUpdate(folders, folderEntryList);
+  // Future<void> upsertFoldersInBatch(List<FolderEntry> folderEntryList) async {
+  //   return await batch((batch) {
+  //     batch.insertAllOnConflictUpdate(folders, folderEntryList);
+  //   }).then((value) {
+  //     var s = 's';
+  //   }).catchError((err) {
+  //     var s = 's';
+  //   });
+  // }
+
+  Future<ResponseModel> upsertFoldersInBatch({
+    @required List<FoldersCompanion> foldersCompanionList,
+  }) async {
+    var response;
+
+    await batch((batch) {
+      batch.insertAllOnConflictUpdate(folders, foldersCompanionList);
+    }).then((value) {
+      response = ResponseModel.getResponseModelForSuccess();
+    }).catchError((err) {
+      response = ResponseModel.getResponseModelForError(
+        code: ErrorCodeModel.UPSERT_FOLDERS_IN_BATCH_FAILED_CODE,
+        message: ErrorCodeModel.UPSERT_FOLDERS_IN_BATCH_FAILED_MESSAGE,
+      );
     });
+
+    return response;
   }
 
   Future<int> changeFolderName(
@@ -610,10 +660,29 @@ class Database extends _$Database {
     });
   }
 
-  Future<void> upsertNotesInBatch(List<NoteEntry> noteEntryList) async {
-    return await batch((batch) {
-      batch.insertAllOnConflictUpdate(notes, noteEntryList);
+  // Future<void> upsertNotesInBatch(List<NoteEntry> noteEntryList) async {
+  //   return await batch((batch) {
+  //     batch.insertAllOnConflictUpdate(notes, noteEntryList);
+  //   });
+  // }
+
+  Future<ResponseModel> upsertNotesInBatch({
+    @required List<NotesCompanion> notesCompanionList,
+  }) async {
+    var response;
+
+    await batch((batch) {
+      batch.insertAllOnConflictUpdate(notes, notesCompanionList);
+    }).then((value) {
+      response = ResponseModel.getResponseModelForSuccess();
+    }).catchError((err) {
+      response = ResponseModel.getResponseModelForError(
+        code: ErrorCodeModel.UPSERT_NOTES_IN_BATCH_FAILED_CODE,
+        message: ErrorCodeModel.UPSERT_NOTES_IN_BATCH_FAILED_MESSAGE,
+      );
     });
+
+    return response;
   }
 
   Future<int> updateNote({
@@ -746,7 +815,7 @@ class Database extends _$Database {
             .map((row) => _convertModelToNoteWithProgressTotal(row))
             .get();
       } else if (GlobalState.selectedFolderIdCurrently ==
-          GlobalState.defaultFolderIdForDeletion) {
+          GlobalState.defaultFolderIdForDeletedFolder) {
         // get deleted note // get deletion notes
 
         // For Deleted Notes folder
@@ -935,11 +1004,30 @@ class Database extends _$Database {
     return response;
   }
 
-  Future<void> upsertReviewPlansInBatch(
-      List<ReviewPlanEntry> reviewPlanEntryList) async {
-    return await batch((batch) {
-      batch.insertAllOnConflictUpdate(reviewPlans, reviewPlanEntryList);
+  // Future<void> upsertReviewPlansInBatch(
+  //     List<ReviewPlanEntry> reviewPlanEntryList) async {
+  //   return await batch((batch) {
+  //     batch.insertAllOnConflictUpdate(reviewPlans, reviewPlanEntryList);
+  //   });
+  // }
+
+  Future<ResponseModel> upsertReviewPlansInBatch({
+    @required List<ReviewPlansCompanion> reviewPlansCompanionList,
+  }) async {
+    var response;
+
+    await batch((batch) {
+      batch.insertAllOnConflictUpdate(reviewPlans, reviewPlansCompanionList);
+    }).then((value) {
+      response = ResponseModel.getResponseModelForSuccess();
+    }).catchError((err) {
+      response = ResponseModel.getResponseModelForError(
+        code: ErrorCodeModel.UPSERT_REVIEW_PLANS_IN_BATCH_FAILED_CODE,
+        message: ErrorCodeModel.UPSERT_REVIEW_PLANS_IN_BATCH_FAILED_MESSAGE,
+      );
     });
+
+    return response;
   }
 
   Future<int> getProgressTotalByReviewPlanId(
@@ -984,12 +1072,33 @@ class Database extends _$Database {
     return response;
   }
 
-  Future<void> upsertReviewPlanConfigsInBatch(
-      List<ReviewPlanConfigEntry> reviewPlanConfigEntryList) async {
-    return await batch((batch) {
+  // Future<void> upsertReviewPlanConfigsInBatch(
+  //     List<ReviewPlanConfigEntry> reviewPlanConfigEntryList) async {
+  //   return await batch((batch) {
+  //     batch.insertAllOnConflictUpdate(
+  //         reviewPlanConfigs, reviewPlanConfigEntryList);
+  //   });
+  // }
+
+  Future<ResponseModel> upsertReviewPlanConfigsInBatch({
+    @required List<ReviewPlanConfigsCompanion> reviewPlanConfigsCompanionList,
+  }) async {
+    var response;
+
+    await batch((batch) {
       batch.insertAllOnConflictUpdate(
-          reviewPlanConfigs, reviewPlanConfigEntryList);
+          reviewPlanConfigs, reviewPlanConfigsCompanionList);
+    }).then((value) {
+      response = ResponseModel.getResponseModelForSuccess();
+    }).catchError((err) {
+      response = ResponseModel.getResponseModelForError(
+        code: ErrorCodeModel.UPSERT_REVIEW_PLAN_CONFIGS_IN_BATCH_FAILED_CODE,
+        message:
+            ErrorCodeModel.UPSERT_REVIEW_PLAN_CONFIGS_IN_BATCH_FAILED_MESSAGE,
+      );
     });
+
+    return response;
   }
 
   // System Infos
@@ -1022,11 +1131,30 @@ class Database extends _$Database {
     return into(systemInfos).insertOnConflictUpdate(systemInfosCompanion);
   }
 
-  Future<void> upsertSystemInfosInBatch(
-      List<SystemInfoEntry> systemInfoEntryList) async {
-    return await batch((batch) {
-      batch.insertAllOnConflictUpdate(systemInfos, systemInfoEntryList);
+  // Future<void> upsertSystemInfosInBatch(
+  //     List<SystemInfoEntry> systemInfoEntryList) async {
+  //   return await batch((batch) {
+  //     batch.insertAllOnConflictUpdate(systemInfos, systemInfoEntryList);
+  //   });
+  // }
+
+  Future<ResponseModel> upsertSystemInfosInBatch({
+    @required List<SystemInfosCompanion> systemInfosCompanionList,
+  }) async {
+    var response;
+
+    await batch((batch) {
+      batch.insertAllOnConflictUpdate(systemInfos, systemInfosCompanionList);
+    }).then((value) {
+      response = ResponseModel.getResponseModelForSuccess();
+    }).catchError((err) {
+      response = ResponseModel.getResponseModelForError(
+        code: ErrorCodeModel.UPSERT_SYSTEM_INFOS_IN_BATCH_FAILED_CODE,
+        message: ErrorCodeModel.UPSERT_SYSTEM_INFOS_IN_BATCH_FAILED_MESSAGE,
+      );
     });
+
+    return response;
   }
 
 // Other methods

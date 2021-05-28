@@ -72,19 +72,6 @@ class TimeHandler {
     return sameTimeForTomorrow;
   }
 
-//   // If *basedOnDateTime* is null, we use Now().local() to get the tomorrow datetime
-//
-//   DateTime dateTimeBase;
-//
-//   if (basedOnDateTime == null) {
-//   dateTimeBase = TimeHandler.getNowForLocal();
-//   } else {
-//   dateTimeBase = basedOnDateTime;
-//   }
-//
-//   return dateTimeBase.add(Duration(days: 1));
-// }static DateTime getTomorrowDateTime({DateTime basedOnDateTime}) {
-
   static bool isYesterdayDateTime(DateTime dateTime) {
     var isYesterdayDateTime = false;
     var yesterday = TimeHandler.getYesterdayDateTime();

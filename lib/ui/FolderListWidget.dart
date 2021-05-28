@@ -199,7 +199,7 @@ class FolderListWidgetState extends State<FolderListWidget>
       var isAllNotesFolder =
           (GlobalState.defaultFolderIdForAllNotes == folderId);
       var isDeletionFolder =
-          (GlobalState.defaultFolderIdForDeletion == folderId);
+          (GlobalState.defaultFolderIdForDeletedFolder == folderId);
       var showZero = true;
 
       // Check if this is an item selected by the user currently

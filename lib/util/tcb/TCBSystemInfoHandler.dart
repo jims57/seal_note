@@ -41,26 +41,78 @@ class TCBSystemInfoHandler {
     return response;
   }
 
-  static Future<ResponseModel> updateSystemInfoBasicData(
+  // static Future<ResponseModel> updateSystemInfoBasicData(
+  //     {@required TCBSystemInfoModel tcbSystemInfoModel}) async {
+  //   ResponseModel response;
+  //
+  //   // Update folders in batch
+  //   var foldersCompanionList =
+  //       TCBFolderModel.convertTCBFolderModelListToFoldersCompanionList(
+  //     tcbFolderModelList: tcbSystemInfoModel.tcbSystemInfoFolderList,
+  //   );
+  //   response = await GlobalState.database.updateFoldersByTransaction(
+  //     foldersCompanionList: foldersCompanionList,
+  //   );
+  //
+  //   // Update notes in batch
+  //   if (response.code == ErrorCodeModel.SUCCESS_CODE) {
+  //     var notesCompanionList =
+  //         TCBNoteModel.convertTCBNoteModelListToNotesCompanionList(
+  //       tcbNoteModelList: tcbSystemInfoModel.tcbSystemInfoNoteList,
+  //     );
+  //     response = await GlobalState.database.updateNotesByTransaction(
+  //       notesCompanionList: notesCompanionList,
+  //     );
+  //   }
+  //
+  //   // Update review plans in batch
+  //   if (response.code == ErrorCodeModel.SUCCESS_CODE) {
+  //     var reviewPlansCompanionList = TCBReviewPlanModel
+  //         .convertTCBReviewPlanModelListToReviewPlansCompanionList(
+  //       tcbReviewPlanModelList: tcbSystemInfoModel.tcbSystemInfoReviewPlanList,
+  //     );
+  //     response = await GlobalState.database.updateReviewPlansByTransaction(
+  //       reviewPlansCompanionList: reviewPlansCompanionList,
+  //     );
+  //   }
+  //
+  //   // Update review plan configs in batch
+  //   if (response.code == ErrorCodeModel.SUCCESS_CODE) {
+  //     var reviewPlanConfigsCompanionList = TCBReviewPlanConfigModel
+  //         .convertTCBReviewPlanConfigModelListToReviewPlanConfigsCompanionList(
+  //       tcbReviewPlanConfigModelList:
+  //           tcbSystemInfoModel.tcbSystemInfoReviewPlanConfigList,
+  //     );
+  //     response =
+  //         await GlobalState.database.updateReviewPlanConfigsByTransaction(
+  //       reviewPlanConfigsCompanionList: reviewPlanConfigsCompanionList,
+  //     );
+  //   }
+  //
+  //   return response;
+  // }
+
+
+  static Future<ResponseModel> upsertSystemInfoBasicData(
       {@required TCBSystemInfoModel tcbSystemInfoModel}) async {
     ResponseModel response;
 
     // Update folders in batch
     var foldersCompanionList =
-        TCBFolderModel.convertTCBFolderModelListToFoldersCompanionList(
+    TCBFolderModel.convertTCBFolderModelListToFoldersCompanionList(
       tcbFolderModelList: tcbSystemInfoModel.tcbSystemInfoFolderList,
     );
-    response = await GlobalState.database.updateFoldersByTransaction(
+    response = await GlobalState.database.upsertFoldersInBatch(
       foldersCompanionList: foldersCompanionList,
     );
 
     // Update notes in batch
     if (response.code == ErrorCodeModel.SUCCESS_CODE) {
       var notesCompanionList =
-          TCBNoteModel.convertTCBNoteModelListToNotesCompanionList(
+      TCBNoteModel.convertTCBNoteModelListToNotesCompanionList(
         tcbNoteModelList: tcbSystemInfoModel.tcbSystemInfoNoteList,
       );
-      response = await GlobalState.database.updateNotesByTransaction(
+      response = await GlobalState.database.upsertNotesInBatch(
         notesCompanionList: notesCompanionList,
       );
     }
@@ -71,7 +123,7 @@ class TCBSystemInfoHandler {
           .convertTCBReviewPlanModelListToReviewPlansCompanionList(
         tcbReviewPlanModelList: tcbSystemInfoModel.tcbSystemInfoReviewPlanList,
       );
-      response = await GlobalState.database.updateReviewPlansByTransaction(
+      response = await GlobalState.database.upsertReviewPlansInBatch(
         reviewPlansCompanionList: reviewPlansCompanionList,
       );
     }
@@ -81,10 +133,10 @@ class TCBSystemInfoHandler {
       var reviewPlanConfigsCompanionList = TCBReviewPlanConfigModel
           .convertTCBReviewPlanConfigModelListToReviewPlanConfigsCompanionList(
         tcbReviewPlanConfigModelList:
-            tcbSystemInfoModel.tcbSystemInfoReviewPlanConfigList,
+        tcbSystemInfoModel.tcbSystemInfoReviewPlanConfigList,
       );
       response =
-          await GlobalState.database.updateReviewPlanConfigsByTransaction(
+      await GlobalState.database.upsertReviewPlanConfigsInBatch(
         reviewPlanConfigsCompanionList: reviewPlanConfigsCompanionList,
       );
     }

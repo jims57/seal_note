@@ -150,7 +150,7 @@ class FolderListItemWidgetState extends State<FolderListItemWidget>
 
     if (GlobalState.isDefaultFolderSelected &&
         GlobalState.selectedFolderIdCurrently ==
-            GlobalState.defaultFolderIdForDeletion) {
+            GlobalState.defaultFolderIdForDeletedFolder) {
       isDeletedFolder = true;
     }
 

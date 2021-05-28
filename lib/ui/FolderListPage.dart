@@ -7,8 +7,7 @@ import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:seal_note/ui/settings/SettingPage.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
-import 'package:seal_note/util/file/FileHandler.dart';
-import 'package:seal_note/util/tcb/TCBStorageHandler.dart';
+import 'package:seal_note/util/ids/IDHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 import 'FolderListItemWidget.dart';
 import 'FolderListWidget.dart';
@@ -228,23 +227,22 @@ class FolderListPageState extends State<FolderListPage>
                               // setting button // setting button event
                               // test button // test button event // click test button
 
-                              // var s22 = GlobalState.defaultFolderIndexList;
+                              var usersCompanionList = <UsersCompanion>[];
+                              usersCompanionList.add(
+                                UsersCompanion(
+                                  id: IDHandler.getMoorCompanionValueId(id: 2),
+                                  // id: IDHandler.getMoorCompanionValueId(),
+                                  userName: Value('admin6'),
+                                  password: Value('222226'),
+                                  created: Value(TimeHandler.getNowForLocal()),
+                                ),
+                              );
+                              var s = await GlobalState.database
+                                  .upsertUsersInBatch(
+                                      usersCompanionList: usersCompanionList);
 
-                              // GlobalState.folderListPageState.currentState.updateDefaultFolderIndexListsVarAtGlobalState();
-
-
-
-                              // var foldersCompanion = FoldersCompanion(
-                              //     id: Value(10), name: Value('我的笔记2'));
-                              // var r = await GlobalState.database
-                              //     .updateFolder(foldersCompanion);
-
-                              // var systemInfo = await GlobalState.database
-                              //     .upsertSystemInfoDataVersion(
-                              //         newDataVersion: 5);
-
-                              var res = await GlobalState.flutterWebviewPlugin
-                                  .evalJavascript("javascript:getPageHtml();");
+                              // var res = await GlobalState.flutterWebviewPlugin
+                              //     .evalJavascript("javascript:getPageHtml();");
 
                               var s2 = 's';
                             },

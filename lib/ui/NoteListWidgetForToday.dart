@@ -616,7 +616,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
                                 if (GlobalState.isDefaultFolderSelected &&
                                     GlobalState.selectedFolderIdCurrently ==
                                         GlobalState
-                                            .defaultFolderIdForDeletion) {
+                                            .defaultFolderIdForDeletedFolder) {
                                   // delete note in deleted folder // deleted folder delete note
                                   // delete note from deleted folder
 
@@ -821,7 +821,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
 
     if (GlobalState.isDefaultFolderSelected &&
         GlobalState.selectedFolderIdCurrently ==
-            GlobalState.defaultFolderIdForDeletion) {
+            GlobalState.defaultFolderIdForDeletedFolder) {
       isInDeletedFolder = true;
     }
 

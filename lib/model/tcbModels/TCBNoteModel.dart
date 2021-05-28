@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moor/moor.dart';
 import 'package:seal_note/data/database/database.dart';
+import 'package:seal_note/util/time/TimeHandler.dart';
 
 class TCBNoteModel {
   final int id;
@@ -37,6 +38,7 @@ class TCBNoteModel {
   static List<NotesCompanion> convertTCBNoteModelListToNotesCompanionList({
     @required List<TCBNoteModel> tcbNoteModelList,
   }) {
+    var now = TimeHandler.getNowForLocal();
     var notesCompanionList = <NotesCompanion>[];
 
     for (var tcbNoteModel in tcbNoteModelList) {
@@ -44,6 +46,7 @@ class TCBNoteModel {
         id: Value(tcbNoteModel.id),
         folderId: Value(tcbNoteModel.folderId),
         content: Value(tcbNoteModel.content),
+        created: Value(now),
         isDeleted: Value(tcbNoteModel.isDeleted),
       ));
     }

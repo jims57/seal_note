@@ -249,17 +249,22 @@ class GlobalState with ChangeNotifier {
   static int systemInfoDataVersion;
 
   // Folders name // folder name
-  // static String defaultFolderNameForToday = '今天';
-  // static String defaultFolderNameForAllNotes = '全部笔记';
-  // static String defaultFolderNameForDeletion = '删除笔记';
-  // static String defaultUserFolderNameForMyNotes = '我的笔记';
+  static String defaultFolderNameForToday = '今天';
+  static String defaultFolderNameForAllNotes = '全部笔记';
+  static String defaultFolderNameForDeletedFolder = '删除笔记';
+  static String defaultUserFolderNameForMyNotes = '我的笔记';
 
   // Folders Id // folder id
   // [Important] These ids shouldn't be changed since many sql queries and logic in dart use these ids to check true or false
   static final int defaultFolderIdForToday = 1;
   static final int defaultFolderIdForAllNotes = 2;
-  static final int defaultFolderIdForDeletion = 3;
+  static final int defaultFolderIdForDeletedFolder = 3;
   static final int defaultUserFolderIdForMyNotes = 4;
+
+  // Folder related
+  static bool isDefaultFolderSelected = false; // For default folder
+  static bool isReviewFolderSelected = false; // For review folder
+  static int defaultOrderForDeletedFolder = 1000000;
 
   // Pages' width
   // Note: The following default values for the width are as far as large screen(screenType = 3) is concerned
@@ -355,10 +360,6 @@ class GlobalState with ChangeNotifier {
   static SystemInfoEventHandler systemInfoEventHandler =
       SystemInfoEventHandler();
 
-  // Folder related
-  static bool isDefaultFolderSelected = false; // For default folder
-  static bool isReviewFolderSelected = false; // For review folder
-
   // Folder selection
   static double folderListItemHeightForFolderSelection = 50.0;
 
@@ -387,7 +388,7 @@ class GlobalState with ChangeNotifier {
   // Setting page
 
   // User info
-  static final int adminUserId = 1;
+  // static final int adminUserId = 1;
   static int currentUserId = 1;
 
   // User folder available dy

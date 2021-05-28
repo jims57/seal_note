@@ -59,7 +59,7 @@ class _NoDataWidgetState extends State<NoDataWidget> {
         // For Today folder
         noDataTitle = '暂无复习内容';
       } else if (GlobalState.selectedFolderIdCurrently ==
-          GlobalState.defaultFolderIdForDeletion) {
+          GlobalState.defaultFolderIdForDeletedFolder) {
         // For Deleted folder
         noDataTitle = '暂无删除的笔记';
       } else {
@@ -84,7 +84,7 @@ class _NoDataWidgetState extends State<NoDataWidget> {
         // For Today folder
         noDataRemark = '说明：所有需要今天复习的笔记，都会出现在此，方便你统一复习。';
       } else if (GlobalState.selectedFolderIdCurrently ==
-          GlobalState.defaultFolderIdForDeletion) {
+          GlobalState.defaultFolderIdForDeletedFolder) {
         // For Deleted folder
         noDataRemark = '说明：所有删除的笔记会保留在此，默认保留：30天。之后将永久删除。';
       } else {

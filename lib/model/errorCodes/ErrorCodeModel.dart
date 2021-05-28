@@ -14,20 +14,43 @@ class ErrorCodeModel {
 
   // System level [1xxx]
 
-  // DB [2xxx]
-  static const int UPDATE_FOLDERS_IN_BATCH_FAILED_CODE = 2000;
+  // [DB] Update operation
+  static const int UPDATE_USERS_IN_BATCH_FAILED_CODE = 2000;
+  static const String UPDATE_USERS_IN_BATCH_FAILED_MESSAGE = '批量更新用户时失败';
+  static const int UPDATE_FOLDERS_IN_BATCH_FAILED_CODE = 2001;
   static const String UPDATE_FOLDERS_IN_BATCH_FAILED_MESSAGE = '批量更新文件夹时失败';
-  static const int UPDATE_NOTES_IN_BATCH_FAILED_CODE = 2001;
+  static const int UPDATE_NOTES_IN_BATCH_FAILED_CODE = 2002;
   static const String UPDATE_NOTES_IN_BATCH_FAILED_MESSAGE = '批量更新笔记时失败';
-  static const int UPDATE_REVIEW_PLANS_IN_BATCH_FAILED_CODE = 2002;
+  static const int UPDATE_REVIEW_PLANS_IN_BATCH_FAILED_CODE = 2003;
   static const String UPDATE_REVIEW_PLANS_IN_BATCH_FAILED_MESSAGE =
       '批量更新复习计划时失败';
-  static const int UPDATE_REVIEW_PLAN_CONFIGS_IN_BATCH_FAILED_CODE = 2003;
+  static const int UPDATE_REVIEW_PLAN_CONFIGS_IN_BATCH_FAILED_CODE = 2004;
   static const String UPDATE_REVIEW_PLAN_CONFIGS_IN_BATCH_FAILED_MESSAGE =
       '批量更新复习计划配置时失败';
-  static const int REORDER_FOLDERS_FAILED_CODE = 2004;
-  static const String REORDER_FOLDERS_FAILED_MESSAGE =
-      '排序文件夹时失败';
+  static const int UPDATE_SYSTEM_INFOS_IN_BATCH_FAILED_CODE = 2005;
+  static const String UPDATE_SYSTEM_INFOS_IN_BATCH_FAILED_MESSAGE =
+      '批量更新系统信息时失败';
+
+  // [DB] Upsert operation
+  static const int UPSERT_USERS_IN_BATCH_FAILED_CODE = 2010;
+  static const String UPSERT_USERS_IN_BATCH_FAILED_MESSAGE = '批量插入或更新用户时失败';
+  static const int UPSERT_FOLDERS_IN_BATCH_FAILED_CODE = 2011;
+  static const String UPSERT_FOLDERS_IN_BATCH_FAILED_MESSAGE = '批量插入或更新文件夹时失败';
+  static const int UPSERT_NOTES_IN_BATCH_FAILED_CODE = 2012;
+  static const String UPSERT_NOTES_IN_BATCH_FAILED_MESSAGE = '批量插入或更新笔记时失败';
+  static const int UPSERT_REVIEW_PLANS_IN_BATCH_FAILED_CODE = 2013;
+  static const String UPSERT_REVIEW_PLANS_IN_BATCH_FAILED_MESSAGE =
+      '批量插入或更新复习计划时失败';
+  static const int UPSERT_REVIEW_PLAN_CONFIGS_IN_BATCH_FAILED_CODE = 2014;
+  static const String UPSERT_REVIEW_PLAN_CONFIGS_IN_BATCH_FAILED_MESSAGE =
+      '批量插入或更新复习计划配置时失败';
+  static const int UPSERT_SYSTEM_INFOS_IN_BATCH_FAILED_CODE = 2015;
+  static const String UPSERT_SYSTEM_INFOS_IN_BATCH_FAILED_MESSAGE =
+      '批量插入或更新系统信息时失败';
+
+  // [DB] Reorder folders
+  static const int REORDER_FOLDERS_FAILED_CODE = 2020;
+  static const String REORDER_FOLDERS_FAILED_MESSAGE = '排序文件夹时失败';
 
   // Login [3xxx]
   static const int WX_AUTH_LOGIN_FAILED_CODE = 3000;

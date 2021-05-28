@@ -71,25 +71,25 @@ class MasterDetailPageState extends State<MasterDetailPage>
         .listen((newDataVersion) async {
       // data version change event // data version has changed event
       // system info data version change event // system info data version has changed event
-      // system info change event
+      // system info change event // data version change event
 
-      // // Update all basic data of system info, since the data version has changed
-      // var response = await TCBSystemInfoHandler.updateSystemInfoBasicData(
-      //   tcbSystemInfoModel: GlobalState.tcbSystemInfo,
-      // );
-      //
-      // if (response.code == ErrorCodeModel.SUCCESS_CODE) {
-      //   // When updated successfully, update the data version in sqlite
-      //
-      //   await GlobalState.database
-      //       .upsertSystemInfoDataVersion(newDataVersion: newDataVersion);
-      //
-      //   // Refresh after data has been updated
-      //   GlobalState.noteListWidgetForTodayState.currentState.triggerSetState(
-      //     forceToRefreshNoteListByDb: true,
-      //     refreshFolderListPageFromDbByTheWay: true,
-      //   );
-      // }
+      // Update all basic data of system info, since the data version has changed
+      var response = await TCBSystemInfoHandler.upsertSystemInfoBasicData(
+        tcbSystemInfoModel: GlobalState.tcbSystemInfo,
+      );
+
+      if (response.code == ErrorCodeModel.SUCCESS_CODE) {
+        // When updated successfully, update the data version in sqlite
+
+        await GlobalState.database
+            .upsertSystemInfoDataVersion(newDataVersion: newDataVersion);
+
+        // Refresh after data has been updated
+        GlobalState.noteListWidgetForTodayState.currentState.triggerSetState(
+          forceToRefreshNoteListByDb: true,
+          refreshFolderListPageFromDbByTheWay: true,
+        );
+      }
     });
 
     loginPageFutureBuilder = _checkIfShowLoginPageOrNot();
