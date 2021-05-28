@@ -92,6 +92,12 @@ class _MyAppState extends State<MyApp> {
             userName: Value('user'),
           ),
         );
+        usersCompanionList.add(
+          UsersCompanion(
+            id: Value(GlobalState.beginIdForUserOperationInDB),
+            userName: Value('xxxx'),
+          ),
+        );
         response = await GlobalState.database
             .upsertUsersInBatch(usersCompanionList: usersCompanionList);
 
@@ -130,6 +136,14 @@ class _MyAppState extends State<MyApp> {
               isDefaultFolder: Value(false),
             ),
           );
+          foldersCompanionList.add(
+            FoldersCompanion(
+              id: Value(GlobalState.beginIdForUserOperationInDB),
+              name: Value('xxxx'),
+              order: Value(3),
+              isDefaultFolder: Value(false),
+            ),
+          );
 
           response = await GlobalState.database
               .upsertFoldersInBatch(foldersCompanionList: foldersCompanionList);
@@ -141,8 +155,16 @@ class _MyAppState extends State<MyApp> {
           notesCompanionList.add(
             NotesCompanion(
               id: Value(1),
+              folderId: Value(GlobalState.defaultUserFolderIdForMyNotes),
               content: Value(
                   '&lt;p&gt;【海豚笔记介绍和使用方法】&lt;br&gt;主是图1：&lt;img id=&quot;d9ddb2824e1053b4ed1c8a3633477a07-5bf3d-001&quot; image-index=&quot;0&quot; style=&quot;width: 90%;&quot; image-extension=&quot;png&quot;&gt;&lt;br&gt;这是说明1。&lt;br&gt;这是说明2。&lt;/p&gt;'),
+            ),
+          );
+          notesCompanionList.add(
+            NotesCompanion(
+              id: Value(GlobalState.beginIdForUserOperationInDB),
+              folderId: Value(GlobalState.defaultUserFolderIdForMyNotes),
+              content: Value('xxxx'),
             ),
           );
 
@@ -165,6 +187,13 @@ class _MyAppState extends State<MyApp> {
               id: Value(2),
               name: Value('艾宾浩斯'),
               introduction: Value('艾宾浩斯简介'),
+            ),
+          );
+          reviewPlansCompanionList.add(
+            ReviewPlansCompanion(
+              id: Value(GlobalState.beginIdForUserOperationInDB),
+              name: Value('xxxx'),
+              introduction: Value('xxxx'),
             ),
           );
 
@@ -221,6 +250,15 @@ class _MyAppState extends State<MyApp> {
               unit: Value(2),
             ),
           );
+          reviewPlanConfigsCompanionList.add(
+            ReviewPlanConfigsCompanion(
+              id: Value(GlobalState.beginIdForUserOperationInDB),
+              reviewPlanId: Value(1),
+              order: Value(1),
+              value: Value(1),
+              unit: Value(1),
+            ),
+          );
 
           response = await GlobalState.database.upsertReviewPlanConfigsInBatch(
               reviewPlanConfigsCompanionList: reviewPlanConfigsCompanionList);
@@ -236,9 +274,19 @@ class _MyAppState extends State<MyApp> {
               value: Value('0'),
             ),
           );
+          systemInfosCompanionList.add(
+            SystemInfosCompanion(
+              id: Value(GlobalState.beginIdForUserOperationInDB),
+              key: Value('xxxx'),
+              value: Value('xxxx'),
+            ),
+          );
 
           response = await GlobalState.database.upsertSystemInfosInBatch(
               systemInfosCompanionList: systemInfosCompanionList);
+
+          // Delete all records with begin Id
+          _deleteAllRecordWithBeginId();
         }
 
         // Record default folder id
@@ -312,6 +360,25 @@ class _MyAppState extends State<MyApp> {
 
     GlobalState.loadingWidgetChangeNotifier =
         Provider.of<LoadingWidgetChangeNotifier>(context, listen: false);
+  }
+
+  void _deleteAllRecordWithBeginId() async {
+    GlobalState.database
+        .deleteUser(userId: GlobalState.beginIdForUserOperationInDB);
+
+    GlobalState.database
+        .deleteFolder(folderId: GlobalState.beginIdForUserOperationInDB);
+
+    GlobalState.database.deleteNote(GlobalState.beginIdForUserOperationInDB);
+
+    GlobalState.database.deleteReviewPlan(
+        reviewPlanId: GlobalState.beginIdForUserOperationInDB);
+
+    GlobalState.database.deleteReviewPlanConfig(
+        reviewPlanConfigId: GlobalState.beginIdForUserOperationInDB);
+
+    GlobalState.database.deleteSystemInfo(
+        systemInfoId: GlobalState.beginIdForUserOperationInDB);
   }
 }
 

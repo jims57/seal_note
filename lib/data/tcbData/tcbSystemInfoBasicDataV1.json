@@ -5,7 +5,7 @@
   "folders": [
     {
       "id": 1,
-      "name": "今天2",
+      "name": "今天3",
       "order": 1,
       "isDefaultFolder": true,
       "isDeleted": false
@@ -29,7 +29,6 @@
       "name": "我的笔记2",
       "order": 3,
       "isDefaultFolder": false,
-      "reviewPlanId": 2,
       "isDeleted": false
     },
     {
@@ -37,13 +36,13 @@
       "name": "英语知识2",
       "order": 4,
       "isDefaultFolder": false,
-      "isDeleted": false
+      "isDeleted": true
     }
   ],
   "notes": [
     {
       "id": 1,
-      "folderId": 5,
+      "folderId": 4,
       "content": "content1002",
       "isDeleted": false
     }

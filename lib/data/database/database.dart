@@ -202,8 +202,8 @@ class SystemInfos extends Table {
 
   TextColumn get value => text().named('value')();
 
-  // @override
-  // List<String> get customConstraints => ['UNIQUE (key)'];
+// @override
+// List<String> get customConstraints => ['UNIQUE (key)'];
 }
 
 @UseMoor(tables: [
@@ -345,6 +345,12 @@ class Database extends _$Database {
     });
 
     return response;
+  }
+
+  Future<int> deleteUser({@required int userId}) async {
+    var result = await (delete(users)..where((u) => u.id.equals(userId))).go();
+
+    return result;
   }
 
   // Folders
@@ -984,6 +990,14 @@ class Database extends _$Database {
         .write(reviewPlansCompanion);
   }
 
+  Future<int> deleteReviewPlan({@required int reviewPlanId}) async {
+    var result = await (delete(reviewPlans)
+          ..where((rp) => rp.id.equals(reviewPlanId)))
+        .go();
+
+    return result;
+  }
+
   Future<ResponseModel> updateReviewPlansByTransaction(
       {@required List<ReviewPlansCompanion> reviewPlansCompanionList}) async {
     var response = ResponseModel.getResponseModelForSuccess();
@@ -1047,6 +1061,14 @@ class Database extends _$Database {
     return (update(reviewPlanConfigs)
           ..where((rpc) => rpc.id.equals(reviewPlanConfigsCompanion.id.value)))
         .write(reviewPlanConfigsCompanion);
+  }
+
+  Future<int> deleteReviewPlanConfig({@required int reviewPlanConfigId}) async {
+    var result = await (delete(reviewPlanConfigs)
+          ..where((rpc) => rpc.id.equals(reviewPlanConfigId)))
+        .go();
+
+    return result;
   }
 
   Future<ResponseModel> updateReviewPlanConfigsByTransaction(
@@ -1155,6 +1177,14 @@ class Database extends _$Database {
     });
 
     return response;
+  }
+
+  Future<int> deleteSystemInfo({@required int systemInfoId}) async {
+    var result = await (delete(systemInfos)
+          ..where((si) => si.id.equals(systemInfoId)))
+        .go();
+
+    return result;
   }
 
 // Other methods

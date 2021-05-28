@@ -116,6 +116,7 @@ class GlobalState with ChangeNotifier {
   static const String loadingGifFileNameWithoutExtension = 'loading2';
   static const String loadingGifFileName =
       '$loadingGifFileNameWithoutExtension.gif';
+  static const int beginIdForUserOperationInDB = 10000;
 
   // Default variables
   static const double defaultItemCaptionHeight = 25.0;
