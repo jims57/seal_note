@@ -286,7 +286,7 @@ class _MyAppState extends State<MyApp> {
               systemInfosCompanionList: systemInfosCompanionList);
 
           // Delete all records with begin Id
-          _deleteAllRecordWithBeginId();
+          _deleteAllRecordsWithBeginId();
         }
 
         // Record default folder id
@@ -362,7 +362,7 @@ class _MyAppState extends State<MyApp> {
         Provider.of<LoadingWidgetChangeNotifier>(context, listen: false);
   }
 
-  void _deleteAllRecordWithBeginId() async {
+  void _deleteAllRecordsWithBeginId() async {
     GlobalState.database
         .deleteUser(userId: GlobalState.beginIdForUserOperationInDB);
 

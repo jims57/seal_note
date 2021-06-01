@@ -227,20 +227,10 @@ class FolderListPageState extends State<FolderListPage>
                               // setting button // setting button event
                               // test button // test button event // click test button
 
-                              // var s = await GlobalState.database
-                              //     .updateFolderReviewPlanId(
-                              //   folderId: 4,
-                              //   oldReviewPlanId: 0,
-                              //   newReviewPlanId: 0,
-                              //   forceToUpdateNotesWithNullNextReviewTimeByNow:
-                              //       true,
-                              // );
+                              // var s  = await GlobalState.database.deleteSystemInfo(systemInfoId: 10001);
 
-                              // var r = await GlobalState.database
-                              //     .isFolderWithUserNotes(folderId: 7);
-
-                              var r = await GlobalState.database.getFoldersCreatedByUser();
-
+                              // var s = await GlobalState.database.del
+                              
                               // var res = await GlobalState.flutterWebviewPlugin
                               //     .evalJavascript("javascript:getPageHtml();");
 

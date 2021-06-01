@@ -521,16 +521,6 @@ class Database extends _$Database {
     return response;
   }
 
-  // Future<void> upsertFoldersInBatch(List<FolderEntry> folderEntryList) async {
-  //   return await batch((batch) {
-  //     batch.insertAllOnConflictUpdate(folders, folderEntryList);
-  //   }).then((value) {
-  //     var s = 's';
-  //   }).catchError((err) {
-  //     var s = 's';
-  //   });
-  // }
-
   Future<ResponseModel> upsertFoldersInBatch({
     @required List<FoldersCompanion> foldersCompanionList,
   }) async {
@@ -702,6 +692,16 @@ class Database extends _$Database {
     return noteContent;
   }
 
+  Future<List<NoteEntry>> getNotesCreatedBySystemInfo() async {
+    var endId = GlobalState.beginIdForUserOperationInDB;
+
+    List<NoteEntry> noteEntryList = await (select(notes)
+          ..where((n) => n.id.isSmallerThanValue(endId)))
+        .get();
+
+    return noteEntryList;
+  }
+
   Future<int> insertNote(NoteEntry noteEntry) {
     // Add a note to db
 
@@ -713,12 +713,6 @@ class Database extends _$Database {
       batch.insertAll(notes, noteEntryList);
     });
   }
-
-  // Future<void> upsertNotesInBatch(List<NoteEntry> noteEntryList) async {
-  //   return await batch((batch) {
-  //     batch.insertAllOnConflictUpdate(notes, noteEntryList);
-  //   });
-  // }
 
   Future<ResponseModel> upsertNotesInBatch({
     @required List<NotesCompanion> notesCompanionList,
@@ -1030,6 +1024,16 @@ class Database extends _$Database {
         .get();
   }
 
+  Future<List<ReviewPlanEntry>> getReviewPlansCreatedBySystemInfo() async {
+    var endId = GlobalState.beginIdForUserOperationInDB;
+
+    List<ReviewPlanEntry> reviewPlanEntryList = await (select(reviewPlans)
+          ..where((rp) => rp.id.isSmallerThanValue(endId)))
+        .get();
+
+    return reviewPlanEntryList;
+  }
+
   Future<int> updateReviewPlan({
     @required ReviewPlansCompanion reviewPlansCompanion,
   }) async {
@@ -1066,13 +1070,6 @@ class Database extends _$Database {
     return response;
   }
 
-  // Future<void> upsertReviewPlansInBatch(
-  //     List<ReviewPlanEntry> reviewPlanEntryList) async {
-  //   return await batch((batch) {
-  //     batch.insertAllOnConflictUpdate(reviewPlans, reviewPlanEntryList);
-  //   });
-  // }
-
   Future<ResponseModel> upsertReviewPlansInBatch({
     @required List<ReviewPlansCompanion> reviewPlansCompanionList,
   }) async {
@@ -1101,6 +1098,19 @@ class Database extends _$Database {
         1;
 
     return progressTotal;
+  }
+
+  // Review plan config
+  Future<List<ReviewPlanConfigEntry>>
+      getReviewPlanConfigsCreatedBySystemInfo() async {
+    var endId = GlobalState.beginIdForUserOperationInDB;
+
+    List<ReviewPlanConfigEntry> reviewPlanConfigEntryList =
+        await (select(reviewPlanConfigs)
+              ..where((rpc) => rpc.id.isSmallerThanValue(endId)))
+            .get();
+
+    return reviewPlanConfigEntryList;
   }
 
   Future<int> updateReviewPlanConfig({
@@ -1142,14 +1152,6 @@ class Database extends _$Database {
     return response;
   }
 
-  // Future<void> upsertReviewPlanConfigsInBatch(
-  //     List<ReviewPlanConfigEntry> reviewPlanConfigEntryList) async {
-  //   return await batch((batch) {
-  //     batch.insertAllOnConflictUpdate(
-  //         reviewPlanConfigs, reviewPlanConfigEntryList);
-  //   });
-  // }
-
   Future<ResponseModel> upsertReviewPlanConfigsInBatch({
     @required List<ReviewPlanConfigsCompanion> reviewPlanConfigsCompanionList,
   }) async {
@@ -1177,6 +1179,16 @@ class Database extends _$Database {
         .getSingle();
   }
 
+  Future<List<SystemInfoEntry>> getSystemInfosCreatedBySystemInfo() async {
+    var endId = GlobalState.beginIdForUserOperationInDB;
+
+    List<SystemInfoEntry> systemInfoEntryList = await (select(systemInfos)
+          ..where((si) => si.id.isSmallerThanValue(endId)))
+        .get();
+
+    return systemInfoEntryList;
+  }
+
   Future<int> getSystemInfoDataVersion() async {
     var dataVersion = 0;
 
@@ -1200,13 +1212,6 @@ class Database extends _$Database {
     );
     return into(systemInfos).insertOnConflictUpdate(systemInfosCompanion);
   }
-
-  // Future<void> upsertSystemInfosInBatch(
-  //     List<SystemInfoEntry> systemInfoEntryList) async {
-  //   return await batch((batch) {
-  //     batch.insertAllOnConflictUpdate(systemInfos, systemInfoEntryList);
-  //   });
-  // }
 
   Future<ResponseModel> upsertSystemInfosInBatch({
     @required List<SystemInfosCompanion> systemInfosCompanionList,
