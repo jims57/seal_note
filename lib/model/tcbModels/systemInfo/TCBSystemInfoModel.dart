@@ -1,6 +1,5 @@
 import 'package:cloudbase_database/cloudbase_database.dart';
 import 'package:seal_note/model/tcbModels/TCBReviewPlanModel.dart';
-
 import '../TCBFolderModel.dart';
 import '../TCBNoteModel.dart';
 import '../TCBReviewPlanConfigModel.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moor/moor.dart';
+import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/database/database.dart';
-import 'package:seal_note/util/time/TimeHandler.dart';
 
 class TCBFolderModel {
   final int id;
@@ -42,21 +42,36 @@ class TCBFolderModel {
     return folderList;
   }
 
-  static List<FoldersCompanion>
+  static Future<List<FoldersCompanion>>
       convertTCBFolderModelListToFoldersCompanionList({
     @required List<TCBFolderModel> tcbFolderModelList,
-  }) {
-    // var now = TimeHandler.getNowForLocal();
+  }) async {
     var foldersCompanionList = <FoldersCompanion>[];
 
     for (var tcbFolderModel in tcbFolderModelList) {
+      var folderId = tcbFolderModel.id;
+      var reviewPlanId = tcbFolderModel.reviewPlanId;
+
+      // Check if the folder has notes created by the user or not
+      var isFolderWithUserNotes =
+          await GlobalState.database.isFolderWithUserNotes(folderId: folderId);
+      var reviewPlanIdValue;
+      if (!isFolderWithUserNotes) {
+        // When it has no notes created by the user
+
+        reviewPlanIdValue = Value(reviewPlanId);
+      } else {
+        // When it has notes created by the user
+
+        reviewPlanIdValue = Value<int>.absent();
+      }
+
       foldersCompanionList.add(FoldersCompanion(
         id: Value(tcbFolderModel.id),
         name: Value(tcbFolderModel.name),
         order: Value(tcbFolderModel.order),
         isDefaultFolder: Value(tcbFolderModel.isDefaultFolder),
-        reviewPlanId: Value(tcbFolderModel.reviewPlanId),
-        // created: Value(now),
+        reviewPlanId: reviewPlanIdValue,
         isDeleted: Value(tcbFolderModel.isDeleted),
       ));
     }

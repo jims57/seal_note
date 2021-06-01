@@ -227,19 +227,19 @@ class FolderListPageState extends State<FolderListPage>
                               // setting button // setting button event
                               // test button // test button event // click test button
 
-                              var usersCompanionList = <UsersCompanion>[];
-                              usersCompanionList.add(
-                                UsersCompanion(
-                                  id: IDHandler.getMoorCompanionValueId(id: 2),
-                                  // id: IDHandler.getMoorCompanionValueId(),
-                                  userName: Value('admin6'),
-                                  password: Value('222226'),
-                                  created: Value(TimeHandler.getNowForLocal()),
-                                ),
-                              );
-                              var s = await GlobalState.database
-                                  .upsertUsersInBatch(
-                                      usersCompanionList: usersCompanionList);
+                              // var s = await GlobalState.database
+                              //     .updateFolderReviewPlanId(
+                              //   folderId: 4,
+                              //   oldReviewPlanId: 0,
+                              //   newReviewPlanId: 0,
+                              //   forceToUpdateNotesWithNullNextReviewTimeByNow:
+                              //       true,
+                              // );
+
+                              // var r = await GlobalState.database
+                              //     .isFolderWithUserNotes(folderId: 7);
+
+                              var r = await GlobalState.database.getFoldersCreatedByUser();
 
                               // var res = await GlobalState.flutterWebviewPlugin
                               //     .evalJavascript("javascript:getPageHtml();");

@@ -367,6 +367,21 @@ class Database extends _$Database {
     return isReviewFolder;
   }
 
+  Future<bool> isFolderWithUserNotes({@required int folderId}) async {
+    var isFolderWithUserNotes = false;
+    NoteEntry noteEntry = await (select(notes)
+          ..where((n) => n.folderId.equals(folderId))
+          ..where((n) => n.id
+              .isBiggerOrEqualValue(GlobalState.beginIdForUserOperationInDB)))
+        .getSingle();
+
+    if (noteEntry != null) {
+      isFolderWithUserNotes = true;
+    }
+
+    return isFolderWithUserNotes;
+  }
+
   Future<bool> hasFolder({@required int folderId}) async {
     var hasFolder = false;
     FolderEntry folderEntry;
@@ -442,6 +457,38 @@ class Database extends _$Database {
     var folders = getFoldersWithUnreadTotal(GlobalState.currentUserId).get();
 
     return folders;
+  }
+
+  Future<List<FolderEntry>> getFoldersByIdScope({
+    @required int beginId,
+    @required intEndId,
+  }) async {
+    List<FolderEntry> folderEntryList = await (select(folders)
+          ..where((f) => f.id.isBiggerOrEqualValue(beginId))
+          ..where((f) => f.id.isSmallerOrEqualValue(intEndId)))
+        .get();
+
+    return folderEntryList;
+  }
+
+  Future<List<FolderEntry>> getFoldersCreatedByUser() async {
+    var beginId = GlobalState.beginIdForUserOperationInDB;
+
+    List<FolderEntry> folderEntryList = await (select(folders)
+          ..where((f) => f.id.isBiggerOrEqualValue(beginId)))
+        .get();
+
+    return folderEntryList;
+  }
+
+  Future<List<FolderEntry>> getFoldersCreatedBySystemInfo() async {
+    var endId = GlobalState.beginIdForUserOperationInDB;
+
+    List<FolderEntry> folderEntryList = await (select(folders)
+          ..where((f) => f.id.isSmallerThanValue(endId)))
+        .get();
+
+    return folderEntryList;
   }
 
   Future<int> insertFolder(FoldersCompanion entry) async {
@@ -575,7 +622,9 @@ class Database extends _$Database {
 
   Future<int> updateFolderReviewPlanId({
     @required int folderId,
+    // oldReviewPlanId = 0, means NULL in sqlite db
     @required int oldReviewPlanId,
+    // newReviewPlanId = 0, means NULL in sqlite db
     @required int newReviewPlanId,
     bool forceToUpdateNotesWithNullNextReviewTimeByNow = true,
   }) async {
@@ -603,7 +652,6 @@ class Database extends _$Database {
         // Make sure all notes with Null nextReviewTime in the folder to have nextReviewTime value
         if (foldersEffectedRows > 0) {
           // When it is setting the folder to a review one
-          var now = TimeHandler.getNowForLocal().toIso8601String();
 
           // Check if it is setting a review plan to the folder or not
           if (oldReviewPlanId != 0 && newReviewPlanId != 0) {
