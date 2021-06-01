@@ -114,6 +114,19 @@ class TCBSystemInfoHandler {
               oldReviewPlanId: oldReviewPlanId,
               newReviewPlanId: newReviewPlanId);
         }
+
+        // Set all notes to deleted status if the folder has deleted status
+        var isDeletedFolder =
+            nonDefaultFoldersCreatedBySystemInfo.isDeleted.value;
+        if (isDeletedFolder) {
+          // When the folder has deleted status, set all its notes to deleted status forcibly by the way
+
+          await GlobalState.database.setNotesDeletedStatusByFolderId(
+            folderId: folderId,
+            isDeleted: true,
+            forceToSetUpdatedFieldToNow: false,
+          );
+        }
       }
     }
 

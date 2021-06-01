@@ -940,14 +940,25 @@ class Database extends _$Database {
             updated: Value(TimeHandler.getNowForLocal())));
   }
 
-  Future<int> setNotesDeletedStatusByFolderId(
-      {@required int folderId, bool isDeleted}) async {
+  Future<int> setNotesDeletedStatusByFolderId({
+    @required int folderId,
+    @required bool isDeleted,
+    bool forceToSetUpdatedFieldToNow = true,
+  }) async {
     // Make all note inside a folder as deleted or not, this won't remove the note from db, it just set isDeleted = true
+
+    var updatedValue;
+    if (forceToSetUpdatedFieldToNow) {
+      updatedValue = Value(TimeHandler.getNowForLocal());
+    } else {
+      updatedValue = Value<DateTime>.absent();
+    }
 
     return await (update(notes)..where((e) => e.folderId.equals(folderId)))
         .write(NotesCompanion(
-            isDeleted: Value(isDeleted),
-            updated: Value(TimeHandler.getNowForLocal())));
+      isDeleted: Value(isDeleted),
+      updated: updatedValue,
+    ));
   }
 
   Future<int> restoreNoteFromDeletedFolder({@required int noteId}) async {
@@ -1100,7 +1111,7 @@ class Database extends _$Database {
     return progressTotal;
   }
 
-  // Review plan config
+// Review plan config
   Future<List<ReviewPlanConfigEntry>>
       getReviewPlanConfigsCreatedBySystemInfo() async {
     var endId = GlobalState.beginIdForUserOperationInDB;
@@ -1173,7 +1184,7 @@ class Database extends _$Database {
     return response;
   }
 
-  // System Infos
+// System Infos
   Future<SystemInfoEntry> getSystemInfoByKey({@required String key}) async {
     return await (select(systemInfos)..where((si) => si.key.equals(key)))
         .getSingle();
