@@ -61,7 +61,7 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
                   },
                   backgroundDecoration: BoxDecoration(color: Colors.black),
                   pageController: _pageController,
-                  loadFailedChild: Text('No image'),
+                  // loadFailedChild: Text('No image'),
                 );
               },
             ),

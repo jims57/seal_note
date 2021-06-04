@@ -23,30 +23,30 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  intl: ^0.16.1
+  intl: ^0.17.0
   http: ^0.12.2
   retry: ^3.0.1
   moor: ^3.4.0
   moor_ffi: ^0.8.0
-  provider: ^4.1.3
+  provider: ^5.0.0
   path_provider: ^1.3.0
   path: ^1.6.4
   after_layout: ^1.0.7+2
-  flutter_slidable: ^0.5.5
-  flutter_webview_plugin: ^0.3.11
+  flutter_slidable: ^0.6.0
+  flutter_webview_plugin: ^0.4.0
 #  webview_flutter: ^2.0.4
 #  web_browser: ^0.5.0
   multi_image_picker: ^4.6.5
-  photo_view: ^0.10.0
+  photo_view: ^0.11.1
   keyboard_utils: ^1.2.4
   uuid: 2.2.2
-  flutter_image_compress: ^0.7.0
+  flutter_image_compress: ^1.0.0
   drag_list: ^1.0.8
-  html_unescape: ^1.0.2
-  html: ^0.14.0+4
+  html_unescape: ^2.0.0
+  html: ^0.15.0
 #  html: ^0.15.0
-  flutter_device_type: ^0.3.2
-  stack: ^0.0.1
+  flutter_device_type: ^0.4.0
+  stack: ^0.2.1
   flushbar: ^1.10.4
   cloudbase_core: ^0.0.9
   cloudbase_auth: ^0.0.14
@@ -54,12 +54,12 @@ dependencies:
   cloudbase_database: ^0.0.12+2
   connectivity: ^3.0.3
   flutter_is_emulator: ^1.0.0
-  store_redirect: ^1.0.2
+  store_redirect: ^2.0.0
   url_launcher: ^6.0.3
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.3
+  cupertino_icons: ^1.0.3
 #  cupertino_icons: ^1.0.2
 
 #dependency_overrides:

@@ -941,6 +941,10 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       var noteContent =
           await GlobalState.database.getNoteContentById(noteId: noteId);
 
+      // Further handling special characters, like \n which are not supported in the WebView
+      // See: https://github.com/jims57/seal_note/issues/399
+      noteContent = noteContent.replaceAll('\n', '');
+
       // Record the encoded content saved in db for future comparison
       GlobalState.noteContentEncodedInDb =
           GlobalState.selectedNoteModel.content;

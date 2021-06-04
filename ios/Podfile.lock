@@ -145,9 +145,9 @@ SPEC CHECKSUMS:
   flutter_is_emulator: b1d882329a081ea30e0e335f1dbe782f5a34242a
   flutter_webview_plugin: ed9e8a6a96baf0c867e90e1bce2673913eeac694
   keyboard_utils: ab24bc711be9e91a5937c20489056b8dd650fecc
-  libwebp: 946cb3063cea9236285f7e9a8505d806d30e07f3
+  libwebp: 04242ef451672185c1fe41b285a034d2fbda483c
   Mantle: 35238ae6f2e2b2d474fa7b67fee82a59fea71915
-  multi_image_picker: 6dfd22d7e6441a1cb06f6876fe8cc5f32f7f6610
+  multi_image_picker: 443e776a762d7901641854043b60abf88a85d5ef
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider: fb74bd0465e96b594bb3b5088ee4a4e7bb1f2a9d
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
@@ -162,4 +162,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: a75497545d4391e2d394c3668e20cfb1c2bbd4aa
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.10.1
