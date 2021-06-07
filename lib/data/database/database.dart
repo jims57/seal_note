@@ -1027,6 +1027,21 @@ class Database extends _$Database {
   }
 
 // Review plans
+  Future<int> getReviewPlanIdByFolderId({@required int folderId}) async {
+    var reviewPlanId = 0;
+
+    // var reviewPlan = await getFolderReviewPlanByFolderId(folderId).getSingle();
+    var folderEntry = await (select(folders)
+          ..where((f) => f.id.equals(folderId)))
+        .getSingle();
+
+    if (folderEntry != null) {
+      reviewPlanId = folderEntry.reviewPlanId ?? 0;
+    }
+
+    return reviewPlanId;
+  }
+
   Future<List<ReviewPlanEntry>> getAllReviewPlans() async {
     return await (select(reviewPlans)
           ..orderBy([

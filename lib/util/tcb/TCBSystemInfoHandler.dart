@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moor/moor.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/data/database/database.dart';
 import 'package:seal_note/model/common/ResponseModel.dart';
@@ -10,6 +11,7 @@ import 'package:seal_note/model/tcbModels/TCBReviewPlanModel.dart';
 import 'package:seal_note/model/tcbModels/systemInfo/TCBSystemInfoGlobalDataModel.dart';
 import 'package:seal_note/model/tcbModels/systemInfo/TCBSystemInfoModel.dart';
 import 'package:seal_note/util/tcb/TCBInitHandler.dart';
+import 'package:seal_note/util/time/TimeHandler.dart';
 
 class TCBSystemInfoHandler {
   // Public methods
@@ -60,7 +62,7 @@ class TCBSystemInfoHandler {
     // Update notes in batch
     var oldNotesCreatedBySystemInfoList = await GlobalState.database
         .getNotesCreatedBySystemInfo(); // Record old notes created by system info first
-    var notesCompanionList;
+    List<NotesCompanion> notesCompanionList;
     if (response.code == ErrorCodeModel.SUCCESS_CODE) {
       notesCompanionList =
           TCBNoteModel.convertTCBNoteModelListToNotesCompanionList(
@@ -78,6 +80,8 @@ class TCBSystemInfoHandler {
           foldersCompanionList.where((foldersCompanion) {
         return foldersCompanion.isDefaultFolder.value == false;
       });
+
+      // Traverse all non-default folders created by system info and try to update the review time of their notes
       for (var nonDefaultFoldersCreatedBySystemInfo
           in nonDefaultFoldersCreatedBySystemInfoList) {
         var folderId = nonDefaultFoldersCreatedBySystemInfo.id.value;
@@ -126,6 +130,100 @@ class TCBSystemInfoHandler {
             isDeleted: true,
             forceToSetUpdatedFieldToNow: false,
           );
+        }
+      }
+
+      // Traverse all notes created by system info, and check if their folder id have changed
+      // if yes, we try to update their next review time,
+      // see: https://github.com/jims57/seal_note/issues/397
+      for (var theNotesCompanionFromTCB in notesCompanionList) {
+        var theNoteId = theNotesCompanionFromTCB.id.value;
+
+        // Get the old note at sqlite by the note id from TCB
+        var theOldNoteAtSqlite =
+            oldNotesCreatedBySystemInfoList.firstWhere((oldNoteAtSqlite) {
+          return oldNoteAtSqlite.id == theNotesCompanionFromTCB.id.value;
+        });
+
+        // Check if the folder id has changed or not
+        var oldFolderId = theOldNoteAtSqlite.folderId;
+        var newFolderId = theNotesCompanionFromTCB.folderId.value;
+        if (newFolderId != oldFolderId) {
+          // Only update the review time if the folder id has changed
+
+          // Get the old review plan id
+          // [Notice] We fetch the review plan id from sqlite rather than from memory on purpose,
+          // because the review plan id of folders are probably changed in previous operation,
+          // you'd better get the latest review plan id from sqlite which has been updated.
+          var oldReviewPlanId = await GlobalState.database
+              .getReviewPlanIdByFolderId(folderId: oldFolderId);
+
+          // Get the new review plan id
+          var newReviewPlanId = await GlobalState.database
+              .getReviewPlanIdByFolderId(folderId: newFolderId);
+
+          // Handle according to scenarios,
+          // see: https://user-images.githubusercontent.com/1920873/120758610-a0229100-c544-11eb-8d22-397871d6ad53.png
+          var nextReviewTimeValue = Value<DateTime>(null);
+          var oldNextReviewTimeValue = Value<DateTime>(null);
+          var now = TimeHandler.getNowForLocal();
+
+          // Since the TCBNoteModel doesn't contain nextReviewTime and oldNextReviewTime field,
+          // we just compare them using the values from the note at sqlite
+          var nextReviewTime = theOldNoteAtSqlite.nextReviewTime;
+          var oldNextReviewTime = theOldNoteAtSqlite.oldNextReviewTime;
+
+          if (oldReviewPlanId != newReviewPlanId) {
+            // Only handle when they are different
+
+            if (oldReviewPlanId > 0 && newReviewPlanId == 0) {
+              // Changed from a review note to a non-review one
+
+              // Set nextReviewTime and oldNextReviewTime value according to cases,
+              // see: https://user-images.githubusercontent.com/1920873/120957289-fc292780-c787-11eb-8644-0cec53ad2e4c.png
+              if (nextReviewTime != null) {
+                // When C2 condition
+
+                oldNextReviewTimeValue = Value<DateTime>(nextReviewTime);
+              } else {
+                // When C1 case
+
+                oldNextReviewTimeValue = Value<DateTime>.absent();
+              }
+            } else if (oldReviewPlanId == 0 && newReviewPlanId > 0) {
+              // Changed from a non-review note to a review note
+
+              // Set nextReviewTime according to this,
+              // see: https://user-images.githubusercontent.com/1920873/120965910-0ce19980-c798-11eb-83c1-1bf0fcfb2dba.png
+              if (nextReviewTime == null && oldNextReviewTime == null) {
+                // When C1 condition
+
+                nextReviewTimeValue = Value<DateTime>(now);
+              } else if (nextReviewTime == null && oldNextReviewTime != null) {
+                // When C2 condition
+
+                nextReviewTimeValue = Value<DateTime>(oldNextReviewTime);
+              } else {
+                // When C3 condition
+
+                // Keep nextReviewTime if it already has value
+                nextReviewTimeValue = Value<DateTime>.absent();
+              }
+            } else {
+              // When the old review plan id != the new review plan id
+
+              // TODO: Need to update the progress no
+            }
+
+            // Finally update note at sqlite
+            var notesCompanion = NotesCompanion(
+              id: Value(theNoteId),
+              nextReviewTime: nextReviewTimeValue,
+              oldNextReviewTime: oldNextReviewTimeValue,
+            );
+            await GlobalState.database
+                .updateNote(notesCompanion: notesCompanion);
+          }
         }
       }
     }

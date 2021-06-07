@@ -5,22 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="31f338f6-5b44-4fa2-b8e7-14e350b3b701" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/mac.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_for_Android.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/KotlinJavaRuntime.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/main_dart.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/data/database/database.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/database/database.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/data/tcbData/tcbSystemInfoBasicDataV1.json" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/tcbData/tcbSystemInfoBasicDataV1.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/ui/NoteListWidgetForToday.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/NoteListWidgetForToday.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/ui/common/PhotoViewWidget.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/common/PhotoViewWidget.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seal_note.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/util/tcb/TCBSystemInfoHandler.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/util/tcb/TCBSystemInfoHandler.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,6 +34,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="dart.analysis.tool.window.visible" value="false" />
+    <property name="io.flutter.reload.alreadyRun" value="true" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="RunManager">
@@ -64,21 +55,73 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state width="757" height="249" key="GridCell.Tab.0.bottom" timestamp="1622777830584">
-      <screen x="0" y="23" width="1440" height="823" />
+    <state x="594" y="23" key="CommitChangelistDialog2" timestamp="1622789968159">
+      <screen x="0" y="23" width="1440" height="825" />
+    </state>
+    <state x="594" y="23" key="CommitChangelistDialog2/0.23.1440.825@0.23.1440.825" timestamp="1622789968159" />
+    <state width="628" height="620" key="DebuggerActiveHint" timestamp="1622791739190">
+      <screen x="0" y="23" width="1440" height="825" />
+    </state>
+    <state width="628" height="618" key="DebuggerActiveHint/0.23.1440.823@0.23.1440.823" timestamp="1622780267888" />
+    <state width="628" height="620" key="DebuggerActiveHint/0.23.1440.825@0.23.1440.825" timestamp="1622791739190" />
+    <state width="1068" height="474" key="GridCell.Tab.0.bottom" timestamp="1623036610634">
+      <screen x="0" y="23" width="1440" height="825" />
     </state>
     <state width="757" height="249" key="GridCell.Tab.0.bottom/0.23.1440.823@0.23.1440.823" timestamp="1622777830584" />
-    <state width="757" height="249" key="GridCell.Tab.0.center" timestamp="1622777830584">
-      <screen x="0" y="23" width="1440" height="823" />
+    <state width="1068" height="474" key="GridCell.Tab.0.bottom/0.23.1440.825@0.23.1440.825" timestamp="1623036610634" />
+    <state width="1068" height="474" key="GridCell.Tab.0.center" timestamp="1623036610633">
+      <screen x="0" y="23" width="1440" height="825" />
     </state>
     <state width="757" height="249" key="GridCell.Tab.0.center/0.23.1440.823@0.23.1440.823" timestamp="1622777830584" />
-    <state width="757" height="249" key="GridCell.Tab.0.left" timestamp="1622777830583">
-      <screen x="0" y="23" width="1440" height="823" />
+    <state width="1068" height="474" key="GridCell.Tab.0.center/0.23.1440.825@0.23.1440.825" timestamp="1623036610633" />
+    <state width="1068" height="474" key="GridCell.Tab.0.left" timestamp="1623036610633">
+      <screen x="0" y="23" width="1440" height="825" />
     </state>
     <state width="757" height="249" key="GridCell.Tab.0.left/0.23.1440.823@0.23.1440.823" timestamp="1622777830583" />
-    <state width="757" height="249" key="GridCell.Tab.0.right" timestamp="1622777830584">
-      <screen x="0" y="23" width="1440" height="823" />
+    <state width="1068" height="474" key="GridCell.Tab.0.left/0.23.1440.825@0.23.1440.825" timestamp="1623036610633" />
+    <state width="1068" height="474" key="GridCell.Tab.0.right" timestamp="1623036610634">
+      <screen x="0" y="23" width="1440" height="825" />
     </state>
     <state width="757" height="249" key="GridCell.Tab.0.right/0.23.1440.823@0.23.1440.823" timestamp="1622777830584" />
+    <state width="1068" height="474" key="GridCell.Tab.0.right/0.23.1440.825@0.23.1440.825" timestamp="1623036610634" />
+    <state width="555" height="411" key="XDebugger.FullValuePopup" timestamp="1622791395993">
+      <screen x="0" y="23" width="1440" height="825" />
+    </state>
+    <state width="555" height="411" key="XDebugger.FullValuePopup/0.23.1440.825@0.23.1440.825" timestamp="1622791395993" />
+    <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1623036869792">
+      <screen x="0" y="23" width="1440" height="825" />
+    </state>
+    <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.823@0.23.1440.823" timestamp="1622779773910" />
+    <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.825@0.23.1440.825" timestamp="1623036869792" />
+    <state x="390" y="116" width="602" height="522" key="find.popup" timestamp="1622779872997">
+      <screen x="0" y="23" width="1440" height="823" />
+    </state>
+    <state x="390" y="116" width="602" height="522" key="find.popup/0.23.1440.823@0.23.1440.823" timestamp="1622779872997" />
+    <state x="356" y="170" width="670" height="678" key="search.everywhere.popup" timestamp="1623045919694">
+      <screen x="0" y="23" width="1440" height="825" />
+    </state>
+    <state x="356" y="170" width="670" height="676" key="search.everywhere.popup/0.23.1440.823@0.23.1440.823" timestamp="1622779850117" />
+    <state x="356" y="170" width="670" height="678" key="search.everywhere.popup/0.23.1440.825@0.23.1440.825" timestamp="1623045919694" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/util/tcb/TCBSystemInfoHandler.dart</url>
+          <line>200</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/util/tcb/TCBSystemInfoHandler.dart</url>
+          <line>204</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/util/tcb/TCBSystemInfoHandler.dart</url>
+          <line>209</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

@@ -257,3 +257,5 @@ ios/Flutter/Generated 9.xcconfig
 .flutter-plugins-dependencies
 .flutter-plugins-dependencies
 .flutter-plugins-dependencies
+.idea/workspace.xml
+.flutter-plugins-dependencies
