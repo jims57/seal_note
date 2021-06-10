@@ -5,20 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="31f338f6-5b44-4fa2-b8e7-14e350b3b701" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/lib/model/download/DownloadedFileModel.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/util/download/DownloadHandler.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/QuillEditor.html" beforeDir="false" afterPath="$PROJECT_DIR$/assets/QuillEditor.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/data/appstate/AppState.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/appstate/AppState.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/model/images/ImageSyncItem.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/model/images/ImageSyncItem.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/ui/FolderListItemWidget.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/FolderListItemWidget.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/ui/FolderListPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/FolderListPage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/ui/MasterDetailPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/MasterDetailPage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/ui/NoteDetailWidget.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/NoteDetailWidget.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/ui/NoteListPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/NoteListPage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/ui/NoteListWidgetForToday.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/NoteListWidgetForToday.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/ui/common/PhotoViewWidget.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/common/PhotoViewWidget.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,30 +79,30 @@
     <state width="660" height="620" key="DebuggerActiveHint/0.23.1440.824@0.23.1440.824" timestamp="1623250916092" />
     <state width="660" height="620" key="DebuggerActiveHint/0.23.1440.825@0.23.1440.825" timestamp="1623297806270" />
     <state width="660" height="622" key="DebuggerActiveHint/0.23.1440.827@0.23.1440.827" timestamp="1623290198016" />
-    <state width="1398" height="405" key="GridCell.Tab.0.bottom" timestamp="1623223927245">
-      <screen x="0" y="23" width="1440" height="822" />
+    <state width="1398" height="108" key="GridCell.Tab.0.bottom" timestamp="1623307376803">
+      <screen x="0" y="23" width="1440" height="825" />
     </state>
     <state width="1398" height="405" key="GridCell.Tab.0.bottom/0.23.1440.822@0.23.1440.822" timestamp="1623223927245" />
     <state width="1398" height="400" key="GridCell.Tab.0.bottom/0.23.1440.823@0.23.1440.823" timestamp="1623205575739" />
-    <state width="1398" height="456" key="GridCell.Tab.0.bottom/0.23.1440.825@0.23.1440.825" timestamp="1623205951743" />
-    <state width="1398" height="405" key="GridCell.Tab.0.center" timestamp="1623223927244">
-      <screen x="0" y="23" width="1440" height="822" />
+    <state width="1398" height="108" key="GridCell.Tab.0.bottom/0.23.1440.825@0.23.1440.825" timestamp="1623307376803" />
+    <state width="1398" height="108" key="GridCell.Tab.0.center" timestamp="1623307376802">
+      <screen x="0" y="23" width="1440" height="825" />
     </state>
     <state width="1398" height="405" key="GridCell.Tab.0.center/0.23.1440.822@0.23.1440.822" timestamp="1623223927244" />
     <state width="1398" height="400" key="GridCell.Tab.0.center/0.23.1440.823@0.23.1440.823" timestamp="1623205575738" />
-    <state width="1398" height="456" key="GridCell.Tab.0.center/0.23.1440.825@0.23.1440.825" timestamp="1623205951741" />
-    <state width="1398" height="405" key="GridCell.Tab.0.left" timestamp="1623223927243">
-      <screen x="0" y="23" width="1440" height="822" />
+    <state width="1398" height="108" key="GridCell.Tab.0.center/0.23.1440.825@0.23.1440.825" timestamp="1623307376802" />
+    <state width="1398" height="108" key="GridCell.Tab.0.left" timestamp="1623307376802">
+      <screen x="0" y="23" width="1440" height="825" />
     </state>
     <state width="1398" height="405" key="GridCell.Tab.0.left/0.23.1440.822@0.23.1440.822" timestamp="1623223927243" />
     <state width="1398" height="400" key="GridCell.Tab.0.left/0.23.1440.823@0.23.1440.823" timestamp="1623205575737" />
-    <state width="1398" height="456" key="GridCell.Tab.0.left/0.23.1440.825@0.23.1440.825" timestamp="1623205951740" />
-    <state width="1398" height="405" key="GridCell.Tab.0.right" timestamp="1623223927244">
-      <screen x="0" y="23" width="1440" height="822" />
+    <state width="1398" height="108" key="GridCell.Tab.0.left/0.23.1440.825@0.23.1440.825" timestamp="1623307376802" />
+    <state width="1398" height="108" key="GridCell.Tab.0.right" timestamp="1623307376802">
+      <screen x="0" y="23" width="1440" height="825" />
     </state>
     <state width="1398" height="405" key="GridCell.Tab.0.right/0.23.1440.822@0.23.1440.822" timestamp="1623223927244" />
     <state width="1398" height="400" key="GridCell.Tab.0.right/0.23.1440.823@0.23.1440.823" timestamp="1623205575738" />
-    <state width="1398" height="456" key="GridCell.Tab.0.right/0.23.1440.825@0.23.1440.825" timestamp="1623205951742" />
+    <state width="1398" height="108" key="GridCell.Tab.0.right/0.23.1440.825@0.23.1440.825" timestamp="1623307376802" />
     <state width="555" height="414" key="XDebugger.FullValuePopup" timestamp="1623290198001">
       <screen x="0" y="23" width="1440" height="827" />
     </state>
@@ -178,11 +166,6 @@
           <option name="timeStamp" value="140" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/ui/NoteDetailWidget.dart</url>
-          <line>270</line>
-          <option name="timeStamp" value="142" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
           <url>file://$PROJECT_DIR$/lib/ui/common/PhotoViewWidget.dart</url>
           <line>177</line>
           <option name="timeStamp" value="143" />
@@ -191,11 +174,6 @@
           <url>file://$PROJECT_DIR$/lib/ui/NoteDetailWidget.dart</url>
           <line>240</line>
           <option name="timeStamp" value="144" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/ui/NoteDetailWidget.dart</url>
-          <line>295</line>
-          <option name="timeStamp" value="145" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
           <url>file://$PROJECT_DIR$/lib/ui/common/PhotoViewWidget.dart</url>

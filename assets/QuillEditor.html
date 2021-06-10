@@ -1740,7 +1740,7 @@
 
         var timestamp = new Date().getTime();
 
-        if(convertToString) {
+        if(shouldConvertToString) {
             timestamp = timestamp.toString();
         }
 
@@ -2837,6 +2837,7 @@
 
             var jsonString = '{"imageId":'+imageIndexClicked+',"src":"'+imageSrcValue+'"}';
 
+            if (printLogToDartFromJs) Print.postMessage('jsonString=>'+jsonString);
             if (printLogToDartFromJs) Print.postMessage('Image index clicked: ' + imageIndexClicked);
 
             // if (interactWithDart) TriggerPhotoView.postMessage(imageIndexClicked);
