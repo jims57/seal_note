@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 class ImageSyncItem {
   String imageId;
   int imageIndex;
+  String imageSrc;
   int syncId = 0; // By default, it is synced
   String base64;
   Uint8List byteData;
@@ -11,6 +12,7 @@ class ImageSyncItem {
   ImageSyncItem(
       {@required this.imageId,
       @required this.imageIndex,
+      this.imageSrc,
       this.syncId,
       this.base64,
       this.byteData});
@@ -19,6 +21,7 @@ class ImageSyncItem {
     return ImageSyncItem(
       imageId: json['imageId'],
       imageIndex: json['imageIndex'],
+      imageSrc: json['imageSrc'],
       syncId: json['syncId'],
       base64: json['base64'],
     );

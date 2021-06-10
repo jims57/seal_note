@@ -180,7 +180,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
           GlobalState.noteDetailWidgetState.currentState
               .setWebViewToReadOnlyMode(
             keepNoteDetailPageOpen: false,
-            forceToSaveNoteToDbIfAnyUpdates: true,
+            saveNoteToDbOnlyWhenHasChanges: true,
           );
         }
       }

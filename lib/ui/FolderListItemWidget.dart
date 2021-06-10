@@ -103,7 +103,7 @@ class FolderListItemWidgetState extends State<FolderListItemWidget>
 
         // Force to set the web view to read only mode
         await GlobalState.noteDetailWidgetState.currentState
-            .setWebViewToReadOnlyMode(forceToSaveNoteToDbIfAnyUpdates: true);
+            .setWebViewToReadOnlyMode(saveNoteToDbOnlyWhenHasChanges: true);
 
         GlobalState.shouldSetBackgroundColorToFirstNoteAutomatically = true;
 

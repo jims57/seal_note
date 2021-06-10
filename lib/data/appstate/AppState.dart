@@ -36,6 +36,8 @@ class AppState extends ChangeNotifier {
   int get firstImageIndex => _firstImageIndex;
 
   set firstImageIndex(int value) {
+    // refresh photo view to show image // photo view show specific image
+
     _firstImageIndex = value;
     notifyListeners();
   }

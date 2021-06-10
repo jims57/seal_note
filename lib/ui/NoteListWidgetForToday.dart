@@ -919,7 +919,7 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
       await GlobalState.noteDetailWidgetState.currentState
           .setWebViewToReadOnlyMode(
               keepNoteDetailPageOpen: keepNoteDetailPageOpen,
-              forceToSaveNoteToDbIfAnyUpdates: forceToSaveNoteToDbIfAnyUpdates);
+              saveNoteToDbOnlyWhenHasChanges: forceToSaveNoteToDbIfAnyUpdates);
     }
 
     // Force to show the web view

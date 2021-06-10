@@ -7,11 +7,16 @@ import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:seal_note/ui/settings/SettingPage.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
-import 'package:seal_note/util/ids/IDHandler.dart';
+import 'package:seal_note/util/download/DownloadHandler.dart';
+import 'package:seal_note/util/file/FileHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 import 'FolderListItemWidget.dart';
 import 'FolderListWidget.dart';
 import 'common/TextFieldWithClearButtonWidget.dart';
+import 'package:http/http.dart' as http;
+import 'dart:io';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 
 class FolderListPage extends StatefulWidget {
   FolderListPage({Key key}) : super(key: key);
@@ -77,7 +82,7 @@ class FolderListPageState extends State<FolderListPage>
               await GlobalState.noteDetailWidgetState.currentState
                   .setWebViewToReadOnlyMode(
                       keepNoteDetailPageOpen: true,
-                      forceToSaveNoteToDbIfAnyUpdates:
+                      saveNoteToDbOnlyWhenHasChanges:
                           true); // Force to save note content to db if there is any change
               GlobalState.noteDetailWidgetState.currentState.hideWebView(
                   forceToSyncWithShouldHideWebViewVar:
@@ -227,12 +232,17 @@ class FolderListPageState extends State<FolderListPage>
                               // setting button // setting button event
                               // test button // test button event // click test button
 
-                              // var s  = await GlobalState.database.deleteSystemInfo(systemInfoId: 10001);
+                              // var imageId = '54d1e729c2cda0d93ffb027146e8f07f-77d25-001';
+                              // var imageId = '54d1e729c2cda0d93ffb027146e8f07f-77d25-001';
+                              // var res2 = await GlobalState.noteDetailWidgetState.currentState.removeImageSrcAttributeInWebView(imageId: imageId);
 
-                              // var s = await GlobalState.database.del
-                              
-                              // var res = await GlobalState.flutterWebviewPlugin
-                              //     .evalJavascript("javascript:getPageHtml();");
+                              // var pp = await GlobalState.noteDetailWidgetState.currentState.saveNoteToDb(forceToSave: true,canSaveInReadOnly: true);
+                              var imageId = '54d1e729c2cda0d93ffb027146e8f07f-77d25-001';
+                              var rm = await GlobalState.noteDetailWidgetState.currentState
+                                  .removeImageSrcAttributeInWebView(imageId: imageId);
+
+                              var res = await GlobalState.flutterWebviewPlugin
+                                  .evalJavascript("javascript:getPageHtml();");
 
                               var s2 = 's';
                             },

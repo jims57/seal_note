@@ -49,7 +49,7 @@ class _NoteListPageState extends State<NoteListPage> {
                 GlobalState.noteDetailWidgetState.currentState
                     .setWebViewToReadOnlyMode(
                         keepNoteDetailPageOpen: true,
-                        forceToSaveNoteToDbIfAnyUpdates: true);
+                        saveNoteToDbOnlyWhenHasChanges: true);
 
                 GlobalState.isHandlingFolderPage = true;
                 GlobalState.isInFolderPage = true;

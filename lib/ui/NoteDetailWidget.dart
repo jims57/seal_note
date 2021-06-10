@@ -185,10 +185,14 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         // Trigger multi image picker from js
         name: 'TriggerMultiImagePickerFromJs',
         onMessageReceived: (JavascriptMessage message) async {
+          // multi image picker // trigger multi image picker
+          // call multi picker // call image picker
+
           try {
             await MultiImagePicker.pickImages(maxImages: 9, enableCamera: true)
                 .then((assets) async {
-              var batchId = UniqueKey().toString().substring(
+              var uniqueKeyString = UniqueKey().toString();
+              var batchId = uniqueKeyString.substring(
                   2, 7); // Indicating the batch number, format: [#b0e7a]
 
               int insertOrder = 1;
@@ -261,6 +265,13 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           // click on photo event // click photo view event
           // click on photo view event // click photo event
           // show image event // show big image event
+          // trigger photo view
+
+          // Get json object from json string
+          var jsonObject = json.decode(message.message);
+
+          var imageId = jsonObject['imageId'];
+          // var imageSrc = jsonObject['src'];
 
           // Mark the photo view is showing
           GlobalState.shouldHideWebView = true;
@@ -268,7 +279,8 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           print(message.message);
 
           // Convert image index to int
-          GlobalState.appState.firstImageIndex = int.parse(message.message);
+          // GlobalState.appState.firstImageIndex = int.parse(message.message);
+          GlobalState.appState.firstImageIndex = imageId;
 
           GlobalState.appState.widgetNo = 2;
 
@@ -301,6 +313,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           for (var i = 0; i < latestImageSyncItemList.length; i++) {
             var _imageId = latestImageSyncItemList[i].imageId;
             var _imageIndex = latestImageSyncItemList[i].imageIndex;
+            var _imageSrc = latestImageSyncItemList[i].imageSrc;
+            if (_imageSrc == '') {
+              _imageSrc = null;
+            }
             var _syncId = latestImageSyncItemList[i].syncId;
 
             // Record each image id for notifying js they are synced
@@ -308,8 +324,13 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
             if (_syncId == 1) {
               // For add operation
+
+              // add image sync item to list
               GlobalState.imageSyncItemList.add(ImageSyncItem(
-                  imageId: _imageId, imageIndex: _imageIndex, syncId: 0));
+                  imageId: _imageId,
+                  imageIndex: _imageIndex,
+                  imageSrc: _imageSrc,
+                  syncId: 0));
             } else if (_syncId == 2) {
               // For deletion operation
               GlobalState.imageSyncItemList.removeWhere(
@@ -412,14 +433,19 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         // auto save // auto save to db
         name: 'SaveNoteToDb',
         onMessageReceived: (JavascriptMessage message) async {
+          var jsonObject = json.decode(message.message);
+          var newNoteEncodedHtml = jsonObject['newNoteEncodedHtml'];
+          var forceToSave = jsonObject['forceToSave'];
+
           // Only in edit mode, we will update the note content
-          if (!GlobalState.isQuillReadOnly) {
+          if (forceToSave || !GlobalState.isQuillReadOnly) {
             // Update the note list by updating the related note model
-            GlobalState.selectedNoteModel.content = message.message;
+            // GlobalState.selectedNoteModel.content = message.message;
+            GlobalState.selectedNoteModel.content = newNoteEncodedHtml;
           }
 
           // It won't execute the save operation to db until something is changed in the note content
-          if (_shouldSaveNoteToDb()) {
+          if (_shouldSaveNoteToDb(forceToSave: forceToSave)) {
             // Check if this is a new note
             if (GlobalState.selectedNoteModel.id > 0) {
               // Old note
@@ -517,7 +543,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
               }
             }
           }
-        }), // SaveNoteEncodedHtmlToSqlite
+        }), // SaveNoteToDb // SaveNoteEncodedHtmlToSqlite
     JavascriptChannel(
         name: 'ConfirmNoteReviewDialog',
         onMessageReceived: (JavascriptMessage message) {
@@ -776,7 +802,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                                         .noteDetailWidgetState.currentState
                                         .setWebViewToReadOnlyMode(
                                             keepNoteDetailPageOpen: true,
-                                            forceToSaveNoteToDbIfAnyUpdates:
+                                            saveNoteToDbOnlyWhenHasChanges:
                                                 true,
                                             notifyAppStateAboutIsEditorReadOnly:
                                                 true);
@@ -919,13 +945,14 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     }
   }
 
-  static bool _shouldSaveNoteToDb() {
+  static bool _shouldSaveNoteToDb({bool forceToSave = false}) {
     var shouldSave = false;
 
     if (GlobalState.selectedNoteModel != null) {
-      if (GlobalState.selectedNoteModel.content !=
-              GlobalState.noteContentEncodedInDb &&
-          !GlobalState.isQuillReadOnly) {
+      if ((GlobalState.selectedNoteModel.content !=
+                  GlobalState.noteContentEncodedInDb &&
+              !GlobalState.isQuillReadOnly) ||
+          forceToSave) {
         shouldSave = true;
       }
     }
@@ -1002,11 +1029,14 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
   Future<void> setWebViewToReadOnlyMode(
       {bool keepNoteDetailPageOpen = true,
-      bool forceToSaveNoteToDbIfAnyUpdates = false,
+      bool saveNoteToDbOnlyWhenHasChanges = false,
+      bool forceToSaveNoteToDb = false,
       bool notifyAppStateAboutIsEditorReadOnly = false,
       Future<VoidCallback> callback}) async {
-    if (forceToSaveNoteToDbIfAnyUpdates) {
-      await saveNoteToDb(forceToSave: forceToSaveNoteToDbIfAnyUpdates);
+    if (forceToSaveNoteToDb) {
+      await saveNoteToDb(forceToSave: true, canSaveInReadOnly: true);
+    } else if (saveNoteToDbOnlyWhenHasChanges) {
+      await saveNoteToDb(forceToSave: false, canSaveInReadOnly: true);
     }
 
     if (!GlobalState.isQuillReadOnly) {
@@ -1079,8 +1109,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
       // execute save note
       // Trigger the auto-save function to save the note
       if (executeAutoSaveNoteWhenSettingToReadOnlyMode) {
-        await GlobalState.flutterWebviewPlugin
-            .evalJavascript("javascript:saveNoteToDb(false, true);");
+        await saveNoteToDb(forceToSave: false, canSaveInReadOnly: true);
       }
 
       await GlobalState.flutterWebviewPlugin
@@ -1091,9 +1120,12 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     GlobalState.isQuillReadOnly = !GlobalState.isQuillReadOnly;
   }
 
-  Future<void> saveNoteToDb(
-      {bool forceToSave = true, bool canSaveInReadOnly = false}) async {
+  Future<void> saveNoteToDb({
+    bool forceToSave = true,
+    bool canSaveInReadOnly = false,
+  }) async {
     // save note to db function // save note to db method
+    // force to save note to db // save note to db
 
     var evalString =
         "javascript:saveNoteToDb($forceToSave, $canSaveInReadOnly);";
@@ -1242,8 +1274,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
       // Save the changes again if the user edited the note content
       if (_shouldSaveNoteToDb()) {
-        await GlobalState.flutterWebviewPlugin
-            .evalJavascript("javascript:saveNoteToDb(true);");
+        await saveNoteToDb(forceToSave: true);
       }
 
       await toggleQuillModeBetweenReadOnlyAndEdit(
@@ -1308,5 +1339,13 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     } else {
       // When load failed, do nothing
     }
+  }
+
+  Future<String> removeImageSrcAttributeInWebView(
+      {@required String imageId}) async {
+    var responseMessage = await GlobalState.flutterWebviewPlugin.evalJavascript(
+        "javascript:removeImageSrcAttributeByImageId('" + imageId + "');");
+
+    return responseMessage;
   }
 }
