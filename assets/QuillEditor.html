@@ -1667,6 +1667,17 @@
 
         return temp.toLowerCase();
     }
+
+    function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+    }
+
+    function generateGUID() {
+        // Generate guid as string, such as: "4836d49c-c5a3-42ed-3a0e-73185e08ac41"
+
+        var uuid = (S4() + S4() + "-" + S4() + "-4" + S4().substr(0, 3) + "-" + S4() + "-" + S4() + S4() + S4()).toLowerCase();
+        return uuid
+    }
 </script>
 
 <!-- Initialize Quill editor -->
@@ -1684,6 +1695,7 @@
     var isEditorScrolling = false; // Indicates if the user is scrolling the editor
     var isCreatingNote = false;
     // var isReadOnlyMode = true; // The quill's editor mode currently, in readOnly or in edit mode
+    var isReplacingQuillContentWithOldNoteContent = false; // If yes, don't trigger text-changed event to avoid duplicate call for saveImageSyncToArray
 
     var pickerIsBeingShown = false;
     var keyboardIsBeingShown = false;
@@ -1757,6 +1769,18 @@
 
         // Since batch id is 5 bit digital
         var batchId = nowTimeStamp.substring(nowTimeStamp.length - 5);
+
+        return batchId;
+    }
+
+    function getBatchIdByGUID() {
+        // Get batch id which uses the last five bit of guid,
+        // i.e. if the guid is "96fa1097-a4d8-410c-d18d-67c344258a5a", 
+        // we will use "58a5a", the last 5 characters, as the batch id
+
+        var guid = generateGUID();
+
+        var batchId = guid.substring(guid.length - 5);
 
         return batchId;
     }
@@ -2178,6 +2202,13 @@
 
 <!-- Image common method -->
 <script>
+    function removeAllUnwantedImagesTagFromWebView() {
+        // All images tag will be removed from the web view, 
+        // except those with src begins with "http"(http image) or "data:image"(base64 data image)
+
+        $('img:not([src^="data:image"]):not([src^=http])').remove();
+    }
+
     function getImageExtensionByImageJQueryObject($theImage){
         var imageExtension = $theImage.attr('image-extension');
 
@@ -2219,9 +2250,26 @@
             var $theImage = $(item);
             var src = $theImage.attr('src');
             var md5 = MD5(src);
-            var batchId = getBatchIdByNowTimeStamp();
+            var batchId = getBatchIdByGUID();
             var imageId = md5+'-' + batchId + '-1';
             addImageIdAttribute($(item), imageId);
+        });
+    }
+
+    function getAllInsecureHttpImageJQueryObjectAsArray() {
+        var httpImageJQueryObjectArray = $('img[src^="http://"]');
+
+        return httpImageJQueryObjectArray;
+    }
+
+    function updateAllHttpImagesUrlFromHttpToHttps() {
+        var httpImageJQueryObjectArray = getAllInsecureHttpImageJQueryObjectAsArray();
+
+        $.each(httpImageJQueryObjectArray, function(index, item) {
+            var $theItem = $(item);
+            var oldSrc = $theItem.attr('src');
+            var newSrc = oldSrc.replace('http://', 'https://');
+            $theItem.attr('src', newSrc);
         });
     }
 </script>
@@ -2508,6 +2556,8 @@
     }
 
     function replaceQuillContentWithOldNoteContent(responseJsonString, goToTopAfterLoaded = false) { // *responseJsonString* is the encoded html of a note
+        isReplacingQuillContentWithOldNoteContent = true;
+
         if (printLogToDartFromJs) Print.postMessage('replaceQuillContentWithOldNoteContent(' + responseJsonString + ')');
 
         // Convert jsonString to json object
@@ -2579,6 +2629,8 @@
 
         if (printLogToDartFromJs) Print.postMessage('syncImageSyncArrayToDart(true);');
         syncImageSyncArrayToDart(true);
+
+        isReplacingQuillContentWithOldNoteContent = false;
     }
 
     function getNoteContentEncoded() { // Get the current note's content with the html encoded
@@ -2892,10 +2944,21 @@
         initQuillEditorWatermark();
 
         quill.on('text-change', function () {
+            if (printLogToDartFromJs) Print.postMessage('quill.on("text-change", function () is called');
+
+            // Remove unwanted image tags such as <img src="//:0" image-index="19" style="width: 90%;">,
+            // which may be created from clipboard
+            removeAllUnwantedImagesTagFromWebView();
 
             // Always to check if there is any http image without id,
             // if yes we add id attribute encrypted based on src value forcibly
             addIdToAllHttpImagesWithoutIdAttributeBasedOnSrcMd5();
+
+            // Replacing http with https, since Dart isn't supportive to http request,
+            // by the way, iOS Review Tewam will also require https in app,
+            // so I decide to use replacement to do this.
+            // See bug: https://github.com/jims57/seal_note/issues/405
+            updateAllHttpImagesUrlFromHttpToHttps();
 
             console.log('Text change!');
             if (printLogToDartFromJs) Print.postMessage('text change');
@@ -2947,7 +3010,12 @@
                     });
 
                     if (printLogToDartFromJs) Print.postMessage('syncImageSyncArrayToDart(false); ');
-                    syncImageSyncArrayToDart(false); // Sync the update to dart
+                    if(!isReplacingQuillContentWithOldNoteContent) { 
+                        // We need this check to avoid duplicate call for syncImageSyncArrayToDart(), 
+                        // since replaceQuillContentWithOldNoteContent() method will call syncImageSyncArrayToDart()
+
+                        syncImageSyncArrayToDart(false); // Sync the update to dart
+                    }
 
                     // Remove item from imageSyncArray, sicne it isn't in the page now
                     $.each(deletedImageIds, function (index, item) {

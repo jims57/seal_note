@@ -12,31 +12,41 @@ class DownloadHandler {
     @required String url,
     // extensionName should be like jpg, jpeg, txt etc, without dot
     @required String extensionName,
+    bool forceToReplaceHttpToHttps = false,
   }) async {
     // var fileUnit8List;
     var downloadedFileModel;
 
-    var response = await http.get(url).catchError((err) {
+    var replacedUrl = url;
+    if (forceToReplaceHttpToHttps) {
+      replacedUrl = url.replaceFirst('http://', 'https://');
+    }
+
+    var response = await http.get(replacedUrl).catchError((err) {
       return null;
     });
 
-    // Convert url to md5 as the file name
-    var fileMd5 = CryptoHandler.convertStringToMd5(url);
-    var fileName = '$fileMd5.$extensionName';
-    var fullFileName = await FileHandler.getFullFileNameAtDocumentDirectory(
-        fileName); // Get full file name at Document Directory
-    var fileUint8List = response.bodyBytes;
+    if (response != null) {
+      // Make sure response isn't null
 
-    // Save the downloaded file to Document Directory
-    var fileObject = await File(fullFileName).writeAsBytes(fileUint8List);
+      // Convert url to md5 as the file name
+      var fileMd5 = CryptoHandler.convertStringToMd5(url);
+      var fileName = '$fileMd5.$extensionName';
+      var fullFileName = await FileHandler.getFullFileNameAtDocumentDirectory(
+          fileName); // Get full file name at Document Directory
+      var fileUint8List = response.bodyBytes;
 
-    downloadedFileModel = DownloadedFileModel(
-      fileMd5FileName: fileMd5,
-      fullFileName: fullFileName,
-      extensionName: extensionName,
-      fileUint8List: fileUint8List,
-      fileObject: fileObject,
-    );
+      // Save the downloaded file to Document Directory
+      var fileObject = await File(fullFileName).writeAsBytes(fileUint8List);
+
+      downloadedFileModel = DownloadedFileModel(
+        fileMd5FileName: fileMd5,
+        fullFileName: fullFileName,
+        extensionName: extensionName,
+        fileUint8List: fileUint8List,
+        fileObject: fileObject,
+      );
+    }
 
     return downloadedFileModel;
   }

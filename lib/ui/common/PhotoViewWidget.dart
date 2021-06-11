@@ -242,29 +242,41 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
             }
 
             DownloadHandler.downloadFileByUrlToDocumentDirectory(
-                    url: imageUrl, extensionName: imageExtension)
-                .then((downloadedFileModel) {
-              imageUint8List = downloadedFileModel.fileUint8List;
+              url: imageUrl,
+              extensionName: imageExtension,
+              forceToReplaceHttpToHttps: false,
+            ).then((downloadedFileModel) {
+              if (downloadedFileModel != null) {
+                imageUint8List = downloadedFileModel.fileUint8List;
 
-              _loadImageUint8ListAndRefreshPhotoView(
-                imageIndex: newImageIndex,
-                imageUint8ListToBeShown: imageUint8List,
-              );
+                _loadImageUint8ListAndRefreshPhotoView(
+                  imageIndex: newImageIndex,
+                  imageUint8ListToBeShown: imageUint8List,
+                );
 
-              // Only the image is downloaded to Document Directory, we don't need the src attribute in the image tag any more,
-              // so we will remove the src attribute.
-              GlobalState.noteDetailWidgetState.currentState
-                  .removeImageSrcAttributeInWebView(imageId: imageId)
-                  .then((responseMessage) {
-                if (responseMessage == 'OK') {
-                  // When remove the src attribute successfully, we save the changes to sqlite
-                  // Force to save the note content since the src of the image has been removed
-                  GlobalState.noteDetailWidgetState.currentState.saveNoteToDb(
-                    forceToSave: true,
-                    canSaveInReadOnly: true,
-                  );
-                }
-              });
+                // Only the image is downloaded to Document Directory, we don't need the src attribute in the image tag any more,
+                // so we will remove the src attribute.
+                // GlobalState.noteDetailWidgetState.currentState
+                //     .removeImageSrcAttributeInWebView(imageId: imageId)
+                //     .then((responseMessage) {
+                //   if (responseMessage == 'OK') {
+                //     // When remove the src attribute successfully, we save the changes to sqlite
+                //     // Force to save the note content since the src of the image has been removed
+                //     GlobalState.noteDetailWidgetState.currentState.saveNoteToDb(
+                //       forceToSave: true,
+                //       canSaveInReadOnly: true,
+                //     );
+                //
+                //     // Use the image Uint8List data to update the src of the image in base64 data in the web view, since the http src has been removed
+                //     ImageHandler.updateWebViewImageByImageUint8List(
+                //         imageUint8List: imageUint8List, imageId: imageId);
+                //   }
+                // });
+              } else {
+                // When downloaded object is null
+
+                // Do nothing currently
+              }
             });
           } else {
             // When the image is at Document Directory
