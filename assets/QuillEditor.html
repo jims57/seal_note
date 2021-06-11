@@ -1727,12 +1727,13 @@
     var base64HasData = false;
 
     // For debug configurations
-    var forWebDebug = false;
     var printLogToDartFromJs = true;
     var isInMyPhone = true;
     var keepPrintTimer = false;
+    var forWebDebug = false;
 
     if (forWebDebug) { // For web
+        var encodedNoteContentForWebDebug = '';
         interactWithDart = false;
         printLogToDartFromJs = false;
         useMultiImagePicker = false;
@@ -3101,5 +3102,12 @@
         notifyDartWebViewHasLoaded();
 
         if (printLogToDartFromJs) Print.postMessage('Page initialization end()');
+
+        // [For web debug]
+        if(forWebDebug) {
+            var responseJsonString = '{"isCreatingNote":false,"folderId":4,"noteId":1,"encodedHtml":"'+encodedNoteContentForWebDebug+'"}';
+
+            replaceQuillContentWithOldNoteContent(responseJsonString)
+        }
     });
 </script>
