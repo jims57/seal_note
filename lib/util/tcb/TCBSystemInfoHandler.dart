@@ -143,86 +143,93 @@ class TCBSystemInfoHandler {
         var theOldNoteAtSqlite =
             oldNotesCreatedBySystemInfoList.firstWhere((oldNoteAtSqlite) {
           return oldNoteAtSqlite.id == theNotesCompanionFromTCB.id.value;
+        }, orElse: () {
+          return null;
         });
 
-        // Check if the folder id has changed or not
-        var oldFolderId = theOldNoteAtSqlite.folderId;
-        var newFolderId = theNotesCompanionFromTCB.folderId.value;
-        if (newFolderId != oldFolderId) {
-          // Only update the review time if the folder id has changed
+        // Only handle it when it is the first time to launch the app.
+        // Notice: When the app is initializing, theOldNoteAtSqlite is null.
+        if (theOldNoteAtSqlite != null) {
+          // Check if the folder id has changed or not
+          var oldFolderId = theOldNoteAtSqlite.folderId;
+          var newFolderId = theNotesCompanionFromTCB.folderId.value;
+          if (newFolderId != oldFolderId) {
+            // Only update the review time if the folder id has changed
 
-          // Get the old review plan id
-          // [Notice] We fetch the review plan id from sqlite rather than from memory on purpose,
-          // because the review plan id of folders are probably changed in previous operation,
-          // you'd better get the latest review plan id from sqlite which has been updated.
-          var oldReviewPlanId = await GlobalState.database
-              .getReviewPlanIdByFolderId(folderId: oldFolderId);
+            // Get the old review plan id
+            // [Notice] We fetch the review plan id from sqlite rather than from memory on purpose,
+            // because the review plan id of folders are probably changed in previous operation,
+            // you'd better get the latest review plan id from sqlite which has been updated.
+            var oldReviewPlanId = await GlobalState.database
+                .getReviewPlanIdByFolderId(folderId: oldFolderId);
 
-          // Get the new review plan id
-          var newReviewPlanId = await GlobalState.database
-              .getReviewPlanIdByFolderId(folderId: newFolderId);
+            // Get the new review plan id
+            var newReviewPlanId = await GlobalState.database
+                .getReviewPlanIdByFolderId(folderId: newFolderId);
 
-          // Handle according to scenarios,
-          // see: https://user-images.githubusercontent.com/1920873/120758610-a0229100-c544-11eb-8d22-397871d6ad53.png
-          var nextReviewTimeValue = Value<DateTime>(null);
-          var oldNextReviewTimeValue = Value<DateTime>(null);
-          var now = TimeHandler.getNowForLocal();
+            // Handle according to scenarios,
+            // see: https://user-images.githubusercontent.com/1920873/120758610-a0229100-c544-11eb-8d22-397871d6ad53.png
+            var nextReviewTimeValue = Value<DateTime>(null);
+            var oldNextReviewTimeValue = Value<DateTime>(null);
+            var now = TimeHandler.getNowForLocal();
 
-          // Since the TCBNoteModel doesn't contain nextReviewTime and oldNextReviewTime field,
-          // we just compare them using the values from the note at sqlite
-          var nextReviewTime = theOldNoteAtSqlite.nextReviewTime;
-          var oldNextReviewTime = theOldNoteAtSqlite.oldNextReviewTime;
+            // Since the TCBNoteModel doesn't contain nextReviewTime and oldNextReviewTime field,
+            // we just compare them using the values from the note at sqlite
+            var nextReviewTime = theOldNoteAtSqlite.nextReviewTime;
+            var oldNextReviewTime = theOldNoteAtSqlite.oldNextReviewTime;
 
-          if (oldReviewPlanId != newReviewPlanId) {
-            // Only handle when they are different
+            if (oldReviewPlanId != newReviewPlanId) {
+              // Only handle when they are different
 
-            if (oldReviewPlanId > 0 && newReviewPlanId == 0) {
-              // Changed from a review note to a non-review one
+              if (oldReviewPlanId > 0 && newReviewPlanId == 0) {
+                // Changed from a review note to a non-review one
 
-              // Set nextReviewTime and oldNextReviewTime value according to cases,
-              // see: https://user-images.githubusercontent.com/1920873/120957289-fc292780-c787-11eb-8644-0cec53ad2e4c.png
-              if (nextReviewTime != null) {
-                // When C2 condition
+                // Set nextReviewTime and oldNextReviewTime value according to cases,
+                // see: https://user-images.githubusercontent.com/1920873/120957289-fc292780-c787-11eb-8644-0cec53ad2e4c.png
+                if (nextReviewTime != null) {
+                  // When C2 condition
 
-                oldNextReviewTimeValue = Value<DateTime>(nextReviewTime);
+                  oldNextReviewTimeValue = Value<DateTime>(nextReviewTime);
+                } else {
+                  // When C1 case
+
+                  oldNextReviewTimeValue = Value<DateTime>.absent();
+                }
+              } else if (oldReviewPlanId == 0 && newReviewPlanId > 0) {
+                // Changed from a non-review note to a review note
+
+                // Set nextReviewTime according to this,
+                // see: https://user-images.githubusercontent.com/1920873/120965910-0ce19980-c798-11eb-83c1-1bf0fcfb2dba.png
+                if (nextReviewTime == null && oldNextReviewTime == null) {
+                  // When C1 condition
+
+                  nextReviewTimeValue = Value<DateTime>(now);
+                } else if (nextReviewTime == null &&
+                    oldNextReviewTime != null) {
+                  // When C2 condition
+
+                  nextReviewTimeValue = Value<DateTime>(oldNextReviewTime);
+                } else {
+                  // When C3 condition
+
+                  // Keep nextReviewTime if it already has value
+                  nextReviewTimeValue = Value<DateTime>.absent();
+                }
               } else {
-                // When C1 case
+                // When the old review plan id != the new review plan id
 
-                oldNextReviewTimeValue = Value<DateTime>.absent();
+                // TODO: Need to update the progress no
               }
-            } else if (oldReviewPlanId == 0 && newReviewPlanId > 0) {
-              // Changed from a non-review note to a review note
 
-              // Set nextReviewTime according to this,
-              // see: https://user-images.githubusercontent.com/1920873/120965910-0ce19980-c798-11eb-83c1-1bf0fcfb2dba.png
-              if (nextReviewTime == null && oldNextReviewTime == null) {
-                // When C1 condition
-
-                nextReviewTimeValue = Value<DateTime>(now);
-              } else if (nextReviewTime == null && oldNextReviewTime != null) {
-                // When C2 condition
-
-                nextReviewTimeValue = Value<DateTime>(oldNextReviewTime);
-              } else {
-                // When C3 condition
-
-                // Keep nextReviewTime if it already has value
-                nextReviewTimeValue = Value<DateTime>.absent();
-              }
-            } else {
-              // When the old review plan id != the new review plan id
-
-              // TODO: Need to update the progress no
+              // Finally update note at sqlite
+              var notesCompanion = NotesCompanion(
+                id: Value(theNoteId),
+                nextReviewTime: nextReviewTimeValue,
+                oldNextReviewTime: oldNextReviewTimeValue,
+              );
+              await GlobalState.database
+                  .updateNote(notesCompanion: notesCompanion);
             }
-
-            // Finally update note at sqlite
-            var notesCompanion = NotesCompanion(
-              id: Value(theNoteId),
-              nextReviewTime: nextReviewTimeValue,
-              oldNextReviewTime: oldNextReviewTimeValue,
-            );
-            await GlobalState.database
-                .updateNote(notesCompanion: notesCompanion);
           }
         }
       }

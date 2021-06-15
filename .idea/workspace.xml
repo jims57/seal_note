@@ -5,10 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="31f338f6-5b44-4fa2-b8e7-14e350b3b701" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/QuillEditor.html" beforeDir="false" afterPath="$PROJECT_DIR$/assets/QuillEditor.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/ui/FolderListPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/FolderListPage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/util/tcb/TCBSystemInfoHandler.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/util/tcb/TCBSystemInfoHandler.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -126,11 +124,11 @@
     <state width="555" height="412" key="XDebugger.FullValuePopup/0.23.1440.824@0.23.1440.824" timestamp="1623250537291" />
     <state width="555" height="411" key="XDebugger.FullValuePopup/0.23.1440.825@0.23.1440.825" timestamp="1623317477149" />
     <state width="555" height="414" key="XDebugger.FullValuePopup/0.23.1440.827@0.23.1440.827" timestamp="1623290198001" />
-    <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1623397684740">
-      <screen x="0" y="23" width="1440" height="826" />
+    <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1623741663902">
+      <screen x="0" y="23" width="1440" height="823" />
     </state>
     <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.822@0.23.1440.822" timestamp="1623247611279" />
-    <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.823@0.23.1440.823" timestamp="1622779773910" />
+    <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.823@0.23.1440.823" timestamp="1623741663902" />
     <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.825@0.23.1440.825" timestamp="1623316731426" />
     <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.826@0.23.1440.826" timestamp="1623397684740" />
     <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.827@0.23.1440.827" timestamp="1623369319148" />
@@ -154,14 +152,19 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/ui/NoteDetailWidget.dart</url>
-          <line>302</line>
-          <option name="timeStamp" value="182" />
+          <url>file://$PROJECT_DIR$/lib/util/tcb/TCBSystemInfoHandler.dart</url>
+          <line>142</line>
+          <option name="timeStamp" value="187" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/ui/FolderListPage.dart</url>
-          <line>246</line>
-          <option name="timeStamp" value="185" />
+          <url>file://$PROJECT_DIR$/lib/util/tcb/TCBSystemInfoHandler.dart</url>
+          <line>146</line>
+          <option name="timeStamp" value="189" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/util/tcb/TCBSystemInfoHandler.dart</url>
+          <line>153</line>
+          <option name="timeStamp" value="190" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
