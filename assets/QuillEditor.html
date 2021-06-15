@@ -2207,7 +2207,8 @@
         // All images tag will be removed from the web view, 
         // except those with src begins with "http"(http image) or "data:image"(base64 data image)
 
-        $('img:not([src^="data:image"]):not([src^=http])').remove();
+        // $('img:not([src^="data:image"]):not([src^=http])').remove();
+        $('img:not([image-index])').remove();
     }
 
     function getImageExtensionByImageJQueryObject($theImage){
@@ -2341,6 +2342,10 @@
         if ((oldNoteEncodedHtml != newNoteEncodedHtml) || forceToSave) { // If there is any change
             if (printLogToDartFromJs) Print.postMessage('inside if(oldNoteEncodedHtml != newNoteEncodedHtml) {}');
             if (printLogToDartFromJs) Print.postMessage('forceToSave='+forceToSave+', isEditingMode='+isEditingMode+', canSaveInReadOnly= '+canSaveInReadOnly);
+
+            // Remove unwanted image tags such as <img src="//:0" image-index="19" style="width: 90%;">,
+            // which may be created from clipboard
+            removeAllUnwantedImagesTagFromWebView();
 
             oldNoteEncodedHtml = newNoteEncodedHtml; // Save to variable to future check
 
@@ -2542,8 +2547,6 @@
         if (printLogToDartFromJs) Print.postMessage('Quill content5:'+getQuillEditorCurrentContent());
         $theEditor.append(replacedByContent);
         if (printLogToDartFromJs) Print.postMessage('Quill content6:'+getQuillEditorCurrentContent());
-
-
 
         if (printLogToDartFromJs) Print.postMessage('Quill content7:'+getQuillEditorCurrentContent());
         if(!showWatermark) quill.deleteText(0, startIndexToDelete);
@@ -2949,7 +2952,7 @@
 
             // Remove unwanted image tags such as <img src="//:0" image-index="19" style="width: 90%;">,
             // which may be created from clipboard
-            removeAllUnwantedImagesTagFromWebView();
+            // removeAllUnwantedImagesTagFromWebView();
 
             // Always to check if there is any http image without id,
             // if yes we add id attribute encrypted based on src value forcibly
