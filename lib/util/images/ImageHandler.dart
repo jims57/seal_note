@@ -34,7 +34,13 @@ class ImageHandler {
     // imageId format: d9ddb2824e1053b4ed1c8a3633477a08-46503-001
     // imageMd5 file name: d9ddb2824e1053b4ed1c8a3633477a08
 
-    return imageId.substring(0, 32);
+    var imageMd5;
+
+    if (imageId.length >= 32) {
+      imageMd5 = imageId.substring(0, 32);
+    }
+
+    return imageMd5;
   }
 
   static Future<void> updateWebViewImageByImageUint8List({

@@ -2948,91 +2948,94 @@
         initQuillEditorWatermark();
 
         quill.on('text-change', function () {
-            if (printLogToDartFromJs) Print.postMessage('quill.on("text-change", function () is called');
+            if(!isReplacingQuillContentWithOldNoteContent){
+                if (printLogToDartFromJs) Print.postMessage('quill.on("text-change", function () is called');
 
-            // Remove unwanted image tags such as <img src="//:0" image-index="19" style="width: 90%;">,
-            // which may be created from clipboard
-            // removeAllUnwantedImagesTagFromWebView();
+                // Remove unwanted image tags such as <img src="//:0" image-index="19" style="width: 90%;">,
+                // which may be created from clipboard
+                // removeAllUnwantedImagesTagFromWebView();
 
-            // Always to check if there is any http image without id,
-            // if yes we add id attribute encrypted based on src value forcibly
-            addIdToAllHttpImagesWithoutIdAttributeBasedOnSrcMd5();
+                // Always to check if there is any http image without id,
+                // if yes we add id attribute encrypted based on src value forcibly
+                addIdToAllHttpImagesWithoutIdAttributeBasedOnSrcMd5();
 
-            // Replacing http with https, since Dart isn't supportive to http request,
-            // by the way, iOS Review Tewam will also require https in app,
-            // so I decide to use replacement to do this.
-            // See bug: https://github.com/jims57/seal_note/issues/405
-            updateAllHttpImagesUrlFromHttpToHttps();
+                // Replacing http with https, since Dart isn't supportive to http request,
+                // by the way, iOS Review Tewam will also require https in app,
+                // so I decide to use replacement to do this.
+                // See bug: https://github.com/jims57/seal_note/issues/405
+                updateAllHttpImagesUrlFromHttpToHttps();
 
-            console.log('Text change!');
-            if (printLogToDartFromJs) Print.postMessage('text change');
+                console.log('Text change!');
+                if (printLogToDartFromJs) Print.postMessage('text change');
 
-            // [For images handling] Only not under multi image picker operation will check the image changes
-            if (!isUnderMultiImagePickerOperation) {
-                beginToCountElapsingMillisecond(500, false); // Always to begin to count the elapsing timer
+                // [For images handling] Only not under multi image picker operation will check the image changes
+                if (!isUnderMultiImagePickerOperation) {
+                    beginToCountElapsingMillisecond(500, false); // Always to begin to count the elapsing timer
 
-                if (printLogToDartFromJs) Print.postMessage('inside if (!isUnderMultiImagePickerOperation) {}');
+                    if (printLogToDartFromJs) Print.postMessage('inside if (!isUnderMultiImagePickerOperation) {}');
 
-                // Listening the change of image in total
-                var newTotalOfImagesInPage = getImageTotalInPage();
-                var oldTotalOfImagesInPage = totalOfImagesInPage;
-                if (newTotalOfImagesInPage != oldTotalOfImagesInPage) { // When the total of images in the page has changed
-                    if (printLogToDartFromJs) Print.postMessage('inside if(newTotalOfImagesInPage != oldTotalOfImagesInPage) {}');
+                    // Listening the change of image in total
+                    var newTotalOfImagesInPage = getImageTotalInPage();
+                    var oldTotalOfImagesInPage = totalOfImagesInPage;
+                    if (newTotalOfImagesInPage != oldTotalOfImagesInPage) { // When the total of images in the page has changed
+                        if (printLogToDartFromJs) Print.postMessage('inside if(newTotalOfImagesInPage != oldTotalOfImagesInPage) {}');
 
-                    var deletedImageIds = []; // Record which image Ids is deleleted in this operation
+                        var deletedImageIds = []; // Record which image Ids is deleleted in this operation
 
-                    // Update all image index first
-                    upsertAllImagesIndex();
+                        // Update all image index first
+                        upsertAllImagesIndex();
 
-                    saveAllHttpImagesWithoutIdToImageSyncArray(1);
+                        saveAllHttpImagesWithoutIdToImageSyncArray(1);
 
-                    if (printLogToDartFromJs) Print.postMessage('inside: if (newTotalOfImagesInPage != oldTotalOfImagesInPage):JSON.stringify(imageSyncArray)=>'+JSON.stringify(imageSyncArray));
+                        if (printLogToDartFromJs) Print.postMessage('inside: if (newTotalOfImagesInPage != oldTotalOfImagesInPage):JSON.stringify(imageSyncArray)=>'+JSON.stringify(imageSyncArray));
 
-                    $.each(imageSyncArray, function (index, imageSyncJson) { //Update each imageSync item in imageSyncArray
-                        var imageId = imageSyncJson.imageId;
-                        var $theImage = getImageJqueryObjectByImageId(imageId);
+                        $.each(imageSyncArray, function (index, imageSyncJson) { //Update each imageSync item in imageSyncArray
+                            var imageId = imageSyncJson.imageId;
+                            var $theImage = getImageJqueryObjectByImageId(imageId);
 
-                        if ($theImage.length > 0) { // When the image still exists, we need to update its *image-index* attribute
-                            var imageIndex = getImageIndexByImageJqueryObject($theImage);
+                            if ($theImage.length > 0) { // When the image still exists, we need to update its *image-index* attribute
+                                var imageIndex = getImageIndexByImageJqueryObject($theImage);
 
-                            var theImageSyncJsonArray = $.grep(imageSyncArray, function (imageSyncJson) {
-                                return imageSyncJson.imageId == imageId;
-                            });
+                                var theImageSyncJsonArray = $.grep(imageSyncArray, function (imageSyncJson) {
+                                    return imageSyncJson.imageId == imageId;
+                                });
 
-                            // Update the imageSyncJson's imageIndex, making sure the array has at least one object
-                            if (theImageSyncJsonArray.length > 0) {
-                                theImageSyncJsonArray[0].imageIndex = imageIndex;
+                                // Update the imageSyncJson's imageIndex, making sure the array has at least one object
+                                if (theImageSyncJsonArray.length > 0) {
+                                    theImageSyncJsonArray[0].imageIndex = imageIndex;
+                                }
+                            } else { // If the image isn't in the page, meaning it has been deleted
+                                imageSyncJson.syncId = 2; // Makes as deleted
+                                imageSyncJson.imageIndex = -1;
+
+                                totalOfImagesInPage -= 1; // Deduct 1
+
+                                deletedImageIds.push(imageId);
                             }
-                        } else { // If the image isn't in the page, meaning it has been deleted
-                            imageSyncJson.syncId = 2; // Makes as deleted
-                            imageSyncJson.imageIndex = -1;
+                        });
 
-                            totalOfImagesInPage -= 1; // Deduct 1
+                        if (printLogToDartFromJs) Print.postMessage('syncImageSyncArrayToDart(false); ');
+                        if(!isReplacingQuillContentWithOldNoteContent) { 
+                            // We need this check to avoid duplicate call for syncImageSyncArrayToDart(), 
+                            // since replaceQuillContentWithOldNoteContent() method will call syncImageSyncArrayToDart()
 
-                            deletedImageIds.push(imageId);
+                            syncImageSyncArrayToDart(false); // Sync the update to dart
                         }
-                    });
 
-                    if (printLogToDartFromJs) Print.postMessage('syncImageSyncArrayToDart(false); ');
-                    if(!isReplacingQuillContentWithOldNoteContent) { 
-                        // We need this check to avoid duplicate call for syncImageSyncArrayToDart(), 
-                        // since replaceQuillContentWithOldNoteContent() method will call syncImageSyncArrayToDart()
+                        // Remove item from imageSyncArray, sicne it isn't in the page now
+                        $.each(deletedImageIds, function (index, item) {
+                            removeImageSyncItemFromArrayVar(item);
+                        });
 
-                        syncImageSyncArrayToDart(false); // Sync the update to dart
+                        updateTotalOfImagesInPageVar();
                     }
 
-                    // Remove item from imageSyncArray, sicne it isn't in the page now
-                    $.each(deletedImageIds, function (index, item) {
-                        removeImageSyncItemFromArrayVar(item);
-                    });
+                    cursorIndex++;
 
-                    updateTotalOfImagesInPageVar();
+                    executeAutoSave();
                 }
-
-                cursorIndex++;
-
-                executeAutoSave();
             }
+           
         });
 
         quill.on('selection-change', function (range, oldRange, source) {
