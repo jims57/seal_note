@@ -8,6 +8,7 @@ import 'package:seal_note/data/database/database.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:seal_note/model/NoteWithProgressTotal.dart';
 import 'package:seal_note/ui/common/NoDataWidget.dart';
+import 'package:seal_note/util/dialog/FlushBarHandler.dart';
 import 'package:seal_note/util/dialog/SnackBarHandler.dart';
 import 'package:seal_note/util/html/HtmlHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
@@ -1044,37 +1045,44 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
     // pull to get data method // note list refresh data
     // refresh data // refresh note data
 
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(milliseconds: 500));
 
-    _noteEntryListForRefresh.clear();
+    // FlushBarHandler().showFlushBar(
+    //   title: 'title',
+    //   message: '',
+    //   context: context,
+    //   showUndoButton: false,
+    // );
 
-    for (var i = 0; i < _refreshCount; ++i) {
-      var title = '[refresh] title${i + 1}';
-      var content = '[refresh] content${i + 1}';
-      var now = DateTime.now().toLocal();
-
-      var noteEntry = NoteEntry(
-          id: null,
-          folderId: GlobalState.selectedFolderIdCurrently,
-          // title: title,
-          content: content,
-          created: now,
-          updated: now,
-          isReviewFinished: false,
-          isDeleted: false,
-          createdBy: GlobalState.currentUserId);
-
-      _noteEntryListForRefresh.add(noteEntry);
-      // _noteEntryList.add(noteEntry);
-    }
-
-    // Insert the refreshed data in batch
-    GlobalState.database
-        .insertNotesInBatch(_noteEntryListForRefresh)
-        .then((value) {
-      GlobalState.noteModelForConsumer.noteListWidgetForTodayState.currentState
-          .resetLoadingConfigsAfterUpdatingSqlite();
-    });
+    // _noteEntryListForRefresh.clear();
+    //
+    // for (var i = 0; i < _refreshCount; ++i) {
+    //   var title = '[refresh] title${i + 1}';
+    //   var content = '[refresh] content${i + 1}';
+    //   var now = DateTime.now().toLocal();
+    //
+    //   var noteEntry = NoteEntry(
+    //       id: null,
+    //       folderId: GlobalState.selectedFolderIdCurrently,
+    //       // title: title,
+    //       content: content,
+    //       created: now,
+    //       updated: now,
+    //       isReviewFinished: false,
+    //       isDeleted: false,
+    //       createdBy: GlobalState.currentUserId);
+    //
+    //   _noteEntryListForRefresh.add(noteEntry);
+    //   // _noteEntryList.add(noteEntry);
+    // }
+    //
+    // // Insert the refreshed data in batch
+    // GlobalState.database
+    //     .insertNotesInBatch(_noteEntryListForRefresh)
+    //     .then((value) {
+    //   GlobalState.noteModelForConsumer.noteListWidgetForTodayState.currentState
+    //       .resetLoadingConfigsAfterUpdatingSqlite();
+    // });
   }
 
   bool _isReviewNote(DateTime nextReviewTime) {
