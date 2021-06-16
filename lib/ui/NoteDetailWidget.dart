@@ -990,6 +990,10 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     return effectedRowsCount;
   }
 
+  Future<bool> _canWebViewGoBack() async {
+    return await GlobalState.flutterWebviewPlugin.canGoBack();
+  }
+
   // Public methods
   void showWebView({bool forceToSyncWithShouldHideWebViewVar = true}) {
     if (forceToSyncWithShouldHideWebViewVar) {
@@ -1258,6 +1262,11 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
   }
 
   Future<void> clickOnDetailPageBackButton() async {
+    var canGoBack = await _canWebViewGoBack();
+    if(canGoBack){
+      return await goBackWebView();
+    }
+
     GlobalState.isHandlingNoteDetailPage = true;
     GlobalState.isInNoteDetailPage = false;
 
@@ -1347,5 +1356,18 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
         "javascript:removeImageSrcAttributeByImageId('" + imageId + "');");
 
     return responseMessage;
+  }
+
+  Future<void> goBackWebView() async {
+    await GlobalState.flutterWebviewPlugin.goBack();
+  }
+
+  Future<void> goBackToFirstPageForWebView() async {
+    var canGoBack = await _canWebViewGoBack();
+
+    while (canGoBack) {
+      await goBackWebView();
+      canGoBack = await _canWebViewGoBack();
+    }
   }
 }

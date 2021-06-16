@@ -7,8 +7,8 @@
     <list default="true" id="31f338f6-5b44-4fa2-b8e7-14e350b3b701" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/QuillEditor.html" beforeDir="false" afterPath="$PROJECT_DIR$/assets/QuillEditor.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/data/tcbData/tcbSystemInfoBasicDataV1.json" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/tcbData/tcbSystemInfoBasicDataV1.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/ui/FolderListPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/FolderListPage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/ui/NoteDetailWidget.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/NoteDetailWidget.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,38 +82,38 @@
     <state width="970" height="620" key="DebuggerActiveHint/0.23.1440.825@0.23.1440.825" timestamp="1623318091660" />
     <state width="666" height="621" key="DebuggerActiveHint/0.23.1440.826@0.23.1440.826" timestamp="1623396990436" />
     <state width="660" height="622" key="DebuggerActiveHint/0.23.1440.827@0.23.1440.827" timestamp="1623320646730" />
-    <state width="1398" height="304" key="GridCell.Tab.0.bottom" timestamp="1623808975126">
+    <state width="1230" height="490" key="GridCell.Tab.0.bottom" timestamp="1623824429912">
       <screen x="0" y="23" width="1440" height="823" />
     </state>
     <state width="1398" height="405" key="GridCell.Tab.0.bottom/0.23.1440.822@0.23.1440.822" timestamp="1623223927245" />
-    <state width="1398" height="304" key="GridCell.Tab.0.bottom/0.23.1440.823@0.23.1440.823" timestamp="1623808975126" />
+    <state width="1230" height="490" key="GridCell.Tab.0.bottom/0.23.1440.823@0.23.1440.823" timestamp="1623824429912" />
     <state width="1398" height="556" key="GridCell.Tab.0.bottom/0.23.1440.825@0.23.1440.825" timestamp="1623738832342" />
     <state width="1398" height="304" key="GridCell.Tab.0.bottom/0.23.1440.826@0.23.1440.826" timestamp="1623738173109" />
     <state width="1398" height="450" key="GridCell.Tab.0.bottom/0.23.1440.827@0.23.1440.827" timestamp="1623369454689" />
     <state width="1398" height="450" key="GridCell.Tab.0.bottom/0.23.1440.828@0.23.1440.828" timestamp="1623371743642" />
-    <state width="1398" height="304" key="GridCell.Tab.0.center" timestamp="1623808975125">
+    <state width="1230" height="490" key="GridCell.Tab.0.center" timestamp="1623824429911">
       <screen x="0" y="23" width="1440" height="823" />
     </state>
     <state width="1398" height="405" key="GridCell.Tab.0.center/0.23.1440.822@0.23.1440.822" timestamp="1623223927244" />
-    <state width="1398" height="304" key="GridCell.Tab.0.center/0.23.1440.823@0.23.1440.823" timestamp="1623808975125" />
+    <state width="1230" height="490" key="GridCell.Tab.0.center/0.23.1440.823@0.23.1440.823" timestamp="1623824429911" />
     <state width="1398" height="556" key="GridCell.Tab.0.center/0.23.1440.825@0.23.1440.825" timestamp="1623738832341" />
     <state width="1398" height="304" key="GridCell.Tab.0.center/0.23.1440.826@0.23.1440.826" timestamp="1623738173108" />
     <state width="1398" height="450" key="GridCell.Tab.0.center/0.23.1440.827@0.23.1440.827" timestamp="1623369454688" />
     <state width="1398" height="450" key="GridCell.Tab.0.center/0.23.1440.828@0.23.1440.828" timestamp="1623371743642" />
-    <state width="1398" height="304" key="GridCell.Tab.0.left" timestamp="1623808975124">
+    <state width="1230" height="490" key="GridCell.Tab.0.left" timestamp="1623824429911">
       <screen x="0" y="23" width="1440" height="823" />
     </state>
     <state width="1398" height="405" key="GridCell.Tab.0.left/0.23.1440.822@0.23.1440.822" timestamp="1623223927243" />
-    <state width="1398" height="304" key="GridCell.Tab.0.left/0.23.1440.823@0.23.1440.823" timestamp="1623808975124" />
+    <state width="1230" height="490" key="GridCell.Tab.0.left/0.23.1440.823@0.23.1440.823" timestamp="1623824429911" />
     <state width="1398" height="556" key="GridCell.Tab.0.left/0.23.1440.825@0.23.1440.825" timestamp="1623738832340" />
     <state width="1398" height="304" key="GridCell.Tab.0.left/0.23.1440.826@0.23.1440.826" timestamp="1623738173107" />
     <state width="1398" height="450" key="GridCell.Tab.0.left/0.23.1440.827@0.23.1440.827" timestamp="1623369454687" />
     <state width="1398" height="450" key="GridCell.Tab.0.left/0.23.1440.828@0.23.1440.828" timestamp="1623371743641" />
-    <state width="1398" height="304" key="GridCell.Tab.0.right" timestamp="1623808975126">
+    <state width="1230" height="490" key="GridCell.Tab.0.right" timestamp="1623824429912">
       <screen x="0" y="23" width="1440" height="823" />
     </state>
     <state width="1398" height="405" key="GridCell.Tab.0.right/0.23.1440.822@0.23.1440.822" timestamp="1623223927244" />
-    <state width="1398" height="304" key="GridCell.Tab.0.right/0.23.1440.823@0.23.1440.823" timestamp="1623808975125" />
+    <state width="1230" height="490" key="GridCell.Tab.0.right/0.23.1440.823@0.23.1440.823" timestamp="1623824429912" />
     <state width="1398" height="556" key="GridCell.Tab.0.right/0.23.1440.825@0.23.1440.825" timestamp="1623738832342" />
     <state width="1398" height="304" key="GridCell.Tab.0.right/0.23.1440.826@0.23.1440.826" timestamp="1623738173108" />
     <state width="1398" height="450" key="GridCell.Tab.0.right/0.23.1440.827@0.23.1440.827" timestamp="1623369454688" />
@@ -126,27 +126,27 @@
     <state width="555" height="412" key="XDebugger.FullValuePopup/0.23.1440.824@0.23.1440.824" timestamp="1623250537291" />
     <state width="555" height="411" key="XDebugger.FullValuePopup/0.23.1440.825@0.23.1440.825" timestamp="1623317477149" />
     <state width="555" height="414" key="XDebugger.FullValuePopup/0.23.1440.827@0.23.1440.827" timestamp="1623290198001" />
-    <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1623741663902">
+    <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1623815417260">
       <screen x="0" y="23" width="1440" height="823" />
     </state>
     <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.822@0.23.1440.822" timestamp="1623247611279" />
-    <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.823@0.23.1440.823" timestamp="1623741663902" />
+    <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.823@0.23.1440.823" timestamp="1623815417260" />
     <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.825@0.23.1440.825" timestamp="1623316731426" />
     <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.826@0.23.1440.826" timestamp="1623397684740" />
     <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.827@0.23.1440.827" timestamp="1623369319148" />
-    <state x="390" y="116" width="602" height="522" key="find.popup" timestamp="1623809168084">
+    <state x="390" y="116" width="602" height="522" key="find.popup" timestamp="1623824232838">
       <screen x="0" y="23" width="1440" height="823" />
     </state>
     <state x="390" y="116" width="713" height="523" key="find.popup/0.23.1440.822@0.23.1440.822" timestamp="1623222899941" />
-    <state x="390" y="116" width="602" height="522" key="find.popup/0.23.1440.823@0.23.1440.823" timestamp="1623809168084" />
+    <state x="390" y="116" width="602" height="522" key="find.popup/0.23.1440.823@0.23.1440.823" timestamp="1623824232838" />
     <state x="390" y="116" width="713" height="525" key="find.popup/0.23.1440.824@0.23.1440.824" timestamp="1623247725857" />
     <state x="390" y="116" width="646" height="524" key="find.popup/0.23.1440.825@0.23.1440.825" timestamp="1623309634646" />
     <state x="390" y="116" width="602" height="524" key="find.popup/0.23.1440.826@0.23.1440.826" timestamp="1623392575815" />
-    <state x="356" y="170" width="670" height="676" key="search.everywhere.popup" timestamp="1623809141457">
+    <state x="356" y="170" width="670" height="676" key="search.everywhere.popup" timestamp="1623817710635">
       <screen x="0" y="23" width="1440" height="823" />
     </state>
     <state x="356" y="169" width="670" height="676" key="search.everywhere.popup/0.23.1440.822@0.23.1440.822" timestamp="1623222648029" />
-    <state x="356" y="170" width="670" height="676" key="search.everywhere.popup/0.23.1440.823@0.23.1440.823" timestamp="1623809141457" />
+    <state x="356" y="170" width="670" height="676" key="search.everywhere.popup/0.23.1440.823@0.23.1440.823" timestamp="1623817710635" />
     <state x="356" y="170" width="670" height="678" key="search.everywhere.popup/0.23.1440.825@0.23.1440.825" timestamp="1623135619967" />
     <state x="356" y="170" width="670" height="680" key="search.everywhere.popup/0.23.1440.826@0.23.1440.826" timestamp="1623394356370" />
   </component>
@@ -154,24 +154,44 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/util/tcb/TCBSystemInfoHandler.dart</url>
-          <line>146</line>
-          <option name="timeStamp" value="189" />
+          <url>file://$PROJECT_DIR$/lib/ui/FolderListPage.dart</url>
+          <line>248</line>
+          <option name="timeStamp" value="193" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/util/tcb/TCBSystemInfoHandler.dart</url>
-          <line>153</line>
-          <option name="timeStamp" value="190" />
+          <url>file://$PROJECT_DIR$/lib/ui/FolderListPage.dart</url>
+          <line>251</line>
+          <option name="timeStamp" value="194" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/util/tcb/TCBSystemInfoHandler.dart</url>
-          <line>151</line>
-          <option name="timeStamp" value="191" />
+          <url>file://$PROJECT_DIR$/lib/ui/FolderListPage.dart</url>
+          <line>244</line>
+          <option name="timeStamp" value="195" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/util/tcb/TCBSystemInfoHandler.dart</url>
-          <line>144</line>
-          <option name="timeStamp" value="192" />
+          <url>file://$PROJECT_DIR$/lib/ui/NoteDetailWidget.dart</url>
+          <line>756</line>
+          <option name="timeStamp" value="197" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/ui/NoteDetailWidget.dart</url>
+          <line>965</line>
+          <option name="timeStamp" value="198" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/ui/NoteDetailWidget.dart</url>
+          <line>1266</line>
+          <option name="timeStamp" value="199" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/ui/NoteDetailWidget.dart</url>
+          <line>1269</line>
+          <option name="timeStamp" value="200" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/ui/NoteDetailWidget.dart</url>
+          <line>1368</line>
+          <option name="timeStamp" value="201" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

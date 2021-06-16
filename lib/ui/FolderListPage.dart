@@ -237,9 +237,20 @@ class FolderListPageState extends State<FolderListPage>
                               // var res2 = await GlobalState.noteDetailWidgetState.currentState.removeImageSrcAttributeInWebView(imageId: imageId);
 
                               // var pp = await GlobalState.noteDetailWidgetState.currentState.saveNoteToDb(forceToSave: true,canSaveInReadOnly: true);
-                              var imageId = '54d1e729c2cda0d93ffb027146e8f07f-77d25-001';
-                              var rm = await GlobalState.noteDetailWidgetState.currentState
-                                  .removeImageSrcAttributeInWebView(imageId: imageId);
+                              // var imageId = '54d1e729c2cda0d93ffb027146e8f07f-77d25-001';
+                              // var rm = await GlobalState.noteDetailWidgetState.currentState
+                              //     .removeImageSrcAttributeInWebView(imageId: imageId);
+
+                              // go back webView
+                              var canGoBack = await GlobalState
+                                  .flutterWebviewPlugin
+                                  .canGoBack();
+                              if (canGoBack) {
+                                print('can go back');
+                                await GlobalState.flutterWebviewPlugin.goBack();
+                              } else {
+                                print('cannot go back!');
+                              }
 
                               var res = await GlobalState.flutterWebviewPlugin
                                   .evalJavascript("javascript:getPageHtml();");
