@@ -8,6 +8,7 @@ import 'package:seal_note/data/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:seal_note/event/SystemInfo/SystemInfoEventHandler.dart';
 import 'package:seal_note/event/webView/WebViewLoadedEventHandler.dart';
+import 'package:seal_note/model/errorCodes/ErrorCodeModel.dart';
 import 'package:seal_note/model/images/CachedImageItem.dart';
 import 'package:seal_note/model/images/ImageSyncItem.dart';
 import 'package:seal_note/model/NoteWithProgressTotal.dart';
@@ -24,6 +25,7 @@ import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:seal_note/ui/common/SelectFolderWidget.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanSecondSubPage.dart';
 import 'package:seal_note/ui/reviewPlans/ReviewPlanWidget.dart';
+import 'package:seal_note/util/tcb/TCBSystemInfoHandler.dart';
 import 'package:seal_note/util/updates/AppUpdateHandler.dart';
 import 'AlertDialogHeightChangeNotifier.dart';
 import 'AppState.dart';
@@ -104,6 +106,12 @@ class GlobalState with ChangeNotifier {
     bool forceToSetIsReviewAppVar = true,
   }) async {
     var isReview = false;
+
+    var response = await TCBSystemInfoHandler.getSystemInfo(forceToGetSystemInfoFromTCB: true);
+    if (response.code == ErrorCodeModel.SUCCESS_CODE &&
+        response.result.reviewedAppVersion == GlobalState.appVersion) {
+      isReview = true;
+    }
 
     if (forceToSetIsReviewAppVar) {
       isReviewApp = isReview;

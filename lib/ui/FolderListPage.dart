@@ -9,6 +9,7 @@ import 'package:seal_note/ui/settings/SettingPage.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
 import 'package:seal_note/util/download/DownloadHandler.dart';
 import 'package:seal_note/util/file/FileHandler.dart';
+import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 import 'FolderListItemWidget.dart';
 import 'FolderListWidget.dart';
@@ -232,25 +233,7 @@ class FolderListPageState extends State<FolderListPage>
                               // setting button // setting button event
                               // test button // test button event // click test button
 
-                              // var imageId = '54d1e729c2cda0d93ffb027146e8f07f-77d25-001';
-                              // var imageId = '54d1e729c2cda0d93ffb027146e8f07f-77d25-001';
-                              // var res2 = await GlobalState.noteDetailWidgetState.currentState.removeImageSrcAttributeInWebView(imageId: imageId);
-
-                              // var pp = await GlobalState.noteDetailWidgetState.currentState.saveNoteToDb(forceToSave: true,canSaveInReadOnly: true);
-                              // var imageId = '54d1e729c2cda0d93ffb027146e8f07f-77d25-001';
-                              // var rm = await GlobalState.noteDetailWidgetState.currentState
-                              //     .removeImageSrcAttributeInWebView(imageId: imageId);
-
-                              // go back webView
-                              var canGoBack = await GlobalState
-                                  .flutterWebviewPlugin
-                                  .canGoBack();
-                              if (canGoBack) {
-                                print('can go back');
-                                await GlobalState.flutterWebviewPlugin.goBack();
-                              } else {
-                                print('cannot go back!');
-                              }
+                              // await TCBLoginHandler.login();
 
                               var res = await GlobalState.flutterWebviewPlugin
                                   .evalJavascript("javascript:getPageHtml();");

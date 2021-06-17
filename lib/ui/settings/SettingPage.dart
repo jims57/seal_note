@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloudbase_core/cloudbase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:seal_note/data/appstate/GlobalState.dart';
 import 'package:seal_note/model/common/ResponseModel.dart';
@@ -32,7 +33,7 @@ class _SettingPageState extends State<SettingPage> {
             onTap: () async {
               // click on sign out // sign out wx account
               // sign out event // exit wx account
-              // exit account event // signout event
+              // exit account event // sign out event
 
               // When there is no network, failed to show it
               var hasNetwork = await NetworkHandler.hasNetworkConnection();

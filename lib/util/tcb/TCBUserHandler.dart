@@ -18,6 +18,7 @@ class TCBUserHandler {
     if (!GlobalState.isLoggedIn && forceToLoginWhenNotLoggedIn) {
       responseModelForLogin = await TCBLoginHandler.login(
         autoUseAnonymousWayToLoginInSimulator: true,
+        forceToUseAnonymousLogin: false,
       );
     }
 

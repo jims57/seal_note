@@ -117,7 +117,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
     super.initState();
 
     // Show update dialog if the user has logged in
-    TCBLoginHandler.hasLoginTCB().then((hasLoginTCB) async {
+    TCBLoginHandler.hasLoginTCB(includeAnonymousLogin: false).then((hasLoginTCB) async {
       // Check if the user has logged in, we only show the update dialog after logging in
       // show update dialog
 
@@ -588,31 +588,25 @@ class MasterDetailPageState extends State<MasterDetailPage>
     // check show login page or not // check show login page or not
     // whether to show login page
 
-    // bool shouldShowLoginPage;
-
     if (await GlobalState.checkIfReviewApp(
       forceToSetIsReviewAppVar: true,
     )) {
+      // Check if review app // check review app
+
       // Review app
       GlobalState.shouldShowLoginPage = false;
     } else {
       // Not review app
 
       if (!await NetworkHandler.hasNetworkConnection()) {
-        // shouldShowLoginPage = true;
         GlobalState.shouldShowLoginPage = true;
-      } else if (!await TCBLoginHandler.hasLoginTCB()) {
-        // shouldShowLoginPage = true;
+      } else if (!await TCBLoginHandler.hasLoginTCB(includeAnonymousLogin: false)) {
         GlobalState.shouldShowLoginPage = true;
-        // } else if (await TCBLoginHandler.isLoginExpired()) {
-        //   shouldShowLoginPage = true;
       } else {
-        // shouldShowLoginPage = false;
         GlobalState.shouldShowLoginPage = false;
       }
     }
 
-    // return shouldShowLoginPage;
     return GlobalState.shouldShowLoginPage;
   }
 
@@ -703,7 +697,9 @@ class MasterDetailPageState extends State<MasterDetailPage>
     // whether to show update dialog // check update dialog
 
     if (forceToGetUpdateAppOption) {
-      GlobalState.updateAppOption = await AppUpdateHandler.getUpdateAppOption();
+      GlobalState.updateAppOption = await AppUpdateHandler.getUpdateAppOption(
+        forceToGetUpdateAppOptionFromTCB: false,
+      );
     }
 
     if (GlobalState.updateAppOption == UpdateAppOption.HasError) {

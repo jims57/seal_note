@@ -11,14 +11,22 @@ import 'package:seal_note/model/tcbModels/TCBReviewPlanModel.dart';
 import 'package:seal_note/model/tcbModels/systemInfo/TCBSystemInfoGlobalDataModel.dart';
 import 'package:seal_note/model/tcbModels/systemInfo/TCBSystemInfoModel.dart';
 import 'package:seal_note/util/tcb/TCBInitHandler.dart';
+import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 
 class TCBSystemInfoHandler {
   // Public methods
   static Future<ResponseModel<TCBSystemInfoGlobalDataModel>> getSystemInfo({
-    bool forceToGetSystemInfoFromTCB = true,
+    bool forceToGetSystemInfoFromTCB = false,
   }) async {
     var response;
+
+    // Check if it has login
+    var hasLogin =
+        await TCBLoginHandler.hasLoginTCB(includeAnonymousLogin: true);
+    if (!hasLogin) {
+      await TCBLoginHandler.login(forceToUseAnonymousLogin: true);
+    }
 
     if (forceToGetSystemInfoFromTCB) {
       // When fetching system info from TCB forcibly
@@ -30,7 +38,7 @@ class TCBSystemInfoHandler {
       // When don't fetch system info from TCB forcibly
       // Try to get the system info from GlobalState first
 
-      if (GlobalState.tcbSystemInfo.tcbSystemInfoGlobalData != null) {
+      if (GlobalState.tcbSystemInfo != null) {
         response = ResponseModel.getResponseModelForSuccess<
                 TCBSystemInfoGlobalDataModel>(
             result: GlobalState.tcbSystemInfo.tcbSystemInfoGlobalData);

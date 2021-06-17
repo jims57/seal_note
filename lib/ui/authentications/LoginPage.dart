@@ -274,6 +274,8 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
 
                         var responseForLogin = await TCBLoginHandler.login(
                           autoUseAnonymousWayToLoginInSimulator: true,
+                          forceToUseAnonymousLogin: false,
+                          delay3SecondsToLogin: true,
                         );
 
                         if (responseForLogin.code == 0) {

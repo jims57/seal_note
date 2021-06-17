@@ -5,6 +5,7 @@ import 'package:seal_note/model/common/ResponseModel.dart';
 import 'package:seal_note/model/errorCodes/ErrorCodeModel.dart';
 import 'package:seal_note/util/simulators/SimulatorHandler.dart';
 import 'package:seal_note/util/tcb/TCBInitHandler.dart';
+import 'package:seal_note/util/tcb/TCBUserHandler.dart';
 
 class TCBLoginHandler {
   // Private methods
@@ -112,12 +113,17 @@ class TCBLoginHandler {
   //   return GlobalState.tcbCloudBaseAuth;
   // }
 
-  static Future<bool> hasLoginTCB() async {
+  static Future<bool> hasLoginTCB({bool includeAnonymousLogin = false}) async {
     // var authState = await _getCloudBaseAuthState();
     var authState = await TCBInitHandler.getCloudBaseAuthState();
 
     if (authState != null) {
-      GlobalState.isLoggedIn = true;
+      var loginType = await TCBLoginHandler.getLoginType();
+      if (loginType == CloudBaseAuthType.ANONYMOUS && !includeAnonymousLogin) {
+        GlobalState.isLoggedIn = false;
+      } else {
+        GlobalState.isLoggedIn = true;
+      }
     } else {
       GlobalState.isLoggedIn = false;
     }
@@ -133,18 +139,23 @@ class TCBLoginHandler {
 
   static Future<ResponseModel> login({
     bool autoUseAnonymousWayToLoginInSimulator = true,
+    bool forceToUseAnonymousLogin = false,
+    bool delay3SecondsToLogin = false,
   }) async {
-    await Future.delayed(Duration(seconds: 3));
+    if(delay3SecondsToLogin){
+      await Future.delayed(Duration(seconds: 3));
+    }
 
     var responseModel = ResponseModel();
 
     var isSimulator = await SimulatorHandler.isSimulatorOrEmulator();
-    var isReviewApp = await GlobalState.checkIfReviewApp(
-      forceToSetIsReviewAppVar: true,
-    );
+    // var isReviewApp = await GlobalState.checkIfReviewApp(
+    //   forceToSetIsReviewAppVar: true,
+    // );
 
     // If this is a review app, use anonymous way to login
-    if (isReviewApp || (isSimulator && autoUseAnonymousWayToLoginInSimulator)) {
+    if (forceToUseAnonymousLogin ||
+        (isSimulator && autoUseAnonymousWayToLoginInSimulator)) {
       // GlobalState.isLoggedIn = await _loginWXAnonymously();
       responseModel = await _loginWXAnonymously();
     } else {
@@ -155,21 +166,25 @@ class TCBLoginHandler {
   }
 
   static Future<ResponseModel> signOutWX() async {
+    // signout method // sign out method
+
     // Id doesn't need to execute sign out method of tcb if on simulator
     var isSimulator = await SimulatorHandler.isSimulatorOrEmulator();
-    var hasLogin = await TCBLoginHandler.hasLoginTCB();
+    var hasLogin = await TCBLoginHandler.hasLoginTCB(includeAnonymousLogin: false);
     var response;
 
     // By default, it responses as a success one
     GlobalState.isLoggedIn = false;
+    GlobalState.isAnonymousLogin = false;
     response = ResponseModel.getResponseModelForSuccess();
 
     if (!isSimulator && hasLogin) {
+
       var auth = TCBInitHandler.getCloudBaseAuth();
 
       await auth.signOut().catchError((err) {
         GlobalState.isLoggedIn =
-            true; // If failed, we set it back to login status
+        true; // If failed, we set it back to login status
 
         response = ResponseModel.getResponseModelForError(
           // result: err,
@@ -177,8 +192,21 @@ class TCBLoginHandler {
           message: ErrorCodeModel.WX_SIGN_OUT_FAILED_MESSAGE,
         );
       });
+
+      // var loginType = await TCBLoginHandler.getLoginType();
+      //
+      // if (loginType == CloudBaseAuthType.WX) {
+      //   // Only wx login supports the sign out method
+      //
+      //
+      // }
     }
 
     return response;
+  }
+
+  static Future<CloudBaseAuthType> getLoginType() async {
+    var authState = await TCBInitHandler.getCloudBaseAuth().getAuthState();
+    return authState.authType;
   }
 }
