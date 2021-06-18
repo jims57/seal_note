@@ -621,18 +621,6 @@ class MasterDetailPageState extends State<MasterDetailPage>
     return GlobalState.shouldShowLoginPage;
   }
 
-  // Future<void> _showUpdateDialogAfterWebViewLoaded() async {
-  //   GlobalState.webViewLoadedEventHandler.onWebViewLoaded
-  //       .listen((hasWebViewLoaded) async {
-  //     // listen webview loaded event // listen to webview loaded event
-  //     // listen webview load event // listen to webview load event
-  //
-  //     if (hasWebViewLoaded) {
-  //       await checkIfShowUpdateDialogOrNot(forceToGetUpdateAppOption: true);
-  //     }
-  //   });
-  // }
-
   // Public methods
   void triggerToShowReusablePage({String title = '', @required Widget child}) {
     // trigger to show reusable page // show reusable page method

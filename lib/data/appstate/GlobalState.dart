@@ -423,6 +423,7 @@ class GlobalState with ChangeNotifier {
   static bool needRefreshWebView = false;
   static const int millisecondToSyncWithWebView = 200;
   static bool shouldHideWebView = false;
+  static String tipBeforeWebViewShown = '';
 
   // Quill editor
   static bool isQuillReadOnly = true;

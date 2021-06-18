@@ -96,6 +96,17 @@ class AppState extends ChangeNotifier {
   bool get hasDataInNoteListPage => _hasDataInNoteListPage;
 
   set hasDataInNoteListPage(bool value) {
+    // Set the tip for the web view before it shows
+    if (value) {
+      // When has data in note list page
+
+      GlobalState.tipBeforeWebViewShown = '';
+    } else {
+      // When no data in note list page
+
+      GlobalState.tipBeforeWebViewShown = '没有选择笔记';
+    }
+
     _hasDataInNoteListPage = value;
     notifyListeners();
   }

@@ -821,10 +821,20 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
                   width: double.maxFinite,
                   alignment: Alignment.center,
                   padding: EdgeInsets.only(bottom: GlobalState.appBarHeight),
-                  child: Text(
-                    '没有选择笔记',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w200),
-                  ),
+                  child: Consumer<AppState>(builder: (cxt, appState, child) {
+                    return Container(
+                        child: (appState.hasDataInNoteListPage)
+                            ? Container()
+                            : Text(
+                                GlobalState.tipBeforeWebViewShown,
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w200),
+                              ));
+                  }),
+                  // child: Text(
+                  //   GlobalState.tipBeforeWebViewShown,
+                  //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w200),
+                  // ),
                 ),
                 hidden: true,
                 scrollBar: false,

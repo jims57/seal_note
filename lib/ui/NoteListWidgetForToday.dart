@@ -32,12 +32,12 @@ class NoteListWidgetForTodayState extends State<NoteListWidgetForToday> {
   int _pageNo;
   int _pageSize;
 
-  int _refreshCount = 20;
+  // int _refreshCount = 20;
 
   bool _isLoading;
   bool _hasMore;
 
-  bool _isFirstLoad = true;
+  // bool _isFirstLoad = true;
 
   // Slide options
   double _slideIconSize = 30.0;
