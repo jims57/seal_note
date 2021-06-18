@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -11,7 +10,6 @@ import 'package:seal_note/ui/authentications/ViewAgreementPage.dart';
 import 'package:seal_note/ui/common/RoundCornerButtonWidget.dart';
 import 'package:seal_note/ui/common/checkboxs/RoundCheckBoxWidget.dart';
 import 'package:seal_note/util/networks/NetworkHandler.dart';
-
 import 'package:after_layout/after_layout.dart';
 import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
 import 'package:connectivity/connectivity.dart';

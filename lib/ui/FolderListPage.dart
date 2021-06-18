@@ -7,17 +7,10 @@ import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:seal_note/ui/settings/SettingPage.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
-import 'package:seal_note/util/download/DownloadHandler.dart';
-import 'package:seal_note/util/file/FileHandler.dart';
-import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 import 'FolderListItemWidget.dart';
 import 'FolderListWidget.dart';
 import 'common/TextFieldWithClearButtonWidget.dart';
-import 'package:http/http.dart' as http;
-import 'dart:io';
-import 'dart:convert';
-import 'package:crypto/crypto.dart';
 
 class FolderListPage extends StatefulWidget {
   FolderListPage({Key key}) : super(key: key);
@@ -183,64 +176,68 @@ class FolderListPageState extends State<FolderListPage>
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          GestureDetector(
-                            child: Container(
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.settings,
-                                      size: 20,
-                                    ),
-                                    Text(
-                                      '设置',
-                                      style: TextStyle(fontSize: 10),
-                                    )
-                                  ]),
-                              color: Colors.transparent,
-                              padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                          if (GlobalState.shouldShowSettingButtonOnFolderPage)
+                            GestureDetector(
+                              // setting button
+                              child: Container(
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.settings,
+                                        size: 20,
+                                      ),
+                                      Text(
+                                        '设置',
+                                        style: TextStyle(fontSize: 10),
+                                      )
+                                    ]),
+                                color: Colors.transparent,
+                                padding:
+                                    EdgeInsets.only(left: 15.0, right: 15.0),
+                              ),
+                              onTap: () async {
+                                // setting event // click setting event
+                                // setting button // setting button event
+
+                                GlobalState.masterDetailPageState.currentState
+                                    .triggerToShowReusablePage(
+                                  title: '设置',
+                                  child: SettingPage(),
+                                );
+                              },
                             ),
-                            onTap: () async {
-                              // setting event // click setting event
-                              // setting button // setting button event
-
-                              GlobalState.masterDetailPageState.currentState
-                                  .triggerToShowReusablePage(
-                                title: '设置',
-                                child: SettingPage(),
-                              );
-                            },
-                          ),
-                          GestureDetector(
-                            child: Container(
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.settings,
-                                      size: 20,
-                                    ),
-                                    Text(
-                                      '测试',
-                                      style: TextStyle(fontSize: 10),
-                                    )
-                                  ]),
-                              color: Colors.transparent,
-                              padding: EdgeInsets.only(left: 15.0, right: 15.0),
-                            ),
-                            onTap: () async {
-                              // setting event // click setting event
-                              // setting button // setting button event
-                              // test button // test button event // click test button
-
-                              // await TCBLoginHandler.login();
-
-                              var res = await GlobalState.flutterWebviewPlugin
-                                  .evalJavascript("javascript:getPageHtml();");
-
-                              var s2 = 's';
-                            },
-                          )
+                          // GestureDetector(
+                          //   // test button
+                          //   child: Container(
+                          //     child: Column(
+                          //         mainAxisAlignment: MainAxisAlignment.center,
+                          //         children: [
+                          //           Icon(
+                          //             Icons.settings,
+                          //             size: 20,
+                          //           ),
+                          //           Text(
+                          //             '测试',
+                          //             style: TextStyle(fontSize: 10),
+                          //           )
+                          //         ]),
+                          //     color: Colors.transparent,
+                          //     padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                          //   ),
+                          //   onTap: () async {
+                          //     // setting event // click setting event
+                          //     // setting button // setting button event
+                          //     // test button // test button event // click test button
+                          //
+                          //     // await TCBLoginHandler.login();
+                          //
+                          //     var res = await GlobalState.flutterWebviewPlugin
+                          //         .evalJavascript("javascript:getPageHtml();");
+                          //
+                          //     var s2 = 's';
+                          //   },
+                          // ),
                         ],
                       ),
                     ),

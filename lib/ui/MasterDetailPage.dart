@@ -596,6 +596,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
       // Review app
       GlobalState.shouldShowLoginPage = false;
+      GlobalState.shouldShowSettingButtonOnFolderPage = false;
     } else {
       // Not review app
 
@@ -608,6 +609,9 @@ class MasterDetailPageState extends State<MasterDetailPage>
           includeAnonymousLogin: false)) {
         GlobalState.shouldShowLoginPage = true;
       } else {
+        // When all checks pass
+
+        GlobalState.shouldShowSettingButtonOnFolderPage = true;
         GlobalState.shouldShowLoginPage = false;
       }
     }

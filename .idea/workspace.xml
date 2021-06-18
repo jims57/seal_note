@@ -5,16 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="31f338f6-5b44-4fa2-b8e7-14e350b3b701" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/data/appstate/GlobalState.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/appstate/GlobalState.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/ui/FolderListPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/FolderListPage.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/ui/MasterDetailPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/MasterDetailPage.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/ui/authentications/LoginPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/authentications/LoginPage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/util/networks/NetworkHandler.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/util/networks/NetworkHandler.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/util/tcb/TCBLoginHandler.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/util/tcb/TCBLoginHandler.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/util/tcb/TCBSystemInfoHandler.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/util/tcb/TCBSystemInfoHandler.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/util/tcb/TCBUserHandler.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/util/tcb/TCBUserHandler.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -132,61 +127,49 @@
     <state width="555" height="412" key="XDebugger.FullValuePopup/0.23.1440.824@0.23.1440.824" timestamp="1623250537291" />
     <state width="555" height="411" key="XDebugger.FullValuePopup/0.23.1440.825@0.23.1440.825" timestamp="1623317477149" />
     <state width="555" height="414" key="XDebugger.FullValuePopup/0.23.1440.827@0.23.1440.827" timestamp="1623290198001" />
-    <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1623984065692">
+    <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1623989482498">
       <screen x="0" y="23" width="1440" height="825" />
     </state>
     <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.822@0.23.1440.822" timestamp="1623247611279" />
     <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.823@0.23.1440.823" timestamp="1623815417260" />
-    <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.825@0.23.1440.825" timestamp="1623984065692" />
+    <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.825@0.23.1440.825" timestamp="1623989482498" />
     <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.826@0.23.1440.826" timestamp="1623397684740" />
     <state x="247" y="31" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1440.827@0.23.1440.827" timestamp="1623369319148" />
-    <state x="390" y="116" width="855" height="554" key="find.popup" timestamp="1623987203536">
+    <state x="390" y="116" width="855" height="554" key="find.popup" timestamp="1623990173460">
       <screen x="0" y="23" width="1440" height="825" />
     </state>
     <state x="390" y="116" width="713" height="523" key="find.popup/0.23.1440.822@0.23.1440.822" timestamp="1623222899941" />
     <state x="390" y="116" width="880" height="522" key="find.popup/0.23.1440.823@0.23.1440.823" timestamp="1623853670574" />
     <state x="390" y="116" width="713" height="525" key="find.popup/0.23.1440.824@0.23.1440.824" timestamp="1623247725857" />
-    <state x="390" y="116" width="855" height="554" key="find.popup/0.23.1440.825@0.23.1440.825" timestamp="1623987203536" />
+    <state x="390" y="116" width="855" height="554" key="find.popup/0.23.1440.825@0.23.1440.825" timestamp="1623990173460" />
     <state x="390" y="116" width="602" height="524" key="find.popup/0.23.1440.826@0.23.1440.826" timestamp="1623392575815" />
-    <state x="356" y="170" width="670" height="678" key="search.everywhere.popup" timestamp="1623987280392">
+    <state x="356" y="170" width="670" height="678" key="search.everywhere.popup" timestamp="1623989743307">
       <screen x="0" y="23" width="1440" height="825" />
     </state>
     <state x="356" y="169" width="670" height="676" key="search.everywhere.popup/0.23.1440.822@0.23.1440.822" timestamp="1623222648029" />
     <state x="356" y="170" width="670" height="676" key="search.everywhere.popup/0.23.1440.823@0.23.1440.823" timestamp="1623854183310" />
-    <state x="356" y="170" width="670" height="678" key="search.everywhere.popup/0.23.1440.825@0.23.1440.825" timestamp="1623987280392" />
+    <state x="356" y="170" width="670" height="678" key="search.everywhere.popup/0.23.1440.825@0.23.1440.825" timestamp="1623989743307" />
     <state x="356" y="170" width="670" height="680" key="search.everywhere.popup/0.23.1440.826@0.23.1440.826" timestamp="1623394356370" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/util/networks/NetworkHandler.dart</url>
-          <line>42</line>
-          <option name="timeStamp" value="438" />
+          <url>file://$PROJECT_DIR$/lib/ui/MasterDetailPage.dart</url>
+          <line>597</line>
+          <option name="timeStamp" value="467" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/ui/authentications/LoginPage.dart</url>
-          <line>73</line>
-          <option name="timeStamp" value="443" />
+          <url>file://$PROJECT_DIR$/lib/ui/MasterDetailPage.dart</url>
+          <line>603</line>
+          <option name="timeStamp" value="468" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/ui/authentications/LoginPage.dart</url>
-          <line>81</line>
-          <option name="timeStamp" value="446" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/ui/authentications/LoginPage.dart</url>
-          <line>121</line>
-          <option name="timeStamp" value="454" />
+          <url>file://$PROJECT_DIR$/lib/ui/MasterDetailPage.dart</url>
+          <line>613</line>
+          <option name="timeStamp" value="469" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
-    <watches-manager>
-      <configuration name="FlutterRunConfigurationType">
-        <watch expression="GlobalState.isReviewApp" language="Dart" />
-        <watch expression="GlobalState.hasNetwork" language="Dart" />
-        <watch expression="GlobalState.shouldShowLoginButtonAndAgreementInLoginPage" language="Dart" />
-      </configuration>
-    </watches-manager>
   </component>
 </project>

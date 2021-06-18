@@ -240,6 +240,9 @@ class GlobalState with ChangeNotifier {
   static bool shouldTriggerPageTransitionAnimation = true;
   static const int pageTransitionAnimationDurationMilliseconds = 200;
 
+  // Buttons
+  static bool shouldShowSettingButtonOnFolderPage = true;
+
   // Reusable page
   static String firstReusablePageTitle = '';
   static Widget firstReusablePageChild;
