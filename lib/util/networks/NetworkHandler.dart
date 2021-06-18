@@ -37,6 +37,9 @@ class NetworkHandler {
         (timer) async {
       GlobalState.hasNetwork = await hasNetworkConnection();
       if (GlobalState.hasNetwork) {
+        // By default, we don't show wx login button and agreement on the login page
+        GlobalState.shouldShowLoginButtonAndAgreementInLoginPage = false;
+
         callbackWhenHasNetwork();
 
         _timer.cancel();

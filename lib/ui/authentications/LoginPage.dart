@@ -63,21 +63,23 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
 
     networkSubscription = Connectivity()
         .onConnectivityChanged
-        .listen((ConnectivityResult result) {
+        .listen((ConnectivityResult result) async {
       // network listener // listen to network status
       // listen network switching status
 
       if (!_isWaitingNetworkToBecomeNormal && GlobalState.shouldShowLoginPage) {
         if (result.index == 2) {
           // When there is no network
-          showErrorPanelWhenNetworkProblem(
+
+          await showErrorPanelWhenNetworkProblem(
             forceToCheckNetwork: true,
             checkNetworkPeriodically: true,
             forceToSetIsWaitingNetworkToBecomeNormalVar: false,
           );
         } else {
           // When there is network
-          hideErrorPanel();
+
+          hideErrorPanel(shouldTriggerSetState: true);
         }
       }
     });
@@ -106,6 +108,17 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Disable wx login button or not
+    if (GlobalState.hasNetwork && _hasCheckedAgreement) {
+      _isLoginButtonDisabled = false;
+    } else {
+      _isLoginButtonDisabled = true;
+    }
+
+    if (!GlobalState.hasNetwork) {
+      GlobalState.shouldShowLoginButtonAndAgreementInLoginPage = false;
+    }
+
     return Container(
       width: _loginPageWidth,
       color: GlobalState.themeGreyColorAtiOSTodoForBackground,
@@ -191,6 +204,10 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
                       right: GlobalState
                               .defaultLeftAndRightMarginBetweenParentBoarderAndPanel *
                           2,
+                      bottom: (GlobalState
+                              .shouldShowLoginButtonAndAgreementInLoginPage)
+                          ? 0
+                          : GlobalState.defaultVerticalMarginBetweenItems,
                     ),
                     // color: GlobalState.themeLightBlueColorAtiOSTodo,
                     child: Text(
@@ -210,165 +227,167 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
 
                 // login wx button // login WeChat button
                 // wx login button // login button
-                RoundCornerButtonWidget(
-                  buttonText: '微信登录',
-                  buttonTextColor: GlobalState.themeWhiteColorAtiOSTodo,
-                  buttonBorderColor: GlobalState.themeGreenColorAtWeChat,
-                  buttonPaddingColor: GlobalState.themeGreenColorAtWeChat,
-                  topMargin: 5.0,
-                  bottomMargin: 15.0,
-                  buttonHeight: 50.0,
-                  isDisabled: _isLoginButtonDisabled,
-                  buttonCallback: () async {
-                    // click on login button // click wx login button
-                    // click on wx login button // click login button
-                    // click on wx button // click wx button
+                if (GlobalState.shouldShowLoginButtonAndAgreementInLoginPage)
+                  RoundCornerButtonWidget(
+                    buttonText: '微信登录',
+                    buttonTextColor: GlobalState.themeWhiteColorAtiOSTodo,
+                    buttonBorderColor: GlobalState.themeGreenColorAtWeChat,
+                    buttonPaddingColor: GlobalState.themeGreenColorAtWeChat,
+                    topMargin: 5.0,
+                    bottomMargin: 15.0,
+                    buttonHeight: 50.0,
+                    isDisabled: _isLoginButtonDisabled,
+                    buttonCallback: () async {
+                      // click on login button // click wx login button
+                      // click on wx login button // click login button
+                      // click on wx button // click wx button
 
-                    // Hide error info panel anyway
-                    hideErrorPanel(shouldTriggerSetState: true);
+                      // Hide error info panel anyway
+                      hideErrorPanel(shouldTriggerSetState: true);
 
-                    // Check network connection
-                    GlobalState.hasNetwork =
-                        await NetworkHandler.hasNetworkConnection();
+                      // Check network connection
+                      GlobalState.hasNetwork =
+                          await NetworkHandler.hasNetworkConnection();
 
-                    if (!_hasCheckedAgreement) {
-                      showErrorPanel(
-                        errorInfo: _errorInfoForNotSelectAgreement,
-                        autoHide: true,
-                        shouldTriggerSetState: true,
-                      );
-                    } else if (!GlobalState.hasNetwork) {
-                      // Check if it has network // has network or not
-
-                      await showErrorPanelWhenNetworkProblem(
-                          forceToCheckNetwork: false);
-                    } else {
-                      // All login checks pass
-
-                      // Don't execute wx login again, if it is under a compulsory update status
-                      if (GlobalState.updateAppOption ==
-                              UpdateAppOption.CompulsoryUpdate ||
-                          GlobalState.updateAppOption ==
-                              UpdateAppOption.HasError) {
-                        // Compulsory update status
-
-                        // We should get update app option forcibly from TCB again if it has error,
-                        // because it is probably caused by network problem, we should try it again.
-                        var forceToGetUpdateAppOption = false;
-                        if (GlobalState.updateAppOption ==
-                            UpdateAppOption.HasError) {
-                          forceToGetUpdateAppOption = true;
-                        }
-
-                        hideLoginPage();
-
-                        GlobalState.masterDetailPageState.currentState
-                            .checkIfShowUpdateDialogOrNot(
-                          forceToGetUpdateAppOption: forceToGetUpdateAppOption,
+                      if (!_hasCheckedAgreement) {
+                        showErrorPanel(
+                          errorInfo: _errorInfoForNotSelectAgreement,
+                          autoHide: true,
+                          shouldTriggerSetState: true,
                         );
+                      } else if (!GlobalState.hasNetwork) {
+                        // Check if it has network // has network or not
+
+                        await showErrorPanelWhenNetworkProblem(
+                            forceToCheckNetwork: false);
                       } else {
-                        // Isn't compulsory update status
+                        // All login checks pass
 
-                        GlobalState.loadingWidgetChangeNotifier
-                            .shouldShowLoadingWidget = true;
+                        // Don't execute wx login again, if it is under a compulsory update status
+                        if (GlobalState.updateAppOption ==
+                                UpdateAppOption.CompulsoryUpdate ||
+                            GlobalState.updateAppOption ==
+                                UpdateAppOption.HasError) {
+                          // Compulsory update status
 
-                        var responseForLogin = await TCBLoginHandler.login(
-                          autoUseAnonymousWayToLoginInSimulator: true,
-                          forceToUseAnonymousLogin: false,
-                          delay3SecondsToLogin: true,
-                        );
+                          // We should get update app option forcibly from TCB again if it has error,
+                          // because it is probably caused by network problem, we should try it again.
+                          var forceToGetUpdateAppOption = false;
+                          if (GlobalState.updateAppOption ==
+                              UpdateAppOption.HasError) {
+                            forceToGetUpdateAppOption = true;
+                          }
 
-                        if (responseForLogin.code == 0) {
-                          GlobalState.loadingWidgetChangeNotifier
-                              .shouldShowLoadingWidget = false;
+                          hideLoginPage();
 
-                          hideLoginPage(forceToShowWebView: true);
-
-                          _shouldShowErrorPanel = false;
-
-                          GlobalState.isLoggedIn = true;
-
-                          GlobalState.masterDetailPageState.currentState
-                              .triggerSetState();
-
-                          // Check if it should show the update dialog or not
                           GlobalState.masterDetailPageState.currentState
                               .checkIfShowUpdateDialogOrNot(
-                            forceToGetUpdateAppOption: true,
+                            forceToGetUpdateAppOption:
+                                forceToGetUpdateAppOption,
                           );
                         } else {
-                          showErrorPanel(
-                            // errorInfo: _errorInfoForLoginFailure,
-                            errorInfo: responseForLogin.message,
-                            autoHide: true,
+                          // Isn't compulsory update status
+
+                          GlobalState.loadingWidgetChangeNotifier
+                              .shouldShowLoadingWidget = true;
+
+                          var responseForLogin = await TCBLoginHandler.login(
+                            autoUseAnonymousWayToLoginInSimulator: true,
+                            forceToUseAnonymousLogin: false,
+                            delay3SecondsToLogin: true,
                           );
+
+                          if (responseForLogin.code == 0) {
+                            GlobalState.loadingWidgetChangeNotifier
+                                .shouldShowLoadingWidget = false;
+
+                            hideLoginPage(forceToShowWebView: true);
+
+                            _shouldShowErrorPanel = false;
+
+                            GlobalState.isLoggedIn = true;
+
+                            GlobalState.masterDetailPageState.currentState
+                                .triggerSetState();
+
+                            // Check if it should show the update dialog or not
+                            GlobalState.masterDetailPageState.currentState
+                                .checkIfShowUpdateDialogOrNot(
+                              forceToGetUpdateAppOption: true,
+                            );
+                          } else {
+                            showErrorPanel(
+                              // errorInfo: _errorInfoForLoginFailure,
+                              errorInfo: responseForLogin.message,
+                              autoHide: true,
+                            );
+                          }
                         }
                       }
-                    }
-                  },
-                ),
-                Container(
-                  alignment: Alignment.topCenter,
-                  margin: EdgeInsets.only(
-                      left: GlobalState
-                          .defaultLeftAndRightMarginBetweenParentBoarderAndPanel,
-                      right: GlobalState
-                          .defaultLeftAndRightMarginBetweenParentBoarderAndPanel),
-                  height: 50,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // login checkbox // agreement checkbox
-                      // checkbox agreement // check agreement
-                      RoundCheckBoxWidget(
-                        isChecked: _hasCheckedAgreement,
-                        onChanged: (isChecked) {
-                          GlobalState.viewAgreementPageChangeNotifier
-                              .shouldAvoidTransitionEffect = true;
-                          _checkLoginCheckBox(hasCheckedAgreement: isChecked);
-                        },
-                      ),
-
-                      // agreement info // agreement label
-                      Container(
-                        // color: Colors.yellow,
-                        width: GlobalState.screenWidth -
-                            GlobalState
-                                    .defaultLeftAndRightMarginBetweenParentBoarderAndPanel *
-                                2 -
-                            GlobalState.defaultCheckBoxWidth,
-                        child: Row(
-                          children: [
-                            Container(
-                              child: _getAgreementTitle(
-                                  title: '已阅并同意 ', clickable: false),
-                              // width: 50,
-                            ),
-                            Container(
-                              // color: Colors.green,
-                              child: Row(
-                                children: [
-                                  _getAgreementTitle(
-                                      // title: '软件许可', clickable: true),
-                                      title: '软件许可',
-                                      clickable: true),
-                                  _getAgreementTitle(
-                                      title: ' 和 ', clickable: false),
-                                  _getAgreementTitle(
-                                      title: '服务协议', clickable: true),
-                                ],
-                              ),
-                            ),
-                            // _getAgreementTitle(
-                            //     title: '『海豚笔记』软件许可', clickable: true),
-                            // _getAgreementTitle(title: ' 和 ', clickable: false),
-                            // _getAgreementTitle(title: '服务协议', clickable: true),
-                          ],
-                        ),
-                      )
-                    ],
+                    },
                   ),
-                ),
+                if (GlobalState.shouldShowLoginButtonAndAgreementInLoginPage)
+                  Container(
+                    alignment: Alignment.topCenter,
+                    margin: EdgeInsets.only(
+                        left: GlobalState
+                            .defaultLeftAndRightMarginBetweenParentBoarderAndPanel,
+                        right: GlobalState
+                            .defaultLeftAndRightMarginBetweenParentBoarderAndPanel),
+                    height: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // login checkbox // agreement checkbox
+                        // checkbox agreement // check agreement
+                        RoundCheckBoxWidget(
+                          isChecked: _hasCheckedAgreement,
+                          onChanged: (isChecked) {
+                            GlobalState.viewAgreementPageChangeNotifier
+                                .shouldAvoidTransitionEffect = true;
+                            _checkLoginCheckBox(hasCheckedAgreement: isChecked);
+                          },
+                        ),
+
+                        // agreement info // agreement label
+                        Container(
+                          width: GlobalState.screenWidth -
+                              GlobalState
+                                      .defaultLeftAndRightMarginBetweenParentBoarderAndPanel *
+                                  2 -
+                              GlobalState.defaultCheckBoxWidth,
+                          child: Row(
+                            children: [
+                              Container(
+                                child: _getAgreementTitle(
+                                    title: '已阅并同意 ', clickable: false),
+                                // width: 50,
+                              ),
+                              Container(
+                                // color: Colors.green,
+                                child: Row(
+                                  children: [
+                                    _getAgreementTitle(
+                                        // title: '软件许可', clickable: true),
+                                        title: '软件许可',
+                                        clickable: true),
+                                    _getAgreementTitle(
+                                        title: ' 和 ', clickable: false),
+                                    _getAgreementTitle(
+                                        title: '服务协议', clickable: true),
+                                  ],
+                                ),
+                              ),
+                              // _getAgreementTitle(
+                              //     title: '『海豚笔记』软件许可', clickable: true),
+                              // _getAgreementTitle(title: ' 和 ', clickable: false),
+                              // _getAgreementTitle(title: '服务协议', clickable: true),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
               ],
             ),
           ),
@@ -540,12 +559,34 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
             if (forceToSetIsWaitingNetworkToBecomeNormalVar) {
               _isWaitingNetworkToBecomeNormal = false;
             }
-            hideErrorPanel();
 
-            // If the user has logged in, going to the note list page automatically
-            if (GlobalState.isLoggedIn) {
-              // GlobalState.masterDetailPageState.currentState.triggerSetState();
+            var hasLogin = await TCBLoginHandler.hasLoginTCB(
+              includeAnonymousLogin: false,
+              forceToUpdateIsLoggedInVarAtGlobalState: true,
+            );
+
+            var isReviewApp = await GlobalState.checkIfReviewApp(
+              forceToSetIsReviewAppVarAtGlobalState: true,
+            );
+
+            if (!isReviewApp) {
+              GlobalState.shouldShowLoginButtonAndAgreementInLoginPage = true;
+            } else {
+              GlobalState.shouldShowLoginButtonAndAgreementInLoginPage = false;
+            }
+
+            // Check if it should show the login page or not,
+            // the logic: https://user-images.githubusercontent.com/1920873/122497489-00730180-d020-11eb-88c0-f7f8df2e7b84.png
+            if (!hasLogin && !isReviewApp) {
+              // Show the login page, only when the user hasn't login when it is not review app
+
+              hideErrorPanel();
+              await GlobalState.loginPageState.currentState.showLoginPage();
+            } else {
+              // Other cases, it should hide the login page
+
               GlobalState.loginPageState.currentState.hideLoginPage(
+                forceToShowWebView: true,
                 shouldShowUpdateAppDialogIfNeeded: true,
               );
             }

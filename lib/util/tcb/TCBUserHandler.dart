@@ -19,6 +19,7 @@ class TCBUserHandler {
       responseModelForLogin = await TCBLoginHandler.login(
         autoUseAnonymousWayToLoginInSimulator: true,
         forceToUseAnonymousLogin: false,
+        delay3SecondsToLogin: false,
       );
     }
 

@@ -117,7 +117,8 @@ class MasterDetailPageState extends State<MasterDetailPage>
     super.initState();
 
     // Show update dialog if the user has logged in
-    TCBLoginHandler.hasLoginTCB(includeAnonymousLogin: false).then((hasLoginTCB) async {
+    TCBLoginHandler.hasLoginTCB(includeAnonymousLogin: false)
+        .then((hasLoginTCB) async {
       // Check if the user has logged in, we only show the update dialog after logging in
       // show update dialog
 
@@ -589,7 +590,7 @@ class MasterDetailPageState extends State<MasterDetailPage>
     // whether to show login page
 
     if (await GlobalState.checkIfReviewApp(
-      forceToSetIsReviewAppVar: true,
+      forceToSetIsReviewAppVarAtGlobalState: true,
     )) {
       // Check if review app // check review app
 
@@ -598,9 +599,13 @@ class MasterDetailPageState extends State<MasterDetailPage>
     } else {
       // Not review app
 
-      if (!await NetworkHandler.hasNetworkConnection()) {
+      // Check current network status
+      GlobalState.hasNetwork = await NetworkHandler.hasNetworkConnection();
+
+      if (!GlobalState.hasNetwork) {
         GlobalState.shouldShowLoginPage = true;
-      } else if (!await TCBLoginHandler.hasLoginTCB(includeAnonymousLogin: false)) {
+      } else if (!await TCBLoginHandler.hasLoginTCB(
+          includeAnonymousLogin: false)) {
         GlobalState.shouldShowLoginPage = true;
       } else {
         GlobalState.shouldShowLoginPage = false;
@@ -609,6 +614,18 @@ class MasterDetailPageState extends State<MasterDetailPage>
 
     return GlobalState.shouldShowLoginPage;
   }
+
+  // Future<void> _showUpdateDialogAfterWebViewLoaded() async {
+  //   GlobalState.webViewLoadedEventHandler.onWebViewLoaded
+  //       .listen((hasWebViewLoaded) async {
+  //     // listen webview loaded event // listen to webview loaded event
+  //     // listen webview load event // listen to webview load event
+  //
+  //     if (hasWebViewLoaded) {
+  //       await checkIfShowUpdateDialogOrNot(forceToGetUpdateAppOption: true);
+  //     }
+  //   });
+  // }
 
   // Public methods
   void triggerToShowReusablePage({String title = '', @required Widget child}) {

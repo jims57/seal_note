@@ -97,24 +97,26 @@ class GlobalState with ChangeNotifier {
   // Please make sure to call hasLoginTCB() method, before using isLoggedIn variable to check the user's login status
   static bool isLoggedIn = false;
 
+  static bool shouldShowLoginButtonAndAgreementInLoginPage = true;
   static bool shouldShowLoginPage = false;
   static bool hasNetwork = true;
   static bool isReviewApp =
       false; // Tell the current version of app is under view by Apple
 
   static Future<bool> checkIfReviewApp({
-    bool forceToSetIsReviewAppVar = true,
+    bool forceToSetIsReviewAppVarAtGlobalState = true,
   }) async {
     var isReview = false;
 
-    var response = await TCBSystemInfoHandler.getSystemInfo(forceToGetSystemInfoFromTCB: true);
+    var response = await TCBSystemInfoHandler.getSystemInfo(
+        forceToGetSystemInfoFromTCB: true);
     if (response.code == ErrorCodeModel.SUCCESS_CODE &&
         response.result.reviewedAppVersion == GlobalState.appVersion) {
       isReview = true;
     }
 
-    if (forceToSetIsReviewAppVar) {
-      isReviewApp = isReview;
+    if (forceToSetIsReviewAppVarAtGlobalState) {
+      GlobalState.isReviewApp = isReview;
     }
 
     return isReview;

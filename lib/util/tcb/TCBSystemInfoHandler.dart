@@ -22,10 +22,15 @@ class TCBSystemInfoHandler {
     var response;
 
     // Check if it has login
-    var hasLogin =
-        await TCBLoginHandler.hasLoginTCB(includeAnonymousLogin: true);
+    var hasLogin = await TCBLoginHandler.hasLoginTCB(
+      includeAnonymousLogin: true,
+      forceToUpdateIsLoggedInVarAtGlobalState: false,
+    );
     if (!hasLogin) {
-      await TCBLoginHandler.login(forceToUseAnonymousLogin: true);
+      await TCBLoginHandler.login(
+        forceToUseAnonymousLogin: true,
+        delay3SecondsToLogin: false,
+      );
     }
 
     if (forceToGetSystemInfoFromTCB) {

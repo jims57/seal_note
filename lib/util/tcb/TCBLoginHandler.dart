@@ -113,22 +113,37 @@ class TCBLoginHandler {
   //   return GlobalState.tcbCloudBaseAuth;
   // }
 
-  static Future<bool> hasLoginTCB({bool includeAnonymousLogin = false}) async {
-    // var authState = await _getCloudBaseAuthState();
+  static Future<bool> hasLoginTCB({
+    bool includeAnonymousLogin = false,
+    bool forceToUpdateIsLoggedInVarAtGlobalState = true,
+  }) async {
+    var hasLogin = false;
     var authState = await TCBInitHandler.getCloudBaseAuthState();
 
     if (authState != null) {
       var loginType = await TCBLoginHandler.getLoginType();
       if (loginType == CloudBaseAuthType.ANONYMOUS && !includeAnonymousLogin) {
-        GlobalState.isLoggedIn = false;
+        hasLogin = false;
+
+        if (forceToUpdateIsLoggedInVarAtGlobalState) {
+          GlobalState.isLoggedIn = false;
+        }
       } else {
-        GlobalState.isLoggedIn = true;
+        hasLogin = true;
+
+        if (forceToUpdateIsLoggedInVarAtGlobalState) {
+          GlobalState.isLoggedIn = true;
+        }
       }
     } else {
-      GlobalState.isLoggedIn = false;
+      hasLogin = false;
+
+      if (forceToUpdateIsLoggedInVarAtGlobalState) {
+        GlobalState.isLoggedIn = false;
+      }
     }
 
-    return GlobalState.isLoggedIn;
+    return hasLogin;
   }
 
   static Future<bool> isLoginExpired() async {
@@ -142,7 +157,7 @@ class TCBLoginHandler {
     bool forceToUseAnonymousLogin = false,
     bool delay3SecondsToLogin = false,
   }) async {
-    if(delay3SecondsToLogin){
+    if (delay3SecondsToLogin) {
       await Future.delayed(Duration(seconds: 3));
     }
 
@@ -170,7 +185,8 @@ class TCBLoginHandler {
 
     // Id doesn't need to execute sign out method of tcb if on simulator
     var isSimulator = await SimulatorHandler.isSimulatorOrEmulator();
-    var hasLogin = await TCBLoginHandler.hasLoginTCB(includeAnonymousLogin: false);
+    var hasLogin =
+        await TCBLoginHandler.hasLoginTCB(includeAnonymousLogin: false);
     var response;
 
     // By default, it responses as a success one
@@ -179,12 +195,11 @@ class TCBLoginHandler {
     response = ResponseModel.getResponseModelForSuccess();
 
     if (!isSimulator && hasLogin) {
-
       var auth = TCBInitHandler.getCloudBaseAuth();
 
       await auth.signOut().catchError((err) {
         GlobalState.isLoggedIn =
-        true; // If failed, we set it back to login status
+            true; // If failed, we set it back to login status
 
         response = ResponseModel.getResponseModelForError(
           // result: err,
