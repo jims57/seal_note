@@ -592,9 +592,11 @@ class MasterDetailPageState extends State<MasterDetailPage>
     if (await GlobalState.checkIfReviewApp(
       forceToSetIsReviewAppVarAtGlobalState: true,
     )) {
-      // Check if review app // check review app
+      // When this app is under review
 
-      // Review app
+      // Check if review app // check review app
+      // review app // when review app
+
       GlobalState.shouldShowLoginPage = false;
       GlobalState.shouldShowSettingButtonOnFolderPage = false;
     } else {

@@ -49,6 +49,7 @@ class GlobalState with ChangeNotifier {
   static int systemInfoBasicDataStructureVersion = 1;
 
   // For configuration // app basic info // app basic variable info
+  static bool isDebugApp = true;
   static int noteListTitleMaxLength = 50;
   static int noteListAbstractMaxLength = 50;
   static int incrementalStepToUseRegex = 100;
@@ -106,6 +107,9 @@ class GlobalState with ChangeNotifier {
   static Future<bool> checkIfReviewApp({
     bool forceToSetIsReviewAppVarAtGlobalState = true,
   }) async {
+    // This method will only return true when network connection is normal and under review app.
+    // Any other cases, including network problem, will return false.
+
     var isReview = false;
 
     var response = await TCBSystemInfoHandler.getSystemInfo(

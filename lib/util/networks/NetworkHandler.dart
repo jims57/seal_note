@@ -29,6 +29,8 @@ class NetworkHandler {
   static void checkNetworkPeriodically(
       {@required VoidCallback callbackWhenHasNetwork,
       int intervalMillisecond = 1000}) {
+    // check network periodically // interval to check network
+
     Timer _timer;
 
     _timer?.cancel();

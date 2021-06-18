@@ -7,6 +7,7 @@ import 'package:seal_note/ui/common/appBars/AppBarWidget.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:seal_note/ui/settings/SettingPage.dart';
 import 'package:seal_note/util/dialog/AlertDialogHandler.dart';
+import 'package:seal_note/util/tcb/TCBLoginHandler.dart';
 import 'package:seal_note/util/time/TimeHandler.dart';
 import 'FolderListItemWidget.dart';
 import 'FolderListWidget.dart';
@@ -207,37 +208,42 @@ class FolderListPageState extends State<FolderListPage>
                                 );
                               },
                             ),
-                          // GestureDetector(
-                          //   // test button
-                          //   child: Container(
-                          //     child: Column(
-                          //         mainAxisAlignment: MainAxisAlignment.center,
-                          //         children: [
-                          //           Icon(
-                          //             Icons.settings,
-                          //             size: 20,
-                          //           ),
-                          //           Text(
-                          //             '测试',
-                          //             style: TextStyle(fontSize: 10),
-                          //           )
-                          //         ]),
-                          //     color: Colors.transparent,
-                          //     padding: EdgeInsets.only(left: 15.0, right: 15.0),
-                          //   ),
-                          //   onTap: () async {
-                          //     // setting event // click setting event
-                          //     // setting button // setting button event
-                          //     // test button // test button event // click test button
-                          //
-                          //     // await TCBLoginHandler.login();
-                          //
-                          //     var res = await GlobalState.flutterWebviewPlugin
-                          //         .evalJavascript("javascript:getPageHtml();");
-                          //
-                          //     var s2 = 's';
-                          //   },
-                          // ),
+                          if (GlobalState.isDebugApp)
+                            GestureDetector(
+                              // test button
+                              child: Container(
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.settings,
+                                        size: 20,
+                                      ),
+                                      Text(
+                                        '测试',
+                                        style: TextStyle(fontSize: 10),
+                                      )
+                                    ]),
+                                color: Colors.transparent,
+                                padding:
+                                    EdgeInsets.only(left: 15.0, right: 15.0),
+                              ),
+                              onTap: () async {
+                                // setting event // click setting event
+                                // setting button // setting button event
+                                // test button // test button event // click test button
+
+
+
+                                var isReviewApp = GlobalState.isReviewApp;
+
+                                var res = await GlobalState.flutterWebviewPlugin
+                                    .evalJavascript(
+                                        "javascript:getPageHtml();");
+
+                                var s2 = 's';
+                              },
+                            ),
                         ],
                       ),
                     ),

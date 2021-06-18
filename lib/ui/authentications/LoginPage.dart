@@ -583,6 +583,12 @@ class LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage> {
             } else {
               // Other cases, it should hide the login page
 
+              if (isReviewApp) {
+                GlobalState.shouldShowSettingButtonOnFolderPage = false;
+
+                GlobalState.folderListPageState.currentState.triggerSetState();
+              }
+
               GlobalState.loginPageState.currentState.hideLoginPage(
                 forceToShowWebView: true,
                 shouldShowUpdateAppDialogIfNeeded: true,

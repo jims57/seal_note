@@ -1001,9 +1001,18 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
     }
 
     if (GlobalState.isLoggedIn) {
+      // When login
+
       GlobalState.flutterWebviewPlugin.show();
     } else {
-      GlobalState.flutterWebviewPlugin.hide();
+      // When not login
+
+      // Check if it is a review app, if yes, show the web view forcibly
+      if (GlobalState.isReviewApp) {
+        GlobalState.flutterWebviewPlugin.show();
+      } else {
+        GlobalState.flutterWebviewPlugin.hide();
+      }
     }
   }
 
@@ -1263,7 +1272,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
 
   Future<void> clickOnDetailPageBackButton() async {
     var canGoBack = await _canWebViewGoBack();
-    if(canGoBack){
+    if (canGoBack) {
       return await goBackWebView();
     }
 
