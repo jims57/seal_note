@@ -2582,6 +2582,10 @@
         if (isCreatingNote) { // If it is createing a new note
             if (printLogToDartFromJs) Print.postMessage('inside if(isCreatingNote) {}');
 
+            // remove old image sync items first
+            if (printLogToDartFromJs) Print.postMessage('removeAllImageSyncItemsFromArrayVar();');
+            removeAllImageSyncItemsFromArrayVar();
+
             clearQuillContent(noteContent, true);
 
             setQuillToReadOnly(false, isCreatingNote);

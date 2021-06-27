@@ -265,7 +265,7 @@ class NoteDetailWidgetState extends State<NoteDetailWidget>
           // click on photo event // click photo view event
           // click on photo view event // click photo event
           // show image event // show big image event
-          // trigger photo view
+          // trigger photo view // show photo view
 
           // Get json object from json string
           var jsonObject = json.decode(message.message);
